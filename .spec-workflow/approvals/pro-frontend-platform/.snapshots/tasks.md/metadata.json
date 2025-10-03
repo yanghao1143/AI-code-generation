@@ -1,0 +1,14 @@
+{
+  "filePath": ".spec-workflow/specs/pro-frontend-platform/tasks.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-10-02T04:59:57.824Z",
+      "trigger": "initial",
+      "approvalId": "approval_1759381197808_twhq51ogy",
+      "approvalTitle": "专业级前端开发平台 任务分解文档（Phase 3）审批请求"
+    }
+  ]
+}

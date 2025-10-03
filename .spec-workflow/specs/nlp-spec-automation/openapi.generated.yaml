@@ -1,0 +1,833 @@
+openapi: 3.0.3
+info:
+  title: nlp-spec-automation API
+  version: 0.1.0
+  description: 自动根据设计与 DDL 生成的初版 OpenAPI（占位，待 speccheck 校验与细化）。
+servers:
+  - url: http://localhost:8081/api
+    description: 本地开发服务器（示例）
+tags:
+  - name: Anchors
+  - name: Fans
+  - name: Tags
+  - name: Conversations
+  - name: FortuneServices
+  - name: FortuneRecords
+  - name: Topics
+  - name: Scripts
+  - name: Workflows
+paths:
+  /anchors:
+    get:
+      tags: [Anchors]
+      summary: 列出 Anchors
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Anchor'
+    post:
+      tags: [Anchors]
+      summary: 创建 Anchor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnchorCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Anchor'
+  /anchors/{id}:
+    get:
+      tags: [Anchors]
+      summary: 获取 Anchor
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Anchor'
+    put:
+      tags: [Anchors]
+      summary: 更新 Anchor
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnchorUpdate'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Anchor'
+    delete:
+      tags: [Anchors]
+      summary: 删除 Anchor
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '204':
+          description: No Content
+
+  /fans:
+    get:
+      tags: [Fans]
+      summary: 列出 Fans
+      security:
+        - bearerAuth: []
+        - headerPermissions: []
+      x-permissions: [fans]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Fan'
+    post:
+      tags: [Fans]
+      summary: 创建 Fan
+      security:
+        - bearerAuth: []
+        - headerPermissions: []
+      x-permissions: [fans]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FanCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fan'
+  /fans/{id}:
+    get:
+      tags: [Fans]
+      summary: 获取 Fan
+      security:
+        - bearerAuth: []
+        - headerPermissions: []
+      x-permissions: [fans]
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fan'
+    put:
+      tags: [Fans]
+      summary: 更新 Fan
+      security:
+        - bearerAuth: []
+        - headerPermissions: []
+      x-permissions: [fans]
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FanUpdate'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fan'
+    delete:
+      tags: [Fans]
+      summary: 删除 Fan
+      security:
+        - bearerAuth: []
+        - headerPermissions: []
+      x-permissions: [fans]
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '204':
+          description: No Content
+
+  /tags:
+    get:
+      tags: [Tags]
+      summary: 列出 Tags
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tag'
+    post:
+      tags: [Tags]
+      summary: 创建 Tag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+  /tags/{id}:
+    get:
+      tags: [Tags]
+      summary: 获取 Tag
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+    delete:
+      tags: [Tags]
+      summary: 删除 Tag
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '204':
+          description: No Content
+    put:
+      tags: [Tags]
+      summary: 更新 Tag
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagUpdate'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+
+  /conversations:
+    get:
+      tags: [Conversations]
+      summary: 列出 Conversations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversation'
+    post:
+      tags: [Conversations]
+      summary: 创建 Conversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversationCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conversation'
+  /conversations/{id}:
+    get:
+      tags: [Conversations]
+      summary: 获取 Conversation
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conversation'
+    delete:
+      tags: [Conversations]
+      summary: 删除 Conversation
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '204':
+          description: No Content
+
+  /fortune-services:
+    get:
+      tags: [FortuneServices]
+      summary: 列出 FortuneServices
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FortuneService'
+    post:
+      tags: [FortuneServices]
+      summary: 创建 FortuneService
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FortuneServiceCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FortuneService'
+  /fortune-services/{id}:
+    get:
+      tags: [FortuneServices]
+      summary: 获取 FortuneService
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FortuneService'
+    delete:
+      tags: [FortuneServices]
+      summary: 删除 FortuneService
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '204':
+          description: No Content
+    put:
+      tags: [FortuneServices]
+      summary: 更新 FortuneService
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FortuneServiceUpdate'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FortuneService'
+
+  /fortune-records:
+    get:
+      tags: [FortuneRecords]
+      summary: 列出 FortuneRecords
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FortuneRecord'
+    post:
+      tags: [FortuneRecords]
+      summary: 创建 FortuneRecord
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FortuneRecordCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FortuneRecord'
+
+  /topics:
+    get:
+      tags: [Topics]
+      summary: 列出 Topics
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Topic'
+    post:
+      tags: [Topics]
+      summary: 创建 Topic
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopicCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Topic'
+  /topics/{id}:
+    get:
+      tags: [Topics]
+      summary: 获取 Topic
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Topic'
+    delete:
+      tags: [Topics]
+      summary: 删除 Topic
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '204':
+          description: No Content
+    put:
+      tags: [Topics]
+      summary: 更新 Topic
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopicUpdate'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Topic'
+
+  /scripts:
+    get:
+      tags: [Scripts]
+      summary: 列出 Scripts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Script'
+    post:
+      tags: [Scripts]
+      summary: 创建 Script
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScriptCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Script'
+  /scripts/{id}:
+    get:
+      tags: [Scripts]
+      summary: 获取 Script
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Script'
+    delete:
+      tags: [Scripts]
+      summary: 删除 Script
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '204':
+          description: No Content
+    put:
+      tags: [Scripts]
+      summary: 更新 Script
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScriptUpdate'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Script'
+
+  /workflows:
+    get:
+      tags: [Workflows]
+      summary: 列出 Workflows
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Workflow'
+    post:
+      tags: [Workflows]
+      summary: 创建 Workflow
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workflow'
+  /workflows/{id}:
+    get:
+      tags: [Workflows]
+      summary: 获取 Workflow
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workflow'
+    delete:
+      tags: [Workflows]
+      summary: 删除 Workflow
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      responses:
+        '204':
+          description: No Content
+    put:
+      tags: [Workflows]
+      summary: 更新 Workflow
+      parameters:
+        - $ref: '#/components/parameters/IdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowUpdate'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workflow'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+    headerPermissions:
+      type: apiKey
+      in: header
+      name: X-User-Permissions
+  parameters:
+    IdParam:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  schemas:
+    Anchor:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        name: { type: string, maxLength: 255 }
+        level: { type: string, maxLength: 64 }
+        created_at: { type: string, format: date-time }
+      required: [id, name, level, created_at]
+    AnchorCreate:
+      type: object
+      properties:
+        name: { type: string, maxLength: 255 }
+        level: { type: string, maxLength: 64 }
+      required: [name, level]
+    AnchorUpdate:
+      type: object
+      properties:
+        name: { type: string, maxLength: 255 }
+        level: { type: string, maxLength: 64 }
+
+    Fan:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        name: { type: string, maxLength: 255 }
+        gender: { type: string, maxLength: 16, nullable: true }
+        birthday: { type: string, maxLength: 32, nullable: true }
+        zodiac: { type: string, maxLength: 32, nullable: true }
+        created_at: { type: string, format: date-time }
+      required: [id, name, created_at]
+    FanCreate:
+      type: object
+      properties:
+        name: { type: string, maxLength: 255 }
+        gender: { type: string, maxLength: 16 }
+        birthday: { type: string, maxLength: 32 }
+        zodiac: { type: string, maxLength: 32 }
+      required: [name]
+    FanUpdate:
+      type: object
+      properties:
+        name: { type: string, maxLength: 255 }
+        gender: { type: string, maxLength: 16 }
+        birthday: { type: string, maxLength: 32 }
+        zodiac: { type: string, maxLength: 32 }
+
+    Tag:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        name: { type: string, maxLength: 128 }
+        created_at: { type: string, format: date-time }
+      required: [id, name, created_at]
+    TagCreate:
+      type: object
+      properties:
+        name: { type: string, maxLength: 128 }
+      required: [name]
+    TagUpdate:
+      type: object
+      properties:
+        name: { type: string, maxLength: 128 }
+
+    Conversation:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        anchor_id: { type: integer, format: int64 }
+        fan_id: { type: integer, format: int64 }
+        content: { type: string }
+        created_at: { type: string, format: date-time }
+      required: [id, anchor_id, fan_id, content, created_at]
+      x-relations:
+        anchor_id:
+          refTable: anchors
+          refField: id
+        fan_id:
+          refTable: fans
+          refField: id
+    ConversationCreate:
+      type: object
+      properties:
+        anchor_id: { type: integer, format: int64 }
+        fan_id: { type: integer, format: int64 }
+        content: { type: string }
+      required: [anchor_id, fan_id, content]
+    ConversationUpdate:
+      type: object
+      properties:
+        anchor_id: { type: integer, format: int64 }
+        fan_id: { type: integer, format: int64 }
+        content: { type: string }
+
+    FortuneService:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        code: { type: string, maxLength: 64 }
+        name: { type: string, maxLength: 255 }
+        input_schema: { type: string, nullable: true }
+        created_at: { type: string, format: date-time }
+      required: [id, code, name, created_at]
+    FortuneServiceCreate:
+      type: object
+      properties:
+        code: { type: string, maxLength: 64 }
+        name: { type: string, maxLength: 255 }
+        input_schema: { type: string }
+      required: [code, name]
+    FortuneServiceUpdate:
+      type: object
+      properties:
+        code: { type: string, maxLength: 64 }
+        name: { type: string, maxLength: 255 }
+        input_schema: { type: string }
+
+    FortuneRecord:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        fan_id: { type: integer, format: int64 }
+        service_id: { type: integer, format: int64 }
+        result: { type: string }
+        created_at: { type: string, format: date-time }
+      required: [id, fan_id, service_id, result, created_at]
+      x-relations:
+        fan_id:
+          refTable: fans
+          refField: id
+        service_id:
+          refTable: fortune_services
+          refField: id
+    FortuneRecordCreate:
+      type: object
+      properties:
+        fan_id: { type: integer, format: int64 }
+        service_id: { type: integer, format: int64 }
+        result: { type: string }
+      required: [fan_id, service_id, result]
+    FortuneRecordUpdate:
+      type: object
+      properties:
+        fan_id: { type: integer, format: int64 }
+        service_id: { type: integer, format: int64 }
+        result: { type: string }
+
+    Topic:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        name: { type: string, maxLength: 255 }
+        popularity: { type: integer, format: int32, nullable: true }
+        created_at: { type: string, format: date-time }
+      required: [id, name, created_at]
+    TopicCreate:
+      type: object
+      properties:
+        name: { type: string, maxLength: 255 }
+        popularity: { type: integer, format: int32 }
+      required: [name]
+    TopicUpdate:
+      type: object
+      properties:
+        name: { type: string, maxLength: 255 }
+        popularity: { type: integer, format: int32 }
+
+    Script:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        title: { type: string, maxLength: 255 }
+        content: { type: string }
+        topic_id: { type: integer, format: int64, nullable: true }
+        created_at: { type: string, format: date-time }
+      required: [id, title, content, created_at]
+      x-relations:
+        topic_id:
+          refTable: topics
+          refField: id
+    ScriptCreate:
+      type: object
+      properties:
+        title: { type: string, maxLength: 255 }
+        content: { type: string }
+        topic_id: { type: integer, format: int64 }
+      required: [title, content]
+    ScriptUpdate:
+      type: object
+      properties:
+        title: { type: string, maxLength: 255 }
+        content: { type: string }
+        topic_id: { type: integer, format: int64 }
+
+    Workflow:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        name: { type: string, maxLength: 255 }
+        definition: { type: string }
+        created_at: { type: string, format: date-time }
+      required: [id, name, definition, created_at]
+    WorkflowCreate:
+      type: object
+      properties:
+        name: { type: string, maxLength: 255 }
+        definition: { type: string }
+      required: [name, definition]
+    WorkflowUpdate:
+      type: object
+      properties:
+        name: { type: string, maxLength: 255 }
+        definition: { type: string }

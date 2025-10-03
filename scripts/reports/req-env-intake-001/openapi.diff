@@ -1,0 +1,796 @@
+--- /root/xingzuo/.spec-workflow/specs/xingzuo/openapi.json	2025-09-30 20:51:05.707076280 +0800
++++ /root/xingzuo/scripts/reports/req-env-intake-001/openapi.json	2025-10-01 21:16:55.942949246 +0800
+@@ -60,6 +60,164 @@
+       }
+     },
+     "schemas": {
++      "Article": {
++        "properties": {
++          "authorId": {
++            "type": "string"
++          },
++          "content": {
++            "type": "string"
++          },
++          "createdAt": {
++            "format": "date-time",
++            "type": "string"
++          },
++          "id": {
++            "type": "string"
++          },
++          "tags": {
++            "items": {
++              "type": "string"
++            },
++            "type": "array"
++          },
++          "title": {
++            "type": "string"
++          },
++          "updatedAt": {
++            "format": "date-time",
++            "type": "string"
++          }
++        },
++        "required": [
++          "id",
++          "title",
++          "content",
++          "authorId",
++          "createdAt",
++          "updatedAt"
++        ],
++        "type": "object"
++      },
++      "ArticleCreateRequest": {
++        "properties": {
++          "authorId": {
++            "type": "string"
++          },
++          "content": {
++            "type": "string"
++          },
++          "tags": {
++            "items": {
++              "type": "string"
++            },
++            "type": "array"
++          },
++          "title": {
++            "type": "string"
++          }
++        },
++        "required": [
++          "title",
++          "content",
++          "authorId"
++        ],
++        "type": "object"
++      },
++      "ArticleData": {
++        "description": "Single article response data",
++        "properties": {
++          "item": {
++            "$ref": "#/components/schemas/Article"
++          }
++        },
++        "type": "object"
++      },
++      "ArticleUpdateRequest": {
++        "description": "Partial update; all fields optional",
++        "properties": {
++          "content": {
++            "type": "string"
++          },
++          "tags": {
++            "items": {
++              "type": "string"
++            },
++            "type": "array"
++          },
++          "title": {
++            "type": "string"
++          }
++        },
++        "type": "object"
++      },
++      "ArticlesListData": {
++        "description": "List data for /api/v1/articles",
++        "properties": {
++          "items": {
++            "items": {
++              "$ref": "#/components/schemas/Article"
++            },
++            "type": "array"
++          },
++          "page": {
++            "$ref": "#/components/schemas/PageMeta"
++          }
++        },
++        "type": "object"
++      },
++      "AuthLoginRequest": {
++        "description": "Public login request to issue HS256 JWT",
++        "properties": {
++          "expiresInSec": {
++            "example": 3600,
++            "minimum": 1,
++            "type": "integer"
++          },
++          "permissions": {
++            "example": [
++              "articles"
++            ],
++            "items": {
++              "type": "string"
++            },
++            "type": "array"
++          },
++          "userId": {
++            "example": "u1",
++            "type": "string"
++          }
++        },
++        "type": "object"
++      },
++      "AuthLoginResponse": {
++        "description": "Public login response containing JWT and claims",
++        "properties": {
++          "expiresAt": {
++            "description": "Unix timestamp (seconds)",
++            "type": "integer"
++          },
++          "permissions": {
++            "items": {
++              "type": "string"
++            },
++            "type": "array"
++          },
++          "token": {
++            "description": "HS256 JWT",
++            "type": "string"
++          },
++          "userId": {
++            "type": "string"
++          }
++        },
++        "required": [
++          "token",
++          "userId",
++          "expiresAt"
++        ],
++        "type": "object"
++      },
+       "BackendFixRequest": {
+         "properties": {
+           "diff": {
+@@ -328,6 +486,27 @@
+         ],
+         "type": "object"
+       },
++      "PageMeta": {
++        "description": "Cursor-based pagination metadata",
++        "properties": {
++          "hasMore": {
++            "type": "boolean"
++          },
++          "nextAfterId": {
++            "type": "string"
++          },
++          "pageSize": {
++            "maximum": 1000,
++            "minimum": 1,
++            "type": "integer"
++          },
++          "total": {
++            "minimum": 0,
++            "type": "integer"
++          }
++        },
++        "type": "object"
++      },
+       "Response": {
+         "properties": {
+           "code": {
+@@ -380,6 +559,49 @@
+   },
+   "openapi": "3.0.0",
+   "paths": {
++    "/api/public/auth/login": {
++      "post": {
++        "description": "Issue HS256 JWT with claims: sub (userId), permissions, exp. This endpoint is public and does not require authentication.",
++        "parameters": [
++          {
++            "$ref": "#/components/parameters/XRequestId"
++          }
++        ],
++        "requestBody": {
++          "content": {
++            "application/json": {
++              "examples": {
++                "default": {
++                  "value": {
++                    "expiresInSec": 3600,
++                    "permissions": [
++                      "articles"
++                    ],
++                    "userId": "u1"
++                  }
++                }
++              },
++              "schema": {
++                "$ref": "#/components/schemas/AuthLoginRequest"
++              }
++            }
++          },
++          "required": true
++        },
++        "responses": {
++          "200": {
++            "$ref": "#/components/responses/OK"
++          },
++          "default": {
++            "$ref": "#/components/responses/Error"
++          }
++        },
++        "summary": "Public login",
++        "x-data-schema": {
++          "$ref": "#/components/schemas/AuthLoginResponse"
++        }
++      }
++    },
+     "/api/v1/ai/backend/fix": {
+       "post": {
+         "parameters": [
+@@ -757,6 +979,91 @@
+         "parameters": [
+           {
+             "$ref": "#/components/parameters/XRequestId"
++          },
++          {
++            "description": "Page size (1-1000). Prefer over legacy 'limit'",
++            "example": 10,
++            "in": "query",
++            "name": "pageSize",
++            "required": false,
++            "schema": {
++              "maximum": 1000,
++              "minimum": 1,
++              "type": "integer"
++            }
++          },
++          {
++            "description": "Cursor: start after the given article ID",
++            "example": "article-id-123",
++            "in": "query",
++            "name": "afterId",
++            "required": false,
++            "schema": {
++              "type": "string"
++            }
++          },
++          {
++            "description": "Filter items by authorId",
++            "example": "u1",
++            "in": "query",
++            "name": "authorId",
++            "required": false,
++            "schema": {
++              "type": "string"
++            }
++          },
++          {
++            "description": "Structured search: substring match on title (case-insensitive)",
++            "example": "Hello",
++            "in": "query",
++            "name": "qTitle",
++            "required": false,
++            "schema": {
++              "type": "string"
++            }
++          },
++          {
++            "description": "Structured search: substring match on content (case-insensitive)",
++            "example": "World",
++            "in": "query",
++            "name": "qContent",
++            "required": false,
++            "schema": {
++              "type": "string"
++            }
++          },
++          {
++            "description": "[Legacy] Max number of items (use 'pageSize')",
++            "example": 10,
++            "in": "query",
++            "name": "limit",
++            "required": false,
++            "schema": {
++              "maximum": 1000,
++              "minimum": 1,
++              "type": "integer"
++            }
++          },
++          {
++            "description": "[Legacy] Start offset (prefer 'afterId' cursor)",
++            "example": 0,
++            "in": "query",
++            "name": "offset",
++            "required": false,
++            "schema": {
++              "minimum": 0,
++              "type": "integer"
++            }
++          },
++          {
++            "description": "[Legacy] Keyword across title/content/tags (case-insensitive contains)",
++            "example": "hello",
++            "in": "query",
++            "name": "q",
++            "required": false,
++            "schema": {
++              "type": "string"
++            }
+           }
+         ],
+         "responses": {
+@@ -775,7 +1082,10 @@
+             "headerPermissions": []
+           }
+         ],
+-        "summary": "List articles"
++        "summary": "List articles",
++        "x-data-schema": {
++          "$ref": "#/components/schemas/ArticlesListData"
++        }
+       },
+       "post": {
+         "parameters": [
+@@ -787,7 +1097,7 @@
+           "content": {
+             "application/json": {
+               "schema": {
+-                "type": "object"
++                "$ref": "#/components/schemas/ArticleCreateRequest"
+               }
+             }
+           },
+@@ -809,7 +1119,10 @@
+             "headerPermissions": []
+           }
+         ],
+-        "summary": "Create article"
++        "summary": "Create article",
++        "x-data-schema": {
++          "$ref": "#/components/schemas/Article"
++        }
+       }
+     },
+     "/api/v1/articles/:id": {
+@@ -859,7 +1172,10 @@
+             "headerPermissions": []
+           }
+         ],
+-        "summary": "Get article"
++        "summary": "Get article",
++        "x-data-schema": {
++          "$ref": "#/components/schemas/Article"
++        }
+       },
+       "put": {
+         "parameters": [
+@@ -871,7 +1187,7 @@
+           "content": {
+             "application/json": {
+               "schema": {
+-                "type": "object"
++                "$ref": "#/components/schemas/ArticleUpdateRequest"
+               }
+             }
+           },
+@@ -893,7 +1209,403 @@
+             "headerPermissions": []
+           }
+         ],
+-        "summary": "Update article"
++        "summary": "Update article",
++        "x-data-schema": {
++          "$ref": "#/components/schemas/Article"
++        }
++      }
++    },
++    "/api/v1/articles/stream": {
++      "get": {
++        "description": "Server-Sent Events stream for article operations. Content-Type: text/event-stream. Frames include data (payload), heartbeat (keep-alive), and a terminal 'event: done'. Requires bearer authentication and 'articles' permission via RBAC. Errors follow unified ErrorResponse codes and structure.",
++        "parameters": [
++          {
++            "$ref": "#/components/parameters/XRequestId"
++          },
++          {
++            "description": "Streaming mode: 'example' emits demo frames; 'list' streams current articles as JSON frames",
++            "in": "query",
++            "name": "mode",
++            "required": false,
++            "schema": {
++              "enum": [
++                "example",
++                "list"
++              ],
++              "type": "string"
++            }
++          },
++          {
++            "description": "Heartbeat comment frame interval in milliseconds (default 5ms; bounds 1–10000ms)",
++            "example": 5,
++            "examples": {
++              "fast": {
++                "summary": "Fast",
++                "value": 5
++              },
++              "medium": {
++                "summary": "Medium",
++                "value": 50
++              },
++              "slow": {
++                "summary": "Slow",
++                "value": 500
++              }
++            },
++            "in": "query",
++            "name": "heartbeatMs",
++            "required": false,
++            "schema": {
++              "maximum": 10000,
++              "minimum": 1,
++              "type": "integer"
++            }
++          },
++          {
++            "description": "Page size when mode=list (1-1000). Prefer over legacy 'limit'",
++            "example": 10,
++            "in": "query",
++            "name": "pageSize",
++            "required": false,
++            "schema": {
++              "maximum": 1000,
++              "minimum": 1,
++              "type": "integer"
++            }
++          },
++          {
++            "description": "Cursor: start after the given article ID when mode=list",
++            "example": "article-id-123",
++            "in": "query",
++            "name": "afterId",
++            "required": false,
++            "schema": {
++              "type": "string"
++            }
++          },
++          {
++            "description": "Filter items by authorId when mode=list",
++            "example": "u1",
++            "in": "query",
++            "name": "authorId",
++            "required": false,
++            "schema": {
++              "type": "string"
++            }
++          },
++          {
++            "description": "Structured search: substring match on title (case-insensitive)",
++            "example": "Hello",
++            "in": "query",
++            "name": "qTitle",
++            "required": false,
++            "schema": {
++              "type": "string"
++            }
++          },
++          {
++            "description": "Structured search: substring match on content (case-insensitive)",
++            "example": "World",
++            "in": "query",
++            "name": "qContent",
++            "required": false,
++            "schema": {
++              "type": "string"
++            }
++          },
++          {
++            "description": "Structured search: comma-separated tags. Use qTagsOp=all to require all tags, qTagsOp=any to match any",
++            "example": "t1,t2",
++            "in": "query",
++            "name": "qTags",
++            "required": false,
++            "schema": {
++              "type": "string"
++            }
++          },
++          {
++            "description": "Exclude items containing any of these comma-separated tags",
++            "example": "t3,t4",
++            "in": "query",
++            "name": "qNotTags",
++            "required": false,
++            "schema": {
++              "type": "string"
++            }
++          },
++          {
++            "description": "Tag match operator: all (intersection) or any (union); default all",
++            "example": "all",
++            "in": "query",
++            "name": "qTagsOp",
++            "required": false,
++            "schema": {
++              "enum": [
++                "all",
++                "any"
++              ],
++              "type": "string"
++            }
++          },
++          {
++            "description": "Combine structured filters using logical 'or' or 'and' (default 'or')",
++            "example": "or",
++            "in": "query",
++            "name": "qOp",
++            "required": false,
++            "schema": {
++              "enum": [
++                "or",
++                "and"
++              ],
++              "type": "string"
++            }
++          },
++          {
++            "description": "Tag weights mapping as 'tag:weight' pairs, comma-separated; used to score items",
++            "example": "t1:2,t2:1",
++            "in": "query",
++            "name": "qTagWeights",
++            "required": false,
++            "schema": {
++              "type": "string"
++            }
++          },
++          {
++            "description": "Minimum cumulative tag weight threshold to include an item",
++            "example": 2,
++            "in": "query",
++            "name": "qTagMinWeight",
++            "required": false,
++            "schema": {
++              "minimum": 1,
++              "type": "integer"
++            }
++          },
++          {
++            "description": "Include items created within the last N milliseconds",
++            "example": 60000,
++            "in": "query",
++            "name": "createdWithinMs",
++            "required": false,
++            "schema": {
++              "minimum": 1,
++              "type": "integer"
++            }
++          },
++          {
++            "description": "Include items created older than N milliseconds",
++            "example": 3600000,
++            "in": "query",
++            "name": "createdOlderThanMs",
++            "required": false,
++            "schema": {
++              "minimum": 1,
++              "type": "integer"
++            }
++          },
++          {
++            "description": "Include items created at or after the given RFC3339 timestamp",
++            "example": "2025-09-30T21:00:00Z",
++            "in": "query",
++            "name": "createdStart",
++            "required": false,
++            "schema": {
++              "format": "date-time",
++              "type": "string"
++            }
++          },
++          {
++            "description": "Include items created at or before the given RFC3339 timestamp",
++            "example": "2025-09-30T22:00:00Z",
++            "in": "query",
++            "name": "createdEnd",
++            "required": false,
++            "schema": {
++              "format": "date-time",
++              "type": "string"
++            }
++          },
++          {
++            "description": "Keep stream open to push newly created matching items (mode=list)",
++            "example": true,
++            "in": "query",
++            "name": "follow",
++            "required": false,
++            "schema": {
++              "type": "boolean"
++            }
++          },
++          {
++            "description": "Max follow duration in milliseconds (bounds 1–60000ms; default 2000ms, env adjustable)",
++            "example": 2000,
++            "in": "query",
++            "name": "followMaxMs",
++            "required": false,
++            "schema": {
++              "maximum": 60000,
++              "minimum": 1,
++              "type": "integer"
++            }
++          },
++          {
++            "description": "Buffer window in milliseconds to aggregate new items before flush",
++            "example": 10,
++            "in": "query",
++            "name": "followBufferMs",
++            "required": false,
++            "schema": {
++              "minimum": 1,
++              "type": "integer"
++            }
++          },
++          {
++            "description": "Max items per flush batch during follow mode",
++            "example": 100,
++            "in": "query",
++            "name": "followBatchMax",
++            "required": false,
++            "schema": {
++              "minimum": 1,
++              "type": "integer"
++            }
++          },
++          {
++            "description": "[Legacy] Max number of items (use 'pageSize')",
++            "example": 10,
++            "in": "query",
++            "name": "limit",
++            "required": false,
++            "schema": {
++              "maximum": 1000,
++              "minimum": 1,
++              "type": "integer"
++            }
++          },
++          {
++            "description": "[Legacy] Start offset (prefer 'afterId' cursor)",
++            "example": 0,
++            "in": "query",
++            "name": "offset",
++            "required": false,
++            "schema": {
++              "minimum": 0,
++              "type": "integer"
++            }
++          },
++          {
++            "description": "[Legacy] Keyword across title/content/tags (case-insensitive contains)",
++            "example": "hello",
++            "in": "query",
++            "name": "q",
++            "required": false,
++            "schema": {
++              "type": "string"
++            }
++          }
++        ],
++        "responses": {
++          "200": {
++            "$ref": "#/components/responses/OK"
++          },
++          "default": {
++            "$ref": "#/components/responses/Error"
++          }
++        },
++        "security": [
++          {
++            "bearerAuth": []
++          },
++          {
++            "headerPermissions": []
++          }
++        ],
++        "summary": "Articles SSE stream",
++        "x-response-content-type": "text/event-stream",
++        "x-sse": {
++          "contentType": "text/event-stream",
++          "errorExamples": [
++            {
++              "body": {
++                "code": "E1100",
++                "message": "AuthFailed",
++                "requestId": "00000000-0000-0000-0000-000000000000",
++                "severity": "warning"
++              },
++              "contentType": "application/json",
++              "status": 401
++            },
++            {
++              "body": {
++                "code": "E1200",
++                "detail": {
++                  "reason": "权限中途变更"
++                },
++                "message": "PermissionDenied",
++                "requestId": "00000000-0000-0000-0000-000000000000",
++                "severity": "warning"
++              },
++              "contentType": "application/json",
++              "status": 403
++            },
++            {
++              "body": {
++                "code": "E1300",
++                "message": "RateLimited",
++                "requestId": "00000000-0000-0000-0000-000000000000",
++                "severity": "warning"
++              },
++              "contentType": "application/json",
++              "status": 429
++            },
++            {
++              "body": {
++                "code": "E3001",
++                "detail": {
++                  "hint": "SSE不支持"
++                },
++                "message": "StreamError",
++                "requestId": "00000000-0000-0000-0000-000000000000",
++                "severity": "error"
++              },
++              "contentType": "application/json",
++              "status": 500
++            }
++          ],
++          "examples": {
++            "exampleMode": {
++              "body": "data: part-1\n\n:heartbeat\n\ndata: part-2\n\nevent: done\n\n",
++              "summary": "Demo frames"
++            },
++            "followMode": {
++              "body": "event: item\n\ndata: {\"id\":\"a1\"}\n\n:heartbeat\n\n:heartbeat\n\nevent: item\n\ndata: {\"id\":\"a3\"}\n\nevent: done\n\n",
++              "summary": "Follow new items"
++            },
++            "heartbeatLoss": {
++              "body": "event: item\n\ndata: {\"id\":\"a20\"}\n\n:heartbeat\n\n// network drop (no heartbeats)\n\nevent: item\n\ndata: {\"id\":\"a21\"}\n\n:heartbeat\n\nevent: done\n\n",
++              "summary": "Heartbeat loss and late recovery"
++            },
++            "jitter": {
++              "body": "event: item\n\ndata: {\"id\":\"a10\"}\n\n:heartbeat\n\n// transient jitter\n\n:heartbeat\n\n:heartbeat\n\nevent: item\n\ndata: {\"id\":\"a11\"}\n\nevent: done\n\n",
++              "summary": "Network jitter with variable heartbeats"
++            },
++            "listMode": {
++              "body": "event: item\n\ndata: {\"id\":\"a1\"}\n\n:heartbeat\n\nevent: item\n\ndata: {\"id\":\"a2\"}\n\nevent: done\n\n",
++              "summary": "List items"
++            },
++            "serverRestartRecovery": {
++              "body": "retry: 1000\n\nid: a30\n\nevent: item\n\ndata: {\"id\":\"a30\"}\n\n// server restarts; client reconnects with Last-Event-ID: a30\n\nevent: item\n\nid: a31\n\ndata: {\"id\":\"a31\"}\n\nevent: done\n\n",
++              "summary": "Server restart with reconnection guidance"
++            }
++          },
++          "frameFields": {
++            "event": "optional event name for the following data",
++            "id": "optional message id for reconnection",
++            "retry": "client reconnection delay in milliseconds"
++          },
++          "notes": "Heartbeat is an SSE comment frame (':heartbeat'). Interval configurable via 'heartbeatMs' query param (default 5ms; bounds 1–10000ms). List mode supports structured filters (qTitle, qContent, qTags/qNotTags with qOp), tag weighting (qTagWeights + qTagMinWeight), relative time windows (createdWithinMs/createdOlderThanMs) and absolute ranges (createdStart/createdEnd), cursor pagination (afterId, pageSize), and optional follow streaming (follow, followMaxMs, followBufferMs, followBatchMax). For restart recovery, servers may emit 'id' and 'retry' fields; clients can reconnect with 'Last-Event-ID'. Termination is signaled via 'event: done'."
++        },
++        "x-streaming": true
+       }
+     },
+     "/api/v1/billing/invoices": {

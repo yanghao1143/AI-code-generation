@@ -1,0 +1,14 @@
+{
+  "filePath": ".spec-workflow/specs/nlp-spec-automation/review.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-10-03T05:54:27.155Z",
+      "trigger": "initial",
+      "approvalId": "approval_1759470867144_4c595snnc",
+      "approvalTitle": "nlp-spec-automation 文档一致性审阅（review.md）请审批"
+    }
+  ]
+}

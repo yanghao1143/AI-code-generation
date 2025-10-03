@@ -1,0 +1,16 @@
+{
+  "id": "snapshot_1759293046993_bz4dev60h",
+  "approvalId": "approval_1759293046987_g2jk0oip9",
+  "approvalTitle": "Approve requirements: nlp-spec-automation (NL→spec automation)",
+  "version": 1,
+  "timestamp": "2025-10-01T04:30:46.993Z",
+  "trigger": "initial",
+  "status": "pending",
+  "content": "标题：自然语言到规格自动化（nlp-spec-automation）需求文档\n\n摘要\n- 目标：将用户的自然语言需求（含中文）自动解析为规范化的技术文档（requirements/design/tasks），并驱动 xingzuo 的模块开发与数据库自动创建。\n- 范围：增强 ai-codegen 管线，使其融合自然语言、OpenAPI、JSON Schema，生成一致的领域模型与 DDL，并通过 speccheck 校验一致性后支持一键应用到目标数据库。\n\n业务目标\n- 准确理解自然语言需求，提取实体、意图、关系与约束。\n- 生成规范化规格文档至 .spec-workflow/specs/xingzuo（requirements.md / design.md / tasks.md）。\n- 自动生成/更新 DDL（scripts/db/*.sql），并支持在获得审批与环境参数后一键创建数据库。\n- 保证规格、OpenAPI/JSON Schema 与 DDL 的一致性（speccheck 零差异）。\n\n用户故事（EARS 风格）\n- 当用户以中文描述一个业务需求时，系统应识别业务实体（如 Anchor/Fan/Topic/FortuneService/FortuneRecord）、字段与关系，并生成 requirements.md。\n- 当需求文档批准后，系统应根据需求生成 design.md（架构与数据模型、接口、流程）与 tasks.md（原子开发任务），并保持术语与命名一致。\n- 当生成一致的 DDL 且 speccheck 无差异时，系统应在获得环境（--dsn 或 --dsn-env）与审批票据后自动应用数据库创建。\n\n范围（In-Scope）\n- 中文自然语言解析：意图识别、实体/关系抽取、约束与规则提取。\n- 术语与类型归一：字段命名、类型约定（_id→BIGINT、created_at/updated_at→DATETIME、definition/content/result/tags→TEXT）。\n- 结构化融合：将自然语言与 OpenAPI/JSON Schema 对齐，避免生成非业务表（如 article/pagemeta），表名统一 PascalCase→snake_case。\n- 规格生成：输出到 .spec-workflow/specs/xingzuo 的 requirements/design/tasks，分阶段审批。\n- DDL 生成与一致性校验：speccheck 校验后再应用数据库。\n\n不在范围（Out-of-Scope）\n- 非核心业务的内容生产类表（article/pagemeta）。\n- 复杂前端 UI 设计细节（仅生成接口与模块开发所需的规格与任务）。\n\n非功能需求\n- 一致性：speccheck 报告需为 0 缺失、0 多余、0 类型不匹配。\n- 可维护性：代码内置映射/归一规则集中配置，便于扩展与测试。\n- 可审计：生成的 SQL 与规格变更需可预览、可审批、可追溯（scripts/db/audit）。\n\n数据模型与命名约定\n- 表命名：实体名 PascalCase 统一为 snake_case（FortuneService→fortune_service）。\n- 字段命名：统一为 snake_case；主键 id 为 BIGINT，自增；外键 *_id 为 BIGINT；时间字段为 DATETIME。\n- 文本大字段：definition/content/result/tags/input_schema 等统一为 TEXT。\n\n集成与接口\n- 与 registry/openapi 的 OpenAPI/JSON Schema 同步，作为结构化来源。\n- 通过 specpipe gen 生成规格与 DDL；speccheck 校验；在审批后 apply-db。\n- CLI 入口：specpipe gen/speccheck/db-preview/apply-db；支持 --dsn/--dsn-env 与 --ticket。\n\n约束与风险\n- 自然语言歧义：通过术语词典、上下文提示与示例集合降低歧义。\n- 类型冲突：字段合并时采用强类型优先规则（BIGINT>INT、DATETIME>STRING、TEXT>VARCHAR），并在 speccheck 报告中验证。\n- 隐私与安全：避免从自然语言中生成存储敏感数据的字段，遵循 scripts/config/terms.json。\n\n验收标准\n- 给定 2-3 条中文需求样例，可自动生成规格与 DDL，并 speccheck 通过（0 差异）。\n- db-preview 输出与 create.sql 一致；apply-db 在提供 --dsn 或 --dsn-env 与 --ticket 后成功执行。\n- 生成的 requirements/design/tasks 三文档内容完整、术语一致、可实施，并在审批仪表盘中完成审批流程。\n\n开放问题\n- 需求版本化与回滚策略：是否在 specs/xingzuo 下按版本分目录？\n- 术语词典规模与维护方式：是否引入 domain-specific glossary 文件？\n- 审批与权限：不同环境（test/staging/prod）的审批策略是否一致？\n\n依赖与参考\n- 代码位置：internal/nlp/ai_codegen.go、internal/nlp/pipeline.go、internal/ddl/generator.go、internal/speccheck/*、scripts/db/*。\n- 关键映射点：ai_codegen.go 中基于属性名归一（示例：switch strings.ToLower(pname)），需确保中文别名映射与强类型优先规则。",
+  "fileStats": {
+    "size": 4463,
+    "lines": 61,
+    "lastModified": "2025-10-01T04:30:33.455Z"
+  },
+  "comments": []
+}

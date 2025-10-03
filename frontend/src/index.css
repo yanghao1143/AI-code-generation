@@ -1,0 +1,30 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: var(--line-height-base, 1.6);
+  font-size: var(--font-size-base, 14px);
+  font-weight: 400;
+  color-scheme: light dark;
+  color: var(--text-color, #111827);
+  background-color: var(--bg-color, #ffffff);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 链接默认继承颜色，具体场景使用 .ui-link */
+a {
+  text-decoration: inherit;
+  color: inherit;
+}
+
+/* 全局基础布局：避免强制居中，交由 .app-container/.ui-panel 控制 */
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  font-size: var(--font-size-base, 14px);
+  line-height: var(--line-height-base, 1.6);
+}
+
+/* 移除通用元素的强样式（如 button/h1 等），统一使用 ui-* 组件与样式 */

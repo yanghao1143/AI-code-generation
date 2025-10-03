@@ -1,0 +1,2 @@
+== curl metrics ==
+time_total:0.001410 size_download:2 http_code:200

@@ -1,0 +1,14 @@
+{
+  "filePath": ".spec-workflow/specs/nlp-spec-automation/requirements.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-10-01T04:30:46.993Z",
+      "trigger": "initial",
+      "approvalId": "approval_1759293046987_g2jk0oip9",
+      "approvalTitle": "Approve requirements: nlp-spec-automation (NL→spec automation)"
+    }
+  ]
+}

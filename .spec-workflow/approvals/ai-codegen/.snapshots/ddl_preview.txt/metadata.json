@@ -1,0 +1,14 @@
+{
+  "filePath": "scripts/reports/req-ai-codegen-010/ddl_preview.txt",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-10-01T16:52:11.596Z",
+      "trigger": "initial",
+      "approvalId": "approval_1759337531579_0g7l397be",
+      "approvalTitle": "行动审批：执行 specpipe db-runner 应用 DDL 到开发库（sqlHash=8cdc7b10e435f450bc4060e40bdbc8421c6422717ba5d273fb20e5c7d1dcca53）"
+    }
+  ]
+}

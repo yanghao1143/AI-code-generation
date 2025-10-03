@@ -1,0 +1,16 @@
+{
+  "id": "snapshot_1759337531596_ijswevzlv",
+  "approvalId": "approval_1759337531579_0g7l397be",
+  "approvalTitle": "行动审批：执行 specpipe db-runner 应用 DDL 到开发库（sqlHash=8cdc7b10e435f450bc4060e40bdbc8421c6422717ba5d273fb20e5c7d1dcca53）",
+  "version": 1,
+  "timestamp": "2025-10-01T16:52:11.596Z",
+  "trigger": "initial",
+  "status": "pending",
+  "content": "Preview channel=CHANGE sqlHash=8cdc7b10e435f450bc4060e40bdbc8421c6422717ba5d273fb20e5c7d1dcca53\n[1] CREATE TABLE IF NOT EXISTS `anchor` (\n  `id` BIGINT AUTO_INCREMENT PRIMARY KEY,\n  `name` VARCHAR(255) NOT NULL,\n  `level` VARCHAR(255) NOT NULL,\n  `created_at` DATETIME NOT NULL\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;\n[2] CREATE TABLE IF NOT EXISTS `fan` (\n  `id` BIGINT AUTO_INCREMENT PRIMARY KEY,\n  `name` VARCHAR(255) NOT NULL,\n  `gender` VARCHAR(255) NULL,\n  `birthday` VARCHAR(255) NULL,\n  `zodiac` VARCHAR(255) NULL,\n  `created_at` DATETIME NOT NULL\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;\n[3] CREATE TABLE IF NOT EXISTS `tag` (\n  `id` BIGINT AUTO_INCREMENT PRIMARY KEY,\n  `name` VARCHAR(255) NOT NULL,\n  `created_at` DATETIME NOT NULL\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;\n[4] CREATE TABLE IF NOT EXISTS `fan_tags` (\n  `fan_id` BIGINT NOT NULL,\n  `tag_id` BIGINT NOT NULL,\n  PRIMARY KEY (`fan_id`, `tag_id`),\n  CONSTRAINT `fk_fan_tags_fan` FOREIGN KEY (`fan_id`) REFERENCES `fan`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,\n  CONSTRAINT `fk_fan_tags_tag` FOREIGN KEY (`tag_id`) REFERENCES `tag`(`id`) ON DELETE CASCADE ON UPDATE CASCADE\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;\n",
+  "fileStats": {
+    "size": 1189,
+    "lines": 28,
+    "lastModified": "2025-10-01T16:51:46.676Z"
+  },
+  "comments": []
+}

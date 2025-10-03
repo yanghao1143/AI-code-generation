@@ -1,0 +1,43 @@
+--- /root/xingzuo/.spec-workflow/specs/xingzuo/openapi.json	2025-09-30 20:51:05.707076280 +0800
++++ /root/xingzuo/scripts/reports/req-ai-codegen-003/openapi.json	2025-09-30 21:00:36.547179018 +0800
+@@ -896,6 +896,40 @@
+         "summary": "Update article"
+       }
+     },
++    "/api/v1/articles/stream": {
++      "get": {
++        "description": "Server-Sent Events stream for article operations. Content-Type: text/event-stream. Frames include data (payload), heartbeat (keep-alive), and a terminal 'event: done'. Requires bearer authentication and 'articles' permission via RBAC. Errors follow unified ErrorResponse codes and structure.",
++        "parameters": [
++          {
++            "$ref": "#/components/parameters/XRequestId"
++          }
++        ],
++        "responses": {
++          "200": {
++            "$ref": "#/components/responses/OK"
++          },
++          "default": {
++            "$ref": "#/components/responses/Error"
++          }
++        },
++        "security": [
++          {
++            "bearerAuth": []
++          },
++          {
++            "headerPermissions": []
++          }
++        ],
++        "summary": "Articles SSE stream",
++        "x-response-content-type": "text/event-stream",
++        "x-sse": {
++          "contentType": "text/event-stream",
++          "example": "data: part-1\n\ndata: heartbeat\n\ndata: part-2\n\nevent: done\n\n",
++          "notes": "Heartbeat is a data frame; termination is signaled via 'event: done'."
++        },
++        "x-streaming": true
++      }
++    },
+     "/api/v1/billing/invoices": {
+       "get": {
+         "parameters": [

@@ -1,0 +1,2 @@
+[Preview] requestId=req-ai-codegen-001
+[Artifacts] Stored under /root/xingzuo/scripts/reports/req-ai-codegen-001

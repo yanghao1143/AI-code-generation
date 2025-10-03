@@ -1,0 +1,16 @@
+{
+  "id": "snapshot_1759218526435_p2bt9ul2c",
+  "approvalId": "approval_1759218526431_1bnhwrtkw",
+  "approvalTitle": "设计阶段（xingzuo）文档审批",
+  "version": 1,
+  "timestamp": "2025-09-30T07:48:46.435Z",
+  "trigger": "initial",
+  "status": "pending",
+  "content": "# 设计阶段（xingzuo）\n\n## 架构概述\n- 后端：Gin + 中间件（错误、RBAC、鉴权、限流、请求ID），统一响应与 API Registry。\n- 前端：DSL + 组件映射，路由/权限自动注册，预览隔离与审批工作流。\n- 联调：契约测试、错误分类与自动修复建议。\n- DevOps：CI门禁（lint/test/安全/契约/性能）、灰度与自动回滚、质量看板。\n\n## 关键设计决策\n- 统一 JSON 绑定助手与错误返回（`internal/validation`）。\n- 标准化 AI 接口占位与类型（`internal/ai/*/types.go` 与路由）。\n- 安全与限流：`internal/middleware/auth.go` 与 `ratelimit.go` 挂载到 `/api/v1`。\n- API统一发现：`internal/registry/routes.go`，前后端对齐契约。\n\n## 与《策划.md》映射\n- 章节 4.6 支付闭环：后续模块化 `billing/` 对接。\n- 章节 4.7–4.9 生成与联调：已就绪占位路由与统一响应。\n- 章节 4.10–4.16 门禁与质量：CI策略待落地。",
+  "fileStats": {
+    "size": 983,
+    "lines": 18,
+    "lastModified": "2025-09-30T07:46:45.512Z"
+  },
+  "comments": []
+}

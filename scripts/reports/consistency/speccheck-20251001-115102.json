@@ -1,0 +1,30 @@
+{
+  "generatedAt": "2025-10-01T11:51:02.387440917+08:00",
+  "sourceDDL": "/root/xingzuo/scripts/db/create.sql",
+  "summary": "missingTables=9 extraTables=10 missingColumnsTables=0 typeMismatchTables=0",
+  "missingTables": [
+    "Tag",
+    "FortuneRecord",
+    "Topic",
+    "Script",
+    "Anchor",
+    "Fan",
+    "Conversation",
+    "FortuneService",
+    "Workflow"
+  ],
+  "extraTables": [
+    "fortune_record",
+    "fan_tags",
+    "fortune_service",
+    "topic",
+    "script",
+    "workflow",
+    "anchor",
+    "fan",
+    "tag",
+    "conversation"
+  ],
+  "missingColumns": {},
+  "typeMismatches": {}
+}

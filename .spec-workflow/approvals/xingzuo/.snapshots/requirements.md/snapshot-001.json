@@ -1,0 +1,16 @@
+{
+  "id": "snapshot_1759218506276_5nym8ljgx",
+  "approvalId": "approval_1759218506268_ej32vts0q",
+  "approvalTitle": "需求阶段（xingzuo）文档审批",
+  "version": 1,
+  "timestamp": "2025-09-30T07:48:26.276Z",
+  "trigger": "initial",
+  "status": "pending",
+  "content": "# 需求阶段（xingzuo）\n\n## 目标与范围\n- 建立 Spec Workflow MCP 规范并连接到当前仓库，纳入《策划.md》内容。\n- 范围覆盖：AI前端/后端生成、智能联调、统一错误与响应、鉴权/限流、审批与灰度、支付结算闭环。\n\n## 关键用户与用例\n- 研发（前/后端）：从需求/Prompt生成页面与API，进行契约校验与联调。\n- Tech Lead/运维：审批、门禁、灰度与回滚；质量与SLO看板。\n- 合规/安全：数据采集最小化、日志脱敏、KMS加密与密钥轮换。\n- 运营：配额、成本与计费；模板治理与季度复盘。\n\n## 约束与合规\n- 数据最小化与保留策略；删除传播与备份加密；按《策划.md》附录10。\n- 统一错误码与响应结构；契约一致性（OpenAPI/DSL）。\n\n## 参考\n- 《策划.md》全量方案作为需求事实来源。",
+  "fileStats": {
+    "size": 882,
+    "lines": 18,
+    "lastModified": "2025-09-30T07:46:43.329Z"
+  },
+  "comments": []
+}

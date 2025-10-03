@@ -1,0 +1,12 @@
+{
+  "id": "approval_1759337333186_6aeh20lyz",
+  "title": "审批请求：ai-codegen 任务文档 tasks.md",
+  "filePath": ".spec-workflow/specs/ai-codegen/tasks.md",
+  "type": "document",
+  "status": "approved",
+  "createdAt": "2025-10-01T16:48:53.186Z",
+  "category": "spec",
+  "categoryName": "ai-codegen",
+  "response": "已批准",
+  "respondedAt": "2025-10-01T16:49:16.611Z"
+}

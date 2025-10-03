@@ -1,0 +1,49 @@
+name: speccheck
+
+on:
+  push:
+    paths:
+      - '.spec-workflow/specs/nlp-spec-automation/**'
+      - 'scripts/db/**'
+      - 'scripts/config/terms.json'
+      - 'scripts/ci/speccheck.sh'
+      - 'cmd/specpipe/**'
+      - 'internal/speccheck/**'
+  pull_request:
+    paths:
+      - '.spec-workflow/specs/nlp-spec-automation/**'
+      - 'scripts/db/**'
+      - 'scripts/config/terms.json'
+      - 'scripts/ci/speccheck.sh'
+      - 'cmd/specpipe/**'
+      - 'internal/speccheck/**'
+
+jobs:
+  consistency-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22.x'
+
+      - name: Run speccheck
+        env:
+          DB_DSN: ${{ secrets.DB_DSN }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASS: ${{ secrets.DB_PASS }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_UNIX_SOCKET: ${{ secrets.DB_UNIX_SOCKET }}
+        run: |
+          bash scripts/ci/speccheck.sh
+
+      - name: Upload speccheck report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: speccheck-report
+          path: scripts/reports/consistency/*.json

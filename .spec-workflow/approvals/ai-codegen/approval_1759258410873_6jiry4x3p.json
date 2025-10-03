@@ -1,0 +1,12 @@
+{
+  "id": "approval_1759258410873_6jiry4x3p",
+  "title": "更新 ai-codegen 需求以支持 NLP→标准文档→数据库自动化",
+  "filePath": ".spec-workflow/specs/ai-codegen/requirements.md",
+  "type": "document",
+  "status": "approved",
+  "createdAt": "2025-09-30T18:53:30.873Z",
+  "category": "spec",
+  "categoryName": "ai-codegen",
+  "response": "已批准",
+  "respondedAt": "2025-10-01T03:14:48.144Z"
+}

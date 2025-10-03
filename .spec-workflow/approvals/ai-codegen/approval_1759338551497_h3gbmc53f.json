@@ -1,0 +1,12 @@
+{
+  "id": "approval_1759338551497_h3gbmc53f",
+  "title": "Approval: Run db-runner CHANGE for ai-codegen (sqlHash=3b8969c9f54628d339adc8b1f6d2b033aedb78a720be7c30c7020cae43b5a942)",
+  "filePath": "scripts/db/migrate.sql",
+  "type": "action",
+  "status": "approved",
+  "createdAt": "2025-10-01T17:09:11.497Z",
+  "category": "spec",
+  "categoryName": "ai-codegen",
+  "response": "已批准",
+  "respondedAt": "2025-10-01T17:09:16.575Z"
+}

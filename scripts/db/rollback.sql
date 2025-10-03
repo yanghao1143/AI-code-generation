@@ -1,0 +1,11 @@
+DROP TABLE IF EXISTS `fan_tags`;
+DROP TABLE IF EXISTS `conversation`;
+DROP TABLE IF EXISTS `workflow`;
+DROP TABLE IF EXISTS `topic`;
+DROP TABLE IF EXISTS `tag`;
+DROP TABLE IF EXISTS `script`;
+DROP TABLE IF EXISTS `fortune_service`;
+DROP TABLE IF EXISTS `fortune_record`;
+DROP TABLE IF EXISTS `fan`;
+DROP TABLE IF EXISTS `conversation`;
+DROP TABLE IF EXISTS `anchor`;

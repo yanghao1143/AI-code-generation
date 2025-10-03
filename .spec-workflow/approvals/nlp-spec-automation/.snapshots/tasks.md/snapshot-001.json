@@ -1,0 +1,16 @@
+{
+  "id": "snapshot_1759297027808_kry8r95p7",
+  "approvalId": "approval_1759297027802_zi3mxrn1g",
+  "approvalTitle": "Tasks document for 'nlp-spec-automation'",
+  "version": 1,
+  "timestamp": "2025-10-01T05:37:07.808Z",
+  "trigger": "initial",
+  "status": "pending",
+  "content": "概述\n\n本任务文档用于跟踪 “nlp-spec-automation” 的执行进度，包括解析器增强、规范融合、测试与审批、以及数据库应用。\n\n任务列表（状态标记：[ ] 待办, [-] 进行中, [x] 已完成）\n\n解析与规范融合\n- [ ] 扩展中文字段别名词典（示例：昵称→name，等级→level，描述→description，封面→cover_url）\n- [ ] 丰富实体中文同义词映射（如 粉丝/Fan、主播/Anchor 的更多行业别称）\n- [ ] 强化关系推断：除 *_id 规则外，识别 M:N 场景的中间表模式（除 fan_tags 外的通用“X↔Y”联接）\n- [ ] propsToFields 启发式增强：识别富文本格式（markdown/html）与 JSON 对象，统一归类为 TEXT\n- [ ] normalizeEntityNames/normalizeModel 补充更多约定（如 code/name 唯一索引策略的澄清项输出）\n\n集成 ai-codegen 结构化规范\n- [ ] 读取并融合 .spec-workflow/specs/ai-codegen 下的 OpenAPI/JSON Schema （含 generated/* 回退）\n- [ ] 统一蛇形命名去重与强类型合并策略（BIGINT>INT>STRING；DATETIME>STRING；TEXT>VARCHAR）\n- [ ] 生成 DomainModel 后运行 speccheck，确保无缺表/缺列/类型错配\n\n自动文档与审批\n- [x] 创建 requirements.md（已完成并提交审批）\n- [x] 创建 design.md（已创建，待审批）\n- [ ] 创建并维护 tasks.md（当前文档）\n- [ ] 在每阶段提交审批并等待通过后继续下一阶段（Dashboard/VS Code 扩展）\n\n实现与命令链路\n- [ ] specpipe 支持：gen → 文档与 DDL 生成；apply-db 需审批票据\n- [ ] 准备数据库应用命令：\n      specpipe gen --source-spec=ai-codegen --out-spec=xingzuo --apply-db=true --dsn-env=<ENV>|--dsn=<DSN> --ticket=<APPROVAL_ID>\n- [ ] 环境变量与凭据管理：.env/.env.local 与 config/db.yaml 中的 DSN 管理策略\n\n测试与质量保证\n- [x] 单元测试：中文字段别名映射与类型规范化（internal/nlp/ai_codegen_test.go）\n- [x] 运行 go test，确保所有测试通过\n- [ ] 集成测试：以策划.md + ai-codegen 的 OpenAPI/Schema 样本进行端到端验证；speccheck 必须通过\n- [ ] CI 引入 speccheck 阶段门禁脚本（scripts/ci/speccheck.sh），在 PR 合并前阻断不一致变更\n- [ ] 为新增别名扩展持续补充测试用例，防止回归\n\n澄清项与外部依赖\n- [ ] 收集 2–3 条中文需求真实样例，用于扩展中文别名词典并提升 NL→spec 解析精度（请提供）\n- [ ] 收集数据库环境与审批票据以执行自动应用（ENV/DSN 与 ticket）\n\n当前进展摘要\n- [x] 已实现中文字段别名规范化（canonicalizeFieldName）、类型与关系推断规则\n- [x] 已补充并通过对应单元测试（go test 全局通过）\n- [-] design.md 已提交审批，待 Dashboard 审核通过\n- [-] tasks.md 已建立并进入维护",
+  "fileStats": {
+    "size": 2834,
+    "lines": 46,
+    "lastModified": "2025-10-01T05:36:57.808Z"
+  },
+  "comments": []
+}

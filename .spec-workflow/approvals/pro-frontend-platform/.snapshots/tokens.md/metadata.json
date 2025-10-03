@@ -1,0 +1,14 @@
+{
+  "filePath": ".spec-workflow/specs/pro-frontend-platform/tokens.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-10-02T16:50:47.155Z",
+      "trigger": "initial",
+      "approvalId": "approval_1759423847137_rixbdep47",
+      "approvalTitle": "Design Tokens Schema 文档（tokens.md）审批"
+    }
+  ]
+}

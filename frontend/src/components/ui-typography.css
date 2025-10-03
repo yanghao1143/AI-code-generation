@@ -1,0 +1,26 @@
+/* Typography helpers: subtitles, code blocks, and generic text using tokens */
+
+.ui-subtitle {
+  margin-top: 0;
+  margin-bottom: var(--space-sm, 8px);
+  font-size: var(--font-size-subtitle, 16px);
+  font-weight: var(--font-weight-subtitle, 600);
+  color: var(--text-color, #111827);
+}
+
+.ui-text {
+  font-size: var(--font-size-base, 14px);
+  line-height: var(--line-height-base, 1.6);
+  color: var(--text-color, #111827);
+}
+
+.ui-code {
+  background: var(--panel-bg, #ffffff);
+  border: var(--border-width, 1px) solid var(--panel-border, rgba(226, 232, 240, 0.9));
+  border-radius: var(--radius-sm, 8px);
+  padding: var(--space-sm, 8px);
+  color: var(--text-color, #111827);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 13px;
+  overflow: auto;
+}

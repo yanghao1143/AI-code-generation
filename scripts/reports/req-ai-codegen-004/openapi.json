@@ -1,0 +1,1382 @@
+{
+  "components": {
+    "parameters": {
+      "XRequestId": {
+        "in": "header",
+        "name": "X-Request-Id",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "Error": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "authFailed": {
+                "value": {
+                  "code": "E1100",
+                  "detail": {
+                    "error": "missing Authorization"
+                  },
+                  "hint": "请提供Authorization: Bearer \u003ctoken\u003e",
+                  "message": "AuthFailed",
+                  "requestId": "00000000-0000-0000-0000-000000000000",
+                  "severity": "warning"
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Error"
+      },
+      "OK": {
+        "content": {
+          "application/json": {
+            "examples": {
+              "success": {
+                "value": {
+                  "code": "OK",
+                  "data": {
+                    "example": "value"
+                  },
+                  "message": "success",
+                  "requestId": "00000000-0000-0000-0000-000000000000",
+                  "severity": "info"
+                }
+              }
+            },
+            "schema": {
+              "$ref": "#/components/schemas/Response"
+            }
+          }
+        },
+        "description": "OK"
+      }
+    },
+    "schemas": {
+      "BackendFixRequest": {
+        "properties": {
+          "diff": {
+            "type": "object"
+          },
+          "reportId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "reportId",
+          "diff"
+        ],
+        "type": "object"
+      },
+      "BackendGenerateRequest": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "spec": {
+            "type": "object"
+          },
+          "template": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "spec"
+        ],
+        "type": "object"
+      },
+      "BackendScaffoldRequest": {
+        "properties": {
+          "endpoints": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "serviceName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "serviceName",
+          "endpoints"
+        ],
+        "type": "object"
+      },
+      "BillingCreateOrderRequest": {
+        "properties": {
+          "amount": {
+            "type": "integer"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "productId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "productId",
+          "amount",
+          "currency"
+        ],
+        "type": "object"
+      },
+      "BillingCreatePaymentRequest": {
+        "properties": {
+          "method": {
+            "type": "string"
+          },
+          "orderId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "orderId",
+          "method"
+        ],
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "code": {
+            "enum": [
+              "E1000",
+              "E1100",
+              "E1200",
+              "E1300",
+              "E1400",
+              "E1500",
+              "E2000",
+              "E2100",
+              "E3000",
+              "E3100"
+            ],
+            "type": "string"
+          },
+          "detail": {
+            "type": "object"
+          },
+          "hint": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "info",
+              "warning",
+              "error"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "requestId"
+        ],
+        "type": "object"
+      },
+      "FrontendCommitRequest": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "snapshotId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "snapshotId"
+        ],
+        "type": "object"
+      },
+      "FrontendGenerateRequest": {
+        "properties": {
+          "dsl": {
+            "type": "object"
+          },
+          "name": {
+            "type": "string"
+          },
+          "permissions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "template": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "dsl"
+        ],
+        "type": "object"
+      },
+      "FrontendValidateRequest": {
+        "properties": {
+          "dsl": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "dsl"
+        ],
+        "type": "object"
+      },
+      "LLMChatRequest": {
+        "properties": {
+          "messages": {
+            "items": {
+              "properties": {
+                "content": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "role",
+                "content"
+              ],
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "modelId": {
+            "type": "string"
+          },
+          "providerHint": {
+            "type": "string"
+          },
+          "stream": {
+            "type": "boolean"
+          },
+          "temperature": {
+            "type": "number"
+          },
+          "topP": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "modelId",
+          "messages"
+        ],
+        "type": "object"
+      },
+      "LLMEmbeddingsRequest": {
+        "properties": {
+          "input": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "modelId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "modelId",
+          "input"
+        ],
+        "type": "object"
+      },
+      "LLMModerateRequest": {
+        "properties": {
+          "input": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "input"
+        ],
+        "type": "object"
+      },
+      "ObserveEventRequest": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "severity"
+        ],
+        "type": "object"
+      },
+      "Response": {
+        "properties": {
+          "code": {
+            "enum": [
+              "OK"
+            ],
+            "type": "string"
+          },
+          "data": {
+            "type": "object"
+          },
+          "message": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "info",
+              "warning",
+              "error"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "requestId"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "scheme": "bearer",
+        "type": "http"
+      },
+      "headerPermissions": {
+        "in": "header",
+        "name": "X-User-Permissions",
+        "type": "apiKey"
+      }
+    }
+  },
+  "info": {
+    "title": "Xingzuo API",
+    "version": "v1"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/ai/backend/fix": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BackendFixRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Fix backend"
+      }
+    },
+    "/api/v1/ai/backend/generate": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BackendGenerateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Generate backend"
+      }
+    },
+    "/api/v1/ai/backend/scaffold": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BackendScaffoldRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Scaffold backend"
+      }
+    },
+    "/api/v1/ai/backend/templates": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "List backend templates"
+      }
+    },
+    "/api/v1/ai/frontend/commit": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FrontendCommitRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Commit frontend snapshot"
+      }
+    },
+    "/api/v1/ai/frontend/generate": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FrontendGenerateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Generate frontend"
+      }
+    },
+    "/api/v1/ai/frontend/templates": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "List frontend templates"
+      }
+    },
+    "/api/v1/ai/frontend/validate": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FrontendValidateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Validate frontend"
+      }
+    },
+    "/api/v1/ai/integration/diagnose": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Integration diagnose"
+      }
+    },
+    "/api/v1/ai/integration/patch": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Integration patch"
+      }
+    },
+    "/api/v1/ai/integration/reports": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Integration reports"
+      }
+    },
+    "/api/v1/ai/integration/test": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Integration test"
+      }
+    },
+    "/api/v1/articles": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "List articles"
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Create article"
+      }
+    },
+    "/api/v1/articles/:id": {
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Delete article"
+      },
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Get article"
+      },
+      "put": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Update article"
+      }
+    },
+    "/api/v1/articles/stream": {
+      "get": {
+        "description": "Server-Sent Events stream for article operations. Content-Type: text/event-stream. Frames include data (payload), heartbeat (keep-alive), and a terminal 'event: done'. Requires bearer authentication and 'articles' permission via RBAC. Errors follow unified ErrorResponse codes and structure.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          },
+          {
+            "description": "Streaming mode: 'example' emits demo frames; 'list' streams current articles as JSON frames",
+            "in": "query",
+            "name": "mode",
+            "required": false,
+            "schema": {
+              "enum": [
+                "example",
+                "list"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Articles SSE stream",
+        "x-response-content-type": "text/event-stream",
+        "x-sse": {
+          "contentType": "text/event-stream",
+          "errorExample": {
+            "body": {
+              "code": "E3001",
+              "detail": {
+                "hint": "SSE不支持"
+              },
+              "message": "StreamError",
+              "requestId": "00000000-0000-0000-0000-000000000000",
+              "severity": "error"
+            },
+            "contentType": "application/json"
+          },
+          "example": "data: part-1\n\n:heartbeat\n\ndata: part-2\n\nevent: done\n\n",
+          "frameFields": {
+            "event": "optional event name for the following data",
+            "id": "optional message id for reconnection",
+            "retry": "client reconnection delay in milliseconds"
+          },
+          "notes": "Heartbeat is an SSE comment frame (' :heartbeat'). Termination is signaled via 'event: done'."
+        },
+        "x-streaming": true
+      }
+    },
+    "/api/v1/billing/invoices": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "List invoices"
+      }
+    },
+    "/api/v1/billing/orders": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingCreateOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Create order"
+      }
+    },
+    "/api/v1/billing/payments": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingCreatePaymentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Create payment"
+      }
+    },
+    "/api/v1/billing/plans": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "List plans"
+      }
+    },
+    "/api/v1/llm/chat": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LLMChatRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Unified LLM chat"
+      }
+    },
+    "/api/v1/llm/embeddings": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LLMEmbeddingsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Generate embeddings"
+      }
+    },
+    "/api/v1/llm/models": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "List LLM models"
+      }
+    },
+    "/api/v1/llm/moderate": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LLMModerateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Content moderation"
+      }
+    },
+    "/api/v1/llm/providers": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "List LLM providers"
+      }
+    },
+    "/api/v1/observe/events": {
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObserveEventRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Post event"
+      }
+    },
+    "/api/v1/observe/metrics": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Metrics"
+      }
+    },
+    "/api/v1/observe/traces": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "headerPermissions": []
+          }
+        ],
+        "summary": "Traces"
+      }
+    },
+    "/api/v1/registry": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "API registry"
+      }
+    },
+    "/api/v1/registry/openapi": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/XRequestId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "default": {
+            "$ref": "#/components/responses/Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "OpenAPI spec"
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "snapshot_1759218582997_cbbi3we4h",
+  "approvalId": "approval_1759218582989_pmkykujlt",
+  "approvalTitle": "实施阶段（xingzuo）文档审批",
+  "version": 1,
+  "timestamp": "2025-09-30T07:49:42.997Z",
+  "trigger": "initial",
+  "status": "pending",
+  "content": "# 实施阶段（xingzuo）\n\n## 当前进展\n- 统一响应、RBAC 与错误处理测试已通过（`internal/middleware/*_test.go`）。\n- 鉴权（Bearer Token，`AUTH_TOKENS`）与限流（`RATE_LIMIT_RPS/BURST`）已挂载到 `/api/v1`。\n- AI 前端/后端占位路由与类型就绪，统一 JSON 绑定助手已启用。\n- API Registry `/api/v1/registry` 已提供统一发现。\n\n## 代码索引\n- 主程序：`cmd/app/main.go`\n- 中间件：`internal/middleware/*`\n- 统一响应：`internal/api/response.go`\n- JSON绑定：`internal/validation/bind.go`\n- AI接口：`internal/ai/frontend|backend/*`\n- 注册表：`internal/registry/routes.go`\n\n## 下一步\n- 完成 CI 门禁与审批流打通；引入契约与性能基线。\n- 启动 `billing/` 与 `observe/` 模块的最小可用版本。",
+  "fileStats": {
+    "size": 802,
+    "lines": 19,
+    "lastModified": "2025-09-30T07:46:49.954Z"
+  },
+  "comments": []
+}

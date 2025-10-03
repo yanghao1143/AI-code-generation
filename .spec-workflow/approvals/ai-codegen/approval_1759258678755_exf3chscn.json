@@ -1,0 +1,12 @@
+{
+  "id": "approval_1759258678755_exf3chscn",
+  "title": "扩展 ai-codegen 任务清单以新增 NLP→文档→DDL 任务",
+  "filePath": ".spec-workflow/specs/ai-codegen/tasks.md",
+  "type": "document",
+  "status": "approved",
+  "createdAt": "2025-09-30T18:57:58.755Z",
+  "category": "spec",
+  "categoryName": "ai-codegen",
+  "response": "已批准",
+  "respondedAt": "2025-10-01T03:14:46.374Z"
+}

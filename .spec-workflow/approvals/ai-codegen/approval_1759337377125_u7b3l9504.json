@@ -1,0 +1,12 @@
+{
+  "id": "approval_1759337377125_u7b3l9504",
+  "title": "审批请求：ai-codegen 设计文档 design.md",
+  "filePath": ".spec-workflow/specs/ai-codegen/design.md",
+  "type": "document",
+  "status": "approved",
+  "createdAt": "2025-10-01T16:49:37.125Z",
+  "category": "spec",
+  "categoryName": "ai-codegen",
+  "response": "已批准",
+  "respondedAt": "2025-10-01T16:49:41.017Z"
+}

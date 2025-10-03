@@ -1,0 +1,72 @@
+{
+  "generatedAt": "2025-10-01T12:23:04.699077371+08:00",
+  "sourceDDL": "/root/xingzuo/scripts/db/create.sql",
+  "summary": "missingTables=2 extraTables=24 missingColumnsTables=0 typeMismatchTables=7",
+  "missingTables": [
+    "fortune_service",
+    "fortune_record"
+  ],
+  "extraTables": [
+    "frontendcommitrequest",
+    "billingcreateorderrequest",
+    "observeeventrequest",
+    "billingcreatepaymentrequest",
+    "pagemeta",
+    "authloginrequest",
+    "authloginresponse",
+    "frontendgeneraterequest",
+    "backendfixrequest",
+    "llmchatrequest",
+    "backendgeneraterequest",
+    "articleupdaterequest",
+    "fortuneservice",
+    "articlecreaterequest",
+    "articleslistdata",
+    "articledata",
+    "article",
+    "llmembeddingsrequest",
+    "llmmoderaterequest",
+    "fortunerecord",
+    "response",
+    "errorresponse",
+    "frontendvalidaterequest",
+    "backendscaffoldrequest"
+  ],
+  "missingColumns": {},
+  "typeMismatches": {
+    "anchor": {
+      "created_at": "expected=DATETIME actual=VARCHAR(255)"
+    },
+    "conversation": {
+      "anchor_id": "expected=BIGINT actual=VARCHAR(255)",
+      "created_at": "expected=DATETIME actual=VARCHAR(255)",
+      "fan_id": "expected=BIGINT actual=VARCHAR(255)"
+    },
+    "fan": {
+      "created_at": "expected=DATETIME actual=VARCHAR(255)"
+    },
+    "script": {
+      "created_at": "expected=DATETIME actual=VARCHAR(255)",
+      "topic_id": "expected=BIGINT actual=VARCHAR(255)"
+    },
+    "tag": {
+      "created_at": "expected=DATETIME actual=VARCHAR(255)"
+    },
+    "topic": {
+      "created_at": "expected=DATETIME actual=VARCHAR(255)"
+    },
+    "workflow": {
+      "created_at": "expected=DATETIME actual=VARCHAR(255)",
+      "definition": "expected=TEXT actual=VARCHAR(255)"
+    }
+  },
+  "openapi": {
+    "source": "/root/xingzuo/scripts/reports/req-ai-codegen-009/openapi.json",
+    "missingResources": [],
+    "extraResources": [],
+    "schemaMissingEntities": [],
+    "schemaMissingFields": {},
+    "schemaTypeMismatches": {},
+    "summary": "missingResources=0 extraResources=0 schemaMissing=0 fieldIssues=0"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "filePath": ".spec-workflow/specs/nlp-spec-automation/tasks.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-10-01T05:37:07.808Z",
+      "trigger": "initial",
+      "approvalId": "approval_1759297027802_zi3mxrn1g",
+      "approvalTitle": "Tasks document for 'nlp-spec-automation'"
+    }
+  ]
+}

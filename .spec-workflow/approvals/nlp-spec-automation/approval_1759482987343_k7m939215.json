@@ -1,0 +1,12 @@
+{
+  "id": "approval_1759482987343_k7m939215",
+  "title": "审阅文档 review.md 需要批准",
+  "filePath": ".spec-workflow/specs/nlp-spec-automation/review.md",
+  "type": "document",
+  "status": "approved",
+  "createdAt": "2025-10-03T09:16:27.343Z",
+  "category": "spec",
+  "categoryName": "nlp-spec-automation",
+  "response": "已批准",
+  "respondedAt": "2025-10-03T09:18:49.138Z"
+}

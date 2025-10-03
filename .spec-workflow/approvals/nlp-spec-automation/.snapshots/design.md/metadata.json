@@ -1,0 +1,14 @@
+{
+  "filePath": ".spec-workflow/specs/nlp-spec-automation/design.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-10-01T04:37:36.135Z",
+      "trigger": "initial",
+      "approvalId": "approval_1759293456122_c0jvw06ak",
+      "approvalTitle": "Design document for 'nlp-spec-automation'"
+    }
+  ]
+}

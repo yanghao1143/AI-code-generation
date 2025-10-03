@@ -1,0 +1,14 @@
+{
+  "filePath": "scripts/reports/req-ai-codegen-001/SUMMARY.txt",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-09-30T12:51:44.493Z",
+      "trigger": "initial",
+      "approvalId": "approval_1759236704490_gdc5i886k",
+      "approvalTitle": "ai-codegen 预览与报告（req-ai-codegen-001）审批"
+    }
+  ]
+}

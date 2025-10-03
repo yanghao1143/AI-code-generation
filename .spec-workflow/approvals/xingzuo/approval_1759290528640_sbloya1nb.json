@@ -1,0 +1,12 @@
+{
+  "id": "approval_1759290528640_sbloya1nb",
+  "title": "执行 CHANGE 通道 DDL（测试环境）",
+  "filePath": "scripts/db/migrate.sql",
+  "type": "action",
+  "status": "approved",
+  "createdAt": "2025-10-01T03:48:48.641Z",
+  "category": "spec",
+  "categoryName": "xingzuo",
+  "response": "已批准",
+  "respondedAt": "2025-10-01T03:49:12.601Z"
+}

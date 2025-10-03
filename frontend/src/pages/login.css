@@ -1,0 +1,50 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg, 16px);
+  background: var(--bg-color, #ffffff);
+}
+
+.card {
+  width: 100%;
+  max-width: 480px;
+  padding: var(--space-lg, 16px);
+  animation: floatIn 420ms ease;
+}
+
+/* 使用 .ui-title 提供的样式，无需额外颜色与字号 */
+.card-title { margin: 0 0 8px 0; }
+
+.form-grid {
+  display: grid;
+  gap: var(--space-md, 12px);
+}
+
+.field {
+  display: grid;
+  gap: var(--space-sm, 8px);
+}
+
+.field-label {
+  font-size: 13px;
+  color: var(--muted-text, #64748b);
+}
+
+.helper-text {
+  margin-top: var(--space-xs, 4px);
+  font-size: 12px;
+  color: var(--muted-text, #64748b);
+}
+
+@keyframes floatIn {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

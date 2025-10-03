@@ -1,0 +1,16 @@
+{
+  "id": "snapshot_1759423847155_ah2k6xogv",
+  "approvalId": "approval_1759423847137_rixbdep47",
+  "approvalTitle": "Design Tokens Schema 文档（tokens.md）审批",
+  "version": 1,
+  "timestamp": "2025-10-02T16:50:47.155Z",
+  "trigger": "initial",
+  "status": "pending",
+  "content": "目的\n\n- 定义前端设计令牌（Design Tokens）的统一结构与命名，覆盖颜色、字号、间距、圆角、阴影、边框与栅格等常见视觉变量。\n- 保障各页面与组件通过 CSS 变量进行主题/方案切换的一致性，便于 Style 预览页、Preset 方案和后续主题系统复用。\n\n命名规范\n\n- 统一使用 CSS 变量形式：以 -- 开头，采用短横线分隔（如：--text-color）。\n- 语义优先，避免具体组件名称：示例 --border-color，而非 --card-border-color。\n- 与代码实现保持一致：tokens.ts 中的 TOKEN_KEYS 为当前有效键。\n\n令牌分类与键列表（当前实现）\n\n1) 颜色（color）\n- --text-color：文本颜色\n- --bg-color：背景颜色\n- --color-primary-start：主色（渐变起始）\n- --color-primary-end：主色（渐变结束）\n- --border-color：通用边框颜色\n- --btn-ghost-text：次按钮文本颜色\n\n2) 字号（size）\n- --font-size-base：基础字号（px）\n- --line-height-base：基础行高（纯数值）\n\n3) 间距（space）\n- --space-sm：小号间距（px）\n- --space-md：中号间距（px）\n- --space-lg：大号间距（px）\n\n4) 圆角（radius）\n- --radius-sm：小号圆角（px）\n- --radius-md：中号圆角（px）\n- --radius-lg：大号圆角（px）\n\n5) 阴影（shadow）\n- --shadow-sm：小号阴影（CSS box-shadow）\n- --shadow-md：中号阴影（CSS box-shadow）\n\n6) 边框（border）\n- --border-width：统一边框宽度（px）\n\n7) 栅格（grid）（已接入预览）\n- --container-max-width：容器最大宽度（默认 1200px）\n- --grid-gap：栅格间距（默认 16px）\n- --grid-columns：栅格列数（默认 12）\n说明：上述 grid 令牌已加入 TOKEN_KEYS 与 A/B/C/D 预设；Style 预览页已提供示例展示（容器宽度条、gap 网格、列数网格）。后续布局系统可直接读取这些变量应用于容器与网格布局。\n\n示例 JSON（与代码当前键一致）\n\n{\n  \"--text-color\": \"#111827\",\n  \"--bg-color\": \"#ffffff\",\n  \"--color-primary-start\": \"#2563eb\",\n  \"--color-primary-end\": \"#7c3aed\",\n  \"--border-color\": \"#e5e7eb\",\n  \"--btn-ghost-text\": \"#6b7280\",\n  \"--space-sm\": \"8px\",\n  \"--space-md\": \"12px\",\n  \"--space-lg\": \"16px\",\n  \"--radius-sm\": \"8px\",\n  \"--radius-md\": \"10px\",\n  \"--radius-lg\": \"12px\",\n  \"--shadow-sm\": \"0 1px 2px rgba(0,0,0,0.08)\",\n  \"--shadow-md\": \"0 8px 24px rgba(0,0,0,0.12)\",\n  \"--border-width\": \"1px\",\n  \"--font-size-base\": \"14px\",\n  \"--line-height-base\": \"1.6\"\n}\n\n前端接入说明\n\n- tokens.ts\n  - TOKEN_KEYS：当前支持的 CSS 变量键列表。\n  - applyTokens(tokens: Record<string, string>)：将变量写入 document.documentElement。\n  - snapshotCurrentTokens()：从 :root 读取当前 CSS 变量快照（受 TOKEN_KEYS 限定）。\n\n- tokens.schema.ts\n  - TOKENS_SCHEMA：用于 Style 预览页按“分类-项目”渲染视觉示例，键名需与 TOKEN_KEYS 对齐。\n\n- Style 预览页（Style.tsx）\n  - 支持方案切换（A/B/C/D）与本地持久化；\n  - 提供可视化调整工具（颜色、间距、圆角、阴影等）；\n  - 支持导出 JSON/CSS/SCSS/LESS；\n  - “令牌 Schema 预览”区块按 TOKENS_SCHEMA 分组渲染色板、字号、间距、圆角、阴影与边框示例。\n\n验收与约束\n\n- 键名必须与代码保持一致；新增令牌需同时更新：\n  - TOKEN_KEYS（tokens.ts）\n  - TOKENS_SCHEMA（tokens.schema.ts）\n  - Style 预览页对应的展示逻辑（如需要）。\n- 建议颜色对比度（文本 vs 背景）达到 WCAG AA：计算公式已在 Style.tsx 内实现用于参考。\n- 阴影与渐变等复杂值需使用合法 CSS 字面量以保证渲染一致性。",
+  "fileStats": {
+    "size": 3666,
+    "lines": 94,
+    "lastModified": "2025-10-02T16:48:32.028Z"
+  },
+  "comments": []
+}

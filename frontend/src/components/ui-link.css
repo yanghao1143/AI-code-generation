@@ -1,0 +1,35 @@
+/* Lightweight link styles for list actions and inline links */
+.ui-link {
+  color: var(--link-color, #2563eb);
+  text-decoration: none;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-weight: 500;
+}
+
+.ui-link:hover {
+  color: var(--link-hover-color, #7c3aed);
+  text-decoration: underline;
+}
+
+.ui-link:active {
+  color: var(--link-active-color, #1d4ed8);
+}
+
+/* 支持路由或手动标注的“激活”态 */
+.ui-link[aria-current="page"],
+.ui-link.ui-link--active {
+  color: var(--link-active-color, #1d4ed8);
+  text-decoration: underline;
+}
+
+.ui-link:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--ring-accent, rgba(124, 58, 237, 0.12));
+  border-radius: var(--radius-sm, 8px);
+}
+
+.ui-link--muted {
+  color: var(--muted-text, #64748b);
+}

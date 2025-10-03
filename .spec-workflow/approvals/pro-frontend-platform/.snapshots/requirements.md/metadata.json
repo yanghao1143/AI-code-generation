@@ -1,0 +1,14 @@
+{
+  "filePath": ".spec-workflow/specs/pro-frontend-platform/requirements.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-10-02T04:53:30.809Z",
+      "trigger": "initial",
+      "approvalId": "approval_1759380810798_e5bz3a4zx",
+      "approvalTitle": "专业级前端开发平台 需求文档（Phase 1）审批请求"
+    }
+  ]
+}

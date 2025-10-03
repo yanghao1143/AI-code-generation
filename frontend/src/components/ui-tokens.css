@@ -1,0 +1,113 @@
+/* Design tokens: colors, radii, spacing, shadows */
+:root {
+  /* Colors */
+  --color-accent: #7c3aed; /* violet */
+  --ring-accent: rgba(124, 58, 237, 0.12);
+  --color-danger: #ef4444;
+  --ring-danger: rgba(239, 68, 68, 0.12);
+  --color-success: #16a34a;
+  --ring-success: rgba(22, 163, 74, 0.12);
+  --color-warning: #b45309;
+  --ring-warning: rgba(180, 83, 9, 0.12);
+  --border-color: #e5e7eb;
+  --muted-text: #9ca3af;
+  --text-color: #111827;
+  --bg-color: #ffffff;
+  --panel-bg: #ffffff;
+  --panel-border: rgba(226, 232, 240, 0.9);
+
+  /* Button gradients & shadows */
+  --color-primary-start: #2563eb; /* blue-600 */
+  --color-primary-end: #7c3aed;   /* violet-600 */
+  --shadow-primary: rgba(37, 99, 235, 0.25);
+  --shadow-primary-hover: rgba(124, 58, 237, 0.25);
+
+  --color-danger-start: #ef4444;  /* red-500 */
+  --color-danger-end: #b91c1c;    /* red-700 */
+  --shadow-danger: rgba(239, 68, 68, 0.25);
+  --shadow-danger-hover: rgba(185, 28, 28, 0.25);
+
+  --btn-text-on-primary: #ffffff;
+  --btn-ghost-text: #111827;
+  --btn-border: #e5e7eb;
+
+  /* Radii & spacing */
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+
+  /* Inputs */
+  --input-padding: 10px 12px;
+  --input-bg: #ffffff;
+  --input-disabled-bg: #f3f4f6;
+  --input-placeholder: #64748b;
+  --input-caret: #2563eb;
+
+  /* Links */
+  --link-color: #2563eb;        /* blue-600 */
+  --link-hover-color: #7c3aed;  /* violet-600 */
+  --link-active-color: #1d4ed8; /* blue-700 */
+
+  /* Panel selected tokens */
+  --panel-selected-border-color: var(--link-active-color, #1d4ed8);
+  --panel-selected-bg: color-mix(in oklab, var(--panel-bg, #ffffff) 92%, var(--panel-selected-border-color) 8%);
+  /* Shadow tokens use safe defaults; component may provide its own fallbacks */
+  --panel-selected-shadow: 0 0 0 2px color-mix(in oklab, var(--panel-selected-border-color) 50%, transparent);
+  --panel-selected-shadow-hover: 0 0 0 3px color-mix(in oklab, var(--panel-selected-border-color) 60%, transparent);
+  --panel-selected-shadow-focus: 0 0 0 4px color-mix(in oklab, var(--panel-selected-border-color) 65%, transparent);
+
+  /* Progress */
+  --progress-bg: #e5e7eb;       /* slate-200 */
+  --progress-height: 10px;
+
+  /* Input widths */
+  --input-width-xs: 56px;
+  --input-width-sm: 64px;
+
+  /* Typography */
+  --font-size-title: 18px;
+  --font-weight-title: 600;
+  --font-size-subtitle: 16px;
+  --font-weight-subtitle: 600;
+  --font-size-status: 14px;
+  --font-size-hint: 12px;
+}
+
+/* 暗色主题变量覆盖 */
+:root[data-theme="dark"] {
+  --text-color: #e5e7eb;
+  --bg-color: #0f172a;
+  --muted-text: #94a3b8;
+  --border-color: #334155;
+  --panel-bg: #111827;
+  --panel-border: #1f2937;
+
+  --btn-ghost-text: #e5e7eb;
+  --btn-border: #334155;
+
+  --input-bg: #0b1220;
+  --input-disabled-bg: #0b1220;
+  --input-placeholder: #94a3b8;
+  --input-caret: #93c5fd;
+  --ring-accent: rgba(124, 58, 237, 0.35);
+  --ring-danger: rgba(239, 68, 68, 0.35);
+  --ring-success: rgba(22, 163, 74, 0.35);
+  --ring-warning: rgba(180, 83, 9, 0.35);
+
+  /* Links */
+  --link-color: #93c5fd;        /* blue-300 */
+  --link-hover-color: #a78bfa;  /* violet-300 */
+  --link-active-color: #60a5fa; /* blue-400 */
+
+  /* Panel selected tokens (dark) */
+  --panel-selected-border-color: var(--link-active-color);
+  --panel-selected-bg: color-mix(in oklab, var(--panel-bg, #111827) 88%, var(--panel-selected-border-color) 12%);
+
+  /* Progress */
+  --progress-bg: #334155;       /* slate-700 */
+  /* height stays same across themes */
+}

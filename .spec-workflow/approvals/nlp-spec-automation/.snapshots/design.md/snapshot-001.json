@@ -1,0 +1,16 @@
+{
+  "id": "snapshot_1759293456135_5qq83vktx",
+  "approvalId": "approval_1759293456122_c0jvw06ak",
+  "approvalTitle": "Design document for 'nlp-spec-automation'",
+  "version": 1,
+  "timestamp": "2025-10-01T04:37:36.135Z",
+  "trigger": "initial",
+  "status": "pending",
+  "content": "概述\n\n本设计文档定义 “nlp-spec-automation”（自然语言→规格自动化）在 xingzuo 项目中的实现方案与技术架构，目标是：\n- 准确理解中文自然语言需求，并抽取领域实体、字段与关系；\n- 将 NL 解析结果与 ai-codegen 的 OpenAPI/JSON Schema 结构化规范融合，生成一致的 DomainModel；\n- 自动输出规范化的技术文档与 DDL，并可经审批后自动应用到数据库。\n\n架构与流程\n\n- 输入：中文 PRD/策划文本（策划.md/用户输入）\n- 核心解析：\n  - internal/nlp/pipeline.go: Parse(text)\n    - 中文关键词→实体映射（粉丝/Fan、主播/Anchor、话题/Topic、脚本/Script、工作流/Workflow、测算服务/FortuneService、测算记录/FortuneRecord、对话/Conversation 等）\n    - 初始实体字段生成与常识关系推断（如 *_id 外键，时间戳）\n  - internal/nlp/ai_codegen.go: ParseWithStructured(root, sourceSpec, text)\n    - 读取 .spec-workflow/specs/ai-codegen 下的 OpenAPI/JSON Schema，并与 Parse(text) 结果融合\n    - canonicalizeFieldName：中文字段别名→英文蛇形命名（如 定义→definition，内容→content，创建时间→created_at，粉丝ID→fan_id 等）\n    - propsToFields：JSON Schema 属性到字段的类型映射与启发式（*_id→BIGINT、date-time→DATETIME、对象/数组→TEXT、content-like→TEXT）\n    - addRelationsFor：基于 *_id 推断一对多关系\n    - normalizeModel / normalizeEntityNames：统一字段类型与实体命名\n- 校验与一致性：internal/speccheck\n  - 检查生成的 DomainModel 与目标规范/DDL 的一致性（无缺表/缺列/类型错配）\n- 输出与应用：specpipe\n  - 生成 .spec-workflow/specs/xingzuo 下的规范文档与 DDL\n  - 通过审批后支持自动执行数据库变更\n\n关键设计点\n\n1) 中文别名规范化\n- 函数：internal/nlp/ai_codegen.go: canonicalizeFieldName\n- 当前覆盖：定义/内容/结果/标签/输入架构/输入模式/创建时间/更新时间/粉丝ID/服务ID/会话ID/主题ID/锚点ID/编号/主键 → 对应英文蛇形命名\n- 可扩展：基于真实 PRD 样例扩充，如 昵称→name、等级→level、描述→description、封面→cover_url 等\n\n2) 类型与关系规范化\n- *_id 一律 BIGINT；created_at/updated_at 一律 DATETIME；content-like（definition/content/result/tags/input_schema）一律 TEXT\n- 关系推断：当存在 fan_id/service_id/conversation_id/topic_id/anchor_id 等，自动建立 1:N；粉丝↔标签 自动建立 M:N（fan_tags）\n\n3) OpenAPI/JSON Schema 融合\n- 优先读取 JSON Schema 的 properties；随后合并 OpenAPI components.schemas\n- 以蛇形命名去重，并采用“更强类型优先”的合并规则（BIGINT>INT>STRING；DATETIME>STRING；TEXT>VARCHAR）\n\n4) 审批与自动化\n- 文档生成与数据库变更分离，所有变更需走审批流程：\n  - requirements.md → design.md → tasks.md → implementation\n  - 每阶段提交审批，批准后进入下一阶段\n- 数据库应用命令模板：\n  specpipe gen --source-spec=ai-codegen --out-spec=xingzuo --apply-db=true --dsn-env=<ENV>|--dsn=<DSN> --ticket=<APPROVAL_ID>\n\n5) 测试与质量保证\n- 单元测试：\n  - internal/nlp/ai_codegen_test.go：中文字段别名映射与类型规范化；propsToFields 启发式验证\n- 集成测试：\n  - 使用策划.md 与 ai-codegen 的 OpenAPI/Schema 样本，验证 speccheck 全部通过（无缺表/缺列/类型错配）\n- 回归保障：\n  - 对新增中文别名扩展，补充测试用例\n\n6) 回滚与安全\n- 若审批未通过或数据库异常，允许使用 scripts/rollback.sh 回滚到上一版本\n- 所有生产库变更必须提供审批 ticket，并在 CI 中执行只读 speccheck 验证\n\n接口与文件\n\n- 输入规范：.spec-workflow/specs/ai-codegen/openapi.json 与 jsonschema.json（或 generated/*）\n- 输出规范：.spec-workflow/specs/xingzuo/*（文档与 DDL）\n- 解析与融合：internal/nlp/pipeline.go, internal/nlp/ai_codegen.go\n- 校验：internal/speccheck\n- 命令：specpipe（dist/specpipe 或 cmd/specpipe）\n\n非功能需求\n\n- 性能：解析与融合应可在本地离线运行，目标 1–2s 完成常规 PRD 的初次生成\n- 可维护性：中文别名词典集中管理，保证易于扩展与测试覆盖\n- 可观测性：记录澄清项（ClarifyIssue），便于后续确认业务约束与索引需求\n\n里程碑\n\n- M1：requirements.md 审批通过；design.md 提交审批（当前）\n- M2：tasks.md 细化任务、测试与审批；实现 NL→spec 生成命令链路\n- M3：集成 speccheck 与自动化数据库应用；在 dashboard 中完成一次端到端演示",
+  "fileStats": {
+    "size": 4690,
+    "lines": 79,
+    "lastModified": "2025-10-01T04:37:30.777Z"
+  },
+  "comments": []
+}

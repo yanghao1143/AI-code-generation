@@ -1,0 +1,12 @@
+{
+  "id": "approval_1759328091890_r12vdwxve",
+  "title": "请审核 ai-codegen 规范的 Requirements 文档（自动解析生成）",
+  "filePath": ".spec-workflow/specs/ai-codegen/requirements.md",
+  "type": "document",
+  "status": "approved",
+  "createdAt": "2025-10-01T14:14:51.890Z",
+  "category": "spec",
+  "categoryName": "ai-codegen",
+  "response": "已批准",
+  "respondedAt": "2025-10-01T14:18:42.034Z"
+}

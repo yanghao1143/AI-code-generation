@@ -1,0 +1,14 @@
+{
+  "filePath": ".spec-workflow/steering/structure.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-09-30T07:47:42.564Z",
+      "trigger": "initial",
+      "approvalId": "approval_1759218462563_sli1pmqj0",
+      "approvalTitle": "项目结构与模块规划（星座项目）文档审批"
+    }
+  ]
+}

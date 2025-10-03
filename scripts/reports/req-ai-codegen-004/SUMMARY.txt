@@ -1,0 +1,23 @@
+[Preview] requestId=req-ai-codegen-004
+
+[Contract]
+- Baseline diff generated: see `openapi.diff`
+- Key changes:
+  - Added query parameter `mode` to `GET /api/v1/articles/stream` (values: `example|list`)
+  - Enriched `x-sse` with `frameFields: {event,id,retry}` and `errorExample`
+
+[Security]
+- `go vet`: no blocking issues recorded
+- `go mod verify`: all modules verified
+
+[Performance]
+- Single check: `time_total: 0.000291s`, `http_code: 200`
+- Samples: 30 (warmup 5), duration: 0.137s
+- Latency: min 0.000118s, avg 0.000224s, p50 0.000177s, p90 0.000375s, p99 0.000806s, max 0.000806s
+- Throughput: 218.98 RPS
+- SSE handshake: `time_connect: 0.000109s`, `time_starttransfer: 0.000397s`, `http_code: 200`
+- SSE heartbeat interval: ~`0.005480s`
+
+[Artifacts]
+- Directory: `/root/xingzuo/scripts/reports/req-ai-codegen-004`
+- Files: `openapi.json`, `openapi.diff`, `performance.txt`, `security.txt`, `SUMMARY.txt`

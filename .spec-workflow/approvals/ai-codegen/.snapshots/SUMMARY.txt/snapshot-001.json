@@ -1,0 +1,16 @@
+{
+  "id": "snapshot_1759236704493_5s93jctgu",
+  "approvalId": "approval_1759236704490_gdc5i886k",
+  "approvalTitle": "ai-codegen 预览与报告（req-ai-codegen-001）审批",
+  "version": 1,
+  "timestamp": "2025-09-30T12:51:44.493Z",
+  "trigger": "initial",
+  "status": "pending",
+  "content": "[Preview] requestId=req-ai-codegen-001\n[Artifacts] Stored under /root/xingzuo/scripts/reports/req-ai-codegen-001\n",
+  "fileStats": {
+    "size": 113,
+    "lines": 3,
+    "lastModified": "2025-09-30T12:51:26.354Z"
+  },
+  "comments": []
+}

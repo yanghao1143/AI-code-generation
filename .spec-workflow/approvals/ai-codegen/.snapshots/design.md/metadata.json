@@ -1,0 +1,14 @@
+{
+  "filePath": ".spec-workflow/specs/ai-codegen/design.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-09-30T12:29:55.957Z",
+      "trigger": "initial",
+      "approvalId": "approval_1759235395948_4pljlw5mr",
+      "approvalTitle": "ai-codegen 规格：设计文档（design.md）审批"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "filePath": "scripts/db/migrate.sql",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-10-01T03:48:48.652Z",
+      "trigger": "initial",
+      "approvalId": "approval_1759290528640_sbloya1nb",
+      "approvalTitle": "执行 CHANGE 通道 DDL（测试环境）"
+    }
+  ]
+}

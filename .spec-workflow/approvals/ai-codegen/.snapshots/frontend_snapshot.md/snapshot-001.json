@@ -1,0 +1,16 @@
+{
+  "id": "snapshot_1759243734200_x5u273kws",
+  "approvalId": "approval_1759243734197_mlcrwxqde",
+  "approvalTitle": "前端最小版 React/TS 快照审阅",
+  "version": 1,
+  "timestamp": "2025-09-30T14:48:54.200Z",
+  "trigger": "initial",
+  "status": "pending",
+  "content": "# 前端快照（最小版 React/TS）\n\n- 预览地址：http://localhost:5173/\n- 功能点：\n  - 鉴权与权限栏（Authorization: Bearer 与 `X-User-Permissions` 可编辑）\n  - 文章列表与创建（`/api/v1/articles`）\n  - 使用代理转发至后端 `http://localhost:8080`\n- 客户端：\n  - 从 `dist/openapi.json` 生成 `src/api/types.ts`\n  - 最小 API 客户端位于 `src/api/client.ts`\n- 依赖与运行：\n  - 后端：`AUTH_TOKENS=dev-token PORT=8080 go run ./cmd/app/main.go`\n  - 前端：`cd frontend && npm install && npm run dev`",
+  "fileStats": {
+    "size": 555,
+    "lines": 13,
+    "lastModified": "2025-09-30T14:48:34.788Z"
+  },
+  "comments": []
+}

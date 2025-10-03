@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2025-10-01T12:01:45.804965059+08:00",
+  "sourceDDL": "/root/xingzuo/scripts/db/create.sql",
+  "summary": "missingTables=0 extraTables=0 missingColumnsTables=0 typeMismatchTables=0",
+  "missingTables": [],
+  "extraTables": [],
+  "missingColumns": {},
+  "typeMismatches": {},
+  "openapi": {
+    "source": "/root/xingzuo/scripts/reports/req-ai-codegen-009/openapi.json",
+    "missingResources": [
+      "tags",
+      "fortune_services",
+      "fortune_records",
+      "topics",
+      "scripts",
+      "anchors",
+      "fans",
+      "conversations",
+      "workflows"
+    ],
+    "extraResources": [],
+    "schemaMissingEntities": [
+      "Anchor",
+      "Fan",
+      "Tag",
+      "Conversation",
+      "FortuneService",
+      "FortuneRecord",
+      "Topic",
+      "Script",
+      "Workflow"
+    ],
+    "schemaMissingFields": {},
+    "schemaTypeMismatches": {},
+    "summary": "missingResources=9 extraResources=0 schemaMissing=9 fieldIssues=0"
+  }
+}

@@ -1,0 +1,74 @@
+.ui-input {
+  padding: var(--input-padding, 10px 12px);
+  border-radius: var(--radius-md, 10px);
+  border: 1px solid var(--border-color, #e5e7eb);
+  background: var(--input-bg, #ffffff);
+  caret-color: var(--input-caret, #2563eb);
+  outline: none;
+  transition: box-shadow 160ms ease, border-color 160ms ease, transform 160ms ease, opacity 160ms ease;
+}
+
+.ui-input:focus {
+  border-color: var(--color-accent, #7c3aed);
+  box-shadow: 0 0 0 3px var(--ring-accent, rgba(124, 58, 237, 0.12));
+  transform: translateZ(0);
+}
+
+/* 键盘导航下的更精确可访问态 */
+.ui-input:focus-visible {
+  border-color: var(--color-accent, #7c3aed);
+  box-shadow: 0 0 0 3px var(--ring-accent, rgba(124, 58, 237, 0.12));
+  transform: translateZ(0);
+}
+
+.ui-input:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+  background: var(--input-disabled-bg, #f3f4f6);
+  color: var(--muted-text, #9ca3af);
+}
+
+.ui-input::placeholder {
+  color: var(--input-placeholder, #64748b);
+}
+
+/* 错误态：支持类名与 aria-invalid，提高可访问性 */
+.ui-input--error,
+.ui-input[aria-invalid="true"] {
+  border-color: var(--color-danger, #ef4444);
+  box-shadow: 0 0 0 3px var(--ring-danger, rgba(239, 68, 68, 0.12));
+}
+
+/* 成功与警告态（用于校验提示的视觉反馈） */
+.ui-input--success {
+  border-color: var(--color-success, #16a34a);
+  box-shadow: 0 0 0 3px var(--ring-success, rgba(22, 163, 74, 0.12));
+}
+.ui-input--warning {
+  border-color: var(--color-warning, #b45309);
+  box-shadow: 0 0 0 3px var(--ring-warning, rgba(180, 83, 9, 0.12));
+}
+
+/* 图标态与提示文本：轻量容器与定位样式 */
+.ui-input-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.ui-input--has-icon {
+  padding-left: calc(var(--space-lg, 16px) + 18px);
+}
+.ui-input__icon {
+  position: absolute;
+  left: var(--space-sm, 8px);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: var(--muted-text, #9ca3af);
+  pointer-events: none;
+}
+.ui-input-hint {
+  margin-top: 6px;
+  font-size: var(--font-size-hint, 12px);
+  color: var(--muted-text, #64748b);
+}

@@ -1,0 +1,12 @@
+{
+  "id": "approval_1759328145273_0i3pjx4zp",
+  "title": "请审核 ai-codegen 规范的 Tasks 文档（自动解析生成）",
+  "filePath": ".spec-workflow/specs/ai-codegen/tasks.md",
+  "type": "document",
+  "status": "approved",
+  "createdAt": "2025-10-01T14:15:45.273Z",
+  "category": "spec",
+  "categoryName": "ai-codegen",
+  "response": "已批准",
+  "respondedAt": "2025-10-01T14:18:41.181Z"
+}

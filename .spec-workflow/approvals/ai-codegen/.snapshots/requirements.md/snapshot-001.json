@@ -1,0 +1,16 @@
+{
+  "id": "snapshot_1759235267546_m3qxslme2",
+  "approvalId": "approval_1759235267543_bvlfbxrqv",
+  "approvalTitle": "ai-codegen 规格：需求文档（requirements.md）审批",
+  "version": 1,
+  "timestamp": "2025-09-30T12:27:47.546Z",
+  "trigger": "initial",
+  "status": "pending",
+  "content": "# 需求说明（ai-codegen）\n\n## 目标\n- 提供“Schema-first”的 AI 自动化代码生成与联调能力：输入结构化 Prompt，先产出 OpenAPI/JSON Schema，再生成可维护的前端页面与后端 API，并完成契约测试与集成联调。\n\n## 使用者与场景\n- 角色：前端/后端开发者、Tech Lead、运维与质量工程师。\n- 场景：\n  - 从需求/Prompt快速得到契约与代码骨架，并在隔离环境预览与审批。\n  - 自动跑契约/集成/性能测试，生成变更与质量报告，保障发布门禁。\n\n## 范围（In Scope）\n- Prompt → OpenAPI/JSON Schema 的合同生成（唯一真实来源）。\n- 后端脚手架：Gin 路由、请求绑定、统一响应与错误码、鉴权/限流/RBAC 中间件注入。\n- 前端脚手架：页面与组件、状态管理、API 客户端；统一 Loading/Error/空态处理。\n- 联调与验证：契约测试（含流式/SSE）、集成测试与性能基线。\n- 质量与门禁：lint/vet/staticcheck/gosec、eslint/tsc、依赖与安全扫描、变更差异报告。\n- 预览与审批：隔离环境、变更与质量报告、审批通过后灰度发布与回滚策略。\n\n## 非范围（Out of Scope）\n- 复杂业务策略自动推断（如风控策略、财务合规细则）。\n- 跨组织的多租户运维与计费治理（后续在 billing/portal 落地）。\n\n## 约束与规则\n- 契约优先：所有生成与联调以 OpenAPI/JSON Schema 为基准，字段与错误码不得越界。\n- 依赖治理：模板白名单与版本范围限制；禁止未经批准的库与不安全依赖。\n- 分层边界：后端（路由/服务/仓储/中间件）与前端（组件/状态/API 客户端）层次清晰，禁止跨层直接耦合。\n- 安全与合规：统一鉴权与 RBAC；日志脱敏与审计；Secrets 扫描必须通过。\n- 代码质量：必须通过 lint/vet/fmt/staticcheck/gosec（后端）与 eslint/tsc（前端）。\n\n## 成功准则（验收）\n- 输入结构化 Prompt，可自动生成：\n  - 规范化的 OpenAPI/JSON Schema。\n  - 可编译的前端页面与后端路由骨架，遵循 `steering/tech.md`。\n  - 契约与集成测试全部通过；错误码与 HTTP 状态一致。\n  - 生成的变更与质量报告可在预览环境审阅并审批。\n- CI 门禁流水线通过：`tidy → lint → test → contract → build → deploy`。\n- 灰度发布可回滚，生成记录可审计（含 requestId 与差异报告）。\n\n## 参考\n- `.spec-workflow/steering/tech.md` 技术规范与生成治理。\n- `.spec-workflow/steering/structure.md` 分层与契约联调实践。\n- `.spec-workflow/steering/product.md` 产品目标与里程碑。",
+  "fileStats": {
+    "size": 2678,
+    "lines": 43,
+    "lastModified": "2025-09-30T12:27:32.450Z"
+  },
+  "comments": []
+}

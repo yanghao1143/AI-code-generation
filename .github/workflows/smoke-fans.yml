@@ -1,0 +1,44 @@
+name: Fans CRUD Smoke Test
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: smoke-fans-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke-fans:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Build app
+        run: |
+          make tidy
+          make build-app
+          make deploy
+
+      - name: Run Fans CRUD smoke test
+        env:
+          PORT: 8081
+          AUTH_TOKENS: dev-token
+          JWT_SECRET: dev-secret
+        run: |
+          make smoke-fans
+
+      - name: Upload deploy log (artifact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-log
+          path: dist/deploy.log

@@ -1,0 +1,29 @@
+# auto 需求规范
+
+本规范由自然语言解析自动生成，反映当前领域模型的核心需求与对象。
+
+## 领域对象
+- Anchor：包含 4 个字段
+- Fan：包含 6 个字段
+- Tag：包含 3 个字段
+- Conversation：包含 5 个字段
+- FortuneService：包含 5 个字段
+- FortuneRecord：包含 5 个字段
+- Topic：包含 4 个字段
+- Script：包含 5 个字段
+- Workflow：包含 4 个字段
+
+## 关系
+- Anchor -> Conversation (one_to_many)
+- Fan -> Conversation (one_to_many)
+- Fan -> Tag (many_to_many)
+- Fan -> FortuneRecord (one_to_many)
+- FortuneService -> FortuneRecord (one_to_many)
+- Topic -> Script (one_to_many)
+- Anchor -> Fan (many_to_many)
+
+## 用户故事（生成版）
+- 作为主播，我希望能够与粉丝进行对话，并查看历史记录，以提升互动质量。
+- 作为运营，我希望为粉丝添加标签并按标签筛选，以进行分层运营。
+- 作为用户，我希望提交命理测算请求并查看测算结果，以获得个性化建议。
+- 作为内容策划，我希望管理话题与脚本，以提升直播内容质量。

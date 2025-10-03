@@ -1,0 +1,14 @@
+{
+  "filePath": ".spec-workflow/specs/xingzuo/design.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-09-30T07:48:46.435Z",
+      "trigger": "initial",
+      "approvalId": "approval_1759218526431_1bnhwrtkw",
+      "approvalTitle": "设计阶段（xingzuo）文档审批"
+    }
+  ]
+}

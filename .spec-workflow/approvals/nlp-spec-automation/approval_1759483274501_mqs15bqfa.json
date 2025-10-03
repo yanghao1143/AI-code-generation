@@ -1,0 +1,12 @@
+{
+  "id": "approval_1759483274501_mqs15bqfa",
+  "title": "更新 tasks.md：OpenAPI 对齐与 speccheck 报告，请审核",
+  "filePath": ".spec-workflow/specs/nlp-spec-automation/tasks.md",
+  "type": "document",
+  "status": "approved",
+  "createdAt": "2025-10-03T09:21:14.501Z",
+  "category": "spec",
+  "categoryName": "nlp-spec-automation",
+  "response": "已批准",
+  "respondedAt": "2025-10-03T09:23:22.420Z"
+}

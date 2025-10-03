@@ -1,0 +1,28 @@
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Node
+node_modules/
+frontend/test-report/
+coverage/
+
+# Go build outputs
+bin/
+dist/
+
+# Logs & PIDs
+*.log
+backend.log
+backend.pid
+
+# Env files
+.env
+.env.*
+scripts/config/.env.template
+
+# Misc
+tmp_openapi.json
+*.secret
+*.cache

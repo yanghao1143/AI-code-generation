@@ -1,0 +1,14 @@
+{
+  "filePath": "scripts/db/migrate.sql",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-10-01T17:09:11.505Z",
+      "trigger": "initial",
+      "approvalId": "approval_1759338551497_h3gbmc53f",
+      "approvalTitle": "Approval: Run db-runner CHANGE for ai-codegen (sqlHash=3b8969c9f54628d339adc8b1f6d2b033aedb78a720be7c30c7020cae43b5a942)"
+    }
+  ]
+}

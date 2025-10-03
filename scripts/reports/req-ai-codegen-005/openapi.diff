@@ -1,0 +1,128 @@
+--- /root/xingzuo/.spec-workflow/specs/xingzuo/openapi.json	2025-09-30 20:51:05.707076280 +0800
++++ /root/xingzuo/scripts/reports/req-ai-codegen-005/openapi.json	2025-09-30 21:20:23.325267850 +0800
+@@ -896,6 +896,125 @@
+         "summary": "Update article"
+       }
+     },
++    "/api/v1/articles/stream": {
++      "get": {
++        "description": "Server-Sent Events stream for article operations. Content-Type: text/event-stream. Frames include data (payload), heartbeat (keep-alive), and a terminal 'event: done'. Requires bearer authentication and 'articles' permission via RBAC. Errors follow unified ErrorResponse codes and structure.",
++        "parameters": [
++          {
++            "$ref": "#/components/parameters/XRequestId"
++          },
++          {
++            "description": "Streaming mode: 'example' emits demo frames; 'list' streams current articles as JSON frames",
++            "in": "query",
++            "name": "mode",
++            "required": false,
++            "schema": {
++              "enum": [
++                "example",
++                "list"
++              ],
++              "type": "string"
++            }
++          },
++          {
++            "description": "Heartbeat comment frame interval in milliseconds (default ~5ms)",
++            "example": 5,
++            "in": "query",
++            "name": "heartbeatMs",
++            "required": false,
++            "schema": {
++              "maximum": 10000,
++              "minimum": 1,
++              "type": "integer"
++            }
++          },
++          {
++            "description": "Max number of items to emit when mode=list (1-1000)",
++            "example": 10,
++            "in": "query",
++            "name": "limit",
++            "required": false,
++            "schema": {
++              "maximum": 1000,
++              "minimum": 1,
++              "type": "integer"
++            }
++          },
++          {
++            "description": "Start offset for items when mode=list (\u003e=0)",
++            "example": 0,
++            "in": "query",
++            "name": "offset",
++            "required": false,
++            "schema": {
++              "minimum": 0,
++              "type": "integer"
++            }
++          },
++          {
++            "description": "Filter items by authorId when mode=list",
++            "example": "u1",
++            "in": "query",
++            "name": "authorId",
++            "required": false,
++            "schema": {
++              "type": "string"
++            }
++          },
++          {
++            "description": "Search keyword across title/content/tags when mode=list",
++            "example": "hello",
++            "in": "query",
++            "name": "q",
++            "required": false,
++            "schema": {
++              "type": "string"
++            }
++          }
++        ],
++        "responses": {
++          "200": {
++            "$ref": "#/components/responses/OK"
++          },
++          "default": {
++            "$ref": "#/components/responses/Error"
++          }
++        },
++        "security": [
++          {
++            "bearerAuth": []
++          },
++          {
++            "headerPermissions": []
++          }
++        ],
++        "summary": "Articles SSE stream",
++        "x-response-content-type": "text/event-stream",
++        "x-sse": {
++          "contentType": "text/event-stream",
++          "errorExample": {
++            "body": {
++              "code": "E3001",
++              "detail": {
++                "hint": "SSE不支持"
++              },
++              "message": "StreamError",
++              "requestId": "00000000-0000-0000-0000-000000000000",
++              "severity": "error"
++            },
++            "contentType": "application/json"
++          },
++          "example": "data: part-1\n\n:heartbeat\n\ndata: part-2\n\nevent: done\n\n",
++          "frameFields": {
++            "event": "optional event name for the following data",
++            "id": "optional message id for reconnection",
++            "retry": "client reconnection delay in milliseconds"
++          },
++          "notes": "Heartbeat is an SSE comment frame (':heartbeat'). Interval configurable via 'heartbeatMs' query param. Termination is signaled via 'event: done'."
++        },
++        "x-streaming": true
++      }
++    },
+     "/api/v1/billing/invoices": {
+       "get": {
+         "parameters": [

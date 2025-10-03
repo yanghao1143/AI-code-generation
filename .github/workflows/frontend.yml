@@ -1,0 +1,173 @@
+name: Frontend Smoke & Unit Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  backend-build:
+    name: Build Backend Binary
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - name: Cache Go modules & build cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: go-${{ runner.os }}-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            go-${{ runner.os }}-
+
+      - name: Download Go modules
+        run: go mod download
+
+      - name: Build backend app
+        run: |
+          mkdir -p dist
+          go build -o dist/app ./cmd/app
+
+      - name: Upload backend binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-binary
+          path: dist/app
+
+  frontend-unit:
+    name: Frontend Unit Tests (Vitest)
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [18, 20, 22]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run unit tests and generate JUnit report
+        working-directory: frontend
+        run: |
+          node -e "require('fs').mkdirSync('test-report',{recursive:true})"
+          npx vitest run --reporter=junit --outputFile=test-report/report.xml
+
+      - name: Publish Unit Test Report (PR comment)
+        if: ${{ always() }}
+        uses: mikepenz/action-junit-report@v4
+        with:
+          report_paths: frontend/test-report/*.xml
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          require_tests: true
+          detailed_summary: true
+          annotate_only: true
+          include_passed: true
+
+      - name: Upload unit test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-unit-report-${{ matrix.os }}-node${{ matrix.node }}
+          path: frontend/test-report
+
+  frontend-smoke:
+    name: Frontend Smoke (SSE/WS + Export)
+    environment: AUTH_TOKEN
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: backend-build
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [18, 20, 22]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download backend binary
+        uses: actions/download-artifact@v4
+        with:
+          name: app-binary
+          path: dist
+
+      - name: Start Backend (PORT=8081)
+        run: |
+          chmod +x dist/app
+          nohup bash -lc 'PORT=8081 AUTH_TOKENS=${{ secrets.AUTH_TOKEN }} APPROVAL_TICKETS=${{ secrets.APPROVAL_TICKET }} ./dist/app' > backend.log 2>&1 &
+          echo $! > backend.pid
+
+      - name: Wait for Backend to be ready
+        run: |
+          for i in {1..30}; do
+            if curl -sSf http://localhost:8081/openapi >/dev/null 2>&1 || curl -sSf http://localhost:8081/api/openapi >/dev/null 2>&1; then
+              echo "Backend is up";
+              exit 0;
+            fi
+            echo "Waiting for backend... ($i)";
+            sleep 2;
+          done
+          echo "Backend failed to start";
+          tail -n +1 backend.log || true
+          exit 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run Clarify combined smoke (SSE/WS + Export)
+        working-directory: frontend
+        env:
+          API_BASE_ALIAS: http://localhost:8081/api
+          AUTH_TOKEN: ${{ secrets.AUTH_TOKEN }}
+          USER_PERMS: ${{ secrets.USER_PERMS }}
+          APPROVAL_TICKET: ${{ secrets.APPROVAL_TICKET }}
+        run: |
+          npm run smoke:clarify-all -s 2>&1 | tee frontend-smoke-node${{ matrix.node }}.log
+
+      - name: Upload frontend smoke logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-smoke-logs
+          path: frontend/frontend-smoke-node*.log
+
+      - name: Upload backend logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-log
+          path: backend.log
+
+      - name: Stop Backend
+        if: always()
+        run: |
+          if [ -f backend.pid ]; then kill $(cat backend.pid) || true; fi

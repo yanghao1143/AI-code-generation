@@ -1,0 +1,11 @@
+{
+  "generatedAt": "2025-10-01T11:51:32.267551401+08:00",
+  "sourceDDL": "/root/xingzuo/scripts/db/create.sql",
+  "summary": "missingTables=0 extraTables=1 missingColumnsTables=0 typeMismatchTables=0",
+  "missingTables": [],
+  "extraTables": [
+    "fan_tags"
+  ],
+  "missingColumns": {},
+  "typeMismatches": {}
+}

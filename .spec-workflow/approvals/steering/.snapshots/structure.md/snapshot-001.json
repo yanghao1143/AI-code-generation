@@ -1,0 +1,16 @@
+{
+  "id": "snapshot_1759218462564_sp2vdr1qn",
+  "approvalId": "approval_1759218462563_sli1pmqj0",
+  "approvalTitle": "项目结构与模块规划（星座项目）文档审批",
+  "version": 1,
+  "timestamp": "2025-09-30T07:47:42.564Z",
+  "trigger": "initial",
+  "status": "pending",
+  "content": "# 项目结构与模块规划（星座项目）\n\n## 仓库结构（当前）\n- `cmd/app/` 主程序与路由注册。\n- `internal/middleware/` 请求ID、错误处理、RBAC、鉴权、限流。\n- `internal/api/` 统一响应结构。\n- `internal/ai/frontend|backend|integration/` AI生成与联调接口占位与类型。\n- `internal/registry/` API Registry统一发现。\n- `internal/validation/` 请求绑定与错误返回助手。\n- `策划.md` 完整策划案与附录。\n\n## 规划模块\n- `billing/` 支付与结算闭环（订单/支付/账单/对账/退款/发票）与风控。\n- `llm/` LLM路由与成本/配额守护，Prompt治理与模板版本管理。\n- `contract/` 契约测试与OpenAPI/DSL一致性校验，破坏性变更报告。\n- `observe/` 追踪与指标采集、质量看板与事件复盘。\n- `portal/` 管理后台（审批/门禁/预览与灰度/成本与配额/合规报告）。\n\n## 路线图与依赖\n- 与《策划.md》5.3路线图一致：逐期落地生成→联调→门禁→灰度→SLO看板。\n- 依赖：Gin、OpenAPI/Swagger、KMS、对象存储、向量库（安全策略与删除传播）。\n\n## 规范\n- 统一响应与错误码；RBAC与鉴权；限流与配额；审计与日志脱敏。\n- CI门禁：lint/test/安全扫描/契约测试/性能基线；灰度与自动回滚；审批分层。",
+  "fileStats": {
+    "size": 1341,
+    "lines": 25,
+    "lastModified": "2025-09-30T07:45:29.227Z"
+  },
+  "comments": []
+}

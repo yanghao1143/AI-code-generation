@@ -1,0 +1,19 @@
+[Preview] requestId=req-ai-codegen-003
+
+[Contract]
+- Baseline diff generated: see `openapi.diff`
+- Key change: added path `GET /api/v1/articles/stream` with SSE metadata
+
+[Security]
+- `go vet`: no blocking issues recorded
+- `go mod verify`: all modules verified
+
+[Performance]
+- Single check: `time_total: 0.000364s`, `http_code: 200`
+- Samples: 30 (warmup 5), duration: 0.123s
+- Latency: min 0.000122s, avg 0.000186s, p50 0.000154s, p90 0.000348s, p99 0.000573s, max 0.000573s
+- Throughput: 243.90 RPS
+
+[Artifacts]
+- Directory: `/root/xingzuo/scripts/reports/req-ai-codegen-003`
+- Files: `openapi.json`, `openapi.diff`, `performance.txt`, `security.txt`, `SUMMARY.txt`

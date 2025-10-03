@@ -1,0 +1,16 @@
+{
+  "id": "snapshot_1759470867155_qepi2bk1a",
+  "approvalId": "approval_1759470867144_4c595snnc",
+  "approvalTitle": "nlp-spec-automation 文档一致性审阅（review.md）请审批",
+  "version": 1,
+  "timestamp": "2025-10-03T05:54:27.155Z",
+  "trigger": "initial",
+  "status": "pending",
+  "content": "# nlp-spec-automation 文档审阅记录（review）\n\n本审阅针对 `.spec-workflow/specs/nlp-spec-automation/requirements.md`、`design.md`、`tasks.md` 三文档的一致性与可追溯性进行检查，并给出后续改进建议。\n\n## 1. 范围与结构检查\n- 文档齐备：requirements/design/tasks 均存在，结构清晰。\n- 需求概述与目标明确：覆盖“从自然语言到规范与数据库”的自动化目标，含 OpenAPI 与 DDL 一致性校验。\n- 设计包含领域实体、字段、关系，以及澄清问题清单，便于实现前确认。\n\n## 2. 一致性与可追溯性\n- 需求→设计：\n  - 需求提出“自动生成规格与 DDL、生成 OpenAPI 并 speccheck”，设计已有实体模型与关系，满足向 DDL/OpenAPI 转换的基础；建议在设计中补充各实体的约束细节（长度、精度、唯一等），以更好满足“字段约束”要求。\n- 设计→任务：\n  - 任务列表包含 DDL 创建、索引、版本化与审计、NLP 精度提升，与设计的“澄清问题”相关性较好。建议在后续任务中明确：\n    - DDL 生成的输出文件路径与版本策略（scripts/db/*.sql），与需求中约定一致。\n    - speccheck 报告产出路径与 CI 集成（例如 scripts/reports/consistency/nlp-spec-automation/report.md）。\n\n## 3. 术语与实体一致性\n- 设计列出实体：Anchor/Fan/Tag/Conversation/FortuneService/FortuneRecord/Topic/Script/Workflow 等；与需求范围中的“对话、脚本、工作流、测算”相吻合。\n- 建议在 requirements 中增加术语表或将部分术语在设计中以 Glossary 形式呈现，减少歧义（例如“FortuneService/Record”的定义与范围）。\n\n## 4. 风险与限制\n- NLP 解析歧义与字段约束冲突已在需求中说明，建议在设计阶段为每个关键实体补充索引与约束示例，降低误差风险。\n- 隐私与合规：设计的澄清问题指出生日、性别等敏感字段；建议在任务中加入“合规检查”子任务或验收标准。\n\n## 5. 待办与后续动作\n1) 在设计文档中补充字段约束细化（maxLength、precision/scale、unique、not null），并与 DDL 生成策略对齐。\n2) 在任务文档中为 DDL 生成与 speccheck 增加明确的输出路径与验收标准（含 CI）。\n3) 在 requirements 增补术语表或在 design 增设 Glossary 段落，统一术语定义。\n4) 在任务中新增或细化“合规检查”步骤（隐私字段处理与日志审计）。\n\n## 6. 结论\n三文档总体一致，具备实施基础；按上述待办项补充后，可进入数据库 DDL 生成与索引规划阶段。",
+  "fileStats": {
+    "size": 2653,
+    "lines": 33,
+    "lastModified": "2025-10-03T05:54:11.498Z"
+  },
+  "comments": []
+}

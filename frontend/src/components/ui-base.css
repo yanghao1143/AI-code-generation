@@ -1,0 +1,22 @@
+/* Global base layout styles for app container, title, and nav */
+.app-container {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  padding: var(--space-lg, 16px);
+}
+
+/* Unified UI container */
+.ui-container {
+  padding: var(--space-lg, 16px);
+}
+
+.app-title {
+  margin-bottom: var(--space-sm, 8px);
+}
+
+.app-nav {
+  margin-top: var(--space-md, 12px);
+  display: flex;
+  gap: var(--space-md, 12px);
+  align-items: center;
+  flex-wrap: wrap;
+}

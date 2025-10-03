@@ -1,0 +1,14 @@
+{
+  "filePath": ".spec-workflow/specs/ai-codegen/tasks.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2025-09-30T12:30:59.674Z",
+      "trigger": "initial",
+      "approvalId": "approval_1759235459667_sntivisfi",
+      "approvalTitle": "ai-codegen 规格：任务清单（tasks.md）审批"
+    }
+  ]
+}

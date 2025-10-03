@@ -1,0 +1,57 @@
+/* Panel selected/active state enhancements using token fallbacks */
+.ui-panel.is-selected,
+.ui-panel[aria-selected="true"],
+.ui-panel[data-selected="true"],
+.ui-panel.ui-panel--selected {
+  /* Prefer panel-selected tokens; fall back to link-active and then a safe accent */
+  border-color: var(--panel-selected-border-color, var(--link-active-color, #3b82f6));
+  background: var(--panel-selected-bg, var(--panel-bg));
+  box-shadow:
+    var(
+      --panel-selected-shadow,
+      0 0 0 2px color-mix(
+        in oklab,
+        var(--panel-selected-border-color, var(--link-active-color, #3b82f6)) 50%,
+        transparent
+      )
+    ),
+    var(--panel-shadow, var(--shadow-sm, 0 2px 8px rgba(0,0,0,0.08)));
+  transition: box-shadow 150ms ease, border-color 150ms ease, background-color 150ms ease;
+}
+
+.ui-panel.is-selected:hover,
+.ui-panel[aria-selected="true"]:hover,
+.ui-panel[data-selected="true"]:hover {
+  box-shadow:
+    var(
+      --panel-selected-shadow-hover,
+      0 0 0 3px color-mix(
+        in oklab,
+        var(--panel-selected-border-color, var(--link-active-color, #3b82f6)) 60%,
+        transparent
+      )
+    ),
+    var(
+      --panel-shadow-hover,
+      var(--panel-shadow, var(--shadow-md, 0 8px 24px rgba(0,0,0,0.12)))
+    );
+}
+
+.ui-panel.is-selected:focus-visible,
+.ui-panel[aria-selected="true"]:focus-visible,
+.ui-panel[data-selected="true"]:focus-visible {
+  outline: none;
+  box-shadow:
+    var(
+      --panel-selected-shadow-focus,
+      0 0 0 4px color-mix(
+        in oklab,
+        var(--panel-selected-border-color, var(--link-active-color, #3b82f6)) 65%,
+        transparent
+      )
+    ),
+    var(
+      --panel-shadow-hover,
+      var(--panel-shadow, var(--shadow-md, 0 8px 24px rgba(0,0,0,0.12)))
+    );
+}

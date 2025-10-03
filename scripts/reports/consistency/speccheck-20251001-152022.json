@@ -1,0 +1,54 @@
+{
+  "generatedAt": "2025-10-01T15:20:22.917609688+08:00",
+  "sourceDDL": "/root/xingzuo/scripts/db/create.sql",
+  "summary": "missingTables=9 extraTables=2 missingColumnsTables=0 typeMismatchTables=0",
+  "missingTables": [
+    "conversation",
+    "topic",
+    "script",
+    "tag",
+    "fortune_service",
+    "fortune_record",
+    "workflow",
+    "anchor",
+    "fan"
+  ],
+  "extraTables": [
+    "user",
+    "order"
+  ],
+  "missingColumns": {},
+  "typeMismatches": {},
+  "openapi": {
+    "source": "/root/xingzuo/dist/openapi.json",
+    "missingResources": [
+      "fans",
+      "fortune_records",
+      "scripts",
+      "anchors",
+      "tags",
+      "conversations",
+      "fortune_services",
+      "topics",
+      "workflows"
+    ],
+    "extraResources": [
+      "orders",
+      "users"
+    ],
+    "schemaMissingEntities": [
+      "Anchor",
+      "Fan",
+      "Tag",
+      "Conversation",
+      "FortuneService",
+      "FortuneRecord",
+      "Topic",
+      "Script",
+      "Workflow"
+    ],
+    "schemaMissingFields": {},
+    "schemaTypeMismatches": {},
+    "summary": "missingResources=9 extraResources=2 schemaMissing=9 fieldIssues=0"
+  }
+}

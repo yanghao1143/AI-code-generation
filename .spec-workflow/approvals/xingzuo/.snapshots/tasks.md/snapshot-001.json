@@ -1,0 +1,16 @@
+{
+  "id": "snapshot_1759218564823_lxjuxe87f",
+  "approvalId": "approval_1759218564815_8wgtxtv62",
+  "approvalTitle": "任务阶段（xingzuo）文档审批",
+  "version": 1,
+  "timestamp": "2025-09-30T07:49:24.823Z",
+  "trigger": "initial",
+  "status": "pending",
+  "content": "# 任务阶段（xingzuo）\n\n- [x] 建立 `.spec-workflow/steering` 三文档并填充策划要点\n- [x] 将鉴权与限流中间件接入 `/api/v1`\n- [x] 统一错误处理与 JSON 绑定助手\n- [x] API Registry 接入主程序并对齐占位路由\n- [ ] 落地 CI 门禁（lint/test/安全/契约/性能）\n- [ ] 初始化 `billing/` 支付与结算模块路由与数据模型\n- [ ] 前端 DSL 与组件映射的审批与灰度工作流对接\n- [ ] 智能联调：契约测试、错误分类与补丁建议落地\n- [ ] 质量看板与SLO指标采集（追踪/指标/事件复盘）",
+  "fileStats": {
+    "size": 584,
+    "lines": 11,
+    "lastModified": "2025-09-30T07:46:47.760Z"
+  },
+  "comments": []
+}

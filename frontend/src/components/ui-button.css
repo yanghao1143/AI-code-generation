@@ -1,0 +1,73 @@
+.ui-btn {
+  padding: 9px 14px;
+  border-radius: var(--radius-lg, 12px);
+  border: 1px solid transparent;
+  color: var(--btn-text-on-primary, #ffffff);
+  background: linear-gradient(135deg, var(--color-primary-start, #2563eb), var(--color-primary-end, #7c3aed));
+  box-shadow: 0 6px 18px var(--shadow-primary, rgba(37, 99, 235, 0.25));
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease;
+}
+
+.ui-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px var(--shadow-primary-hover, rgba(124, 58, 237, 0.25));
+}
+
+.ui-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--ring-accent, rgba(124, 58, 237, 0.12));
+}
+
+.ui-btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.ui-btn--ghost {
+  background: transparent;
+  color: var(--btn-ghost-text, #111827);
+  border-color: var(--btn-border, #e5e7eb);
+}
+
+/* Ghost hover/focus adjustments */
+.ui-btn--ghost:hover {
+  border-color: var(--color-accent, #7c3aed);
+}
+.ui-btn--ghost:focus-visible {
+  box-shadow: 0 0 0 3px var(--ring-accent, rgba(124, 58, 237, 0.12));
+}
+
+/* Ghost active/current (用于导航按钮的选中态) */
+.ui-btn--ghost[aria-current="page"],
+.ui-btn--ghost.is-active {
+  color: var(--link-active-color, #1d4ed8);
+  border-color: var(--link-active-color, #1d4ed8);
+  font-weight: 600;
+}
+
+/* Danger variant for destructive actions */
+.ui-btn--danger {
+  background: linear-gradient(135deg, var(--color-danger-start, #ef4444), var(--color-danger-end, #b91c1c));
+  color: var(--btn-text-on-primary, #ffffff);
+  border-color: transparent;
+  box-shadow: 0 6px 18px var(--shadow-danger, rgba(239, 68, 68, 0.25));
+}
+
+.ui-btn--danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px var(--shadow-danger-hover, rgba(185, 28, 28, 0.25));
+}
+
+.ui-btn--danger:focus-visible {
+  box-shadow: 0 0 0 3px var(--ring-danger, rgba(239, 68, 68, 0.12));
+}
+
+/* Active states: reduce lift and shadow */
+.ui-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px var(--shadow-primary, rgba(37, 99, 235, 0.25));
+}
+.ui-btn--danger:active {
+  box-shadow: 0 4px 12px var(--shadow-danger, rgba(239, 68, 68, 0.25));
+}

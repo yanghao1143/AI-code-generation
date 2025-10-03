@@ -1,0 +1,16 @@
+{
+  "id": "snapshot_1759218445256_djbb4n6oj",
+  "approvalId": "approval_1759218445255_3eidj3lkl",
+  "approvalTitle": "技术架构（星座项目）文档审批",
+  "version": 1,
+  "timestamp": "2025-09-30T07:47:25.256Z",
+  "trigger": "initial",
+  "status": "pending",
+  "content": "# 技术架构（星座项目）\n\n## 总体架构\n- 后端：Golang + Gin，统一中间件（请求ID、错误处理、鉴权、RBAC、限流）、统一响应结构与API Registry。\n- 前端：基于 UI DSL（JSON Schema风格）与组件映射（Web/移动），路由与权限自动注册，预览环境隔离。\n- AI能力：\n  - 前端生成：Prompt→DSL→组件映射→校验→快照→审批→合并。\n  - 后端生成：需求→OpenAPI→Gin Handler/Service/Repo→测试→Swagger/Registry→灰度。\n  - 智能联调：契约比对、错误分类（网络/鉴权/限流/模式不匹配/后端异常）、补丁建议与回归测试。\n- DevOps：CI/CD门禁（lint/test/安全扫描/契约测试/性能对比），灰度发布与自动回滚；统一追踪与质量看板。\n\n## 安全与合规\n- 字段级加密与KMS管理（静态加密、对象存储/备份加密、密钥轮换与演练）。\n- 日志脱敏与保留策略；最小化数据采集与去标识化测试数据。\n- 向量库安全：集合分级、payload白名单、删除权事件链路、备份与恢复演练。详见《策划.md》附录10.3。\n\n## 业务闭环技术设计\n- 支付与结算：订单/支付/回调/配额变更/账单/对账/退款/发票，接口与数据模型在《策划.md》4.6；配合风控与SOP。\n- 成本与配额：LLM路由的成本限制与预算曲线，高成本模型需额外审批；生成/联调任务限流与配额管理。\n\n## 非功能（NFR）\n- 性能：关键接口P99≤300ms；错误预算月度≤20%；契约通过率≥95%。\n- 可靠性：统一错误码与自动修复策略（重试/退避/熔断/隔离）；MTTR优化。\n- 兼容性：OpenAPI与前端DSL契约一致；API Registry对齐校验与破坏性变更报告。\n\n## 代码结构（当前仓库）\n- `cmd/app/main.go` 主程序，注册 `/api/v1` 路由组与中间件。\n- `internal/middleware/*` 请求ID、错误处理、RBAC、鉴权、限流。\n- `internal/ai/*` 前端/后端/联调占位接口与请求绑定。\n- `internal/api/response.go` 统一响应结构。\n- `internal/registry/routes.go` 统一API注册端点。\n- `internal/validation/bind.go` 统一JSON绑定与错误响应。\n\n## 与《策划.md》的对应关系\n- 4.7–4.9：AI生成前端/后端与智能联调框架 → 已有占位路由与统一响应。\n- 4.10–4.16：CI/审批、质量指标、风险与限流、Prompt治理、人机协作与错误码策略 → 中间件与流程可逐步落地到CI。\n- 4.6：支付与结算闭环 → 后续模块化实现与路由接入。",
+  "fileStats": {
+    "size": 2564,
+    "lines": 37,
+    "lastModified": "2025-09-30T07:45:26.990Z"
+  },
+  "comments": []
+}

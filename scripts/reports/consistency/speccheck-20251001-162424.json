@@ -1,0 +1,18 @@
+{
+  "generatedAt": "2025-10-01T16:24:24.255380328+08:00",
+  "sourceDDL": "/root/xingzuo/scripts/db/create.sql",
+  "summary": "missingTables=0 extraTables=0 missingColumnsTables=0 typeMismatchTables=0",
+  "missingTables": [],
+  "extraTables": [],
+  "missingColumns": {},
+  "typeMismatches": {},
+  "openapi": {
+    "source": "/root/xingzuo/dist/openapi.json",
+    "missingResources": [],
+    "extraResources": [],
+    "schemaMissingEntities": [],
+    "schemaMissingFields": {},
+    "schemaTypeMismatches": {},
+    "summary": "missingResources=0 extraResources=0 schemaMissing=0 fieldIssues=0"
+  }
+}

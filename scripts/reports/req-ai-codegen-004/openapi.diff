@@ -1,0 +1,73 @@
+--- /root/xingzuo/.spec-workflow/specs/xingzuo/openapi.json	2025-09-30 20:51:05.707076280 +0800
++++ /root/xingzuo/scripts/reports/req-ai-codegen-004/openapi.json	2025-09-30 21:10:09.270468222 +0800
+@@ -896,6 +896,70 @@
+         "summary": "Update article"
+       }
+     },
++    "/api/v1/articles/stream": {
++      "get": {
++        "description": "Server-Sent Events stream for article operations. Content-Type: text/event-stream. Frames include data (payload), heartbeat (keep-alive), and a terminal 'event: done'. Requires bearer authentication and 'articles' permission via RBAC. Errors follow unified ErrorResponse codes and structure.",
++        "parameters": [
++          {
++            "$ref": "#/components/parameters/XRequestId"
++          },
++          {
++            "description": "Streaming mode: 'example' emits demo frames; 'list' streams current articles as JSON frames",
++            "in": "query",
++            "name": "mode",
++            "required": false,
++            "schema": {
++              "enum": [
++                "example",
++                "list"
++              ],
++              "type": "string"
++            }
++          }
++        ],
++        "responses": {
++          "200": {
++            "$ref": "#/components/responses/OK"
++          },
++          "default": {
++            "$ref": "#/components/responses/Error"
++          }
++        },
++        "security": [
++          {
++            "bearerAuth": []
++          },
++          {
++            "headerPermissions": []
++          }
++        ],
++        "summary": "Articles SSE stream",
++        "x-response-content-type": "text/event-stream",
++        "x-sse": {
++          "contentType": "text/event-stream",
++          "errorExample": {
++            "body": {
++              "code": "E3001",
++              "detail": {
++                "hint": "SSE不支持"
++              },
++              "message": "StreamError",
++              "requestId": "00000000-0000-0000-0000-000000000000",
++              "severity": "error"
++            },
++            "contentType": "application/json"
++          },
++          "example": "data: part-1\n\n:heartbeat\n\ndata: part-2\n\nevent: done\n\n",
++          "frameFields": {
++            "event": "optional event name for the following data",
++            "id": "optional message id for reconnection",
++            "retry": "client reconnection delay in milliseconds"
++          },
++          "notes": "Heartbeat is an SSE comment frame (' :heartbeat'). Termination is signaled via 'event: done'."
++        },
++        "x-streaming": true
++      }
++    },
+     "/api/v1/billing/invoices": {
+       "get": {
+         "parameters": [

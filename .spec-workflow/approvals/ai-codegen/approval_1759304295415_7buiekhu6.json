@@ -1,0 +1,12 @@
+{
+  "id": "approval_1759304295415_7buiekhu6",
+  "title": "Requirements approval: Enhance ai-codegen to parse natural language and auto-generate specs/xingzuo modules + database DDL",
+  "filePath": ".spec-workflow/specs/ai-codegen/requirements.md",
+  "type": "document",
+  "status": "approved",
+  "createdAt": "2025-10-01T07:38:15.415Z",
+  "category": "spec",
+  "categoryName": "ai-codegen",
+  "response": "已批准",
+  "respondedAt": "2025-10-01T08:18:56.347Z"
+}

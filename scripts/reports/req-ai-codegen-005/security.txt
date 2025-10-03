@@ -1,0 +1,4 @@
+== go vet ==
+
+== go mod verify ==
+all modules verified

@@ -1,0 +1,23 @@
+{
+  "name": "Articles Service",
+  "resources": [
+    {
+      "name": "Article",
+      "basePath": "/api/v1/articles",
+      "operations": ["list", "get", "create", "update", "delete"],
+      "schema": {
+        "type": "object",
+        "required": ["id", "title", "content", "createdAt"],
+        "properties": {
+          "id": {"type": "string"},
+          "title": {"type": "string"},
+          "content": {"type": "string"},
+          "authorId": {"type": "string"},
+          "tags": {"type": "array", "items": {"type": "string"}},
+          "createdAt": {"type": "string", "format": "date-time"},
+          "updatedAt": {"type": "string", "format": "date-time"}
+        }
+      }
+    }
+  ]
+}

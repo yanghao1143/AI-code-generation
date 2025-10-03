@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2025-10-02T00:56:26.071518555+08:00",
+  "sourceDDL": "/root/xingzuo/scripts/db/create.sql",
+  "summary": "missingTables=0 extraTables=0 missingColumnsTables=5 typeMismatchTables=0",
+  "missingTables": [],
+  "extraTables": [],
+  "missingColumns": {
+    "conversation": [
+      "anchor_id",
+      "content"
+    ],
+    "fortune_service": [
+      "code",
+      "input_schema"
+    ],
+    "script": [
+      "title",
+      "topic_id"
+    ],
+    "topic": [
+      "name",
+      "popularity"
+    ],
+    "workflow": [
+      "definition"
+    ]
+  },
+  "typeMismatches": {},
+  "openapi": {
+    "source": "/root/xingzuo/scripts/reports/req-ai-codegen-009/openapi.json",
+    "missingResources": [],
+    "extraResources": [],
+    "schemaMissingEntities": [],
+    "schemaMissingFields": {},
+    "schemaTypeMismatches": {},
+    "summary": "missingResources=0 extraResources=0 schemaMissing=0 fieldIssues=0"
+  }
+}
