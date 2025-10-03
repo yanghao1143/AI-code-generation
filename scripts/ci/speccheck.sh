@@ -72,15 +72,24 @@ RUN_LOG="$OUT_DIR/speccheck-run-$timestamp.log"
 echo "[speccheck] Running consistency check..."
 { go run ./cmd/specpipe speccheck --ddl="$DDL" --openapi="$OPENAPI_JSON" --terms="$TERMS" --out="$OUT"; } 2>&1 | tee "$RUN_LOG"
 
-# Determine actual output path (some versions of specpipe may write with its own timestamp)
+# Determine actual output path robustly
+# Some versions of specpipe ignore --out and write with their own timestamp.
 OUT_REAL="$OUT"
 if [[ ! -f "$OUT_REAL" ]]; then
-  alt=$(grep -E 'Consistency report written:' "$RUN_LOG" | tail -n1 | sed -E 's/.*Consistency report written:\s*(.*)/\1/')
-  if [[ -n "$alt" && -f "$alt" ]]; then
-    OUT_REAL="$alt"
+  # Prefer the latest file in the reports directory
+  latest=$(ls -t "$OUT_DIR"/speccheck-*.json 2>/dev/null | head -n1 || true)
+  if [[ -n "$latest" && -f "$latest" ]]; then
+    OUT_REAL="$latest"
   else
-    latest=$(ls -t "$OUT_DIR"/speccheck-*.json 2>/dev/null | head -n1 || true)
-    if [[ -n "$latest" ]]; then OUT_REAL="$latest"; fi
+    # Fallback to parsing the run log for an absolute path
+    alt=$(grep -E 'Consistency report written:' "$RUN_LOG" | tail -n1 | sed -E 's/.*Consistency report written:\s*(.*)/\1/' | tr -d '\r')
+    if [[ -n "$alt" && -f "$alt" ]]; then
+      OUT_REAL="$alt"
+    else
+      echo "[speccheck] ERROR: No report file found in $OUT_DIR. Specpipe may have failed."
+      echo "[speccheck] Run log: $RUN_LOG"
+      exit 2
+    fi
   fi
 fi
 
