@@ -68,18 +68,31 @@ db_precheck || true
 timestamp=$(date +%Y%m%d-%H%M%S)
 OUT="$OUT_DIR/speccheck-$timestamp.json"
 
+RUN_LOG="$OUT_DIR/speccheck-run-$timestamp.log"
 echo "[speccheck] Running consistency check..."
-go run ./cmd/specpipe speccheck --ddl="$DDL" --openapi="$OPENAPI_JSON" --terms="$TERMS" --out="$OUT"
+{ go run ./cmd/specpipe speccheck --ddl="$DDL" --openapi="$OPENAPI_JSON" --terms="$TERMS" --out="$OUT"; } 2>&1 | tee "$RUN_LOG"
 
-echo "[speccheck] Report written: $OUT"
+# Determine actual output path (some versions of specpipe may write with its own timestamp)
+OUT_REAL="$OUT"
+if [[ ! -f "$OUT_REAL" ]]; then
+  alt=$(grep -E 'Consistency report written:' "$RUN_LOG" | tail -n1 | sed -E 's/.*Consistency report written:\s*(.*)/\1/')
+  if [[ -n "$alt" && -f "$alt" ]]; then
+    OUT_REAL="$alt"
+  else
+    latest=$(ls -t "$OUT_DIR"/speccheck-*.json 2>/dev/null | head -n1 || true)
+    if [[ -n "$latest" ]]; then OUT_REAL="$latest"; fi
+  fi
+fi
+
+echo "[speccheck] Report written: $OUT_REAL"
 
 # Try parse summary using jq if available, fallback to grep/awk parsing
 if command -v jq >/dev/null 2>&1; then
-  summary=$(jq -r '.summary' "$OUT")
-  openapi_summary=$(jq -r '.openapi.summary' "$OUT")
+  summary=$(jq -r '.summary' "$OUT_REAL")
+  openapi_summary=$(jq -r '.openapi.summary' "$OUT_REAL")
 else
-  summary=$(grep -m1 '"summary"' "$OUT" | sed -E 's/.*"summary"\:\s*"(.*)".*/\1/')
-  openapi_summary=$(grep -m1 '"summary"' "$OUT" -n | tail -n1 | sed -E 's/.*"summary"\:\s*"(.*)".*/\1/')
+  summary=$(grep -m1 '"summary"' "$OUT_REAL" | sed -E 's/.*"summary"\:\s*"(.*)".*/\1/')
+  openapi_summary=$(grep -m1 '"summary"' "$OUT_REAL" -n | tail -n1 | sed -E 's/.*"summary"\:\s*"(.*)".*/\1/')
 fi
 
 echo "[speccheck] Summary: $summary"
@@ -121,9 +134,9 @@ fail=0
 [[ -n "$fi" && ${fi:-0} -gt $FAIL_ON_FIELD_ISSUES ]] && echo "[speccheck] Fail: fieldIssues=$fi > $FAIL_ON_FIELD_ISSUES" && fail=1
 
 if [[ $fail -eq 1 ]]; then
-  echo "[speccheck] Failed thresholds. See $OUT"
+  echo "[speccheck] Failed thresholds. See $OUT_REAL"
   exit 1
 fi
 
-echo "[speccheck] Passed. Report: $OUT"
+echo "[speccheck] Passed. Report: $OUT_REAL"
 exit 0
