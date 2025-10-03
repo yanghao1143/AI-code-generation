@@ -21,6 +21,7 @@ on:
 jobs:
   consistency-check:
     runs-on: ubuntu-latest
+    environment: AUTH_TOKEN
     steps:
       - name: Checkout
         uses: actions/checkout@v4
