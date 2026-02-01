@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>🤖 三模型指挥中心</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d1117; 
+      color: #c9d1d9; 
+      padding: 20px;
+    }
+    h1 { 
+      text-align: center; 
+      margin-bottom: 20px; 
+      color: #58a6ff;
+    }
+    .grid { 
+      display: grid; 
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 15px; 
+    }
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 15px;
+      min-height: 300px;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #30363d;
+    }
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    .status-working { background: #3fb950; }
+    .status-waiting { background: #d29922; }
+    .status-idle { background: #8b949e; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .model-name { font-weight: 600; font-size: 18px; }
+    .task { color: #8b949e; font-size: 13px; margin-bottom: 10px; }
+    .output {
+      background: #0d1117;
+      border-radius: 4px;
+      padding: 10px;
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .timestamp {
+      text-align: center;
+      color: #8b949e;
+      font-size: 12px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🤖 三模型指挥中心</h1>
+  <div class="grid">
+    <div class="card">
+      <div class="card-header">
+        <div class="status-dot" id="claude-status"></div>
+        <span class="model-name">🟣 Claude</span>
+      </div>
+      <div class="task" id="claude-task">-</div>
+      <div class="output" id="claude-output">加载中...</div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="status-dot" id="gemini-status"></div>
+        <span class="model-name">🔵 Gemini</span>
+      </div>
+      <div class="task" id="gemini-task">-</div>
+      <div class="output" id="gemini-output">加载中...</div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="status-dot" id="codex-status"></div>
+        <span class="model-name">🟢 Codex</span>
+      </div>
+      <div class="task" id="codex-task">-</div>
+      <div class="output" id="codex-output">加载中...</div>
+    </div>
+  </div>
+  <div class="timestamp" id="timestamp">-</div>
+</body>
+</html>

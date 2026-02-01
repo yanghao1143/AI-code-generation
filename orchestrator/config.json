@@ -1,0 +1,32 @@
+{
+  "models": {
+    "claude": {
+      "cmd": "/mnt/c/Windows/System32/cmd.exe /c claude",
+      "strengths": ["代码架构", "复杂逻辑", "debug", "重构"],
+      "workdir": "C:\\Projects"
+    },
+    "gemini": {
+      "cmd": "/mnt/c/Windows/System32/cmd.exe /c gemini",
+      "strengths": ["前端UI", "设计", "文档", "多模态"],
+      "workdir": "C:\\Projects"
+    },
+    "codex": {
+      "cmd": "/mnt/c/Windows/System32/cmd.exe /c codex",
+      "strengths": ["快速实现", "脚本", "自动化", "测试"],
+      "workdir": "C:\\Projects"
+    }
+  },
+  "redis": {
+    "prefix": "openclaw:",
+    "keys": {
+      "context": "context:current",
+      "tasks": "tasks:active",
+      "summary": "summary:latest",
+      "history": "history:log"
+    }
+  },
+  "backup": {
+    "file_path": "/home/jinyang/.openclaw/workspace/memory/",
+    "auto_commit": true
+  }
+}
