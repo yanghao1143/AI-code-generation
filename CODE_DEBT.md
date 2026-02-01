@@ -1,5 +1,104 @@
 # CODE_DEBT.md - 代码债务追踪
 
+## 2026-02-01 巡检 (21:51) - 最新扫描 ✅
+
+**扫描路径**: `/mnt/d/ai软件/zed/crates/`
+
+### 扫描结果摘要
+
+| 指标 | cc_switch | multi_model_dispatch | 总计 |
+|------|-----------|---------------------|------|
+| 总行数 | 5590 | 565 | 6155 |
+| 源文件数 | 14 | 8 | 22 |
+| 未使用 imports | 16 | 10 | **26** |
+| TODO/FIXME | 1 | 1 | **2** |
+| unwrap() 调用 | 24 | 0 | **24** |
+| expect() 调用 | 12 | 0 | **12** |
+| 注释代码块 | 6 | 0 | **6** |
+| deprecated API | 0 ✅ | 0 ✅ | **0** ✅ |
+| dbg!/println! | 0 ✅ | 0 ✅ | **0** ✅ |
+| panic! (非测试) | 0 ✅ | 0 ✅ | **0** ✅ |
+| unsafe 块 | 0 ✅ | 0 ✅ | **0** ✅ |
+
+### 详细问题列表
+
+#### cc_switch crate - 未使用的 imports (16 个)
+
+| 文件 | 行号 | Import | 优先级 |
+|------|------|--------|--------|
+| api_client.rs | 5 | anyhow::{anyhow, Context, Result} | 低 |
+| api_client.rs | 6 | base64::prelude::* | 低 |
+| api_client.rs | 7 | credentials_provider::CredentialsProvider | 低 |
+| api_client.rs | 8 | futures::AsyncReadExt | 低 |
+| api_client.rs | 9 | gpui::AsyncApp | 低 |
+| api_client.rs | 10 | http_client::{AsyncBody, HttpClient, Method, Request, StatusCode} | 低 |
+| api_client.rs | 11 | i18n::t | 低 |
+| api_client.rs | 12 | rand::Rng | 低 |
+| api_client.rs | 13 | sha2::{Digest, Sha256} | 低 |
+| api_client.rs | 14 | std::collections::HashMap | 低 |
+| api_client.rs | 15 | std::sync::Arc | 低 |
+| api_client.rs | 16 | std::time::Duration | 低 |
+| api_client.rs | 17 | tiny_http::{Response, Server} | 低 |
+| api_client.rs | 18 | url::Url | 低 |
+| cc_switch.rs | 46 | gpui::App | 低 |
+| cc_switch.rs | 47 | settings::Settings | 低 |
+
+#### multi_model_dispatch crate - 未使用的 imports (10 个)
+
+| 文件 | 行号 | Import | 优先级 |
+|------|------|--------|--------|
+| agent/agent.rs | 1 | std::sync::Arc | 低 |
+| agent/agent.rs | 2 | anyhow::{Result, anyhow} | 低 |
+| agent/agent.rs | 3 | gpui::AsyncApp | 低 |
+| agent/agent.rs | 4 | language_model::{LanguageModel, LanguageModelRequest, LanguageModelCompletionEvent, Role, MessageContent} | 低 |
+| agent/agent.rs | 5 | futures::StreamExt | 低 |
+| dispatcher.rs | 1 | std::sync::Arc | 低 |
+| dispatcher.rs | 2 | anyhow::Result | 低 |
+| dispatcher.rs | 3 | gpui::{App, AsyncApp, Task} | 低 |
+| dispatcher.rs | 4 | language_model::{LanguageModel, LanguageModelRegistry} | 低 |
+| dispatcher.rs | 5 | crate::agent::{Agent, AgentRole} | 低 |
+
+#### TODO/FIXME 列表
+
+| 文件 | 行号 | 内容 | 优先级 |
+|------|------|------|--------|
+| cc_switch/config_sync.rs | 763 | Implement update logic (git pull) | 中 |
+| multi_model_dispatch/multi_model_dispatch.rs | 201 | Display plan somewhere? For now just log/notify. | 中 |
+
+### 本次巡检结论
+
+✅ **整体代码质量良好**
+- 无 deprecated API 使用
+- 无调试宏残留 (dbg!/println!)
+- 无 unsafe 代码
+- 无 panic! (非测试)
+- multi_model_dispatch 代码质量优秀 (0 unwrap/expect)
+
+⚠️ **需要改进的地方**
+1. **26 个未使用的 imports** - 建议使用 `cargo fix` 自动清理
+2. **2 个 TODO 待实现** - 需要设计和实现
+3. **36 个 unwrap/expect 调用** - 多数在 Mutex lock 和测试代码中，可接受
+
+### 清理建议
+
+#### 立即可做 (高优先级)
+```bash
+# 自动清理未使用的 imports
+cd /mnt/d/ai软件/zed
+cargo fix -p cc_switch --allow-dirty
+cargo fix -p multi_model_dispatch --allow-dirty
+```
+
+#### 需要设计 (中优先级)
+1. **config_sync.rs:763** - 实现技能更新逻辑 (git pull)
+2. **multi_model_dispatch.rs:201** - 实现 dispatch 结果的 UI 展示
+
+#### 可选优化 (低优先级)
+1. 审查 unwrap/expect 调用，考虑使用 `?` 操作符或 `map_err`
+2. 确认注释代码块是否为死代码
+
+---
+
 ## 2026-02-01 巡检 (21:05)
 
 **扫描路径**: `/mnt/d/ai软件/zed/crates/`
