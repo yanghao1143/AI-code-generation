@@ -1,0 +1,72 @@
+{
+  "concurrency": {
+    "max_total": 6,
+    "max_opus": 2,
+    "max_sonnet": 3,
+    "max_haiku": 5
+  },
+  "priorities": {
+    "P0_CRITICAL": 0,
+    "P1_HIGH": 100,
+    "P2_MEDIUM": 200,
+    "P3_LOW": 300
+  },
+  "tasks": [
+    {
+      "id": "commander_patrol",
+      "name": "综合巡检",
+      "model": "sonnet",
+      "priority": "P1_HIGH",
+      "interval_ms": 180000,
+      "message": "【综合巡检】检查 tmux 会话状态，处理确认，派发任务，审查代码质量。"
+    },
+    {
+      "id": "health_monitor",
+      "name": "健康监控",
+      "model": "haiku",
+      "priority": "P1_HIGH",
+      "interval_ms": 600000,
+      "message": "【健康监控】检查 context 使用率和 agent 效率，更新 AGENT_STATUS.md。"
+    },
+    {
+      "id": "code_quality",
+      "name": "代码质量",
+      "model": "haiku",
+      "priority": "P2_MEDIUM",
+      "interval_ms": 1800000,
+      "message": "【代码质量】扫描 cc_switch 和 multi_model_dispatch，检查 unused imports、TODO、复杂度。"
+    },
+    {
+      "id": "progress_report",
+      "name": "进度汇报",
+      "model": "sonnet",
+      "priority": "P2_MEDIUM",
+      "interval_ms": 900000,
+      "message": "【进度汇报】汇报三个 agent 的工作进度，用表格和 emoji。"
+    },
+    {
+      "id": "build_test",
+      "name": "编译测试",
+      "model": "sonnet",
+      "priority": "P1_HIGH",
+      "interval_ms": 1800000,
+      "message": "【编译测试】运行 cargo check 和 cargo test，失败则派修复任务。"
+    },
+    {
+      "id": "git_docs",
+      "name": "Git文档",
+      "model": "haiku",
+      "priority": "P3_LOW",
+      "interval_ms": 1800000,
+      "message": "【Git文档】检查未提交改动，更新文档，git commit+push。"
+    },
+    {
+      "id": "security_scan",
+      "name": "安全扫描",
+      "model": "haiku",
+      "priority": "P3_LOW",
+      "interval_ms": 7200000,
+      "message": "【安全扫描】检查依赖安全、注释质量、性能热点。"
+    }
+  ]
+}

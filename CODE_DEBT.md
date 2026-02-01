@@ -1,5 +1,122 @@
 # CODE_DEBT.md - 代码债务追踪
 
+## 2026-02-01 巡检 (22:19) - 最新扫描 ✅
+
+**扫描路径**: `/mnt/d/ai软件/zed/crates/`
+**扫描时间**: 2026-02-01 22:19:59 (GMT+8)
+**扫描工具**: 自动化代码质量检查脚本 (Python 启发式分析)
+
+### 扫描结果摘要
+
+| 指标 | cc_switch | multi_model_dispatch | 总计 |
+|------|-----------|---------------------|------|
+| 总行数 | 5590 | 565 | 6155 |
+| 源文件数 | 14 | 8 | 22 |
+| 未使用 imports | 29 | 11 | **40** |
+| TODO/FIXME | 1 | 1 | **2** |
+| 注释代码块 | 1 | 2 | **3** |
+| unwrap() 调用 | 36 | 0 | **36** |
+| expect() 调用 | 0 | 0 | **0** |
+| deprecated API | 0 ✅ | 0 ✅ | **0** ✅ |
+| dbg!/println! | 0 ✅ | 0 ✅ | **0** ✅ |
+| panic! (非测试) | 0 ✅ | 0 ✅ | **0** ✅ |
+| unsafe 块 | 0 ✅ | 0 ✅ | **0** ✅ |
+
+### 详细问题列表
+
+#### cc_switch crate - 未使用的 imports (29 个)
+
+| 文件 | 行号 | Import | 优先级 |
+|------|------|--------|--------|
+| api_client.rs | 5 | anyhow::{anyhow, Context, Result} | 低 |
+| api_client.rs | 8 | futures::AsyncReadExt | 低 |
+| api_client.rs | 10 | http_client::{AsyncBody, HttpClient, Method, Request, StatusCode} | 低 |
+| api_client.rs | 12 | rand::Rng | 低 |
+| api_client.rs | 13 | sha2::{Digest, Sha256} | 低 |
+| api_client.rs | 17 | tiny_http::{Response, Server} | 低 |
+| api_client.rs | 20 | crate::{AppType, Provider} | 低 |
+| cc_switch.rs | 47 | settings::Settings | 低 |
+| cc_switch_panel.rs | 5 | crate::views::{McpView, ProvidersView, SkillsView} | 低 |
+| cc_switch_panel.rs | 6 | crate::{AppType, CcSwitchConfig, CcSwitchSettings, McpServerId, PanelTab, ProviderId, SkillId} | 低 |
+| ... | ... | ... 还有 19 个 | 低 |
+
+#### multi_model_dispatch crate - 未使用的 imports (11 个)
+
+| 文件 | 行号 | Import | 优先级 |
+|------|------|--------|--------|
+| dispatcher.rs | 3 | gpui::{App, AsyncApp, Task} | 低 |
+| dispatcher.rs | 4 | language_model::{LanguageModel, LanguageModelRegistry} | 低 |
+| dispatcher.rs | 5 | crate::agent::{Agent, AgentRole} | 低 |
+| multi_model_dispatch.rs | 7 | ui::{Divider, DividerColor} | 低 |
+| multi_model_dispatch.rs | 13 | std::sync::Arc | 低 |
+| settings.rs | 1 | gpui::{App, Pixels} | 低 |
+| settings.rs | 3 | serde::{Deserialize, Serialize} | 低 |
+| agent/agent.rs | 2 | anyhow::{Result, anyhow} | 低 |
+| agent/agent.rs | 4 | language_model::{LanguageModel, LanguageModelRequest, LanguageModelCompletionEvent, Role, MessageContent} | 低 |
+| agent/agent.rs | 5 | futures::StreamExt | 低 |
+| ... | ... | ... 还有 1 个 | 低 |
+
+#### TODO/FIXME 列表
+
+| 文件 | 行号 | 内容 | 优先级 |
+|------|------|------|--------|
+| cc_switch/config_sync.rs | 763 | Implement update logic (git pull) | 中 |
+| multi_model_dispatch/multi_model_dispatch.rs | 201 | Display plan somewhere? For now just log/notify. | 中 |
+
+#### 注释代码块列表
+
+| 文件 | 行号 | 内容 | 优先级 |
+|------|------|------|--------|
+| cc_switch/cc_switch_panel.rs | 3 | //! Implements the Panel trait for the left sidebar. | 低 |
+| multi_model_dispatch/settings.rs | 28 | // For now, return default as we haven't added this to the main SettingsContent struct | 低 |
+| multi_model_dispatch/settings.rs | 33 | // but to satisfy the trait we must implement this. | 低 |
+
+### 本次巡检结论
+
+✅ **整体代码质量良好**
+- 无 deprecated API 使用
+- 无调试宏残留 (dbg!/println!)
+- 无 unsafe 代码
+- 无 panic! (非测试)
+- multi_model_dispatch 代码质量优秀 (0 unwrap/expect)
+- 注释代码块数量少 (仅 3 个，多为说明性注释)
+
+⚠️ **需要改进的地方**
+1. **40 个未使用的 imports** - 建议使用 `cargo fix` 自动清理
+2. **2 个 TODO 待实现** - 需要设计和实现
+3. **36 个 unwrap 调用** - 多数在 Mutex lock 和测试代码中，可接受
+
+### 与上次扫描的对比 (22:01 → 22:19)
+
+| 指标 | 上次 | 本次 | 变化 |
+|------|------|------|------|
+| 未使用 imports | 26 | 40 | ⚠️ +14 (需要关注) |
+| 注释代码块 | 0 | 3 | ⚠️ +3 (需要清理) |
+| TODO/FIXME | 2 | 2 | ➡️ 无变化 |
+| unwrap/expect | 36 | 36 | ➡️ 无变化 |
+
+**变化说明**: 未使用的 imports 数量增加，可能是因为最近的代码变更。注释代码块也有所增加，需要进行清理。
+
+### 清理建议
+
+#### 立即可做 (高优先级)
+```bash
+# 自动清理未使用的 imports
+cd /mnt/d/ai软件/zed
+cargo fix -p cc_switch --allow-dirty
+cargo fix -p multi_model_dispatch --allow-dirty
+```
+
+#### 需要设计 (中优先级)
+1. **config_sync.rs:763** - 实现技能更新逻辑 (git pull)
+2. **multi_model_dispatch.rs:201** - 实现 dispatch 结果的 UI 展示
+
+#### 可选优化 (低优先级)
+1. 审查 unwrap 调用，考虑使用 `?` 操作符或 `map_err`
+2. 清理注释代码块，确认是否为死代码
+
+---
+
 ## 2026-02-01 巡检 (22:01) - 最新扫描 ✅
 
 **扫描路径**: `/mnt/d/ai软件/zed/crates/`

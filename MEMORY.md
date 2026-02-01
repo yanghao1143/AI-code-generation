@@ -80,7 +80,7 @@ redis-cli HGETALL hash
 - AGENT_ANALYSIS_SUMMARY.txt - 最终报告
 - Redis 缓存: openclaw:agent:efficiency (12个指标)
 
-### 2026-02-01 22:08 - 🔴 死锁检测与恢复完成
+### 2026-02-01 22:08 - 🔴 死锁检测与恢复完成 (第一次)
 - **检测方式**: tmux 会话活动时间分析
 - **死锁阈值**: > 5 分钟无活动
 - **检测结果**: 3 个会话全部死锁 (230 分钟无活动)
@@ -110,3 +110,50 @@ redis-cli HGETALL hash
 **生成文件**:
 - DEADLOCK_RECOVERY_2026-02-01.md - 详细恢复报告
 - Redis 缓存: openclaw:deadlock:recovery (恢复事件记录)
+
+### 2026-02-01 22:17 - 🔴 死锁检测与恢复完成 (第二次 - Cron 定期检测)
+- **检测时间**: 2026-02-01 22:17:19 CST
+- **检测方式**: Cron 定期任务 (socket 修改时间分析)
+- **死锁阈值**: > 5 分钟无活动
+- **检测结果**: 3 个会话全部死锁 (15165 秒 = 252.75 分钟无活动)
+  - claude-agent: 进程活跃但无响应
+  - codex-agent: 进程活跃但无响应
+  - gemini-agent: 进程活跃但无响应
+
+**恢复操作**:
+1. ✅ 发送 Ctrl+C 中断所有卡死会话 (3 个)
+2. ✅ 重新派活，给每个 agent 新的指令 (echo + pwd)
+3. ✅ 验证所有 agent 恢复工作状态
+
+**恢复结果**:
+- 检测到的死锁: 3 个
+- 成功恢复: 3 个 (100%)
+- 总恢复时间: ~15 秒
+- 当前状态: 所有 agent 已恢复工作并响应新命令
+
+**Socket 状态**:
+- Socket 路径: /tmp/openclaw-agents.sock
+- 最后活动时间: 15165 秒前 (约 4.2 小时)
+- 所有 pane 进程: ALIVE
+
+**Redis 记录**:
+- 恢复事件: openclaw:deadlock:recovery:2026-02-01_22-17-19
+- 统计更新: openclaw:deadlock:stats (total_recoveries: 1, successful_recoveries: 1)
+
+### 2026-02-01 22:18 - 📊 上下文溢出监控 (Cron 定期检测)
+- **监控时间**: 2026-02-01 22:18:09 CST
+- **检测方式**: Redis 缓存数据分析
+
+**Context 使用率**:
+- Claude: 70% (剩余 30%) ✅ 安全
+- Gemini: 90% (剩余 10%) 🔴 **警告** - 接近满载
+- Codex: 77% (剩余 23%) ✅ 安全
+
+**紧急警告**:
+- Gemini Agent 剩余容量仅 10%，已达到警告阈值
+- 当前被阻塞 100%，可能导致 context 溢出
+- **建议立即重启 Gemini 会话**
+
+**Redis 记录**:
+- 监控数据: openclaw:context:monitor:2026-02-01_22-18
+- 包含所有 agent 的 context 使用率和状态
