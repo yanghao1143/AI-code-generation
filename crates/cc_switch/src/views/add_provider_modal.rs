@@ -1,8 +1,7 @@
 //! Modal for adding or editing an AI Provider configuration
 
 use gpui::{
-    App, AsyncApp, Context, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Render,
-    WeakEntity, Window,
+    App, Context, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Render, Window,
 };
 use i18n::t;
 use menu;
@@ -11,10 +10,9 @@ use ui::{
     Button, Modal, ModalFooter, ModalHeader, prelude::*,
 };
 use ui_input::InputField;
-use util::ResultExt;
 use workspace::ModalView;
 
-use crate::{AppType, Provider, ProviderId};
+use crate::{Provider, ProviderId};
 
 pub struct AddProviderModal {
     focus_handle: FocusHandle,

@@ -1,7 +1,7 @@
 //! Modal for installing a new Skill
 
 use gpui::{
-    DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Render, ScrollHandle,
+    DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Render,
 };
 use i18n::t;
 use menu;

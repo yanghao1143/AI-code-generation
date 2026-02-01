@@ -1,0 +1,31 @@
+[package]
+name = "autonomous_agent"
+version = "0.1.0"
+edition = "2021"
+description = "Autonomous coding agent for Chi Code - enables continuous task execution"
+license = "GPL-3.0-or-later"
+publish = false
+
+[lints]
+workspace = true
+
+[dependencies]
+agent.workspace = true
+anyhow.workspace = true
+async-trait.workspace = true
+collections.workspace = true
+futures.workspace = true
+gpui.workspace = true
+language_model.workspace = true
+log.workspace = true
+parking_lot.workspace = true
+project.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+settings.workspace = true
+smol.workspace = true
+util.workspace = true
+uuid.workspace = true
+
+[dev-dependencies]
+gpui = { workspace = true, features = ["test-support"] }

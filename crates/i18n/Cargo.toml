@@ -1,0 +1,23 @@
+[package]
+name = "i18n"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+license = "GPL-3.0-or-later"
+
+[lints]
+workspace = true
+
+[lib]
+path = "src/lib.rs"
+doctest = false
+
+[dependencies]
+fluent-bundle = "0.15"
+fluent-syntax = "0.11"
+intl-memoizer = "0.5"
+unic-langid = "0.9"
+sys-locale.workspace = true
+
+[dev-dependencies]
+# gpui is only needed when integrating with the UI, not for core i18n tests

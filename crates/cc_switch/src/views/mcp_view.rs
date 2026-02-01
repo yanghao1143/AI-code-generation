@@ -9,7 +9,7 @@ use gpui::{AnyElement, App, Context, Pixels, Render, Window};
 use i18n::t;
 use settings::Settings;
 use theme::ThemeSettings;
-use ui::{ContextMenu, PopoverMenu, Tooltip, prelude::*};
+use ui::{Tooltip, prelude::*};
 
 use crate::{AppType, McpServer, McpServerId};
 

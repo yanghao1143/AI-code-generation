@@ -132,10 +132,10 @@ impl ApiClient {
 
     /// Generate a random string for PKCE verifier and state.
     fn generate_random_string(length: usize) -> String {
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
         (0..length)
             .map(|_| {
-                let idx = rng.gen_range(0..62);
+                let idx = rng.random_range(0..62);
                 let chars = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
                 chars[idx] as char
             })

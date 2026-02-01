@@ -7,12 +7,11 @@ use crate::{AppType, CcSwitchConfig, CcSwitchSettings, McpServerId, PanelTab, Pr
 use anyhow::{Context as _, Result};
 use db::kvp::KEY_VALUE_STORE;
 use gpui::{
-    AnyElement, App, AsyncApp, AsyncWindowContext, Context, Entity, EventEmitter, FocusHandle, Focusable,
+    AnyElement, App, AsyncWindowContext, Context, Entity, EventEmitter, FocusHandle, Focusable,
     InteractiveElement, IntoElement, ParentElement, Pixels, Render, Styled,
     Subscription, Task, WeakEntity, Window, actions, div,
 };
 use i18n::t;
-use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 use settings::Settings;
 use ui::prelude::*;

@@ -1,6 +1,5 @@
 //! Modal for adding or editing an MCP server configuration
 
-use anyhow::Result;
 use gpui::{
     DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Render, ScrollHandle,
 };
@@ -14,7 +13,7 @@ use ui::{
 use ui_input::InputField;
 use workspace::ModalView;
 
-use crate::{AppType, McpApps, McpServer, McpServerId};
+use crate::{McpApps, McpServer, McpServerId};
 
 pub struct AddMcpServerModal {
     focus_handle: FocusHandle,
