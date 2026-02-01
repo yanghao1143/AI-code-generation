@@ -64,6 +64,7 @@ pub mod sweep_ai;
 pub mod udiff;
 
 mod capture_example;
+mod language_model_delegate;
 mod zed_edit_prediction_delegate;
 pub mod zeta1;
 pub mod zeta2;
@@ -78,6 +79,7 @@ use crate::onboarding_modal::ZedPredictModal;
 pub use crate::prediction::EditPrediction;
 pub use crate::prediction::EditPredictionId;
 use crate::prediction::EditPredictionResult;
+pub use language_model_delegate::LanguageModelEditPredictionDelegate;
 pub use crate::sweep_ai::SweepAi;
 pub use capture_example::capture_example;
 pub use language_model::ApiKeyState;

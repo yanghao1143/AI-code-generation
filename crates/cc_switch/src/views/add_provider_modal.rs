@@ -47,7 +47,7 @@ impl AddProviderModal {
             .to_string();
 
         let name_input = cx.new(|cx| {
-            let mut input = InputField::new(window, cx, &t("cc-provider-name-placeholder"))
+            let input = InputField::new(window, cx, &t("cc-provider-name-placeholder"))
                 .label(&t("name"))
                 .tab_index(1);
             input.set_text(&name_text, window, cx);
@@ -55,7 +55,7 @@ impl AddProviderModal {
         });
 
         let api_key_input = cx.new(|cx| {
-            let mut input = InputField::new(window, cx, &t("cc-api-key-placeholder"))
+            let input = InputField::new(window, cx, &t("cc-api-key-placeholder"))
                 .label(&t("cc-api-key"))
                 .tab_index(2);
             input.set_text(&api_key, window, cx);
@@ -63,7 +63,7 @@ impl AddProviderModal {
         });
 
         let api_url_input = cx.new(|cx| {
-            let mut input = InputField::new(window, cx, &t("cc-api-url-placeholder"))
+            let input = InputField::new(window, cx, &t("cc-api-url-placeholder"))
                 .label(&t("cc-api-url"))
                 .tab_index(3);
             input.set_text(&api_url, window, cx);

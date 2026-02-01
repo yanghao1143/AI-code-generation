@@ -5,7 +5,6 @@
 //! - MCP Servers (Model Context Protocol)
 //! - Skills (Claude Code slash commands)
 
-mod api_client;
 mod cc_switch_panel;
 mod cc_switch_settings;
 pub mod config_sync;

@@ -3,7 +3,8 @@ use codestral::CodestralEditPredictionDelegate;
 use collections::HashMap;
 use copilot::CopilotEditPredictionDelegate;
 use edit_prediction::{
-    MercuryFeatureFlag, SweepFeatureFlag, ZedEditPredictionDelegate, Zeta2FeatureFlag,
+    LanguageModelEditPredictionDelegate, MercuryFeatureFlag, SweepFeatureFlag,
+    ZedEditPredictionDelegate, Zeta2FeatureFlag,
 };
 use editor::Editor;
 use feature_flags::FeatureFlagAppExt;
@@ -193,6 +194,13 @@ fn assign_edit_prediction_provider(
         EditPredictionProvider::Codestral => {
             let http_client = client.http_client();
             let provider = cx.new(|_| CodestralEditPredictionDelegate::new(http_client));
+            editor.set_edit_prediction_provider(Some(provider), window, cx);
+        }
+        EditPredictionProvider::Llm => {
+            let Some(project) = editor.project().cloned() else {
+                return;
+            };
+            let provider = cx.new(|cx| LanguageModelEditPredictionDelegate::new(project, cx));
             editor.set_edit_prediction_provider(Some(provider), window, cx);
         }
         value @ (EditPredictionProvider::Experimental(_) | EditPredictionProvider::Zed) => {

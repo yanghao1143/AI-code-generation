@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize, de::Error as _};
 use settings_macros::{MergeFrom, with_fallible_options};
 use std::sync::Arc;
 
-use crate::{ExtendingVec, merge_from};
+use crate::{ExtendingVec, LanguageModelSelection, merge_from};
 
 /// The state of the modifier keys at some point in time
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize, JsonSchema, MergeFrom)]
@@ -98,6 +98,8 @@ pub enum EditPredictionProvider {
     Supermaven,
     Zed,
     Codestral,
+    /// Use a configured language model (e.g., GPT, Claude, Gemini).
+    Llm,
     Experimental(&'static str),
 }
 
@@ -118,6 +120,7 @@ impl<'de> Deserialize<'de> for EditPredictionProvider {
             Supermaven,
             Zed,
             Codestral,
+            Llm,
             Experimental(String),
         }
 
@@ -127,6 +130,7 @@ impl<'de> Deserialize<'de> for EditPredictionProvider {
             Content::Supermaven => EditPredictionProvider::Supermaven,
             Content::Zed => EditPredictionProvider::Zed,
             Content::Codestral => EditPredictionProvider::Codestral,
+            Content::Llm => EditPredictionProvider::Llm,
             Content::Experimental(name)
                 if name == EXPERIMENTAL_SWEEP_EDIT_PREDICTION_PROVIDER_NAME =>
             {
@@ -166,6 +170,7 @@ impl EditPredictionProvider {
             | EditPredictionProvider::Copilot
             | EditPredictionProvider::Supermaven
             | EditPredictionProvider::Codestral
+            | EditPredictionProvider::Llm
             | EditPredictionProvider::Experimental(_) => false,
         }
     }
@@ -186,6 +191,8 @@ pub struct EditPredictionSettingsContent {
     pub copilot: Option<CopilotSettingsContent>,
     /// Settings specific to Codestral.
     pub codestral: Option<CodestralSettingsContent>,
+    /// Settings for using a configured language model (GPT/Claude/Gemini/etc.).
+    pub llm: Option<EditPredictionLlmSettingsContent>,
     /// Whether edit predictions are enabled in the assistant prompt editor.
     /// This has no effect if globally disabled.
     pub enabled_in_text_threads: Option<bool>,
@@ -231,6 +238,31 @@ pub struct CodestralSettingsContent {
     ///
     /// Default: "https://codestral.mistral.ai"
     pub api_url: Option<String>,
+}
+
+#[with_fallible_options]
+#[derive(Clone, Debug, Default, Serialize, Deserialize, JsonSchema, MergeFrom, PartialEq)]
+pub struct EditPredictionLlmSettingsContent {
+    /// Optional provider/model override for edit predictions.
+    /// If unset, the default language model will be used.
+    pub model: Option<LanguageModelSelection>,
+    /// Maximum tokens to generate.
+    ///
+    /// Default: 256
+    pub max_tokens: Option<u32>,
+    /// Sampling temperature.
+    ///
+    /// Default: 0.2
+    #[serde(serialize_with = "crate::serialize_optional_f32_with_two_decimal_places")]
+    pub temperature: Option<f32>,
+    /// Maximum tokens to use for editable range context.
+    ///
+    /// Default: 350
+    pub max_editable_tokens: Option<u32>,
+    /// Maximum tokens to use for surrounding context.
+    ///
+    /// Default: 150
+    pub max_context_tokens: Option<u32>,
 }
 
 /// The mode in which edit predictions should be displayed.

@@ -54,8 +54,6 @@ pub type ToggleAllAppsCallback = Arc<dyn Fn(SkillId, bool, &mut Window, &mut App
 /// View for displaying skills list with drag-drop reordering
 pub struct SkillsView {
     config: CcSwitchConfig,
-    /// Currently dragging skill ID
-    dragging_skill: Option<SkillId>,
     on_toggle_app: Option<ToggleAppCallback>,
     on_reorder: Option<ReorderCallback>,
     on_install: Option<InstallCallback>,
@@ -67,7 +65,6 @@ impl SkillsView {
     pub fn new(config: CcSwitchConfig) -> Self {
         Self {
             config,
-            dragging_skill: None,
             on_toggle_app: None,
             on_reorder: None,
             on_install: None,
@@ -113,23 +110,8 @@ impl SkillsView {
         self
     }
 
-    /// Update the configuration
-    pub fn update_config(&mut self, config: CcSwitchConfig) {
-        self.config = config;
-    }
-
-    /// Set the currently dragging skill
-    pub fn set_dragging(&mut self, skill_id: Option<SkillId>) {
-        self.dragging_skill = skill_id;
-    }
-
-    /// Check if a skill is being dragged
-    pub fn is_dragging(&self, skill_id: &SkillId) -> bool {
-        self.dragging_skill.as_ref() == Some(skill_id)
-    }
-
     /// Render the header section
-    fn render_header(&self, cx: &App) -> impl IntoElement {
+    fn render_header(&self, _cx: &App) -> impl IntoElement {
         let on_install = self.on_install.clone();
 
         h_flex()
@@ -178,8 +160,7 @@ impl SkillsView {
             })
             .when(!skills.is_empty(), |this| {
                 this.children(skills.into_iter().map(|skill| {
-                    let is_dragging = self.is_dragging(&skill.id);
-                    self.render_skill_item(skill, is_dragging, cx)
+                    self.render_skill_item(skill, cx)
                 }))
             })
     }
@@ -188,7 +169,6 @@ impl SkillsView {
     fn render_skill_item(
         &self,
         skill: &InstalledSkill,
-        is_dragging: bool,
         cx: &App,
     ) -> impl IntoElement {
         let skill_id = skill.id.clone();
@@ -201,8 +181,6 @@ impl SkillsView {
         div()
             .id(SharedString::from(format!("skill-drag-{}", skill_id)))
             .w_full()
-            // Drag styling
-            .when(is_dragging, |this| this.opacity(0.5))
             // Start drag
             .on_drag(SkillDragItem(skill_id.clone()), move |_drag_item, _, _, cx| {
                 // Return a view to represent the dragged item
@@ -323,7 +301,7 @@ impl SkillsView {
     }
 
     /// Render menu button for a skill
-    fn render_skill_menu(&self, skill_id: &SkillId, _skill_name: &str, directory: &str, readme_url: Option<&str>, cx: &App) -> impl IntoElement {
+    fn render_skill_menu(&self, skill_id: &SkillId, _skill_name: &str, directory: &str, readme_url: Option<&str>, _cx: &App) -> impl IntoElement {
         let skill_id = skill_id.clone();
         let directory = directory.to_string();
         let readme_url = readme_url.map(|s| s.to_string());
@@ -400,7 +378,7 @@ impl SkillsView {
     }
 
     /// Render the install skill button
-    fn render_install_button(&self, cx: &App) -> impl IntoElement {
+    fn render_install_button(&self, _cx: &App) -> impl IntoElement {
         let on_install = self.on_install.clone();
 
         div().w_full().p_2().child(

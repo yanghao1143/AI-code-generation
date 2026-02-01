@@ -390,6 +390,8 @@ pub struct EditPredictionSettings {
     pub copilot: CopilotSettings,
     /// Settings specific to Codestral.
     pub codestral: CodestralSettings,
+    /// Settings specific to language-model-based predictions.
+    pub llm: LlmEditPredictionSettings,
     /// Whether edit predictions are enabled in the assistant panel.
     /// This setting has no effect if globally disabled.
     pub enabled_in_text_threads: bool,
@@ -437,6 +439,20 @@ pub struct CodestralSettings {
     pub max_tokens: Option<u32>,
     /// Custom API URL to use for Codestral.
     pub api_url: Option<String>,
+}
+
+#[derive(Clone, Debug, Default)]
+pub struct LlmEditPredictionSettings {
+    /// Optional provider/model override for edit predictions.
+    pub model: Option<settings::LanguageModelSelection>,
+    /// Maximum tokens to generate.
+    pub max_tokens: Option<u32>,
+    /// Sampling temperature.
+    pub temperature: Option<f32>,
+    /// Maximum tokens to use for editable range context.
+    pub max_editable_tokens: Option<u32>,
+    /// Maximum tokens to use for surrounding context.
+    pub max_context_tokens: Option<u32>,
 }
 
 impl AllLanguageSettings {
@@ -670,6 +686,15 @@ impl settings::Settings for AllLanguageSettings {
             api_url: codestral.api_url,
         };
 
+        let llm = edit_predictions.llm.unwrap();
+        let llm_settings = LlmEditPredictionSettings {
+            model: llm.model,
+            max_tokens: llm.max_tokens,
+            temperature: llm.temperature,
+            max_editable_tokens: llm.max_editable_tokens,
+            max_context_tokens: llm.max_context_tokens,
+        };
+
         let enabled_in_text_threads = edit_predictions.enabled_in_text_threads.unwrap();
 
         let mut file_types: FxHashMap<Arc<str>, (GlobSet, Vec<String>)> = FxHashMap::default();
@@ -708,6 +733,7 @@ impl settings::Settings for AllLanguageSettings {
                 mode: edit_predictions_mode,
                 copilot: copilot_settings,
                 codestral: codestral_settings,
+                llm: llm_settings,
                 enabled_in_text_threads,
                 examples_dir: edit_predictions.examples_dir,
                 example_capture_rate: edit_predictions.example_capture_rate,

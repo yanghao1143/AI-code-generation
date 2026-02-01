@@ -34,6 +34,7 @@ use std::{
     sync::{Arc, LazyLock},
     time::Duration,
 };
+use language_model::LanguageModelRegistry;
 use supermaven::{AccountStatus, Supermaven};
 use ui::{
     Clickable, ContextMenu, ContextMenuEntry, DocumentationSide, IconButton, IconButtonShape,
@@ -44,7 +45,7 @@ use workspace::{
     StatusItemView, Toast, Workspace, create_and_open_local_file, item::ItemHandle,
     notifications::NotificationId,
 };
-use zed_actions::{OpenBrowser, OpenSettingsAt};
+use zed_actions::{OpenBrowser, OpenSettingsAt, assistant::InlineAssist};
 
 use crate::{
     CaptureExample, RatePredictions, rate_prediction_modal::PredictEditsRatePredictionsFeatureFlag,
@@ -306,7 +307,9 @@ impl Render for EditPredictionButton {
                         .with_handle(self.popover_menu_handle.clone()),
                 )
             }
-            provider @ (EditPredictionProvider::Experimental(_) | EditPredictionProvider::Zed) => {
+            provider @ (EditPredictionProvider::Experimental(_)
+            | EditPredictionProvider::Zed
+            | EditPredictionProvider::Llm) => {
                 let enabled = self.editor_enabled.unwrap_or(true);
 
                 let ep_icon;
@@ -314,6 +317,16 @@ impl Render for EditPredictionButton {
                 let mut missing_token = false;
 
                 match provider {
+                    EditPredictionProvider::Llm => {
+                        ep_icon = IconName::Sparkle;
+                        missing_token = !LanguageModelRegistry::read_global(cx)
+                            .has_authenticated_provider(cx);
+                        tooltip_meta = if missing_token {
+                            "Configure a language model provider"
+                        } else {
+                            "Powered by your LLM"
+                        };
+                    }
                     EditPredictionProvider::Experimental(
                         EXPERIMENTAL_SWEEP_EDIT_PREDICTION_PROVIDER_NAME,
                     ) => {
@@ -348,7 +361,12 @@ impl Render for EditPredictionButton {
                     }
                 };
 
-                if edit_prediction::should_show_upsell_modal() {
+                let show_upsell = matches!(
+                    provider,
+                    EditPredictionProvider::Zed | EditPredictionProvider::Experimental(_)
+                );
+
+                if show_upsell && edit_prediction::should_show_upsell_modal() {
                     let tooltip_meta = if self.user_store.read(cx).current_user().is_some() {
                         "Choose a Plan"
                     } else {
@@ -541,6 +559,10 @@ impl EditPredictionButton {
 
         providers.push(EditPredictionProvider::Zed);
 
+        if LanguageModelRegistry::read_global(cx).has_authenticated_provider(cx) {
+            providers.push(EditPredictionProvider::Llm);
+        }
+
         if cx.has_flag::<Zeta2FeatureFlag>() {
             providers.push(EditPredictionProvider::Experimental(
                 EXPERIMENTAL_ZETA2_EDIT_PREDICTION_PROVIDER_NAME,
@@ -613,6 +635,7 @@ impl EditPredictionButton {
                     EditPredictionProvider::Copilot => "GitHub Copilot",
                     EditPredictionProvider::Supermaven => "Supermaven",
                     EditPredictionProvider::Codestral => "Codestral",
+                    EditPredictionProvider::Llm => "AI Models (GPT/Claude/Gemini)",
                     EditPredictionProvider::Experimental(
                         EXPERIMENTAL_SWEEP_EDIT_PREDICTION_PROVIDER_NAME,
                     ) => "Sweep",
@@ -926,9 +949,23 @@ impl EditPredictionButton {
         }
 
         if let Some(editor_focus_handle) = self.editor_focus_handle.clone() {
+            let explain_action = InlineAssist {
+                prompt: Some("Explain this code.".to_string()),
+            };
             menu = menu
                 .separator()
                 .header("Actions")
+                .entry(
+                    "Explain Code",
+                    Some(Box::new(explain_action.clone())),
+                    {
+                        let editor_focus_handle = editor_focus_handle.clone();
+                        let explain_action = explain_action.clone();
+                        move |window, cx| {
+                            editor_focus_handle.dispatch_action(&explain_action, window, cx);
+                        }
+                    },
+                )
                 .entry(
                     "Predict Edit at Cursor",
                     Some(Box::new(ShowEditPrediction)),

@@ -457,11 +457,11 @@ pub async fn sync_mcp_to_codex(servers: &IndexMap<McpServerId, McpServer>) -> Re
         doc.as_table_mut().remove("mcp_servers");
     } else {
         let mut servers_tbl = Table::new();
-        let mut ids: Vec<_> = enabled.iter().map(|(id, _)| id.clone()).collect();
+        let mut ids: Vec<String> = enabled.iter().map(|(id, _)| (*id).clone()).collect();
         ids.sort();
 
         for id in ids {
-            if let Some((_, server)) = enabled.iter().find(|(i, _)| *i == id) {
+            if let Some((_, server)) = enabled.iter().find(|(i, _)| *i == &id) {
                 let spec = extract_server_spec(server);
                 match json_server_to_toml_table(&spec) {
                     Ok(table) => {

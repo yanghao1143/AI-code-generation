@@ -5,48 +5,12 @@
 
 use std::sync::Arc;
 
-use gpui::{AnyElement, App, Context, Pixels, Render, Window};
+use gpui::{AnyElement, App, Context, Render, Window};
 use i18n::t;
-use settings::Settings;
-use theme::ThemeSettings;
 use ui::{Tooltip, prelude::*};
 
 use crate::{AppType, McpServer, McpServerId};
 
-/// Data for drag-drop operations
-#[derive(Clone)]
-pub struct McpDragItem {
-    pub id: McpServerId,
-    pub name: String,
-}
-
-/// Visual representation during drag operation
-pub struct DraggedMcpServerView {
-    name: String,
-    width: Pixels,
-}
-
-impl Render for DraggedMcpServerView {
-    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
-        let ui_font = ThemeSettings::get_global(cx).ui_font.family.clone();
-        h_flex()
-            .font_family(ui_font)
-            .bg(cx.theme().colors().background)
-            .w(self.width)
-            .p_1()
-            .gap_1()
-            .shadow_md()
-            .rounded_sm()
-            .child(
-                Icon::new(IconName::Server)
-                    .size(IconSize::Small)
-                    .color(Color::Muted),
-            )
-            .child(Label::new(self.name.clone()).size(LabelSize::Small))
-    }
-}
-
-pub type ReorderCallback = Arc<dyn Fn(McpServerId, McpServerId, &mut Window, &mut App) + Send + Sync>;
 pub type ToggleAppCallback = Arc<dyn Fn(McpServerId, AppType, bool, &mut Window, &mut App) + Send + Sync>;
 pub type AddCallback = Arc<dyn Fn(&mut Window, &mut App) + Send + Sync>;
 pub type EditCallback = Arc<dyn Fn(McpServerId, &mut Window, &mut App) + Send + Sync>;
@@ -55,9 +19,6 @@ pub type DeleteCallback = Arc<dyn Fn(McpServerId, &mut Window, &mut App) + Send 
 /// View for displaying MCP server list with drag-drop reordering
 pub struct McpView {
     servers: Vec<McpServer>,
-    dragging: Option<McpServerId>,
-    width: Pixels,
-    on_reorder: Option<ReorderCallback>,
     on_toggle_app: Option<ToggleAppCallback>,
     on_add: Option<AddCallback>,
     on_edit: Option<EditCallback>,
@@ -68,30 +29,11 @@ impl McpView {
     pub fn new(servers: Vec<McpServer>) -> Self {
         Self {
             servers,
-            dragging: None,
-            width: px(280.),
-            on_reorder: None,
             on_toggle_app: None,
             on_add: None,
             on_edit: None,
             on_delete: None,
         }
-    }
-
-    pub fn update_servers(&mut self, servers: Vec<McpServer>) {
-        self.servers = servers;
-    }
-
-    pub fn set_width(&mut self, width: Pixels) {
-        self.width = width;
-    }
-
-    pub fn on_reorder(
-        mut self,
-        callback: impl Fn(McpServerId, McpServerId, &mut Window, &mut App) + Send + Sync + 'static,
-    ) -> Self {
-        self.on_reorder = Some(Arc::new(callback));
-        self
     }
 
     pub fn on_toggle_app(
@@ -121,12 +63,6 @@ impl McpView {
     ) -> Self {
         self.on_delete = Some(Arc::new(callback));
         self
-    }
-
-    fn reorder_mcp_server(&self, from_id: &McpServerId, to_id: &McpServerId, window: &mut Window, cx: &mut App) {
-        if let Some(callback) = &self.on_reorder {
-            callback(from_id.clone(), to_id.clone(), window, cx);
-        }
     }
 
     fn render_header(&self, cx: &App) -> impl IntoElement {
@@ -237,7 +173,7 @@ impl McpView {
     // Note: render_server_item with drag-drop and context menu removed due to GPUI API incompatibility
     // Using render_server_item_simple instead
 
-    fn render_empty_state(&self, cx: &App) -> impl IntoElement {
+    fn render_empty_state(&self, _cx: &App) -> impl IntoElement {
         let on_add = self.on_add.clone();
 
         v_flex()

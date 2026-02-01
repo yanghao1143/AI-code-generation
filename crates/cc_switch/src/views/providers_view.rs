@@ -69,11 +69,6 @@ impl ProvidersView {
         self
     }
 
-    /// Update the configuration
-    pub fn update_config(&mut self, config: CcSwitchConfig) {
-        self.config = config;
-    }
-
     /// Get the currently active provider
     fn current_provider(&self) -> Option<&Provider> {
         self.config.current_provider()

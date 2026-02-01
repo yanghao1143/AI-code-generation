@@ -43,7 +43,7 @@ trait WorkspaceExt {
 }
 
 impl WorkspaceExt for Workspace {
-    fn register_cc_switch_panel(&mut self, _window: Option<&mut Window>, cx: &mut Context<Self>) {
+    fn register_cc_switch_panel(&mut self, _window: Option<&mut Window>, _cx: &mut Context<Self>) {
         self.register_action(|workspace, _: &ToggleFocus, window, cx| {
             workspace.toggle_panel_focus::<CcSwitchPanel>(window, cx);
         });
@@ -299,30 +299,6 @@ impl CcSwitchPanel {
         cx.notify();
     }
 
-    fn reorder_mcp_servers(&mut self, source_id: McpServerId, target_id: McpServerId, cx: &mut Context<Self>) {
-        if source_id == target_id {
-            return;
-        }
-
-        let servers = self.config.mcp_servers_sorted();
-        let source_pos = servers.iter().position(|s| s.id == source_id);
-        let target_pos = servers.iter().position(|s| s.id == target_id);
-
-        if let (Some(source_idx), Some(target_idx)) = (source_pos, target_pos) {
-            let mut ids: Vec<McpServerId> = servers.iter().map(|s| s.id.clone()).collect();
-            let id = ids.remove(source_idx);
-            ids.insert(target_idx, id);
-
-            for (idx, id) in ids.into_iter().enumerate() {
-                if let Some(server) = self.config.mcp_servers.get_mut(&id) {
-                    server.sort_index = Some(idx);
-                }
-            }
-            self.save_config(cx);
-            cx.notify();
-        }
-    }
-
     fn switch_provider(&mut self, provider_id: ProviderId, cx: &mut Context<Self>) {
         self.config.current_provider = Some(provider_id);
         self.save_config(cx);
@@ -548,16 +524,6 @@ impl CcSwitchPanel {
                     if let Some(this) = this_toggle.upgrade() {
                         this.update(cx, |this, cx| {
                             this.toggle_mcp_app(id, app, enabled, cx);
-                        });
-                    }
-                });
-
-                // on_reorder callback
-                let this_reorder = this.clone();
-                view = view.on_reorder(move |source, target, _window, cx| {
-                    if let Some(this) = this_reorder.upgrade() {
-                        this.update(cx, |this, cx| {
-                            this.reorder_mcp_servers(source, target, cx);
                         });
                     }
                 });

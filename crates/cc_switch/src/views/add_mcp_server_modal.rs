@@ -1,8 +1,6 @@
 //! Modal for adding or editing an MCP server configuration
 
-use gpui::{
-    DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Render, ScrollHandle,
-};
+use gpui::{DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Render};
 use i18n::t;
 use menu;
 use serde_json::json;
@@ -17,7 +15,6 @@ use crate::{McpApps, McpServer, McpServerId};
 
 pub struct AddMcpServerModal {
     focus_handle: FocusHandle,
-    scroll_handle: ScrollHandle,
     name_input: Entity<InputField>,
     command_input: Entity<InputField>,
     args_input: Entity<InputField>,
@@ -89,7 +86,6 @@ impl AddMcpServerModal {
 
         Self {
             focus_handle: cx.focus_handle(),
-            scroll_handle: ScrollHandle::new(),
             name_input,
             command_input,
             args_input,
@@ -185,7 +181,7 @@ impl Focusable for AddMcpServerModal {
 impl ModalView for AddMcpServerModal {}
 
 impl Render for AddMcpServerModal {
-    fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let env_rows = self.env_inputs.iter().enumerate().map(|(ix, (k, v))| {
             h_flex()
                 .gap_2()
