@@ -62,9 +62,114 @@ cargo clippy -p multi_model_dispatch -- -W unused-imports
 
 ---
 
+## 2026-02-01 巡检 (21:43) - 最新扫描
+
+**扫描路径**: `/mnt/d/ai软件/zed/crates/`
+
+### multi_model_dispatch crate (565 行)
+
+| 文件 | 行号 | 问题类型 | 描述 | 优先级 |
+|------|------|----------|------|--------|
+| `agent/agent.rs` | 1 | 未使用 import | `std::sync::Arc` 导入但未使用 | 低 |
+| `agent/agent.rs` | 3 | 未使用 import | `gpui::AsyncApp` 导入但未使用 | 低 |
+| `agent/agent.rs` | 5 | 未使用 import | `futures::StreamExt` 导入但未使用 | 低 |
+| `dispatcher.rs` | 1 | 未使用 import | `std::sync::Arc` 导入但未使用 | 低 |
+| `dispatcher.rs` | 3 | 未使用 import | `gpui::{App, AsyncApp, Task}` 导入但未使用 | 低 |
+| `dispatcher.rs` | 4 | 未使用 import | `language_model::{LanguageModel, LanguageModelRegistry}` 导入但未使用 | 低 |
+| `dispatcher.rs` | 5 | 未使用 import | `crate::agent::{Agent, AgentRole}` 导入但未使用 | 低 |
+| `multi_model_dispatch.rs` | 12 | 未使用 import | `ui_input::InputField` 导入但未使用 | 低 |
+| `multi_model_dispatch.rs` | 13 | 未使用 import | `std::sync::Arc` 导入但未使用 | 低 |
+| `settings.rs` | 1 | 未使用 import | `gpui::{App, Pixels}` 导入但未使用 | 低 |
+| `settings.rs` | 2 | 未使用 import | `schemars::JsonSchema` 导入但未使用 | 低 |
+| `views/agent_list_view.rs` | 9 | 未使用 import | `crate::multi_model_dispatch::{AgentState, AgentRole, AgentStatus}` 导入但未使用 | 低 |
+| `multi_model_dispatch.rs` | 201 | TODO | `// TODO: Display plan somewhere? For now just log/notify.` 待实现 | 中 |
+
+### cc_switch crate (5590 行)
+
+| 文件 | 行号 | 问题类型 | 描述 | 优先级 |
+|------|------|----------|------|--------|
+| `api_client.rs` | 6,7,11,13,17,20 | 未使用 import | 6 个导入未使用 | 低 |
+| `cc_switch.rs` | 46 | 未使用 import | `gpui::App` 导入但未使用 | 低 |
+| `cc_switch_panel.rs` | 8,14,18,19 | 未使用 import | 4 个导入未使用 | 低 |
+| `config_sync.rs` | 10,11,19 | 未使用 import | 3 个导入未使用 | 低 |
+| `models.rs` | 8 | 未使用 import | `indexmap::IndexMap` 导入但未使用 | 低 |
+| `persistence.rs` | 5,6,9 | 未使用 import | 3 个导入未使用 | 低 |
+| `views/add_mcp_server_modal.rs` | 3,6,8,13,14,16 | 未使用 import | 6 个导入未使用 | 低 |
+| `views/add_provider_modal.rs` | 3,6,8,12,13,15 | 未使用 import | 6 个导入未使用 | 低 |
+| `views/add_skill_modal.rs` | 3,6,11,12,14 | 未使用 import | 5 个导入未使用 | 低 |
+| `views/mcp_view.rs` | 6,8,9,10,14 | 未使用 import | 5 个导入未使用 | 低 |
+| `views/providers_view.rs` | 5,10,16 | 未使用 import | 3 个导入未使用 | 低 |
+| `views/skills_view.rs` | 6,12,18 | 未使用 import | 3 个导入未使用 | 低 |
+| `config_sync.rs` | 763 | TODO | `// TODO: Implement update logic (git pull)` 技能更新逻辑未实现 | 中 |
+| `api_client.rs` | 344,355,369,391,409,416,439,442,475,478,513,517 | unwrap() 调用 | 12 个 Mutex lock unwrap() 和测试代码 | 低 |
+| `config_sync.rs` | 1303,1317 | unwrap() 调用 | 2 个 unwrap() 调用 | 低 |
+| `models.rs` | 608 | unwrap() 调用 | 1 个测试代码中的 unwrap() | 低 |
+| `config_sync.rs` | 312,648,692 | 注释代码块 | 3 个注释代码块（可能的死代码） | 低 |
+
+### 代码质量统计
+
+| 指标 | cc_switch | multi_model_dispatch |
+|------|-----------|---------------------|
+| 总行数 | 5590 | 565 |
+| 源文件数 | 14 | 8 |
+| TODO/FIXME | 1 | 1 |
+| unwrap() 调用 | 24 (多数在 Mutex lock 和测试) | 0 |
+| expect() 调用 | 0 | 0 |
+| 注释代码块 | 3 | 0 |
+| deprecated API | 0 ✅ | 0 ✅ |
+| dbg!/println! | 0 ✅ | 0 ✅ |
+| panic! (非测试) | 0 ✅ | 0 ✅ |
+| unsafe 块 | 0 ✅ | 0 ✅ |
+| 未使用 imports | 44 | 12 |
+
+### 本次扫描结论
+
+⚠️ **代码质量有所下降** - 未使用的 imports 数量大幅增加
+- multi_model_dispatch: 12 个未使用 imports (之前: 2 个)
+- cc_switch: 44 个未使用 imports (之前: 0 个)
+
+✅ **整体代码质量仍可接受**
+- 无 deprecated API 使用
+- 无调试宏残留 (dbg!/println!)
+- 无 unsafe 代码
+- 无 panic! (非测试)
+- unwrap() 主要用于 Mutex lock（可接受模式）和测试代码
+
+⚠️ **待处理项**
+1. 56 个未使用的 imports (高优先级，应立即清理)
+2. 2 个 TODO 待实现 (中优先级)
+3. 3 个注释代码块 (低优先级，需要确认是否为死代码)
+
+---
+
+## 清理建议
+
+### 立即可做 (高优先级)
+```bash
+# 在 Windows 端运行 clippy 自动检测未使用 imports
+cd /mnt/d/ai软件/zed
+cargo clippy -p multi_model_dispatch -- -W unused-imports
+cargo clippy -p cc_switch -- -W unused-imports
+
+# 或使用 cargo fix 自动修复
+cargo fix -p multi_model_dispatch --allow-dirty
+cargo fix -p cc_switch --allow-dirty
+```
+
+### 需要设计 (中优先级)
+1. **config_sync.rs:763** - 实现技能更新逻辑 (git pull)
+2. **multi_model_dispatch.rs:201** - 实现 dispatch 结果的 UI 展示
+
+### 需要审查 (低优先级)
+1. **config_sync.rs:312,648,692** - 确认注释代码块是否为死代码，如是则删除
+
+---
+
 ## 历史记录
 
 | 日期 | 扫描结果 | 处理状态 |
 |------|----------|----------|
+| 2026-02-01 21:43 | 56 unused imports, 2 TODOs, 3 注释块 | 需要立即清理 ⚠️ |
+| 2026-02-01 21:27 | 2 unused imports, 2 TODOs | 无变化 ⏸️ |
 | 2026-02-01 21:05 | 2 unused imports, 2 TODOs | 待处理 |
 | 2026-02-01 20:51 | 2 unused imports, 2 TODOs | 已记录 |
