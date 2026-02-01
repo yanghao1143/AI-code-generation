@@ -79,3 +79,34 @@ redis-cli HGETALL hash
 - AGENT_OPTIMIZATION.md - 优化建议和实施方案
 - AGENT_ANALYSIS_SUMMARY.txt - 最终报告
 - Redis 缓存: openclaw:agent:efficiency (12个指标)
+
+### 2026-02-01 22:08 - 🔴 死锁检测与恢复完成
+- **检测方式**: tmux 会话活动时间分析
+- **死锁阈值**: > 5 分钟无活动
+- **检测结果**: 3 个会话全部死锁 (230 分钟无活动)
+  - claude-agent: 等待编辑确认
+  - codex-agent: 等待 PowerShell 确认
+  - gemini-agent: 等待 findstr 确认
+
+**恢复操作**:
+1. ✅ 发送 Ctrl+C 中断所有卡死会话
+2. ✅ 重新派活，给每个 agent 新的指令
+3. ✅ 验证所有 agent 恢复工作状态
+
+**恢复结果**:
+- 检测到的死锁: 3 个
+- 成功恢复: 3 个 (100%)
+- 总恢复时间: ~10 秒
+- 当前状态: 所有 agent 已恢复工作
+
+**根本原因**: 三个 agent 都在等待用户确认，导致长时间无活动。这是之前效率分析中发现的"用户交互阻塞"问题的具体表现。
+
+**改进建议**:
+- 实现自动化确认机制，避免长时间等待
+- 为等待用户确认的操作设置超时
+- 定期检查 agent 状态，及时发现和恢复死锁
+- 使用任务队列管理 agent 工作
+
+**生成文件**:
+- DEADLOCK_RECOVERY_2026-02-01.md - 详细恢复报告
+- Redis 缓存: openclaw:deadlock:recovery (恢复事件记录)
