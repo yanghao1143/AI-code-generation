@@ -6,7 +6,7 @@
 use std::sync::Arc;
 
 use gpui::{
-    AnyElement, App, Corner, Entity, IntoElement, ParentElement, Render, SharedString, Styled,
+    AnyElement, App, Corner, IntoElement, ParentElement, Render, SharedString, Styled,
     Window, div,
 };
 use i18n::t;

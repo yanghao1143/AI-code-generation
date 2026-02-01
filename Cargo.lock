@@ -17291,6 +17291,7 @@ dependencies = [
  "git_ui",
  "gpui",
  "http_client",
+ "i18n",
  "menu",
  "notifications",
  "platform_title_bar",

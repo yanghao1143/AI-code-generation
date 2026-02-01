@@ -40,6 +40,7 @@ cloud_llm_client.workspace = true
 db.workspace = true
 git_ui.workspace = true
 gpui = { workspace = true, features = ["screen-capture"] }
+i18n.workspace = true
 menu.workspace = true
 notifications.workspace = true
 project.workspace = true

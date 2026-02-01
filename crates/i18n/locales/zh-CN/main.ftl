@@ -1329,6 +1329,13 @@ cc-oauth-state-mismatch = 状态参数不匹配。
 cc-oauth-complete = 授权完成，您可以关闭此窗口。
 cc-error-prefix = 错误
 
+# 标题栏
+title-bar-restricted-mode = 受限模式
+title-bar-restricted-mode-tooltip = 您正处于受限模式
+title-bar-restricted-mode-meta = 将此项目标记为受信任以解锁所有功能
+title-bar-disconnected = 已断开连接
+title-bar-sign-in = 登录
+
 # 通用表单标签
 name = 名称
 key = 键

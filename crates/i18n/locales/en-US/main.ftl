@@ -1328,6 +1328,13 @@ cc-oauth-state-mismatch = State mismatch.
 cc-oauth-complete = Authorization complete. You may close this window.
 cc-error-prefix = Error
 
+# Title bar
+title-bar-restricted-mode = Restricted Mode
+title-bar-restricted-mode-tooltip = You're in Restricted Mode
+title-bar-restricted-mode-meta = Mark this project as trusted and unlock all features
+title-bar-disconnected = Disconnected
+title-bar-sign-in = Sign In
+
 # Common form labels
 name = Name
 key = Key
