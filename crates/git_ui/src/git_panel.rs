@@ -4425,7 +4425,7 @@ impl GitPanel {
                     ),
             )
             .child(
-                panel_button("Cancel")
+                panel_button(t!("cancel"))
                     .size(ButtonSize::Default)
                     .on_click(cx.listener(|this, _, _, cx| this.set_amend_pending(false, cx))),
             )

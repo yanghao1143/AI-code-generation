@@ -142,7 +142,7 @@ impl RenderOnce for AlertModal {
             modal = modal.child(footer);
         } else if has_default_footer {
             let primary_action = self.primary_action.unwrap_or_else(|| "Ok".into());
-            let dismiss_label = self.dismiss_label.unwrap_or_else(|| "Cancel".into());
+            let dismiss_label = self.dismiss_label.unwrap_or_else(|| t!("cancel").into());
 
             modal = modal.child(
                 h_flex()
@@ -192,7 +192,7 @@ impl Component for AlertModal {
                                 "The current window will be closed, and connections to any shared projects will be terminated."
                             )
                             .primary_action("Leave Call")
-                            .dismiss_label("Cancel")
+                            .dismiss_label(t!("cancel"))
                             .into_any_element(),
                     )]),
                     example_group(vec![single_example(

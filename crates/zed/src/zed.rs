@@ -1366,7 +1366,7 @@ fn quit(_: &Quit, cx: &mut App) {
                         PromptLevel::Info,
                         "Are you sure you want to quit?",
                         None,
-                        &["Quit", "Cancel"],
+                        &["Quit", t!("cancel")],
                         cx,
                     )
                 })

@@ -269,7 +269,7 @@ impl Render for WindowDemo {
                     PromptLevel::Info,
                     "Are you sure?",
                     None,
-                    &["Ok", "Cancel"],
+                    &["Ok", t!("cancel")],
                     cx,
                 );
 

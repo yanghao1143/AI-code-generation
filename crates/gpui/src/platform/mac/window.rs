@@ -1180,7 +1180,7 @@ impl PlatformWindow for MacWindow {
     ) -> Option<oneshot::Receiver<usize>> {
         // macOs applies overrides to modal window buttons after they are added.
         // Two most important for this logic are:
-        // * Buttons with "Cancel" title will be displayed as the last buttons in the modal
+        // * Buttons with t!("cancel") title will be displayed as the last buttons in the modal
         // * Last button added to the modal via `addButtonWithTitle` stays focused
         // * Focused buttons react on "space"/" " keypresses
         // * Usage of `keyEquivalent`, `makeFirstResponder` or `setInitialFirstResponder` does not change the focus
@@ -1192,7 +1192,7 @@ impl PlatformWindow for MacWindow {
         // and any button with the title “Don’t Save” has a key equivalent of Command-D (but only if it’s not the first button).
         // ```
         //
-        // To avoid situations when the last element added is "Cancel" and it gets the focus
+        // To avoid situations when the last element added is t!("cancel") and it gets the focus
         // (hence stealing both ESC and Space shortcuts), we find and add one non-Cancel button
         // last, so it gets focus and a Space shortcut.
         // This way, "Save this file? Yes/No/Cancel"-ish modals will get all three buttons mapped with a key.

@@ -630,7 +630,7 @@ impl PickerDelegate for OpenPathDelegate {
                             Some(
                                 "A file or folder with the same name already exists. Replacing it will overwrite its current contents.",
                             ),
-                            &["Replace", "Cancel"],
+                            &["Replace", t!("cancel")],
                             cx
                         );
                         self.replace_prompt = cx.spawn_in(window, async move |picker, cx| {

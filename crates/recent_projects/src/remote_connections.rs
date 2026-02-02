@@ -756,7 +756,7 @@ pub async fn open_remote_project(
                                 }
                             },
                             Some(&format!("{e:#}")),
-                            &[t("retry"), "Cancel"],
+                            &[t("retry"), t!("cancel")],
                             cx,
                         )
                     })?
@@ -819,7 +819,7 @@ pub async fn open_remote_project(
                                 }
                             },
                             Some(&format!("{e:#}")),
-                            &[t("retry"), "Cancel"],
+                            &[t("retry"), t!("cancel")],
                             cx,
                         )
                     })?

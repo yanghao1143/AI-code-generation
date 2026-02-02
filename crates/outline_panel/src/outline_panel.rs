@@ -21,7 +21,7 @@ use gpui::{
     UniformListScrollHandle, WeakEntity, Window, actions, anchored, deferred, div, point, px, size,
     uniform_list,
 };
-use i18n::t;
+use i18n::{t, t_args};
 use itertools::Itertools;
 use language::{Anchor, BufferId, BufferSnapshot, OffsetRangeExt, OutlineItem};
 use menu::{Cancel, SelectFirst, SelectLast, SelectNext, SelectPrevious};
@@ -2269,11 +2269,10 @@ impl OutlinePanel {
     ) -> Option<String> {
         let buffer_snapshot = self.buffer_snapshot_for_id(buffer_id, cx)?;
         let excerpt_range = range.context.to_point(&buffer_snapshot);
-        Some(format!(
-            "Lines {}- {}",
-            excerpt_range.start.row + 1,
-            excerpt_range.end.row + 1,
-        ))
+        let mut args = HashMap::default();
+        args.insert("start", (excerpt_range.start.row + 1).into());
+        args.insert("end", (excerpt_range.end.row + 1).into());
+        Some(t_args("outline-lines", args))
     }
 
     fn render_outline(
@@ -2430,9 +2429,9 @@ impl OutlinePanel {
                             .map(|icon| icon.color(color).into_any_element());
                             (icon, file_name(path.as_std_path()))
                         }
-                        None => (None, "Untitled".to_string()),
+                        None => (None, t("untitled")),
                     },
-                    None => (None, "Unknown buffer".to_string()),
+                    None => (None, t("outline-unknown-buffer")),
                 };
                 (
                     ElementId::from(external_file.buffer_id.to_proto() as usize),
@@ -4621,9 +4620,9 @@ impl OutlinePanel {
     ) -> impl IntoElement {
         let contents = if self.cached_entries.is_empty() {
             let header = if query.is_some() {
-                "No matches for query"
+                t("outline-no-matches")
             } else {
-                "No outlines available"
+                t("outline-no-outline")
             };
 
             v_flex()
@@ -4652,7 +4651,7 @@ impl OutlinePanel {
                             window.keystroke_text_for(&workspace::ToggleRightDock)
                         }
                     };
-                    Label::new(format!("Toggle Panel With {keystroke}")).color(Color::Muted)
+                    Label::new(t_args("outline-toggle-with", &std::collections::HashMap::from_iter([("keystroke", keystroke.as_ref())]))).color(Color::Muted)
                 }))
         } else {
             let list_contents = {
@@ -4804,9 +4803,9 @@ impl OutlinePanel {
 
     fn render_filter_footer(&mut self, pinned: bool, cx: &mut Context<Self>) -> Div {
         let (icon, icon_tooltip) = if pinned {
-            (IconName::Unpin, "Unpin Outline")
+            (IconName::Unpin, t("outline-panel-unpin"))
         } else {
-            (IconName::Pin, "Pin Active Outline")
+            (IconName::Pin, t("outline-panel-pin"))
         };
 
         let has_query = self.query(cx).is_some();
@@ -4834,7 +4833,7 @@ impl OutlinePanel {
                         this.child(
                             IconButton::new("clear_filter", IconName::Close)
                                 .shape(IconButtonShape::Square)
-                                .tooltip(Tooltip::text("Clear Filter"))
+                                .tooltip(Tooltip::text(t("outline-clear-filter")))
                                 .on_click(cx.listener(|outline_panel, _, window, cx| {
                                     outline_panel.filter_editor.update(cx, |editor, cx| {
                                         editor.set_text("", window, cx);
@@ -4990,7 +4989,7 @@ impl Panel for OutlinePanel {
     }
 
     fn icon_tooltip(&self, _window: &Window, _: &App) -> Option<gpui::SharedString> {
-        Some("Outline Panel".into())
+        Some(t("panel-outline").into())
     }
 
     fn toggle_action(&self) -> Box<dyn Action> {
@@ -5132,7 +5131,7 @@ impl Render for OutlinePanel {
                         .gap_0p5()
                         .border_b_1()
                         .border_color(cx.theme().colors().border_variant)
-                        .child(Label::new("Searching:").color(Color::Muted))
+                        .child(Label::new(t("outline-searching")).color(Color::Muted))
                         .child(Label::new(query_text)),
                 )
             })

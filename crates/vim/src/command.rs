@@ -321,7 +321,7 @@ pub fn register(editor: &mut Editor, cx: &mut Context<Vim>) {
             gpui::PromptLevel::Critical,
             "Argument required",
             None,
-            &["Cancel"],
+            &[t!("cancel")],
             cx,
         );
     });
@@ -367,7 +367,7 @@ pub fn register(editor: &mut Editor, cx: &mut Context<Vim>) {
                             gpui::PromptLevel::Warning,
                             "No file name",
                             Some("Partial buffer write requires file name."),
-                            &["Cancel"],
+                            &[t!("cancel")],
                             cx,
                         );
                         return;
@@ -397,7 +397,7 @@ pub fn register(editor: &mut Editor, cx: &mut Context<Vim>) {
                             gpui::PromptLevel::Warning,
                             "Use ! to write partial buffer",
                             Some("Overwriting the current file with selected buffer content requires '!'."),
-                            &["Cancel"],
+                            &[t!("cancel")],
                             cx,
                         );
                         return;
@@ -425,7 +425,7 @@ pub fn register(editor: &mut Editor, cx: &mut Context<Vim>) {
                                 Some(
                                     "A file or folder with the same name already exists. Replacing it will overwrite its current contents.",
                                 ),
-                                &["Replace", "Cancel"],
+                                &["Replace", t!("cancel")],
                                 cx
                             )
                         });
@@ -506,7 +506,7 @@ pub fn register(editor: &mut Editor, cx: &mut Context<Vim>) {
                         "A file or folder with the same name already exists. \
                         Replacing it will overwrite its current contents.",
                     ),
-                    &["Replace", "Cancel"],
+                    &["Replace", t!("cancel")],
                     cx,
                 );
                 cx.spawn_in(window, async move |editor, cx| {
@@ -566,7 +566,7 @@ pub fn register(editor: &mut Editor, cx: &mut Context<Vim>) {
                 gpui::PromptLevel::Critical,
                 &format!("Invalid argument: {}", s),
                 None,
-                &["Cancel"],
+                &[t!("cancel")],
                 cx,
             );
         }
@@ -2731,7 +2731,7 @@ mod test {
         // conflict!
         cx.simulate_keystrokes("i @ escape");
         cx.simulate_keystrokes(": w enter");
-        cx.simulate_prompt_answer("Cancel");
+        cx.simulate_prompt_answer(t!("cancel"));
 
         assert_eq!(fs.load(path).await.unwrap().replace("\r\n", "\n"), "oops\n");
         assert!(!cx.has_pending_prompt());

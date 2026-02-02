@@ -2227,7 +2227,7 @@ impl Pane {
                         PromptLevel::Warning,
                         DELETED_MESSAGE,
                         None,
-                        &[t("save"), t("close"), "Cancel"],
+                        &[t("save"), t("close"), t!("cancel")],
                         cx,
                     )
                 })?;
@@ -2261,7 +2261,7 @@ impl Pane {
                         PromptLevel::Warning,
                         CONFLICT_MESSAGE,
                         None,
-                        &["Overwrite", "Discard", "Cancel"],
+                        &["Overwrite", "Discard", t!("cancel")],
                         cx,
                     )
                 })?;
@@ -2303,7 +2303,7 @@ impl Pane {
                                 PromptLevel::Warning,
                                 &prompt,
                                 None,
-                                &[t("save"), "Don't Save", "Cancel"],
+                                &[t("save"), "Don't Save", t!("cancel")],
                                 cx,
                             ))
                         } else {
@@ -7298,7 +7298,7 @@ mod tests {
         });
 
         cx.executor().run_until_parked();
-        cx.simulate_prompt_answer("Cancel");
+        cx.simulate_prompt_answer(t!("cancel"));
         close_task.await.unwrap();
         assert_item_labels(&pane, ["Dirty*^"], cx);
     }
