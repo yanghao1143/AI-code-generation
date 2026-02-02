@@ -7,7 +7,7 @@ use crate::{
     scroll::ScrollAmount,
 };
 use anyhow::Context as _;
-use i18n::t;
+use i18n::{t, t_args};
 use gpui::{
     AnyElement, AsyncWindowContext, Context, Entity, Focusable as _, FontWeight, Hsla,
     InteractiveElement, IntoElement, MouseButton, ParentElement, Pixels, ScrollHandle, Size,
@@ -447,7 +447,7 @@ fn show_hover(
 
             if let Some((invisible, range)) = invisible_char {
                 let blocks = vec![HoverBlock {
-                    text: format!("Unicode character U+{:02X}", invisible as u32),
+                    text: t_args("editor-unicode-character", &[("code", format!("{:02X}", invisible as u32).into())]).to_string(),
                     kind: HoverBlockKind::PlainText,
                 }];
                 let parsed_content =

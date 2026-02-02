@@ -21212,7 +21212,7 @@ impl Editor {
         // Create the prompt editor for the review input
         let prompt_editor = cx.new(|cx| {
             let mut editor = Editor::single_line(window, cx);
-            editor.set_placeholder_text("Add a review comment...", window, cx);
+            editor.set_placeholder_text(t("editor-add-review-comment-placeholder"), window, cx);
             editor
         });
 
@@ -22679,7 +22679,7 @@ impl Editor {
                 .ok();
             }
             Err(err) => {
-                let message = format!("Failed to copy permalink: {err}");
+                let message = t_args("editor-failed-copy-permalink", &[("error", err.to_string().into())]).to_string();
 
                 anyhow::Result::<()>::Err(err).log_err();
 
@@ -22743,7 +22743,7 @@ impl Editor {
                 .ok();
             }
             Err(err) => {
-                let message = format!("Failed to open permalink: {err}");
+                let message = t_args("editor-failed-open-permalink", &[("error", err.to_string().into())]).to_string();
 
                 anyhow::Result::<()>::Err(err).log_err();
 
