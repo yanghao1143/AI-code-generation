@@ -491,7 +491,12 @@ dispatch_task() {
         fi
     fi
     
-    # 6. 使用默认任务
+    # 6. 使用喂食器生成的任务
+    if [[ -z "$task" ]]; then
+        task=$("$WORKSPACE/scripts/context-feeder.sh" generate "$agent" 2>/dev/null)
+    fi
+    
+    # 7. 使用默认任务
     if [[ -z "$task" ]]; then
         case "$agent" in
             claude-agent)
@@ -525,6 +530,9 @@ run_check() {
     local mode="${1:-quick}"
     local issues=()
     
+    # 先提取所有 agent 的上下文
+    "$WORKSPACE/scripts/context-feeder.sh" extract 2>/dev/null
+    
     for agent in "${AGENTS[@]}"; do
         # 检查会话是否存在
         if ! tmux -S "$SOCKET" has-session -t "$agent" 2>/dev/null; then
@@ -548,11 +556,15 @@ run_check() {
                 fi
             fi
         else
-            # 正在工作，重置计数器
+            # 正在工作，重置计数器，保存上下文
             redis-cli HSET "$REDIS_PREFIX:retry:$agent" "count" 0 2>/dev/null
             redis-cli HSET "$REDIS_PREFIX:unknown:$agent" "count" 0 2>/dev/null
+            "$WORKSPACE/scripts/context-cache.sh" save "$agent" 2>/dev/null
         fi
     done
+    
+    # 整理共享知识
+    "$WORKSPACE/scripts/context-feeder.sh" compile 2>/dev/null
     
     if [[ ${#issues[@]} -gt 0 ]]; then
         echo "🔧 ${issues[*]}"
