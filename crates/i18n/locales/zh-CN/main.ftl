@@ -2603,3 +2603,19 @@ remote-servers-remote-projects = 远程项目
 
 # Agent Registry - Title / 代理注册表 - 标题
 agent-registry-title = ACP 代理注册表
+
+# Language Models - Common / 语言模型 - 通用
+lm-loading-credentials = 正在加载凭证...
+lm-api-key-configured = API 密钥已配置
+lm-api-key-configured-for = API 密钥已为 { $url } 配置
+lm-api-key-env-var = API 密钥已在 { $env_var } 环境变量中设置
+lm-api-key-steps = 要使用 { $agent }，您需要添加 API 密钥。请按照以下步骤操作：
+lm-create-key-by-visiting = 访问以下链接创建密钥
+lm-paste-api-key-hint = 在下方粘贴您的 API 密钥并按回车键开始使用
+lm-custom-api-url-hint = (可选) 自定义 API 地址 (例如代理服务器)
+lm-custom-api-url-label = 自定义 API 地址 (可选)
+lm-api-key-label = API 密钥
+lm-env-var-hint = 您也可以设置 { $env_var } 环境变量并重启 Zed。
+lm-reset-api-key-hint = 要重置 API 密钥，请取消设置 { $env_var } 环境变量。
+lm-zed-agent-anthropic = Zed 的 Anthropic 代理
+lm-anthropic-settings = Anthropic 设置
