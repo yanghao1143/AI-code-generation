@@ -83,9 +83,9 @@ impl UserMessage {
             .as_ref()
             .is_some_and(|checkpoint| checkpoint.show)
         {
-            writeln!(markdown, "## User (checkpoint)").unwrap();
+            writeln!(markdown, "## {}", t("acp-user-checkpoint")).unwrap();
         } else {
-            writeln!(markdown, "## User").unwrap();
+            writeln!(markdown, "## {}", t("acp-user")).unwrap();
         }
         writeln!(markdown).unwrap();
         writeln!(markdown, "{}", self.content.to_markdown(cx)).unwrap();
@@ -103,7 +103,8 @@ pub struct AssistantMessage {
 impl AssistantMessage {
     pub fn to_markdown(&self, cx: &App) -> String {
         format!(
-            "## Assistant\n\n{}\n\n",
+            "## {}\n\n{}\n\n",
+            t("acp-assistant"),
             self.chunks
                 .iter()
                 .map(|chunk| chunk.to_markdown(cx))
@@ -399,9 +400,11 @@ impl ToolCall {
 
     pub fn to_markdown(&self, cx: &App) -> String {
         let mut markdown = format!(
-            "**Tool Call: {}**\nStatus: {}\n\n",
-            self.label.read(cx).source(),
-            self.status
+            "**{}: {}**\n{}: {}\n\n",
+            t("acp-tool-call"),
+            self.title(cx),
+            t("status"),
+            self.status_text()
         );
         for content in &self.content {
             markdown.push_str(content.to_markdown(cx).as_str());

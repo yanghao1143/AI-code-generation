@@ -2257,3 +2257,7 @@ acp-duplicate-subagent-update = Duplicate SubagentThread update for the same Acp
 acp-use-either-send-update = Use either send_update or set_next_prompt_updates
 acp-read-beyond-file-end = Attempting to read beyond the end of the file
 tool-call-not-found = Tool call not found
+acp-user = User
+acp-assistant = Assistant
+acp-user-checkpoint = User (checkpoint)
+acp-tool-call = Tool Call

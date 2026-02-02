@@ -2720,3 +2720,7 @@ acp-duplicate-subagent-update = 同一 AcpThread 实体的重复 SubagentThread 
 acp-use-either-send-update = 请使用 send_update 或 set_next_prompt_updates
 acp-read-beyond-file-end = 尝试读取超出文件末尾的内容
 tool-call-not-found = 未找到工具调�
+acp-user = 用户
+acp-assistant = 助手
+acp-user-checkpoint = 用户 (检查点)
+acp-tool-call = 工具调用
