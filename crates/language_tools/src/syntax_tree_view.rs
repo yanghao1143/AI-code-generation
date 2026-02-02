@@ -6,6 +6,7 @@ use gpui::{
     ParentElement, Render, ScrollStrategy, SharedString, Styled, Task, UniformListScrollHandle,
     WeakEntity, Window, actions, div, rems, uniform_list,
 };
+use i18n::{t, t_args};
 use language::{Buffer, OwnedSyntaxLayer};
 use std::{any::TypeId, mem, ops::Range};
 use theme::ActiveTheme;
@@ -521,17 +522,14 @@ impl Render for SyntaxTreeView {
                         .max_w_3_5()
                         .map(|this| {
                             if editor_state.is_some_and(|state| !state.has_language()) {
-                                this.child(Label::new("Current editor has no associated language"))
+                                this.child(Label::new(t("syntax-tree-no-language")))
                                     .child(
-                                        Label::new(concat!(
-                                            "Try assigning a language or",
-                                            "switching to a different buffer"
-                                        ))
-                                        .size(LabelSize::Small),
+                                        Label::new(t("syntax-tree-try-assigning-language"))
+                                            .size(LabelSize::Small),
                                     )
                             } else {
-                                this.child(Label::new("Not attached to an editor")).child(
-                                    Label::new("Focus an editor to show a new tree view")
+                                this.child(Label::new(t("syntax-tree-not-attached"))).child(
+                                    Label::new(t("syntax-tree-focus-editor"))
                                         .size(LabelSize::Small),
                                 )
                             }
@@ -561,7 +559,7 @@ impl Item for SyntaxTreeView {
     fn to_item_events(_: &Self::Event, _: impl FnMut(workspace::item::ItemEvent)) {}
 
     fn tab_content_text(&self, _detail: usize, _cx: &App) -> SharedString {
-        "Syntax Tree".into()
+        t("syntax-tree").into()
     }
 
     fn telemetry_event_text(&self) -> Option<&'static str> {
@@ -680,7 +678,7 @@ impl SyntaxTreeToolbarItemView {
                                 editor.tab_content_text(Default::default(), cx)
                             });
 
-                            Tooltip::text(format!("Update view to '{active_tab_name}'"))
+                            Tooltip::text(t_args("syntax-tree-update-view", &[("name", active_tab_name.into())]))
                         })
                         .on_click(cx.listener(|this, _, window, cx| {
                             this.update_active_editor(&Default::default(), window, cx);

@@ -2529,3 +2529,11 @@ inspector-bounds = 边界: ⌜{ $origin } - { $bottom_right }⌟
 inspector-size = 尺寸: { $size }
 inspector-content-size = 内容尺寸: { $size }
 inspector-content-size-tooltip = 元素子元素的尺寸
+
+# Language Tools - Syntax Tree View / 语言工具 - 语法树视图
+syntax-tree = 语法树
+syntax-tree-no-language = 当前编辑器没有关联的语言
+syntax-tree-try-assigning-language = 尝试指定语言或切换到其他缓冲区
+syntax-tree-not-attached = 未附加到编辑器
+syntax-tree-focus-editor = 聚焦编辑器以显示新的语法树视图
+syntax-tree-update-view = 更新视图到 '{ $name }'

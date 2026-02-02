@@ -2518,3 +2518,11 @@ inspector-bounds = Bounds: ⌜{ $origin } - { $bottom_right }⌟
 inspector-size = Size: { $size }
 inspector-content-size = Content size: { $size }
 inspector-content-size-tooltip = Size of the element's children
+
+# Language Tools - Syntax Tree View
+syntax-tree = Syntax Tree
+syntax-tree-no-language = Current editor has no associated language
+syntax-tree-try-assigning-language = Try assigning a language or switching to a different buffer
+syntax-tree-not-attached = Not attached to an editor
+syntax-tree-focus-editor = Focus an editor to show a new tree view
+syntax-tree-update-view = Update view to '{ $name }'
