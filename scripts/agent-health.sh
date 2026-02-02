@@ -479,12 +479,26 @@ case "$action" in
         NEEDS_RECOVERY=false
         
         for agent in "${AGENTS[@]}"; do
-            IFS='|' read -r name status health idle context cli_type <<< "$(check_agent "$agent")"
+            # 直接获取输出，避免多次调用导致状态变化
+            output=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p 2>/dev/null)
+            output_tail=$(echo "$output" | tail -30)
+            last_lines=$(echo "$output" | tail -5)
+            cli_type=$(detect_cli_type "$output_tail" "$agent")
             
-            if [[ "$health" == "blocked" || "$health" == "critical" || "$health" == "unhealthy" ]]; then
+            # 检查是否需要确认
+            if is_waiting_confirm "$output_tail"; then
                 NEEDS_RECOVERY=true
-                echo "⚠️ [$name] 需要恢复: $status ($health)"
-                recover_agent "$name" "$status" "$cli_type"
+                echo "⚠️ [$agent] 需要确认"
+                recover_agent "$agent" "needs_confirm" "$cli_type"
+                continue
+            fi
+            
+            # 检查是否有未发送的输入
+            if has_pending_input "$output_tail" "$cli_type"; then
+                NEEDS_RECOVERY=true
+                echo "⚠️ [$agent] 有未发送的输入"
+                recover_agent "$agent" "pending_input" "$cli_type"
+                continue
             fi
         done
         
