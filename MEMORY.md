@@ -579,4 +579,39 @@ RULES: [约束/验收标准]
 ./scripts/priority-queue.sh stats
 ```
 
+### 2026-02-02 13:16 - 🚀 进化 v3.4：统一入口 + 任务分解器
+
+**新增功能**:
+
+1. **统一入口脚本** (`scripts/evo`)
+   - 整合所有进化系统功能
+   - 简洁的命令行界面
+   - 支持: status, dashboard, check, add, list, decompose, learn, report, repair, restart, cleanup
+
+2. **智能任务分解器** (`scripts/task-decomposer.sh`)
+   - 支持任务类型: i18n, bugfix, feature, refactor
+   - 自动检测任务类型
+   - 根据步骤自动分配给合适的 agent
+   - 创建子任务到优先级队列
+
+3. **自动学习系统** (`scripts/auto-learn.sh`)
+   - 记录成功/失败模式
+   - 分析 agent 表现
+   - 生成学习报告
+   - 集成到修复流程
+
+4. **检测修复**
+   - 修复 Claude pending_input 检测 (移除 ^ 锚点)
+   - 扩大检测范围到 last_20
+
+**使用方法**:
+```bash
+# 统一入口
+./scripts/evo status
+./scripts/evo check
+./scripts/evo add "修复编译错误" compile codex-agent
+./scripts/evo decompose "国际化 crates/terminal 模块"
+./scripts/evo report
+```
+
 **当前状态**: 三个 agent 全部正常工作
