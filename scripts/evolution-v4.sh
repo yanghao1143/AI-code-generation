@@ -364,24 +364,10 @@ fix_env_error() {
     local agent="$1"
     local output=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p 2>/dev/null)
     
-    # 检测具体是什么命令找不到
-    if echo "$output" | grep -qE "cargo: command not found|cargo: No such file" 2>/dev/null; then
-        # cargo 找不到，可能是 PATH 问题
-        # 在 WSL 中，需要 source cargo env
-        tmux -S "$SOCKET" send-keys -t "$agent" C-c
-        sleep 1
-        # 告诉 agent 使用完整路径或设置环境
-        tmux -S "$SOCKET" send-keys -t "$agent" "注意: cargo 命令找不到。请使用 'source ~/.cargo/env' 或使用完整路径 '~/.cargo/bin/cargo'。继续你的任务。" Enter
-    elif echo "$output" | grep -qE "node: command not found" 2>/dev/null; then
-        tmux -S "$SOCKET" send-keys -t "$agent" C-c
-        sleep 1
-        tmux -S "$SOCKET" send-keys -t "$agent" "注意: node 命令找不到。请使用 nvm 或完整路径。继续你的任务。" Enter
-    else
-        # 通用处理
-        tmux -S "$SOCKET" send-keys -t "$agent" C-c
-        sleep 1
-        tmux -S "$SOCKET" send-keys -t "$agent" "遇到环境问题，请检查命令路径或使用替代方案。继续你的任务。" Enter
-    fi
+    # env_error 通常是 bash 层面的问题，不是 CLI 内部问题
+    # 最好的处理方式是重启会话
+    echo "检测到环境错误，重启 $agent 会话..."
+    restart_agent "$agent"
 }
 
 # ============ 重启 Agent ============
