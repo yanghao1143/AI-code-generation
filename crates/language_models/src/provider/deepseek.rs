@@ -6,6 +6,7 @@ use futures::Stream;
 use futures::{FutureExt, StreamExt, future::BoxFuture, stream::BoxStream};
 use gpui::{AnyView, App, AsyncApp, Context, Entity, SharedString, Task, Window};
 use http_client::HttpClient;
+use i18n::{t, t_args};
 use language_model::{
     ApiKeyState, AuthenticateError, EnvVar, IconOrSvg, LanguageModel, LanguageModelCompletionError,
     LanguageModelCompletionEvent, LanguageModelId, LanguageModelName, LanguageModelProvider,
@@ -594,44 +595,40 @@ impl Render for ConfigurationView {
     fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let env_var_set = self.state.read(cx).api_key_state.is_from_env_var();
         let configured_card_label = if env_var_set {
-            format!("API key set in {API_KEY_ENV_VAR_NAME} environment variable")
+            t_args("lm-api-key-env-var", &[("env_var", API_KEY_ENV_VAR_NAME.into())]).to_string()
         } else {
             let api_url = DeepSeekLanguageModelProvider::api_url(cx);
             if api_url == DEEPSEEK_API_URL {
-                "API key configured".to_string()
+                t("lm-api-key-configured").to_string()
             } else {
-                format!("API key configured for {}", api_url)
+                t_args("lm-api-key-configured-for", &[("url", api_url.to_string().into())]).to_string()
             }
         };
 
         if self.load_credentials_task.is_some() {
             div()
-                .child(Label::new("Loading credentials..."))
+                .child(Label::new(t("lm-loading-credentials")))
                 .into_any_element()
         } else if self.should_render_editor(cx) {
             v_flex()
                 .size_full()
                 .on_action(cx.listener(Self::save_api_key))
-                .child(Label::new("To use DeepSeek in Zed, you need an API key:"))
+                .child(Label::new(t("lm-deepseek-api-key-intro")))
                 .child(
                     List::new()
                         .child(
                             ListBulletItem::new("")
-                                .child(Label::new("Get your API key from the"))
+                                .child(Label::new(t("lm-deepseek-get-key")))
                                 .child(ButtonLink::new(
-                                    "DeepSeek console",
+                                    t("lm-deepseek-console"),
                                     "https://platform.deepseek.com/api_keys",
                                 )),
                         )
-                        .child(ListBulletItem::new(
-                            "Paste your API key below and hit enter to start using the assistant",
-                        )),
+                        .child(ListBulletItem::new(t("lm-paste-api-key-hint"))),
                 )
                 .child(self.api_key_editor.clone())
                 .child(
-                    Label::new(format!(
-                        "You can also set the {API_KEY_ENV_VAR_NAME} environment variable and restart Zed."
-                    ))
+                    Label::new(t_args("lm-env-var-hint", &[("env_var", API_KEY_ENV_VAR_NAME.into())]))
                     .size(LabelSize::Small)
                     .color(Color::Muted),
                 )

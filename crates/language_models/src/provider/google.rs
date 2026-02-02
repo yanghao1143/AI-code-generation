@@ -7,6 +7,7 @@ use google_ai::{
 };
 use gpui::{AnyView, App, AsyncApp, Context, Entity, SharedString, Task, Window};
 use http_client::HttpClient;
+use i18n::{t, t_args};
 use language_model::{
     AuthenticateError, ConfigurationViewTargetAgent, EnvVar, LanguageModelCompletionError,
     LanguageModelCompletionEvent, LanguageModelToolChoice, LanguageModelToolSchemaFormat,
@@ -813,47 +814,43 @@ impl Render for ConfigurationView {
     fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let env_var_set = self.state.read(cx).api_key_state.is_from_env_var();
         let configured_card_label = if env_var_set {
-            format!(
-                "API key set in {} environment variable",
-                API_KEY_ENV_VAR.name
-            )
+            t_args("lm-api-key-env-var", &[("env_var", API_KEY_ENV_VAR.name.into())]).to_string()
         } else {
             let api_url = GoogleLanguageModelProvider::api_url(cx);
             if api_url == google_ai::API_URL {
-                "API key configured".to_string()
+                t("lm-api-key-configured").to_string()
             } else {
-                format!("API key configured for {}", api_url)
+                t_args("lm-api-key-configured-for", &[("url", api_url.to_string().into())]).to_string()
             }
         };
 
         if self.load_credentials_task.is_some() {
             div()
-                .child(Label::new("Loading credentials..."))
+                .child(Label::new(t("lm-loading-credentials")))
                 .into_any_element()
         } else if self.should_render_editor(cx) {
+            let agent_name: SharedString = match &self.target_agent {
+                ConfigurationViewTargetAgent::ZedAgent => t("lm-zed-agent-google"),
+                ConfigurationViewTargetAgent::Other(agent) => agent.clone(),
+            };
             v_flex()
                 .size_full()
                 .on_action(cx.listener(Self::save_api_key))
-                .child(Label::new(format!("To use {}, you need to add an API key. Follow these steps:", match &self.target_agent {
-                    ConfigurationViewTargetAgent::ZedAgent => "Zed's agent with Google AI".into(),
-                    ConfigurationViewTargetAgent::Other(agent) => agent.clone(),
-                })))
+                .child(Label::new(t_args("lm-api-key-steps", &[("agent", agent_name)])))
                 .child(
                     List::new()
                         .child(
                             ListBulletItem::new("")
-                                .child(Label::new("Create one by visiting"))
-                                .child(ButtonLink::new("Google AI's console", "https://aistudio.google.com/app/apikey"))
+                                .child(Label::new(t("lm-create-key-by-visiting")))
+                                .child(ButtonLink::new(t("lm-google-console"), "https://aistudio.google.com/app/apikey"))
                         )
                         .child(
-                            ListBulletItem::new("Paste your API key below and hit enter to start using the agent")
+                            ListBulletItem::new(t("lm-paste-api-key-hint"))
                         )
                 )
                 .child(self.api_key_editor.clone())
                 .child(
-                    Label::new(
-                        format!("You can also set the {GEMINI_API_KEY_VAR_NAME} environment variable and restart Zed."),
-                    )
+                    Label::new(t_args("lm-env-var-hint", &[("env_var", GEMINI_API_KEY_VAR_NAME.into())]))
                     .size(LabelSize::Small).color(Color::Muted),
                 )
                 .into_any_element()
@@ -862,7 +859,7 @@ impl Render for ConfigurationView {
                 .disabled(env_var_set)
                 .on_click(cx.listener(|this, _, window, cx| this.reset_api_key(window, cx)))
                 .when(env_var_set, |this| {
-                    this.tooltip_label(format!("To reset your API key, make sure {GEMINI_API_KEY_VAR_NAME} and {GOOGLE_AI_API_KEY_VAR_NAME} environment variables are unset."))
+                    this.tooltip_label(t_args("lm-google-reset-hint", &[("env_var1", GEMINI_API_KEY_VAR_NAME.into()), ("env_var2", GOOGLE_AI_API_KEY_VAR_NAME.into())]))
                 })
                 .into_any_element()
         }

@@ -9,6 +9,7 @@ use fs::Fs;
 use futures::{FutureExt, Stream, StreamExt, future::BoxFuture, stream::BoxStream};
 use gpui::{AnyView, App, AsyncApp, Context, Entity, Task};
 use http_client::HttpClient;
+use i18n::{t, t_args};
 use language_model::{
     ApiKeyState, AuthenticateError, ConfigurationViewTargetAgent, EnvVar, IconOrSvg, LanguageModel,
     LanguageModelCacheConfiguration, LanguageModelCompletionError, LanguageModelCompletionEvent,
@@ -1557,63 +1558,62 @@ impl Render for ConfigurationView {
     fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let env_var_set = self.state.read(cx).api_key_state.is_from_env_var();
         let configured_card_label = if env_var_set {
-            format!("API key set in {API_KEY_ENV_VAR_NAME} environment variable")
+            t_args("lm-api-key-env-var", &[("env_var", API_KEY_ENV_VAR_NAME.into())]).to_string()
         } else {
             let api_url = AnthropicLanguageModelProvider::api_url(cx);
             if api_url == ANTHROPIC_API_URL {
-                "API key configured".to_string()
+                t("lm-api-key-configured").to_string()
             } else {
-                format!("API key configured for {}", api_url)
+                t_args("lm-api-key-configured-for", &[("url", api_url.to_string().into())]).to_string()
             }
         };
 
         if self.load_credentials_task.is_some() {
             div()
-                .child(Label::new("Loading credentials..."))
+                .child(Label::new(t("lm-loading-credentials")))
                 .into_any_element()
         } else if self.should_render_editor(cx) {
+            let agent_name: SharedString = match &self.target_agent {
+                ConfigurationViewTargetAgent::ZedAgent => t("lm-zed-agent-anthropic"),
+                ConfigurationViewTargetAgent::Other(agent) => agent.clone(),
+            };
             v_flex()
                 .size_full()
                 .on_action(cx.listener(Self::save_api_key))
-                .child(Label::new(format!("To use {}, you need to add an API key. Follow these steps:", match &self.target_agent {
-                    ConfigurationViewTargetAgent::ZedAgent => "Zed's agent with Anthropic".into(),
-                    ConfigurationViewTargetAgent::Other(agent) => agent.clone(),
-                })))
+                .child(Label::new(t_args("lm-api-key-steps", &[("agent", agent_name)])))
                 .child(
                     List::new()
                         .child(
                             ListBulletItem::new("")
-                                .child(Label::new("Create one by visiting"))
-                                .child(ButtonLink::new("Anthropic's settings", "https://console.anthropic.com/settings/keys"))
+                                .child(Label::new(t("lm-create-key-by-visiting")))
+                                .child(ButtonLink::new(t("lm-anthropic-settings"), "https://console.anthropic.com/settings/keys"))
                         )
                         .child(
-                            ListBulletItem::new("Paste your API key below and hit enter to start using the agent")
+                            ListBulletItem::new(t("lm-paste-api-key-hint"))
                         )
                         .child(
-                            ListBulletItem::new("(可选) 自定义 API 地址 (例如代理服务器)")
+                            ListBulletItem::new(t("lm-custom-api-url-hint"))
                         )
                 )
                 .child(
                     v_flex()
                         .gap_1()
                         .child(
-                            Label::new("自定义 API 地址 (可选)")
+                            Label::new(t("lm-custom-api-url-label"))
                                 .size(LabelSize::Small)
                                 .color(Color::Muted)
                         )
                         .child(self.api_url_editor.clone())
                 )
                 .child(
-                    Label::new("API Key")
+                    Label::new(t("lm-api-key-label"))
                         .size(LabelSize::Small)
                         .color(Color::Muted)
                         .mt_1()
                 )
                 .child(self.api_key_editor.clone())
                 .child(
-                    Label::new(
-                        format!("You can also set the {API_KEY_ENV_VAR_NAME} environment variable and restart Zed."),
-                    )
+                    Label::new(t_args("lm-env-var-hint", &[("env_var", API_KEY_ENV_VAR_NAME.into())]))
                     .size(LabelSize::Small)
                     .color(Color::Muted)
                     .mt_0p5(),
@@ -1624,9 +1624,7 @@ impl Render for ConfigurationView {
                 .disabled(env_var_set)
                 .on_click(cx.listener(|this, _, window, cx| this.reset_api_key(window, cx)))
                 .when(env_var_set, |this| {
-                    this.tooltip_label(format!(
-                    "To reset your API key, unset the {API_KEY_ENV_VAR_NAME} environment variable."
-                ))
+                    this.tooltip_label(t_args("lm-reset-api-key-hint", &[("env_var", API_KEY_ENV_VAR_NAME.into())]))
                 })
                 .into_any_element()
         }

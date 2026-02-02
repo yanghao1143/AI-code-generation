@@ -2619,3 +2619,20 @@ lm-env-var-hint = 您也可以设置 { $env_var } 环境变量并重启 Zed。
 lm-reset-api-key-hint = 要重置 API 密钥，请取消设置 { $env_var } 环境变量。
 lm-zed-agent-anthropic = Zed 的 Anthropic 代理
 lm-anthropic-settings = Anthropic 设置
+
+# Language Models - OpenAI / 语言模型 - OpenAI
+lm-zed-agent-openai = Zed 的 OpenAI 代理
+lm-openai-console = OpenAI 控制台
+lm-ensure-credits = 确保您的 OpenAI 账户有余额
+lm-openai-copilot-note = 注意：其他服务（如 GitHub Copilot）的订阅不适用于此。
+lm-openai-compatible-models = Zed 还支持 OpenAI 兼容的模型。
+
+# Language Models - Google / 语言模型 - Google
+lm-zed-agent-google = Zed 的 Google AI 代理
+lm-google-console = Google AI 控制台
+lm-google-reset-hint = 要重置 API 密钥，请确保 { $env_var1 } 和 { $env_var2 } 环境变量未设置。
+
+# Language Models - DeepSeek / 语言模型 - DeepSeek
+lm-deepseek-api-key-intro = 要在 Zed 中使用 DeepSeek，您需要一个 API 密钥：
+lm-deepseek-get-key = 从以下位置获取您的 API 密钥
+lm-deepseek-console = DeepSeek 控制台

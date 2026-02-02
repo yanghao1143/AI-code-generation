@@ -2590,3 +2590,36 @@ remote-servers-remote-projects = Remote Projects
 
 # Agent Registry - Title
 agent-registry-title = ACP Agent Registry
+
+# Language Models - Common
+lm-loading-credentials = Loading credentials...
+lm-api-key-configured = API key configured
+lm-api-key-configured-for = API key configured for { $url }
+lm-api-key-env-var = API key set in { $env_var } environment variable
+lm-api-key-steps = To use { $agent }, you need to add an API key. Follow these steps:
+lm-create-key-by-visiting = Create one by visiting
+lm-paste-api-key-hint = Paste your API key below and hit enter to start using the agent
+lm-custom-api-url-hint = (Optional) Custom API URL (e.g., proxy server)
+lm-custom-api-url-label = Custom API URL (Optional)
+lm-api-key-label = API Key
+lm-env-var-hint = You can also set the { $env_var } environment variable and restart Zed.
+lm-reset-api-key-hint = To reset your API key, unset the { $env_var } environment variable.
+lm-zed-agent-anthropic = Zed's agent with Anthropic
+lm-anthropic-settings = Anthropic's settings
+
+# Language Models - OpenAI
+lm-zed-agent-openai = Zed's agent with OpenAI
+lm-openai-console = OpenAI's console
+lm-ensure-credits = Ensure your OpenAI account has credits
+lm-openai-copilot-note = Note that having a subscription for another service like GitHub Copilot won't work.
+lm-openai-compatible-models = Zed also supports OpenAI-compatible models.
+
+# Language Models - Google
+lm-zed-agent-google = Zed's agent with Google AI
+lm-google-console = Google AI's console
+lm-google-reset-hint = To reset your API key, make sure { $env_var1 } and { $env_var2 } environment variables are unset.
+
+# Language Models - DeepSeek
+lm-deepseek-api-key-intro = To use DeepSeek in Zed, you need an API key:
+lm-deepseek-get-key = Get your API key from the
+lm-deepseek-console = DeepSeek console
