@@ -9,6 +9,7 @@ use gpui::{
     PathPromptOptions, Render, SharedString, Styled, Subscription, Task, WeakEntity, Window,
     actions, rems,
 };
+use i18n::{t, t_args};
 use picker::{Picker, PickerDelegate, PickerEditorPosition};
 use project::{
     DirectoryLister,
@@ -17,6 +18,7 @@ use project::{
 };
 use recent_projects::{RemoteConnectionModal, connect};
 use remote::{RemoteConnectionOptions, remote_client::ConnectionIdentifier};
+use std::collections::HashMap;
 use std::{path::PathBuf, sync::Arc};
 use ui::{HighlightedLabel, KeyBinding, ListItem, ListItemSpacing, prelude::*};
 use util::ResultExt;
@@ -276,7 +278,7 @@ impl WorktreeListDelegate {
                         files: false,
                         directories: true,
                         multiple: false,
-                        prompt: Some("Select directory for new worktree".into()),
+                        prompt: Some(t("git-select-worktree-dir").into()),
                     },
                     DirectoryLister::Project(this.project().clone()),
                     window,
@@ -364,7 +366,7 @@ impl WorktreeListDelegate {
 
             anyhow::Ok(())
         })
-        .detach_and_prompt_err("Failed to create worktree", window, cx, |e, _, _| {
+        .detach_and_prompt_err(&t("git-failed-create-worktree"), window, cx, |e, _, _| {
             Some(e.to_string())
         });
     }
@@ -401,7 +403,7 @@ impl WorktreeListDelegate {
                 anyhow::Ok(())
             })
             .detach_and_prompt_err(
-                "Failed to open worktree",
+                &t("git-failed-open-worktree"),
                 window,
                 cx,
                 |e, _, _| Some(e.to_string()),
@@ -420,7 +422,7 @@ impl WorktreeListDelegate {
                 .await
             })
             .detach_and_prompt_err(
-                "Failed to open worktree",
+                &t("git-failed-open-worktree"),
                 window,
                 cx,
                 |e, _, _| Some(e.to_string()),
@@ -537,7 +539,7 @@ impl PickerDelegate for WorktreeListDelegate {
     type ListItem = ListItem;
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Select worktree…".into()
+        t("git-select-worktree").into()
     }
 
     fn editor_position(&self) -> PickerEditorPosition {
@@ -672,14 +674,19 @@ impl PickerDelegate for WorktreeListDelegate {
             .collect::<String>();
 
         let (branch_name, sublabel) = if entry.is_new {
+            let branch = entry.worktree.branch();
+            let args = HashMap::from([("branch", branch)]);
             (
-                Label::new(format!("Create Worktree: \"{}\"…", entry.worktree.branch()))
+                Label::new(t_args("git-create-worktree", &args))
                     .truncate()
                     .into_any_element(),
-                format!(
-                    "based off {}",
-                    self.base_branch(cx).unwrap_or("the current branch")
-                ),
+                match self.base_branch(cx) {
+                    Some(branch) => {
+                        let args = HashMap::from([("branch", branch)]);
+                        t_args("git-based-off", &args)
+                    }
+                    None => t("git-based-off-current"),
+                },
             )
         } else {
             let branch = entry.worktree.branch();
@@ -735,7 +742,7 @@ impl PickerDelegate for WorktreeListDelegate {
     }
 
     fn no_matches_text(&self, _window: &mut Window, _cx: &mut App) -> Option<SharedString> {
-        Some("No worktrees found".into())
+        Some(t("git-no-worktrees").into())
     }
 
     fn render_footer(&self, _: &mut Window, cx: &mut Context<Picker<Self>>) -> Option<AnyElement> {
@@ -753,9 +760,10 @@ impl PickerDelegate for WorktreeListDelegate {
 
         if is_creating {
             let from_default_button = self.default_branch.as_ref().map(|default_branch| {
+                let args = HashMap::from([("branch", default_branch.as_ref())]);
                 Button::new(
                     "worktree-from-default",
-                    format!("Create from: {default_branch}"),
+                    t_args("git-create-from-branch", &args),
                 )
                 .key_binding(
                     KeyBinding::for_action_in(&WorktreeFromDefault, &focus_handle, cx)
@@ -766,7 +774,16 @@ impl PickerDelegate for WorktreeListDelegate {
                 })
             });
 
-            let current_branch = self.base_branch(cx).unwrap_or("current branch");
+            let current_branch_label = match self.base_branch(cx) {
+                Some(branch) => {
+                    let args = HashMap::from([("branch", branch)]);
+                    t_args("git-create-from-branch", &args)
+                }
+                None => {
+                    let args = HashMap::from([("branch", "current branch")]);
+                    t_args("git-create-from-branch", &args)
+                }
+            };
 
             Some(
                 footer_container
@@ -774,7 +791,7 @@ impl PickerDelegate for WorktreeListDelegate {
                     .child(
                         Button::new(
                             "worktree-from-current",
-                            format!("Create from: {current_branch}"),
+                            current_branch_label,
                         )
                         .key_binding(
                             KeyBinding::for_action_in(&menu::Confirm, &focus_handle, cx)
@@ -790,7 +807,7 @@ impl PickerDelegate for WorktreeListDelegate {
             Some(
                 footer_container
                     .child(
-                        Button::new("open-in-new-window", "Open in New Window")
+                        Button::new("open-in-new-window", t("git-open-in-new-window"))
                             .key_binding(
                                 KeyBinding::for_action_in(&menu::Confirm, &focus_handle, cx)
                                     .map(|kb| kb.size(rems_from_px(12.))),
@@ -800,7 +817,7 @@ impl PickerDelegate for WorktreeListDelegate {
                             }),
                     )
                     .child(
-                        Button::new("open-in-window", "Open")
+                        Button::new("open-in-window", t("git-open"))
                             .key_binding(
                                 KeyBinding::for_action_in(
                                     &menu::SecondaryConfirm,

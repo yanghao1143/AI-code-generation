@@ -1,7 +1,9 @@
 use anyhow::Context as _;
 
 use git::repository::{Remote, RemoteCommandOutput};
+use i18n::{t, t_args};
 use linkify::{LinkFinder, LinkKind};
+use std::collections::HashMap;
 use ui::SharedString;
 use util::ResultExt as _;
 
@@ -38,13 +40,16 @@ pub fn format_output(action: &RemoteAction, output: RemoteCommandOutput) -> Succ
         RemoteAction::Fetch(remote) => {
             if output.stderr.is_empty() {
                 SuccessMessage {
-                    message: "Fetch: Already up to date".into(),
+                    message: t("git-fetch-up-to-date").into(),
                     style: SuccessStyle::Toast,
                 }
             } else {
                 let message = match remote {
-                    Some(remote) => format!("Synchronized with {}", remote.name),
-                    None => "Synchronized with remotes".into(),
+                    Some(remote) => {
+                        let args = HashMap::from([("remote", remote.name.as_ref())]);
+                        t_args("git-sync-with-remote", &args).into()
+                    }
+                    None => t("git-sync-remotes").into(),
                 };
                 SuccessMessage {
                     message,
@@ -71,20 +76,23 @@ pub fn format_output(action: &RemoteAction, output: RemoteCommandOutput) -> Succ
             };
             if output.stdout.ends_with("Already up to date.\n") {
                 SuccessMessage {
-                    message: "Pull: Already up to date".into(),
+                    message: t("git-pull-up-to-date").into(),
                     style: SuccessStyle::Toast,
                 }
             } else if output.stdout.starts_with("Updating") {
                 let files_changed = get_changes(&output).log_err();
                 let message = if let Some(files_changed) = files_changed {
-                    format!(
-                        "Received {} file change{} from {}",
-                        files_changed,
-                        if files_changed == 1 { "" } else { "s" },
-                        remote_ref.name
-                    )
+                    let plural = if files_changed == 1 { "one" } else { "other" };
+                    let count_str = files_changed.to_string();
+                    let args = HashMap::from([
+                        ("count", count_str.as_str()),
+                        ("plural", plural),
+                        ("remote", remote_ref.name.as_ref()),
+                    ]);
+                    t_args("git-received-changes", &args).into()
                 } else {
-                    format!("Fast forwarded from {}", remote_ref.name)
+                    let args = HashMap::from([("remote", remote_ref.name.as_ref())]);
+                    t_args("git-fast-forwarded", &args).into()
                 };
                 SuccessMessage {
                     message,
@@ -93,46 +101,55 @@ pub fn format_output(action: &RemoteAction, output: RemoteCommandOutput) -> Succ
             } else if output.stdout.starts_with("Merge") {
                 let files_changed = get_changes(&output).log_err();
                 let message = if let Some(files_changed) = files_changed {
-                    format!(
-                        "Merged {} file change{} from {}",
-                        files_changed,
-                        if files_changed == 1 { "" } else { "s" },
-                        remote_ref.name
-                    )
+                    let plural = if files_changed == 1 { "one" } else { "other" };
+                    let count_str = files_changed.to_string();
+                    let args = HashMap::from([
+                        ("count", count_str.as_str()),
+                        ("plural", plural),
+                        ("remote", remote_ref.name.as_ref()),
+                    ]);
+                    t_args("git-merged-changes", &args).into()
                 } else {
-                    format!("Merged from {}", remote_ref.name)
+                    let args = HashMap::from([("remote", remote_ref.name.as_ref())]);
+                    t_args("git-merged-from", &args).into()
                 };
                 SuccessMessage {
                     message,
                     style: SuccessStyle::ToastWithLog { output },
                 }
             } else if output.stdout.contains("Successfully rebased") {
+                let args = HashMap::from([("remote", remote_ref.name.as_ref())]);
                 SuccessMessage {
-                    message: format!("Successfully rebased from {}", remote_ref.name),
+                    message: t_args("git-rebased-from", &args).into(),
                     style: SuccessStyle::ToastWithLog { output },
                 }
             } else {
+                let args = HashMap::from([("remote", remote_ref.name.as_ref())]);
                 SuccessMessage {
-                    message: format!("Successfully pulled from {}", remote_ref.name),
+                    message: t_args("git-pulled-from", &args).into(),
                     style: SuccessStyle::ToastWithLog { output },
                 }
             }
         }
         RemoteAction::Push(branch_name, remote_ref) => {
             let message = if output.stderr.ends_with("Everything up-to-date\n") {
-                "Push: Everything is up-to-date".to_string()
+                t("git-push-up-to-date").into()
             } else {
-                format!("Pushed {} to {}", branch_name, remote_ref.name)
+                let args = HashMap::from([
+                    ("branch", branch_name.as_ref()),
+                    ("remote", remote_ref.name.as_ref()),
+                ]);
+                t_args("git-pushed-to", &args).into()
             };
 
             let style = if output.stderr.ends_with("Everything up-to-date\n") {
                 Some(SuccessStyle::Toast)
             } else if output.stderr.contains("\nremote: ") {
                 let pr_hints = [
-                    ("Create a pull request", "Create Pull Request"), // GitHub
-                    ("Create pull request", "Create Pull Request"),   // Bitbucket
-                    ("create a merge request", "Create Merge Request"), // GitLab
-                    ("View merge request", "View Merge Request"),     // GitLab
+                    ("Create a pull request", t("git-create-pr")), // GitHub
+                    ("Create pull request", t("git-create-pr")),   // Bitbucket
+                    ("create a merge request", t("git-create-mr")), // GitLab
+                    ("View merge request", t("git-view-mr")),     // GitLab
                 ];
                 pr_hints
                     .iter()

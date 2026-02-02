@@ -22,6 +22,7 @@ use gpui::{
     Action, AnyElement, App, AppContext as _, AsyncWindowContext, Entity, EventEmitter,
     FocusHandle, Focusable, Render, Subscription, Task, WeakEntity, actions,
 };
+use i18n::{t, t_args};
 use language::{Anchor, Buffer, Capability, OffsetRangeExt};
 use multi_buffer::{MultiBuffer, PathKey};
 use project::{
@@ -855,7 +856,7 @@ impl Item for ProjectDiff {
     }
 
     fn tab_tooltip_text(&self, _: &App) -> Option<SharedString> {
-        Some("Project Diff".into())
+        Some(t("git-project-diff").into())
     }
 
     fn tab_content(&self, params: TabContentParams, _window: &Window, cx: &App) -> AnyElement {
@@ -870,8 +871,11 @@ impl Item for ProjectDiff {
 
     fn tab_content_text(&self, _detail: usize, cx: &App) -> SharedString {
         match self.branch_diff.read(cx).diff_base() {
-            DiffBase::Head => "Uncommitted Changes".into(),
-            DiffBase::Merge { base_ref } => format!("Changes since {}", base_ref).into(),
+            DiffBase::Head => t("git-uncommitted-changes").into(),
+            DiffBase::Merge { base_ref } => {
+                let args = std::collections::HashMap::from([("base_ref", base_ref.as_str())]);
+                t_args("git-changes-since", &args).into()
+            }
         }
     }
 

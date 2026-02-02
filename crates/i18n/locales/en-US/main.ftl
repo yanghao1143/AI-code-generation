@@ -369,6 +369,58 @@ git-select = Select
 git-create-remote-repo = Create Remote Repository
 git-configure-github = You may need to configure git for Github.
 git-password-prompt = Password Prompt
+git-enter-commit-message = Enter commit message
+git-no-changes-to-commit = No Changes to Commit
+git-configure-llm = Configure an LLM provider to generate commit messages
+git-generate-commit-message = Generate Commit Message
+git-switch-repository = Switch Active Repository
+git-select-repo-destination = Select as Repository Destination
+git-project-diff = Project Diff
+git-uncommitted-changes = Uncommitted Changes
+git-select-worktree = Select worktree…
+git-no-worktrees = No worktrees found
+git-select-worktree-dir = Select directory for new worktree
+git-select-stash = Select a stash…
+git-no-stashes = No stashes found
+git-fetch-up-to-date = Fetch: Already up to date
+git-sync-remotes = Synchronized with remotes
+git-sync-with-remote = Synchronized with { $remote }
+git-pull-up-to-date = Pull: Already up to date
+git-clone-title = Git Clone: { $repo_name }
+git-add-repo-to-project = Add repo to project
+git-open-in-new-project = Open repo in new project
+git-stash-drop = Drop
+git-stash-view = View
+git-stash-apply = Apply
+git-failed-drop-stash = Failed to drop stash
+git-failed-pop-stash = Failed to pop stash
+git-failed-apply-stash = Failed to apply stash
+git-create-worktree = Create Worktree: "{ $branch }"…
+git-based-off = based off { $branch }
+git-based-off-current = based off the current branch
+git-create-from-branch = Create from: { $branch }
+git-open-in-new-window = Open in New Window
+git-open = Open
+git-failed-create-worktree = Failed to create worktree
+git-failed-open-worktree = Failed to open worktree
+git-received-changes = Received { $count } file { $plural ->
+    [one] change
+   *[other] changes
+} from { $remote }
+git-fast-forwarded = Fast forwarded from { $remote }
+git-merged-changes = Merged { $count } file { $plural ->
+    [one] change
+   *[other] changes
+} from { $remote }
+git-merged-from = Merged from { $remote }
+git-rebased-from = Successfully rebased from { $remote }
+git-pulled-from = Successfully pulled from { $remote }
+git-push-up-to-date = Push: Everything is up-to-date
+git-pushed-to = Pushed { $branch } to { $remote }
+git-create-pr = Create Pull Request
+git-create-mr = Create Merge Request
+git-view-mr = View Merge Request
+git-changes-since = Changes since { $base_ref }
 
 # ============================================
 # Collaboration

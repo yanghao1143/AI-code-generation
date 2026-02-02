@@ -1,5 +1,7 @@
 use gpui::{App, Context, WeakEntity, Window};
+use i18n::{t, t_args};
 use notifications::status_toast::{StatusToast, ToastIcon};
+use std::collections::HashMap;
 use std::sync::Arc;
 use ui::{Color, IconName, SharedString};
 use util::ResultExt;
@@ -18,7 +20,7 @@ pub fn clone_and_open(
         files: false,
         directories: true,
         multiple: false,
-        prompt: Some("Select as Repository Destination".into()),
+        prompt: Some(t("git-select-repo-destination").into()),
     });
 
     window
@@ -65,11 +67,15 @@ pub fn clone_and_open(
 
             let prompt_answer = if has_worktrees {
                 cx.update(|window, cx| {
+                    let args = HashMap::from([("repo_name", repo_name.as_str())]);
+                    let title = t_args("git-clone-title", &args);
+                    let add_to_project = t("git-add-repo-to-project");
+                    let open_in_new = t("git-open-in-new-project");
                     window.prompt(
                         gpui::PromptLevel::Info,
-                        &format!("Git Clone: {}", repo_name),
+                        &title,
                         None,
-                        &["Add repo to project", "Open repo in new project"],
+                        &[add_to_project.as_str(), open_in_new.as_str()],
                         cx,
                     )
                 })
