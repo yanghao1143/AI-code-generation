@@ -4,6 +4,7 @@ use gpui::{
     AnyElement, App, ClipboardItem, Context, ElementId, Entity, IntoElement, ParentElement,
     RenderOnce, Styled, Window,
 };
+use i18n::t;
 
 use crate::{Tooltip, prelude::*};
 
@@ -47,7 +48,7 @@ impl CopyButton {
             message: message.into(),
             icon_size: IconSize::Small,
             disabled: false,
-            tooltip_label: "Copy".into(),
+            tooltip_label: t("copy"),
             visible_on_hover: None,
             custom_on_click: None,
         }

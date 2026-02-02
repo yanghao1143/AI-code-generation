@@ -2,6 +2,7 @@ use crate::{
     Chip, DecoratedIcon, DiffStat, IconDecoration, IconDecorationKind, SpinnerLabel, prelude::*,
 };
 use gpui::{ClickEvent, SharedString};
+use i18n::t;
 
 #[derive(IntoElement, RegisterComponent)]
 pub struct ThreadItem {
@@ -152,7 +153,7 @@ impl RenderOnce for ThreadItem {
                     )
                     .when(has_no_changes, |this| {
                         this.child(
-                            Label::new("No Changes")
+                            Label::new(t("no-changes"))
                                 .size(LabelSize::Small)
                                 .color(Color::Muted),
                         )
