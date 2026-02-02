@@ -2578,3 +2578,12 @@ debugger-native-support-copy = It's finally here: Native support for debugging a
 # Git UI - Onboarding
 git-native-support = Native Git Support
 git-native-support-copy = First-class support for staging, committing, pulling, pushing, viewing diffs, and more. All without leaving Zed.
+
+# Dev Container - More
+dev-container-create-title = Create Dev Container
+dev-container-template-option = Template Option: 
+dev-container-overwrite-config = Overwrite Existing Configuration?
+
+# Remote Servers - More
+remote-servers-dev-containers = Dev Containers
+remote-servers-remote-projects = Remote Projects

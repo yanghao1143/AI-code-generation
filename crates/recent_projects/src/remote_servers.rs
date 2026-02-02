@@ -1733,7 +1733,7 @@ impl RemoteServerProjects {
                         .pb_1()
                         .child(
                             ModalHeader::new()
-                                .child(Headline::new("Dev Containers").size(HeadlineSize::XSmall)),
+                                .child(Headline::new(t("remote-servers-dev-containers")).size(HeadlineSize::XSmall)),
                         )
                         .child(ListSeparator)
                         .child(
@@ -2613,7 +2613,7 @@ impl RemoteServerProjects {
         Modal::new("remote-projects", None)
             .header(
                 ModalHeader::new()
-                    .child(Headline::new("Remote Projects").size(HeadlineSize::XSmall))
+                    .child(Headline::new(t("remote-servers-remote-projects")).size(HeadlineSize::XSmall))
                     .child(
                         Label::new(placeholder_text)
                             .color(Color::Muted)

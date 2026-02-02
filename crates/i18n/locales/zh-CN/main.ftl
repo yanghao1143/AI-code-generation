@@ -2503,6 +2503,8 @@ tool-status-canceled = 已取消
 tool-call-not-found = 未找到工具调用
 
 # Common / 通用
+status = 状态
+terminal = 终端
 image = 图片
 diagnostics = 诊断
 untitled = 未命名
@@ -2589,3 +2591,12 @@ debugger-native-support-copy = 终于来了：原生支持多种编程语言的�
 # Git UI - Onboarding / Git UI - 引导
 git-native-support = 原生 Git 支持
 git-native-support-copy = 一流的暂存、提交、拉取、推送、查看差异等功能支持。无需离开 Zed。
+
+# Dev Container - More / 开发容器 - 更多
+dev-container-create-title = 创建开发容器
+dev-container-template-option = 模板选项: 
+dev-container-overwrite-config = 覆盖现有配置？
+
+# Remote Servers - More / 远程服务器 - 更多
+remote-servers-dev-containers = 开发容器
+remote-servers-remote-projects = 远程项目
