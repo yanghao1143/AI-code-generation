@@ -20,6 +20,7 @@ use gpui::{
     Action, AnyView, App, AsyncWindowContext, Corner, Entity, EventEmitter, FocusHandle, Focusable,
     ScrollHandle, Subscription, Task, WeakEntity,
 };
+use i18n::t;
 use language::LanguageRegistry;
 use language_model::{
     IconOrSvg, LanguageModelProvider, LanguageModelProviderId, LanguageModelRegistry,
@@ -321,14 +322,15 @@ impl AgentConfiguration {
                     .when(is_expanded, |parent| match configuration_view {
                         Some(configuration_view) => parent.child(configuration_view),
                         None => parent.child(Label::new(format!(
-                            "No configuration view for {provider_name}",
+                            "{} {provider_name}",
+                            t("agent-no-config-view-for")
                         ))),
                     })
                     .when(is_expanded && provider.is_authenticated(cx), |parent| {
                         parent.child(
                             Button::new(
                                 SharedString::from(format!("new-thread-{provider_id}")),
-                                "Start New Thread",
+                                t("agent-start-new-thread"),
                             )
                             .full_width()
                             .style(ButtonStyle::Outlined)
@@ -354,7 +356,7 @@ impl AgentConfiguration {
                             this.child(
                                 Button::new(
                                     SharedString::from(format!("delete-provider-{provider_id}")),
-                                    "Remove Provider",
+                                    t("agent-remove-provider"),
                                 )
                                 .full_width()
                                 .style(ButtonStyle::Outlined)
@@ -425,7 +427,7 @@ impl AgentConfiguration {
 
         let popover_menu = PopoverMenu::new("add-provider-popover")
             .trigger(
-                Button::new("add-provider", "Add Provider")
+                Button::new("add-provider", t("agent-add-provider"))
                     .style(ButtonStyle::Outlined)
                     .icon_position(IconPosition::Start)
                     .icon(IconName::Plus)
@@ -539,7 +541,7 @@ impl AgentConfiguration {
 
         let add_server_popover = PopoverMenu::new("add-server-popover")
             .trigger(
-                Button::new("add-server", "Add Server")
+                Button::new("add-server", t("agent-add-server"))
                     .style(ButtonStyle::Outlined)
                     .icon_position(IconPosition::Start)
                     .icon(IconName::Plus)
@@ -550,12 +552,12 @@ impl AgentConfiguration {
             .menu({
                 move |window, cx| {
                     Some(ContextMenu::build(window, cx, |menu, _window, _cx| {
-                        menu.entry("Add Custom Server", None, {
+                        menu.entry(t("agent-add-custom-server"), None, {
                             |window, cx| {
                                 window.dispatch_action(crate::AddContextServer.boxed_clone(), cx)
                             }
                         })
-                        .entry("Install from Extensions", None, {
+                        .entry(t("agent-install-from-extensions"), None, {
                             |window, cx| {
                                 window.dispatch_action(
                                     zed_actions::Extensions {
@@ -582,8 +584,8 @@ impl AgentConfiguration {
             .border_b_1()
             .border_color(cx.theme().colors().border)
             .child(self.render_section_title(
-                "Model Context Protocol (MCP) Servers",
-                "All MCP servers connected directly or via a Zed extension.",
+                t("agent-mcp-servers-title"),
+                t("agent-mcp-servers-desc"),
                 add_server_popover.into_any_element(),
             ))
             .child(
@@ -604,7 +606,7 @@ impl AgentConfiguration {
                                     .border_color(cx.theme().colors().border.opacity(0.6))
                                     .rounded_sm()
                                     .child(
-                                        Label::new("No MCP servers added yet.")
+                                        Label::new(t("agent-no-mcp-servers"))
                                             .color(Color::Muted)
                                             .size(LabelSize::Small),
                                     ),
@@ -673,12 +675,12 @@ impl AgentConfiguration {
         let (source_icon, source_tooltip) = if provided_by_extension {
             (
                 IconName::ZedSrcExtension,
-                "This MCP server was installed from an extension.",
+                t("agent-mcp-installed-from-extension"),
             )
         } else {
             (
                 IconName::ZedSrcCustom,
-                "This custom MCP server was installed directly.",
+                t("agent-mcp-installed-directly"),
             )
         };
 
@@ -692,19 +694,19 @@ impl AgentConfiguration {
                         3,
                     )
                     .into_any_element(),
-                "Server is starting.",
+                t("agent-server-starting"),
             ),
             ContextServerStatus::Running => (
                 Indicator::dot().color(Color::Success).into_any_element(),
-                "Server is active.",
+                t("agent-server-active"),
             ),
             ContextServerStatus::Error(_) => (
                 Indicator::dot().color(Color::Error).into_any_element(),
-                "Server has an error.",
+                t("agent-server-error"),
             ),
             ContextServerStatus::Stopped => (
                 Indicator::dot().color(Color::Muted).into_any_element(),
-                "Server is stopped.",
+                t("agent-server-stopped"),
             ),
         };
         let is_remote = server_configuration
@@ -716,7 +718,7 @@ impl AgentConfiguration {
                 IconButton::new("context-server-config-menu", IconName::Settings)
                     .icon_color(Color::Muted)
                     .icon_size(IconSize::Small),
-                Tooltip::text("Configure MCP Server"),
+                Tooltip::text(t("agent-configure-mcp-server")),
             )
             .anchor(Corner::TopRight)
             .menu({
@@ -728,7 +730,7 @@ impl AgentConfiguration {
 
                 move |window, cx| {
                     Some(ContextMenu::build(window, cx, |menu, _window, _cx| {
-                        menu.entry("Configure Server", None, {
+                        menu.entry(t("agent-configure-server"), None, {
                             let context_server_id = context_server_id.clone();
                             let language_registry = language_registry.clone();
                             let workspace = workspace.clone();
@@ -753,7 +755,7 @@ impl AgentConfiguration {
                                     .detach();
                                 }
                             }
-                        }).when(tool_count > 0, |this| this.entry("View Tools", None, {
+                        }).when(tool_count > 0, |this| this.entry(t("agent-view-tools"), None, {
                             let context_server_id = context_server_id.clone();
                             let context_server_registry = context_server_registry.clone();
                             let workspace = workspace.clone();
@@ -772,7 +774,7 @@ impl AgentConfiguration {
                             }
                         }))
                         .separator()
-                        .entry("Uninstall", None, {
+                        .entry(t("agent-uninstall"), None, {
                             let fs = fs.clone();
                             let context_server_id = context_server_id.clone();
                             let workspace = workspace.clone();
@@ -988,7 +990,7 @@ impl AgentConfiguration {
 
         let add_agent_popover = PopoverMenu::new("add-agent-server-popover")
             .trigger(
-                Button::new("add-agent", "Add Agent")
+                Button::new("add-agent", t("agent-add-agent"))
                     .style(ButtonStyle::Outlined)
                     .icon_position(IconPosition::Start)
                     .icon(IconName::Plus)
@@ -999,12 +1001,12 @@ impl AgentConfiguration {
             .menu({
                 move |window, cx| {
                     Some(ContextMenu::build(window, cx, |menu, _window, _cx| {
-                        menu.entry("Install from Registry", None, {
+                        menu.entry(t("agent-install-from-registry"), None, {
                             |window, cx| {
                                 window.dispatch_action(Box::new(zed_actions::AgentRegistry), cx)
                             }
                         })
-                        .entry("Add Custom Agent", None, {
+                        .entry(t("agent-add-custom-agent"), None, {
                             move |window, cx| {
                                 if let Some(workspace) = window.root().flatten() {
                                     let workspace = workspace.downgrade();
@@ -1020,9 +1022,9 @@ impl AgentConfiguration {
                             }
                         })
                         .separator()
-                        .header("Learn More")
+                        .header(t("agent-learn-more"))
                         .item(
-                            ContextMenuEntry::new("Agent Servers Docs")
+                            ContextMenuEntry::new(t("agent-servers-docs"))
                                 .icon(IconName::ArrowUpRight)
                                 .icon_color(Color::Muted)
                                 .icon_position(IconPosition::End)
@@ -1038,7 +1040,7 @@ impl AgentConfiguration {
                                 }),
                         )
                         .item(
-                            ContextMenuEntry::new("ACP Docs")
+                            ContextMenuEntry::new(t("agent-acp-docs"))
                                 .icon(IconName::ArrowUpRight)
                                 .icon_color(Color::Muted)
                                 .icon_position(IconPosition::End)
@@ -1068,8 +1070,8 @@ impl AgentConfiguration {
             .child(
                 v_flex()
                     .child(self.render_section_title(
-                        "External Agents",
-                        "All agents connected through the Agent Client Protocol.",
+                        t("agent-external-agents"),
+                        t("agent-external-agents-desc"),
                         add_agent_popover.into_any_element(),
                     ))
                     .child(
@@ -1144,7 +1146,8 @@ impl AgentConfiguration {
             ExternalAgentSource::Extension => Some((
                 SharedString::new(format!("agent-source-{}", id)),
                 SharedString::from(format!(
-                    "The {} agent was installed from an extension.",
+                    "{} {}",
+                    t("agent-installed-from-extension-prefix"),
                     display_name
                 )),
                 IconName::ZedSrcExtension,
@@ -1152,7 +1155,8 @@ impl AgentConfiguration {
             ExternalAgentSource::Registry => Some((
                 SharedString::new(format!("agent-source-{}", id)),
                 SharedString::from(format!(
-                    "The {} agent was installed from the ACP registry.",
+                    "{} {}",
+                    t("agent-installed-from-registry-prefix"),
                     display_name
                 )),
                 IconName::AcpRegistry,
@@ -1170,7 +1174,7 @@ impl AgentConfiguration {
                 )
                 .icon_color(Color::Muted)
                 .icon_size(IconSize::Small)
-                .tooltip(Tooltip::text("Uninstall Agent Extension"))
+                .tooltip(Tooltip::text(t("agent-uninstall-extension")))
                 .on_click(cx.listener(move |this, _, _window, cx| {
                     let agent_name = agent_server_name.clone();
 
@@ -1192,7 +1196,7 @@ impl AgentConfiguration {
                     )
                     .icon_color(Color::Muted)
                     .icon_size(IconSize::Small)
-                    .tooltip(Tooltip::text("Remove Registry Agent"))
+                    .tooltip(Tooltip::text(t("agent-remove-registry-agent")))
                     .on_click(cx.listener(move |_, _, _window, cx| {
                         let agent_name = agent_server_name.clone();
                         update_settings_file(fs.clone(), cx, move |settings, _| {

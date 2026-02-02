@@ -1126,6 +1126,45 @@ agent-output-truncated = 输出已截断
 agent-disable-thinking-mode = 禁用思考模式
 agent-enable-thinking-mode = 启用思考模式
 
+# Agent Configuration / Agent 配置
+agent-no-config-view-for = 没有配置视图：
+agent-remove-provider = 移除提供商
+agent-add-custom-server = 添加自定义服务器
+agent-install-from-extensions = 从扩展安装
+agent-mcp-servers-title = Model Context Protocol (MCP) 服务器
+agent-mcp-servers-desc = 所有直接连接或通过 Zed 扩展连接的 MCP 服务器。
+agent-mcp-installed-from-extension = 此 MCP 服务器是从扩展安装的。
+agent-mcp-installed-directly = 此自定义 MCP 服务器是直接安装的。
+agent-server-starting = 服务器正在启动。
+agent-server-active = 服务器已激活。
+agent-server-error = 服务器出现错误。
+agent-server-stopped = 服务器已停止。
+agent-configure-mcp-server = 配置 MCP 服务器
+agent-configure-server = 配置服务器
+agent-view-tools = 查看工具
+agent-uninstall = 卸载
+agent-install-from-registry = 从注册表安装
+agent-add-custom-agent = 添加自定义 Agent
+agent-learn-more = 了解更多
+agent-servers-docs = Agent 服务器文档
+agent-acp-docs = ACP 文档
+agent-external-agents = 外部 Agent
+agent-external-agents-desc = 所有通过 Agent Client Protocol 连接的 Agent。
+agent-installed-from-extension-prefix = 此 Agent 是从扩展安装的：
+agent-installed-from-registry-prefix = 此 Agent 是从 ACP 注册表安装的：
+agent-uninstall-extension = 卸载 Agent 扩展
+agent-remove-registry-agent = 移除注册表 Agent
+
+# Agent Diff / Agent 差异
+agent-diff-title = Agent 差异
+agent-review = 审查
+agent-no-changes-to-review = 没有需要审查的更改
+agent-reject = 拒绝
+agent-next-hunk = 下一个代码块
+agent-previous-hunk = 上一个代码块
+agent-review-all-files = 审查所有文件
+agent-generating-changes = 正在生成更改…
+
 # AI Plans / AI 计划
 ai-plan-free = 免费版
 ai-plan-pro = 专业版

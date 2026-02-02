@@ -847,6 +847,45 @@ agent-output-truncated = Output was truncated
 agent-disable-thinking-mode = Disable Thinking Mode
 agent-enable-thinking-mode = Enable Thinking Mode
 
+# Agent Configuration
+agent-no-config-view-for = No configuration view for
+agent-remove-provider = Remove Provider
+agent-add-custom-server = Add Custom Server
+agent-install-from-extensions = Install from Extensions
+agent-mcp-servers-title = Model Context Protocol (MCP) Servers
+agent-mcp-servers-desc = All MCP servers connected directly or via a Zed extension.
+agent-mcp-installed-from-extension = This MCP server was installed from an extension.
+agent-mcp-installed-directly = This custom MCP server was installed directly.
+agent-server-starting = Server is starting.
+agent-server-active = Server is active.
+agent-server-error = Server has an error.
+agent-server-stopped = Server is stopped.
+agent-configure-mcp-server = Configure MCP Server
+agent-configure-server = Configure Server
+agent-view-tools = View Tools
+agent-uninstall = Uninstall
+agent-install-from-registry = Install from Registry
+agent-add-custom-agent = Add Custom Agent
+agent-learn-more = Learn More
+agent-servers-docs = Agent Servers Docs
+agent-acp-docs = ACP Docs
+agent-external-agents = External Agents
+agent-external-agents-desc = All agents connected through the Agent Client Protocol.
+agent-installed-from-extension-prefix = The agent was installed from an extension:
+agent-installed-from-registry-prefix = The agent was installed from the ACP registry:
+agent-uninstall-extension = Uninstall Agent Extension
+agent-remove-registry-agent = Remove Registry Agent
+
+# Agent Diff
+agent-diff-title = Agent Diff
+agent-review = Review
+agent-no-changes-to-review = No changes to review
+agent-reject = Reject
+agent-next-hunk = Next Hunk
+agent-previous-hunk = Previous Hunk
+agent-review-all-files = Review All Files
+agent-generating-changes = Generating Changes…
+
 # AI Plans
 ai-plan-free = Free
 ai-plan-pro = Pro
