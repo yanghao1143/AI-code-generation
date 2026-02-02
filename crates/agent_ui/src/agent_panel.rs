@@ -811,14 +811,17 @@ impl AgentPanel {
                 {
                     execution.update(cx, |view, _cx| view.set_status(AgentStatus::Thinking));
                     progress.update(cx, |view, _cx| {
-                        view.add_log(format!("Starting task: {}", task));
+                        view.add_log(i18n::t_args!(
+                            "agent-starting-task",
+                            &std::collections::HashMap::from_iter([("task", task.as_str())])
+                        ));
                         view.set_steps(vec![
                             Step {
-                                description: "Analyzing task".into(),
+                                description: t("agent-analyzing-task").into(),
                                 status: StepStatus::Active,
                             },
                             Step {
-                                description: "Planning".into(),
+                                description: t("agent-planning").into(),
                                 status: StepStatus::Pending,
                             },
                         ]);

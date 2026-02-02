@@ -50,10 +50,10 @@ impl ExecutionControlView {
 impl Render for ExecutionControlView {
     fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let status_label = match &self.status {
-            AgentStatus::Idle => "Idle".to_string(),
-            AgentStatus::Thinking => "Thinking...".to_string(),
-            AgentStatus::Executing => "Executing...".to_string(),
-            AgentStatus::Paused => "Paused".to_string(),
+            AgentStatus::Idle => t("agent-status-idle"),
+            AgentStatus::Thinking => t("agent-status-thinking"),
+            AgentStatus::Executing => t("agent-status-executing"),
+            AgentStatus::Paused => t("agent-status-paused"),
             AgentStatus::Error(msg) => msg.clone(),
         };
 
@@ -90,7 +90,7 @@ impl Render for ExecutionControlView {
                         this.child(
                             Button::new(
                                 "pause-resume",
-                                if is_paused { "Resume" } else { "Pause" },
+                                if is_paused { t("resume") } else { t("pause") },
                             )
                             .style(ButtonStyle::Subtle)
                             .on_click(cx.listener(|this, _, window, cx| {

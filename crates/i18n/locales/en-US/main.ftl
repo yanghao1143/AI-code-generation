@@ -763,6 +763,50 @@ editor-open-file = Open File
 editor-copy-diagnostic = Copy Diagnostic
 editor-previous-signature = Previous Signature
 editor-next-signature = Next Signature
+editor-add-comment = Add Comment
+editor-add-review-comment-placeholder = Add a review comment...
+editor-add-review-tooltip = Add Review
+editor-add-to-agent-thread = Add to Agent Thread
+editor-cancel = Cancel
+editor-close = Close
+editor-confirm = Confirm
+editor-copy = Copy
+editor-copy-and-trim = Copy and Trim
+editor-copy-permalink = Copy Permalink
+editor-cut = Cut
+editor-evaluate-selection = Evaluate Selection
+editor-failed-to-create-buffer = Failed to create buffer
+editor-find-all-references = Find All References
+editor-format-buffer = Format Buffer
+editor-format-selections = Format Selections
+editor-go-to-declaration = Go to Declaration
+editor-go-to-definition = Go to Definition
+editor-go-to-implementation = Go to Implementation
+editor-go-to-type-definition = Go to Type Definition
+editor-jump-to-edit = Jump to Edit
+editor-next-hunk = Next Hunk
+editor-open-in-terminal = Open in Terminal
+editor-paste = Paste
+editor-prev-hunk = Previous Hunk
+editor-project-path-not-found = Project path not found
+editor-rename-symbol = Rename Symbol
+editor-restore = Restore
+editor-restore-hunk = Restore Hunk
+editor-reveal-in-finder = Reveal in Finder
+editor-reveal-in-file-explorer = Reveal in File Explorer
+editor-reveal-in-file-manager = Reveal in File Manager
+editor-right-click-to-copy-path = Right-click to copy path
+editor-run-to-cursor = Run to Cursor
+editor-show-code-actions = Show Code Actions
+editor-show-symbol-outline = Show Symbol Outline
+editor-stage = Stage
+editor-stage-hunk = Stage Hunk
+editor-unstage = Unstage
+editor-unstage-hunk = Unstage Hunk
+editor-view-file-history = View File History
+editor-failed-copy-permalink = Failed to copy permalink: { $error }
+editor-failed-open-permalink = Failed to open permalink: { $error }
+editor-unicode-character = Unicode character U+{ $code }
 
 # Feedback
 feedback-copied-to-clipboard = Copied into clipboard
@@ -2418,3 +2462,13 @@ inline-assist-transform = Transform
 inline-assist-keybinding-to-chat = { $keybinding } to chat
 inline-assist-placeholder = { $action }… ({ $keybinding_hint } ― ↓↑ for history — @ to include context)
 
+
+ a g e n t - s t a r t i n g - t a s k   =   S t a r t i n g   t a s k :   {   \   } 
+ a g e n t - a n a l y z i n g - t a s k   =   A n a l y z i n g   t a s k 
+ a g e n t - p l a n n i n g   =   P l a n n i n g 
+ a g e n t - s t a t u s - i d l e   =   I d l e 
+ a g e n t - s t a t u s - t h i n k i n g   =   T h i n k i n g . . . 
+ a g e n t - s t a t u s - e x e c u t i n g   =   E x e c u t i n g . . . 
+ a g e n t - s t a t u s - p a u s e d   =   P a u s e d 
+  
+ 
