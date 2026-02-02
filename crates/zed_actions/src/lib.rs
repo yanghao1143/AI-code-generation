@@ -567,7 +567,7 @@ pub mod outline {
     actions!(
         outline,
         [
-            #[action(name = "Toggle")]
+            #[action(name = t("toggle"))]
             ToggleOutline
         ]
     );

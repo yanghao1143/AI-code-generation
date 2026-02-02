@@ -393,14 +393,14 @@ actions!(
     project_symbols,
     [
         /// Toggles the project symbols search.
-        #[action(name = "Toggle")]
+        #[action(name = t("toggle"))]
         ToggleProjectSymbols
     ]
 );
 
 /// Toggles the file finder interface.
 #[derive(Default, PartialEq, Eq, Clone, Deserialize, JsonSchema, Action)]
-#[action(namespace = file_finder, name = "Toggle")]
+#[action(namespace = file_finder, name = t("toggle"))]
 #[serde(deny_unknown_fields)]
 pub struct ToggleFileFinder {
     #[serde(default)]

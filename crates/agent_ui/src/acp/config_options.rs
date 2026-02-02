@@ -665,9 +665,9 @@ impl PickerDelegate for ConfigOptionPickerDelegate {
                                 }))
                                 .end_hover_slot(div().pr_1p5().child({
                                     let (icon, color, tooltip) = if is_favorite {
-                                        (IconName::StarFilled, Color::Accent, "Unfavorite")
+                                        (IconName::StarFilled, Color::Accent, t("unfavorite"))
                                     } else {
-                                        (IconName::Star, Color::Default, "Favorite")
+                                        (IconName::Star, Color::Default, t("favorite"))
                                     };
 
                                     let config_id = self.config_id.clone();

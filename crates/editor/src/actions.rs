@@ -384,7 +384,7 @@ actions!(
     go_to_line,
     [
         /// Toggles the go to line dialog.
-        #[action(name = "Toggle")]
+        #[action(name = t("toggle"))]
         ToggleGoToLine
     ]
 );
