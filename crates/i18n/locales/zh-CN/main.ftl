@@ -2566,3 +2566,18 @@ disconnected-reconnect = 重新连接
 rules-library-title = 规则库
 rules-library-no-rules-found = 未找到匹配搜索的规则。
 rules-library-new-rule = 新建规则
+
+# Remote Servers / 远程服务器
+remote-servers-open-folder = 打开文件夹
+remote-servers-view-options = 查看服务器选项
+remote-servers-error-creating-container = 创建开发容器时出错:
+remote-servers-creating-from = 创建来源
+remote-servers-open-or-create-from = 打开或从以下位置新建
+remote-servers-edit = 编辑
+remote-servers-remove-distro = 移除发行版
+remote-servers-copy-address = 复制服务器地址
+remote-servers-remove-server = 移除服务器
+remote-servers-connect-ssh = 连接 SSH 服务器
+remote-servers-connect-container = 连接开发容器
+remote-servers-add-wsl = 添加 WSL 发行版
+remote-servers-no-servers = 尚未注册远程服务器。

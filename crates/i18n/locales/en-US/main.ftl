@@ -2555,3 +2555,18 @@ disconnected-reconnect = Reconnect
 rules-library-title = Rules Library
 rules-library-no-rules-found = No rules found matching your search.
 rules-library-new-rule = New Rule
+
+# Remote Servers
+remote-servers-open-folder = Open Folder
+remote-servers-view-options = View Server Options
+remote-servers-error-creating-container = Error Creating Dev Container:
+remote-servers-creating-from = Creating From
+remote-servers-open-or-create-from = Open or Create New From
+remote-servers-edit = Edit
+remote-servers-remove-distro = Remove Distro
+remote-servers-copy-address = Copy Server Address
+remote-servers-remove-server = Remove Server
+remote-servers-connect-ssh = Connect SSH Server
+remote-servers-connect-container = Connect Dev Container
+remote-servers-add-wsl = Add WSL Distro
+remote-servers-no-servers = No remote servers registered yet.

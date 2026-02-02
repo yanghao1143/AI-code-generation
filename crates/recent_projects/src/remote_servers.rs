@@ -14,6 +14,7 @@ use gpui::{
     FocusHandle, Focusable, PromptLevel, ScrollHandle, Subscription, Task, WeakEntity, Window,
     canvas,
 };
+use i18n::t;
 use language::Point;
 use log::{debug, info};
 use open_path_prompt::OpenPathDelegate;
@@ -1223,7 +1224,7 @@ impl RemoteServerProjects {
                                         .inset(true)
                                         .spacing(ui::ListItemSpacing::Sparse)
                                         .start_slot(Icon::new(IconName::Plus).color(Color::Muted))
-                                        .child(Label::new("Open Folder"))
+                                        .child(Label::new(t("remote-servers-open-folder")))
                                         .on_click(cx.listener({
                                             let connection = connection.clone();
                                             move |this, _, window, cx| {
@@ -1262,7 +1263,7 @@ impl RemoteServerProjects {
                                         .start_slot(
                                             Icon::new(IconName::Settings).color(Color::Muted),
                                         )
-                                        .child(Label::new("View Server Options"))
+                                        .child(Label::new(t("remote-servers-view-options")))
                                         .on_click(cx.listener({
                                             let ssh_connection = connection.clone();
                                             move |this, _, window, cx| {
@@ -1300,7 +1301,7 @@ impl RemoteServerProjects {
                                 .inset(true)
                                 .spacing(ui::ListItemSpacing::Sparse)
                                 .start_slot(Icon::new(IconName::Plus).color(Color::Muted))
-                                .child(Label::new("Open Folder"))
+                                .child(Label::new(t("remote-servers-open-folder")))
                                 .on_click(cx.listener({
                                     let host = host.clone();
                                     move |this, _, window, cx| {
@@ -1671,7 +1672,7 @@ impl RemoteServerProjects {
                                     .selectable(false)
                                     .spacing(ui::ListItemSpacing::Sparse)
                                     .start_slot(Icon::new(IconName::XCircle).color(Color::Error))
-                                    .child(Label::new("Error Creating Dev Container:"))
+                                    .child(Label::new(t("remote-servers-error-creating-container")))
                                     .child(Label::new(message).buffer_font(cx)),
                             )
                             .child(ListSeparator)
@@ -1761,7 +1762,7 @@ impl RemoteServerProjects {
                                                     h_flex()
                                                         .opacity(0.6)
                                                         .gap_1()
-                                                        .child(Label::new("Creating From"))
+                                                        .child(Label::new(t("remote-servers-creating-from")))
                                                         .child(
                                                             Label::new("devcontainer.json")
                                                                 .buffer_font(cx),
@@ -1787,7 +1788,7 @@ impl RemoteServerProjects {
                                             .child(
                                                 h_flex()
                                                     .gap_1()
-                                                    .child(Label::new("Open or Create New From"))
+                                                    .child(Label::new(t("remote-servers-open-or-create-from")))
                                                     .child(
                                                         Label::new("devcontainer.json")
                                                             .buffer_font(cx),
@@ -1826,7 +1827,7 @@ impl RemoteServerProjects {
                                         .spacing(ui::ListItemSpacing::Sparse)
                                         .start_slot(Icon::new(IconName::Pencil).color(Color::Muted))
                                         .child(
-                                            h_flex().gap_1().child(Label::new("Edit")).child(
+                                            h_flex().gap_1().child(Label::new(t("remote-servers-edit"))).child(
                                                 Label::new("devcontainer.json").buffer_font(cx),
                                             ),
                                         )
@@ -2145,7 +2146,7 @@ impl RemoteServerProjects {
                         .inset(true)
                         .spacing(ui::ListItemSpacing::Sparse)
                         .start_slot(Icon::new(IconName::Trash).color(Color::Error))
-                        .child(Label::new("Remove Distro").color(Color::Error))
+                        .child(Label::new(t("remote-servers-remove-distro")).color(Color::Error))
                         .on_click(cx.listener(move |_, _, window, cx| {
                             remove_wsl_distro(cx.entity(), index, distro_name.clone(), window, cx);
                             cx.focus_self(window);
@@ -2237,7 +2238,7 @@ impl RemoteServerProjects {
                             .inset(true)
                             .spacing(ui::ListItemSpacing::Sparse)
                             .start_slot(Icon::new(IconName::Copy).color(Color::Muted))
-                            .child(Label::new("Copy Server Address"))
+                            .child(Label::new(t("remote-servers-copy-address")))
                             .end_hover_slot(
                                 Label::new(connection_string.clone()).color(Color::Muted),
                             )
@@ -2303,7 +2304,7 @@ impl RemoteServerProjects {
                             .inset(true)
                             .spacing(ui::ListItemSpacing::Sparse)
                             .start_slot(Icon::new(IconName::Trash).color(Color::Error))
-                            .child(Label::new("Remove Server").color(Color::Error))
+                            .child(Label::new(t("remote-servers-remove-server")).color(Color::Error))
                             .on_click(cx.listener(move |_, _, window, cx| {
                                 remove_ssh_server(
                                     cx.entity(),
@@ -2437,7 +2438,7 @@ impl RemoteServerProjects {
                     .inset(true)
                     .spacing(ui::ListItemSpacing::Sparse)
                     .start_slot(Icon::new(IconName::Plus).color(Color::Muted))
-                    .child(Label::new("Connect SSH Server"))
+                    .child(Label::new(t("remote-servers-connect-ssh")))
                     .on_click(cx.listener(|this, _, window, cx| {
                         let state = CreateRemoteServer::new(window, cx);
                         this.mode = Mode::CreateRemoteServer(state);
@@ -2467,7 +2468,7 @@ impl RemoteServerProjects {
                     .inset(true)
                     .spacing(ui::ListItemSpacing::Sparse)
                     .start_slot(Icon::new(IconName::Plus).color(Color::Muted))
-                    .child(Label::new("Connect Dev Container"))
+                    .child(Label::new(t("remote-servers-connect-container")))
                     .on_click(cx.listener(|this, _, window, cx| {
                         let state = CreateRemoteDevContainer::new(window, cx);
                         this.mode = Mode::CreateRemoteDevContainer(state);
@@ -2493,7 +2494,7 @@ impl RemoteServerProjects {
                     .inset(true)
                     .spacing(ui::ListItemSpacing::Sparse)
                     .start_slot(Icon::new(IconName::Plus).color(Color::Muted))
-                    .child(Label::new("Add WSL Distro"))
+                    .child(Label::new(t("remote-servers-add-wsl")))
                     .on_click(cx.listener(|this, _, window, cx| {
                         let state = AddWslDistro::new(window, cx);
                         this.mode = Mode::AddWslDistro(state);
@@ -2550,7 +2551,7 @@ impl RemoteServerProjects {
                                 .border_t_1()
                                 .border_color(cx.theme().colors().border_variant)
                                 .child(
-                                    Label::new("No remote servers registered yet.")
+                                    Label::new(t("remote-servers-no-servers"))
                                         .color(Color::Muted),
                                 )
                                 .into_any_element(),
