@@ -466,8 +466,8 @@ impl AgentConfiguration {
         v_flex()
             .w_full()
             .child(self.render_section_title(
-                "LLM Providers",
-                "Add at least one provider to use AI-powered features with Zed's native agent.",
+                t("agent-llm-providers"),
+                t("agent-llm-providers-description"),
                 popover_menu.into_any_element(),
             ))
             .child(
@@ -500,9 +500,9 @@ impl AgentConfiguration {
                 .blend(cx.theme().colors().text_accent.opacity(0.2));
 
             let (plan_name, label_color, bg_color) = match plan {
-                Plan::V2(PlanV2::ZedFree) => ("Free", Color::Default, free_chip_bg),
-                Plan::V2(PlanV2::ZedProTrial) => ("Pro Trial", Color::Accent, pro_chip_bg),
-                Plan::V2(PlanV2::ZedPro) => ("Pro", Color::Accent, pro_chip_bg),
+                Plan::V2(PlanV2::ZedFree) => (t("plan-free"), Color::Default, free_chip_bg),
+                Plan::V2(PlanV2::ZedProTrial) => (t("plan-pro-trial"), Color::Accent, pro_chip_bg),
+                Plan::V2(PlanV2::ZedPro) => (t("plan-pro"), Color::Accent, pro_chip_bg),
             };
 
             Chip::new(plan_name.to_string())

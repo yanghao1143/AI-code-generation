@@ -5,6 +5,7 @@ use crate::{
 };
 use fs::Fs;
 use gpui::{Entity, FocusHandle, SharedString};
+use i18n::t;
 use language_model::IconOrSvg;
 use picker::popover_menu::PickerPopoverMenu;
 use settings::update_settings_file;
@@ -95,7 +96,7 @@ impl Render for AgentModelSelector {
         let model_name = model
             .as_ref()
             .map(|model| model.model.name().0)
-            .unwrap_or_else(|| SharedString::from("Select a Model"));
+            .unwrap_or_else(|| SharedString::from(t("agent-select-model")));
 
         let provider_icon = model.as_ref().map(|model| model.provider.icon());
         let color = if self.menu_handle.is_deployed() {

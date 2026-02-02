@@ -7,6 +7,7 @@ use gpui::{
     Action, AnyElement, App, BackgroundExecutor, DismissEvent, FocusHandle, ForegroundExecutor,
     Subscription, Task,
 };
+use i18n::t;
 use language_model::{
     AuthenticateError, ConfiguredModel, IconOrSvg, LanguageModel, LanguageModelId,
     LanguageModelProvider, LanguageModelProviderId, LanguageModelRegistry,
@@ -468,7 +469,7 @@ impl PickerDelegate for LanguageModelPickerDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Select a model…".into()
+        t("agent-select-model-ellipsis").into()
     }
 
     fn update_matches(

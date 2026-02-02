@@ -28,7 +28,7 @@ use theme::ThemeSettings;
 use ui::utils::WithRemSize;
 use ui::{IconButtonShape, KeyBinding, PopoverMenuHandle, Tooltip, prelude::*};
 use uuid::Uuid;
-use i18n::t;
+use i18n::{t, t_args};
 use workspace::notifications::NotificationId;
 use workspace::{Toast, Workspace};
 use zed_actions::{
@@ -363,7 +363,7 @@ impl<T: 'static> PromptEditor<T> {
         self.editor = cx.new(|cx| {
             let mut editor = Editor::auto_height(1, Self::MAX_LINES as usize, window, cx);
             editor.set_soft_wrap_mode(language::language_settings::SoftWrap::EditorWidth, cx);
-            editor.set_placeholder_text("Add a prompt…", window, cx);
+            editor.set_placeholder_text(t("inline-assist-add-prompt"), window, cx);
             editor.set_text(prompt, window, cx);
             creases = insert_message_creases(&mut editor, &existing_creases, window, cx);
 
@@ -396,20 +396,23 @@ impl<T: 'static> PromptEditor<T> {
         let action = match mode {
             PromptEditorMode::Buffer { codegen, .. } => {
                 if codegen.read(cx).is_insertion {
-                    "Generate"
+                    t("inline-assist-generate")
                 } else {
-                    "Transform"
+                    t("inline-assist-transform")
                 }
             }
-            PromptEditorMode::Terminal { .. } => "Generate",
+            PromptEditorMode::Terminal { .. } => t("inline-assist-generate"),
         };
 
         let agent_panel_keybinding =
             ui::text_for_action(&zed_actions::assistant::ToggleFocus, window, cx)
-                .map(|keybinding| format!("{keybinding} to chat"))
+                .map(|keybinding| t_args("inline-assist-keybinding-to-chat", &[("keybinding", keybinding.into())]).to_string())
                 .unwrap_or_default();
 
-        format!("{action}… ({agent_panel_keybinding} ― ↓↑ for history — @ to include context)")
+        t_args("inline-assist-placeholder", &[
+            ("action", action.into()),
+            ("keybinding_hint", agent_panel_keybinding.into()),
+        ]).to_string()
     }
 
     pub fn prompt(&self, cx: &App) -> String {

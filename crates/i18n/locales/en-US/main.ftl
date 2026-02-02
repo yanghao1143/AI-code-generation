@@ -2401,3 +2401,20 @@ tool-status-failed = Failed
 tool-status-rejected = Rejected
 tool-status-canceled = Canceled
 
+# Agent UI - agent_ui module
+agent-llm-providers = LLM Providers
+agent-llm-providers-description = Add at least one provider to use AI-powered features with Zed's native agent.
+plan-free = Free
+plan-pro-trial = Pro Trial
+plan-pro = Pro
+agent-select-command = Select a command...
+agent-select-model-ellipsis = Select a model…
+agent-profile-name = Profile name
+agent-search-builtin-tools = Search built-in tools…
+agent-search-mcp-tools = Search MCP tools…
+inline-assist-add-prompt = Add a prompt…
+inline-assist-generate = Generate
+inline-assist-transform = Transform
+inline-assist-keybinding-to-chat = { $keybinding } to chat
+inline-assist-placeholder = { $action }… ({ $keybinding_hint } ― ↓↑ for history — @ to include context)
+

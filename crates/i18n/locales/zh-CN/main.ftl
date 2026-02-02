@@ -2860,3 +2860,20 @@ tool-status-failed = 失败
 tool-status-rejected = 已拒绝
 tool-status-canceled = 已取消
 
+# Agent UI - agent_ui 模块
+agent-llm-providers = LLM 提供商
+agent-llm-providers-description = 添加至少一个提供商以使用 Zed 原生代理的 AI 功能。
+plan-free = 免费版
+plan-pro-trial = Pro 试用版
+plan-pro = Pro
+agent-select-command = 选择命令...
+agent-select-model-ellipsis = 选择模型…
+agent-profile-name = 配置文件名称
+agent-search-builtin-tools = 搜索内置工具…
+agent-search-mcp-tools = 搜索 MCP 工具…
+inline-assist-add-prompt = 添加提示…
+inline-assist-generate = 生成
+inline-assist-transform = 转换
+inline-assist-keybinding-to-chat = { $keybinding } 打开对话
+inline-assist-placeholder = { $action }… ({ $keybinding_hint } ― ↓↑ 浏览历史 — @ 包含上下文)
+

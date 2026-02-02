@@ -76,7 +76,7 @@ impl TextThreadHistory {
     ) -> Self {
         let search_editor = cx.new(|cx| {
             let mut editor = Editor::single_line(window, cx);
-            editor.set_placeholder_text("Search threads...", window, cx);
+            editor.set_placeholder_text(t("agent-search-threads"), window, cx);
             editor
         });
 
