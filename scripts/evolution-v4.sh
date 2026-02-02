@@ -222,16 +222,35 @@ repair_agent() {
         loop_detected)
             # 循环检测，先清除输入，再发 Escape 取消，最后派新任务
             # 注意：不要先发 Enter，会把堆积的输入发出去
+            
+            # 1. 发 Escape 取消当前操作
             tmux -S "$SOCKET" send-keys -t "$agent" Escape
-            sleep 0.5
-            # 清除输入框
-            for i in {1..50}; do
+            sleep 1
+            
+            # 2. 清除输入框 (Gemini 需要更多 BSpace)
+            for i in {1..100}; do
                 tmux -S "$SOCKET" send-keys -t "$agent" BSpace
             done
+            sleep 0.5
+            
+            # 3. 再发 Ctrl+U 清除整行 (对 Claude/Codex 有效)
+            tmux -S "$SOCKET" send-keys -t "$agent" C-u
             sleep 0.3
-            # 再发一次 Escape 确保退出循环提示
+            
+            # 4. 再发一次 Escape 确保退出循环提示
             tmux -S "$SOCKET" send-keys -t "$agent" Escape
             sleep 0.5
+            
+            # 5. 验证输入框是否清空
+            local check_output=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p | tail -5)
+            if echo "$check_output" | grep -qE "^│ > .+[^│]" 2>/dev/null; then
+                # Gemini 输入框还有内容，继续清除
+                for i in {1..100}; do
+                    tmux -S "$SOCKET" send-keys -t "$agent" BSpace
+                done
+                sleep 0.3
+            fi
+            
             dispatch_task "$agent"
             echo "loop_broken"
             ;;
