@@ -122,11 +122,9 @@ is_waiting_confirm() {
         fi
     fi
     
-    # 2. Gemini CLI 特有: "Allow execution of" 确认
-    if echo "$last_lines" | grep -qE "Allow execution of:|Allow.*\?" 2>/dev/null; then
-        if echo "$last_lines" | grep -qE "Allow once|Allow for this session" 2>/dev/null; then
-            return 0
-        fi
+    # 2. Gemini CLI 特有: "Allow execution of" 确认 或 loop detection
+    if echo "$last_lines" | grep -qE "Allow execution of:|Allow.*\?|loop was detected|Keep loop detection" 2>/dev/null; then
+        return 0
     fi
     
     # 3. Codex CLI 特有: 权限确认或选择确认
@@ -218,7 +216,12 @@ has_pending_input() {
             ;;
         codex)
             # Codex: 检查 › 后面有内容但没有处理中标志
+            # 排除默认提示语 "Write tests for @filename"
             if echo "$last_lines" | grep -qE "^› .+" 2>/dev/null; then
+                # 排除默认提示语
+                if echo "$last_lines" | grep -qE "^› Write tests for|^› \s*$" 2>/dev/null; then
+                    return 1
+                fi
                 if ! echo "$last_lines" | grep -qE "(Searching|Investigating|esc to interrupt)" 2>/dev/null; then
                     return 0
                 fi
