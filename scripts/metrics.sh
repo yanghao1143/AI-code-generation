@@ -1,186 +1,192 @@
 #!/bin/bash
-# metrics.sh - 性能指标收集器
-# 功能: 收集和分析 agent 性能数据
+# metrics.sh - 性能指标收集和分析
+# 收集 agent 工作时间、任务完成率、context 使用趋势
 
 WORKSPACE="/home/jinyang/.openclaw/workspace"
 SOCKET="/tmp/openclaw-agents.sock"
 REDIS_PREFIX="openclaw:metrics"
-AGENTS=("claude-agent" "gemini-agent" "codex-agent")
 
-# ============ 收集指标 ============
-collect() {
+# 颜色
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+# 收集当前指标
+collect_metrics() {
     local timestamp=$(date +%s)
     
-    for agent in "${AGENTS[@]}"; do
+    for agent in claude-agent gemini-agent codex-agent; do
         local output=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p 2>/dev/null)
         
         # Context 使用率
         local ctx=$(echo "$output" | grep -oE "[0-9]+% context" | tail -1 | grep -oE "^[0-9]+")
-        [[ -z "$ctx" ]] && ctx=$(echo "$output" | tr '\n' ' ' | grep -oE "auto-compac[^0-9]*[0-9]+%" | tail -1 | grep -oE "[0-9]+")
+        if [[ -z "$ctx" ]]; then
+            ctx=$(echo "$output" | tr '\n' ' ' | grep -oE "auto-compac[^0-9]*[0-9]+%" | tail -1 | grep -oE "[0-9]+")
+        fi
+        [[ -z "$ctx" ]] && ctx=100
         
-        # 工作时间
-        local work_time=$(echo "$output" | grep -oE "[0-9]+m [0-9]+s" | tail -1)
-        local work_seconds=0
-        if [[ -n "$work_time" ]]; then
-            local mins=$(echo "$work_time" | grep -oE "^[0-9]+")
-            local secs=$(echo "$work_time" | grep -oE "[0-9]+s" | grep -oE "[0-9]+")
-            work_seconds=$((mins * 60 + secs))
+        # 工作状态 (1=working, 0=idle)
+        local working=0
+        if echo "$output" | tail -10 | grep -qE "esc to cancel|esc to interrupt" 2>/dev/null; then
+            working=1
         fi
         
-        # 状态
-        local status="unknown"
-        local last_10=$(echo "$output" | tail -10)
-        if echo "$last_10" | grep -qE "esc to interrupt|esc to cancel|Thinking|Working|Searching|Reading" 2>/dev/null; then
-            status="working"
-        elif echo "$last_10" | grep -qE "^❯\s*$|^›\s*$|Type your message" 2>/dev/null; then
-            status="idle"
-        elif echo "$last_10" | grep -qE "Unable to connect|ERR_BAD_REQUEST|ECONNREFUSED" 2>/dev/null; then
-            status="error"
-        fi
-        
-        # 文件操作数
-        local file_ops=$(echo "$output" | grep -cE "(Update|Create|Read)\(" 2>/dev/null || echo 0)
-        
-        # 存储到 Redis (时间序列)
-        redis-cli ZADD "$REDIS_PREFIX:ctx:$agent" "$timestamp" "$timestamp:${ctx:-0}" 2>/dev/null
-        redis-cli ZADD "$REDIS_PREFIX:work:$agent" "$timestamp" "$timestamp:$work_seconds" 2>/dev/null
-        redis-cli ZADD "$REDIS_PREFIX:ops:$agent" "$timestamp" "$timestamp:$file_ops" 2>/dev/null
+        # 保存到 Redis 时间序列
+        redis-cli ZADD "${REDIS_PREFIX}:ctx:${agent}" "$timestamp" "${timestamp}:${ctx}" >/dev/null 2>&1
+        redis-cli ZADD "${REDIS_PREFIX}:work:${agent}" "$timestamp" "${timestamp}:${working}" >/dev/null 2>&1
         
         # 保留最近 1000 条
-        redis-cli ZREMRANGEBYRANK "$REDIS_PREFIX:ctx:$agent" 0 -1001 2>/dev/null
-        redis-cli ZREMRANGEBYRANK "$REDIS_PREFIX:work:$agent" 0 -1001 2>/dev/null
-        redis-cli ZREMRANGEBYRANK "$REDIS_PREFIX:ops:$agent" 0 -1001 2>/dev/null
-        
-        # 当前状态
-        redis-cli HSET "$REDIS_PREFIX:current:$agent" \
-            "ctx" "${ctx:-0}" \
-            "status" "$status" \
-            "work_seconds" "$work_seconds" \
-            "file_ops" "$file_ops" \
-            "timestamp" "$timestamp" 2>/dev/null
+        redis-cli ZREMRANGEBYRANK "${REDIS_PREFIX}:ctx:${agent}" 0 -1001 >/dev/null 2>&1
+        redis-cli ZREMRANGEBYRANK "${REDIS_PREFIX}:work:${agent}" 0 -1001 >/dev/null 2>&1
     done
     
-    echo "✅ 指标已收集 $(date '+%H:%M:%S')"
+    echo "指标已收集 @ $(date '+%H:%M:%S')"
 }
 
-# ============ 显示当前指标 ============
-show_current() {
-    echo "===== 当前指标 $(date '+%H:%M:%S') ====="
-    printf "%-14s %-8s %-10s %-10s %-10s\n" "Agent" "状态" "Context" "工作时间" "文件操作"
-    echo "────────────────────────────────────────────────────────────"
+# 分析 context 趋势
+analyze_context_trend() {
+    local agent="$1"
+    local minutes="${2:-30}"
+    local since=$(($(date +%s) - minutes * 60))
     
-    for agent in "${AGENTS[@]}"; do
-        local ctx=$(redis-cli HGET "$REDIS_PREFIX:current:$agent" "ctx" 2>/dev/null || echo "?")
-        local status=$(redis-cli HGET "$REDIS_PREFIX:current:$agent" "status" 2>/dev/null || echo "?")
-        local work=$(redis-cli HGET "$REDIS_PREFIX:current:$agent" "work_seconds" 2>/dev/null || echo "0")
-        local ops=$(redis-cli HGET "$REDIS_PREFIX:current:$agent" "file_ops" 2>/dev/null || echo "0")
-        
-        local work_fmt="${work}s"
-        if [[ "$work" -gt 60 ]]; then
-            work_fmt="$((work / 60))m $((work % 60))s"
-        fi
-        
-        printf "%-14s %-8s %-10s %-10s %-10s\n" "$agent" "$status" "${ctx}%" "$work_fmt" "$ops"
-    done
-}
-
-# ============ 显示趋势 ============
-show_trend() {
-    local agent="${1:-claude-agent}"
-    local metric="${2:-ctx}"
-    local count="${3:-10}"
+    echo -e "${CYAN}$agent Context 趋势 (最近 ${minutes} 分钟):${NC}"
     
-    echo "===== $agent $metric 趋势 (最近 $count 条) ====="
+    local data=$(redis-cli ZRANGEBYSCORE "${REDIS_PREFIX}:ctx:${agent}" "$since" "+inf" 2>/dev/null)
     
-    redis-cli ZRANGE "$REDIS_PREFIX:$metric:$agent" -$count -1 2>/dev/null | while read -r entry; do
-        local ts=$(echo "$entry" | cut -d: -f1)
-        local val=$(echo "$entry" | cut -d: -f2)
-        local time=$(date -d "@$ts" '+%H:%M:%S' 2>/dev/null || echo "$ts")
-        echo "[$time] $val"
-    done
-}
-
-# ============ 计算平均值 ============
-calc_average() {
-    local agent="${1:-claude-agent}"
-    local metric="${2:-ctx}"
-    local period="${3:-60}"  # 最近 N 分钟
-    
-    local now=$(date +%s)
-    local start=$((now - period * 60))
-    
-    local values=$(redis-cli ZRANGEBYSCORE "$REDIS_PREFIX:$metric:$agent" "$start" "$now" 2>/dev/null)
-    
-    if [[ -z "$values" ]]; then
-        echo "无数据"
+    if [[ -z "$data" ]]; then
+        echo "  (无数据)"
         return
     fi
     
+    local first_ctx=""
+    local last_ctx=""
     local sum=0
     local count=0
     
-    while read -r entry; do
-        local val=$(echo "$entry" | cut -d: -f2)
-        sum=$((sum + val))
+    for entry in $data; do
+        local ctx=$(echo "$entry" | cut -d: -f2)
+        [[ -z "$first_ctx" ]] && first_ctx=$ctx
+        last_ctx=$ctx
+        sum=$((sum + ctx))
         ((count++))
-    done <<< "$values"
+    done
     
     if [[ $count -gt 0 ]]; then
         local avg=$((sum / count))
-        echo "$agent $metric 平均值 (${period}分钟): $avg (样本数: $count)"
+        local change=$((last_ctx - first_ctx))
+        
+        echo -e "  起始: ${first_ctx}% → 当前: ${last_ctx}%"
+        echo -e "  平均: ${avg}%"
+        
+        if [[ $change -lt 0 ]]; then
+            echo -e "  趋势: ${RED}下降 ${change}%${NC}"
+        elif [[ $change -gt 0 ]]; then
+            echo -e "  趋势: ${GREEN}上升 +${change}%${NC}"
+        else
+            echo -e "  趋势: 稳定"
+        fi
     fi
 }
 
-# ============ 生成报告 ============
-report() {
-    echo "╔══════════════════════════════════════════════════════════════════╗"
-    echo "║              📊 性能指标报告                                     ║"
-    echo "║                    $(date '+%Y-%m-%d %H:%M:%S')                           ║"
-    echo "╚══════════════════════════════════════════════════════════════════╝"
-    echo ""
+# 分析工作效率
+analyze_efficiency() {
+    local agent="$1"
+    local minutes="${2:-60}"
+    local since=$(($(date +%s) - minutes * 60))
     
-    show_current
-    echo ""
+    echo -e "${CYAN}$agent 工作效率 (最近 ${minutes} 分钟):${NC}"
     
-    echo "===== 平均值 (最近 30 分钟) ====="
-    for agent in "${AGENTS[@]}"; do
-        calc_average "$agent" "ctx" 30
+    local data=$(redis-cli ZRANGEBYSCORE "${REDIS_PREFIX}:work:${agent}" "$since" "+inf" 2>/dev/null)
+    
+    if [[ -z "$data" ]]; then
+        echo "  (无数据)"
+        return
+    fi
+    
+    local working_count=0
+    local total_count=0
+    
+    for entry in $data; do
+        local status=$(echo "$entry" | cut -d: -f2)
+        [[ "$status" == "1" ]] && ((working_count++))
+        ((total_count++))
     done
+    
+    if [[ $total_count -gt 0 ]]; then
+        local efficiency=$((working_count * 100 / total_count))
+        echo -e "  工作时间占比: ${GREEN}${efficiency}%${NC} ($working_count/$total_count 采样)"
+    fi
+}
+
+# 生成完整报告
+generate_report() {
+    echo -e "${CYAN}╔══════════════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${CYAN}║                    📊 性能指标报告                                ║${NC}"
+    echo -e "${CYAN}╚══════════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "生成时间: $(date '+%Y-%m-%d %H:%M:%S')"
     echo ""
     
-    echo "===== Context 趋势 ====="
-    for agent in "${AGENTS[@]}"; do
-        echo "--- $agent ---"
-        show_trend "$agent" "ctx" 5
+    for agent in claude-agent gemini-agent codex-agent; do
+        echo -e "${GREEN}━━━ $agent ━━━${NC}"
+        analyze_context_trend "$agent" 30
+        analyze_efficiency "$agent" 60
+        echo ""
+    done
+    
+    # 总体统计
+    echo -e "${GREEN}━━━ 总体统计 ━━━${NC}"
+    local total_dispatched=$(redis-cli HGET "openclaw:evo:stats" "dispatched:total" 2>/dev/null || echo 0)
+    local total_recovered=$(redis-cli HGET "openclaw:evo:stats" "recovered:total" 2>/dev/null || echo 0)
+    echo -e "  总派发任务: $total_dispatched"
+    echo -e "  总恢复次数: $total_recovered"
+}
+
+# 快速摘要
+quick_summary() {
+    echo -e "${CYAN}📊 指标摘要${NC}"
+    
+    for agent in claude-agent gemini-agent codex-agent; do
+        local output=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p 2>/dev/null | tail -15)
+        local ctx=$(echo "$output" | grep -oE "[0-9]+% context" | tail -1 | grep -oE "^[0-9]+")
+        [[ -z "$ctx" ]] && ctx="?"
+        
+        local status="idle"
+        if echo "$output" | grep -qE "esc to cancel|esc to interrupt" 2>/dev/null; then
+            status="work"
+        fi
+        
+        printf "  %-15s ctx:%3s%% [%s]\n" "$agent" "$ctx" "$status"
     done
 }
 
-# ============ 入口 ============
-case "${1:-current}" in
+# 主入口
+case "${1:-summary}" in
     collect)
-        collect
-        ;;
-    current)
-        show_current
+        collect_metrics
         ;;
     trend)
-        show_trend "$2" "$3" "$4"
+        analyze_context_trend "${2:-claude-agent}" "${3:-30}"
         ;;
-    average)
-        calc_average "$2" "$3" "$4"
+    efficiency)
+        analyze_efficiency "${2:-claude-agent}" "${3:-60}"
         ;;
     report)
-        report
+        generate_report
+        ;;
+    summary)
+        quick_summary
         ;;
     *)
-        echo "用法: $0 {collect|current|trend|average|report}"
+        echo "用法: $0 <command> [args...]"
         echo ""
+        echo "命令:"
         echo "  collect              - 收集当前指标"
-        echo "  current              - 显示当前指标"
-        echo "  trend <agent> <metric> [count]  - 显示趋势"
-        echo "  average <agent> <metric> [minutes]  - 计算平均值"
+        echo "  trend <agent> [min]  - 分析 context 趋势"
+        echo "  efficiency <agent>   - 分析工作效率"
         echo "  report               - 生成完整报告"
-        echo ""
-        echo "指标: ctx (context), work (工作时间), ops (文件操作)"
+        echo "  summary              - 快速摘要"
         ;;
 esac
