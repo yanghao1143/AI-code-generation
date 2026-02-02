@@ -104,7 +104,7 @@ impl Render for ProjectDiagnosticsEditor {
 
         let child =
             if warning_count + self.summary.error_count == 0 && self.editor.read(cx).is_empty(cx) {
-                let label = if self.summary.warning_count == 0 {
+                let label: SharedString = if self.summary.warning_count == 0 {
                     t("diagnostics-no-problems-in-workspace").into()
                 } else {
                     t("diagnostics-no-errors-in-workspace").into()

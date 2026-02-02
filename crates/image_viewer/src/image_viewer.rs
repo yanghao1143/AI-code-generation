@@ -13,6 +13,7 @@ use gpui::{
     Point, Render, ScrollDelta, ScrollWheelEvent, Style, Styled, Task, WeakEntity, Window, actions,
     canvas, div, img, opaque_grey, point, px, size,
 };
+use i18n::t;
 use language::File as _;
 use persistence::IMAGE_VIEWER;
 use project::{ImageItem, Project, ProjectPath, image_store::ImageItemEvent};

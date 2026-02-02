@@ -850,6 +850,31 @@ keymap-editor-tooltip-overridden = 此绑定被其他绑定覆盖。
 keymap-editor-tooltip-show-matching = 显示匹配的快捷键
 keymap-editor-tooltip-overridden-alt = 此绑定被其他绑定覆盖。\n使用 Alt+Click 编辑此绑定
 keymap-editor-toggle-exact-match = 切换精确匹配模式
+outline-panel-search-placeholder = 搜索缓冲区符号…
+outline-panel-reveal-finder = 在访达中显示
+outline-panel-reveal-explorer = 在文件资源管理器中显示
+outline-panel-reveal-file-manager = 在文件管理器中显示
+outline-panel-open-terminal = 在终端中打开
+outline-panel-unfold-directory = 展开目录
+outline-panel-fold-directory = 折叠目录
+outline-panel-copy-path = 复制路径
+outline-panel-copy-relative-path = 复制相对路径
+language-selector-placeholder = 选择语言...
+language-selector-current = (当前)
+markdown-preview-title = 预览 { $name }
+markdown-preview-default-title = Markdown 预览
+image-viewer-zoom-out = 缩小
+image-viewer-reset-zoom = 重置缩放
+image-viewer-zoom-in = 放大
+image-viewer-fit-to-view = 适应视图
+keymap-editor-rec = 录制
+keymap-editor-search = 搜索
+keymap-editor-stop-searching = 停止搜索
+keymap-editor-stop-recording = 停止录制
+keymap-editor-start-searching = 开始搜索
+keymap-editor-start-recording = 开始录制
+keymap-editor-clear-keystrokes = 清除按键
+keymap-editor-clear-keystrokes-hint = 点击三次以执行
 
 # ============================================
 # AI / Agent / AI 助手

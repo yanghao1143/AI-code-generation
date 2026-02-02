@@ -8,6 +8,7 @@ use gpui::{
     App, Context, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, ParentElement,
     Render, Styled, WeakEntity, Window, actions,
 };
+use i18n::t;
 use language::{Buffer, LanguageMatcher, LanguageName, LanguageRegistry};
 use open_path_prompt::file_finder_settings::FileFinderSettings;
 use picker::{Picker, PickerDelegate};
@@ -151,7 +152,8 @@ impl LanguageSelectorDelegate {
         if let Some(buffer_language) = buffer_language
             .filter(|buffer_language| buffer_language.name().as_ref() == mat.string.as_str())
         {
-            label.push_str(" (current)");
+            label.push(' ');
+            label.push_str(&t("language-selector-current"));
             let icon = need_icon
                 .then(|| self.language_icon(&buffer_language.config().matcher, cx))
                 .flatten();
@@ -185,7 +187,7 @@ impl PickerDelegate for LanguageSelectorDelegate {
     type ListItem = ListItem;
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Select a language…".into()
+        t("language-selector-placeholder").into()
     }
 
     fn match_count(&self) -> usize {

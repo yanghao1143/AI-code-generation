@@ -11,6 +11,7 @@ use gpui::{
     IntoElement, IsZero, ListState, ParentElement, Render, RetainAllImageCache, Styled,
     Subscription, Task, WeakEntity, Window, list,
 };
+use i18n::{t, t_args};
 use language::LanguageRegistry;
 use settings::Settings;
 use theme::ThemeSettings;
@@ -529,9 +530,16 @@ impl Item for MarkdownPreviewView {
                 local_file
                     .abs_path(cx)
                     .file_name()
-                    .map(|name| format!("Preview {}", name.to_string_lossy()).into())
+                    .map(|name| {
+                        let name = name.to_string_lossy();
+                        t_args(
+                            "markdown-preview-title",
+                            &[("name", name.as_ref())].into_iter().collect(),
+                        )
+                        .into()
+                    })
             })
-            .unwrap_or_else(|| SharedString::from("Markdown Preview"))
+            .unwrap_or_else(|| t("markdown-preview-default-title").into())
     }
 
     fn telemetry_event_text(&self) -> Option<&'static str> {

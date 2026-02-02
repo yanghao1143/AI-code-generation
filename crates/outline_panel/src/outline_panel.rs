@@ -21,6 +21,7 @@ use gpui::{
     UniformListScrollHandle, WeakEntity, Window, actions, anchored, deferred, div, point, px, size,
     uniform_list,
 };
+use i18n::t;
 use itertools::Itertools;
 use language::{Anchor, BufferId, BufferSnapshot, OffsetRangeExt, OutlineItem};
 use menu::{Cancel, SelectFirst, SelectLast, SelectNext, SelectPrevious};
@@ -721,7 +722,7 @@ impl OutlinePanel {
         cx.new(|cx| {
             let filter_editor = cx.new(|cx| {
                 let mut editor = Editor::single_line(window, cx);
-                editor.set_placeholder_text("Search buffer symbols…", window, cx);
+                editor.set_placeholder_text(&t("outline-panel-search-placeholder"), window, cx);
                 editor
             });
             let filter_update_subscription = cx.subscribe_in(
@@ -1440,25 +1441,25 @@ impl OutlinePanel {
             menu.context(self.focus_handle.clone())
                 .action(
                     if cfg!(target_os = "macos") {
-                        "Reveal in Finder"
+                        t("outline-panel-reveal-finder")
                     } else if cfg!(target_os = "windows") {
-                        "Reveal in File Explorer"
+                        t("outline-panel-reveal-explorer")
                     } else {
-                        "Reveal in File Manager"
+                        t("outline-panel-reveal-file-manager")
                     },
                     Box::new(RevealInFileManager),
                 )
-                .action("Open in Terminal", Box::new(OpenInTerminal))
+                .action(t("outline-panel-open-terminal"), Box::new(OpenInTerminal))
                 .when(is_unfoldable, |menu| {
-                    menu.action("Unfold Directory", Box::new(UnfoldDirectory))
+                    menu.action(t("outline-panel-unfold-directory"), Box::new(UnfoldDirectory))
                 })
                 .when(is_foldable, |menu| {
-                    menu.action("Fold Directory", Box::new(FoldDirectory))
+                    menu.action(t("outline-panel-fold-directory"), Box::new(FoldDirectory))
                 })
                 .separator()
-                .action("Copy Path", Box::new(zed_actions::workspace::CopyPath))
+                .action(t("outline-panel-copy-path"), Box::new(zed_actions::workspace::CopyPath))
                 .action(
-                    "Copy Relative Path",
+                    t("outline-panel-copy-relative-path"),
                     Box::new(zed_actions::workspace::CopyRelativePath),
                 )
         });

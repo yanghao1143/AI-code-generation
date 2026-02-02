@@ -509,10 +509,15 @@ impl PickerDelegate for RecentProjectsDelegate {
                 window.keystroke_text_for(&menu::Confirm),
             )
         };
-        t_args("recent-projects-placeholder", [
-            ("reuse", reuse_window.as_str()),
-            ("create", create_window.as_str()),
-        ])
+        t_args(
+            "recent-projects-placeholder",
+            &[
+                ("reuse", reuse_window.as_str()),
+                ("create", create_window.as_str()),
+            ]
+            .into_iter()
+            .collect(),
+        )
         .into()
     }
 

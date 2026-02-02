@@ -495,7 +495,7 @@ impl KeymapEditor {
 
         let filter_editor = cx.new(|cx| {
             let mut editor = Editor::single_line(window, cx);
-            editor.set_placeholder_text("Filter action names…", window, cx);
+            editor.set_placeholder_text(&t("keymap-editor-filter-placeholder"), window, cx);
             editor
         });
 
@@ -982,29 +982,29 @@ impl KeymapEditor {
             let context_menu = ContextMenu::build(window, cx, |menu, _window, _cx| {
                 menu.context(self.focus_handle.clone())
                     .when(selected_binding_is_unbound, |this| {
-                        this.action("Create", Box::new(CreateBinding))
+                        this.action(t("keymap-editor-menu-create"), Box::new(CreateBinding))
                     })
                     .action_disabled_when(
                         selected_binding_is_unbound,
-                        "Edit",
+                        t("keymap-editor-menu-edit"),
                         Box::new(EditBinding),
                     )
                     .action_disabled_when(
                         selected_binding_is_unbound,
-                        "Delete",
+                        t("keymap-editor-menu-delete"),
                         Box::new(DeleteBinding),
                     )
                     .separator()
-                    .action("Copy Action", Box::new(CopyAction))
+                    .action(t("keymap-editor-menu-copy-action"), Box::new(CopyAction))
                     .action_disabled_when(
                         selected_binding_has_no_context,
-                        "Copy Context",
+                        t("keymap-editor-menu-copy-context"),
                         Box::new(CopyContext),
                     )
                     .separator()
                     .action_disabled_when(
                         selected_binding_has_no_context,
-                        "Show Matching Keybindings",
+                        t("keymap-editor-menu-show-matching"),
                         Box::new(ShowMatchingKeybinds),
                     )
             });
@@ -1048,9 +1048,9 @@ impl KeymapEditor {
                     .icon_color(Color::Warning)
                     .tooltip(|_window, cx| {
                         Tooltip::with_meta(
-                            "View conflicts",
+                            t("keymap-editor-tooltip-conflicts"),
                             Some(&ToggleConflictFilter),
-                            "Use alt+click to show all conflicts",
+                            t("keymap-editor-tooltip-conflicts-alt"),
                             cx,
                         )
                     })
@@ -1067,9 +1067,9 @@ impl KeymapEditor {
                 base_button_style(index, IconName::Info)
                     .tooltip(|_window, cx| {
                         Tooltip::with_meta(
-                            "Edit this binding",
+                            t("keymap-editor-tooltip-edit"),
                             Some(&ShowMatchingKeybinds),
-                            "This binding is overridden by other bindings.",
+                            t("keymap-editor-tooltip-overridden"),
                             cx,
                         )
                     })
@@ -1082,9 +1082,9 @@ impl KeymapEditor {
                 base_button_style(index, IconName::Info)
                     .tooltip(|_window, cx|  {
                         Tooltip::with_meta(
-                            "Show matching keybinds",
+                            t("keymap-editor-tooltip-show-matching"),
                             Some(&ShowMatchingKeybinds),
-                            "This binding is overridden by other bindings.\nUse alt+click to edit this binding",
+                            t("keymap-editor-tooltip-overridden-alt"),
                             cx,
                         )
                     })
@@ -1109,7 +1109,7 @@ impl KeymapEditor {
                 })
                 .when(
                     self.show_hover_menus && !self.context_menu_deployed(),
-                    |this| this.tooltip(Tooltip::for_action_title("Edit Keybinding", &EditBinding)),
+                    |this| this.tooltip(Tooltip::for_action_title(t("keymap-editor-tooltip-edit"), &EditBinding)),
                 )
                 .on_click(cx.listener(move |this, _, window, cx| {
                     this.select_index(index, None, window, cx);
@@ -1123,15 +1123,15 @@ impl KeymapEditor {
         let hint = match (self.filter_state, &self.search_mode) {
             (FilterState::Conflicts, _) => {
                 if self.keybinding_conflict_state.any_user_binding_conflicts() {
-                    "No conflicting keybinds found that match the provided query"
+                    t("keymap-editor-no-conflicts-query")
                 } else {
-                    "No conflicting keybinds found"
+                    t("keymap-editor-no-conflicts")
                 }
             }
             (FilterState::All, SearchMode::KeyStroke { .. }) => {
-                "No keybinds found matching the entered keystrokes"
+                t("keymap-editor-no-keystroke-matches")
             }
-            (FilterState::All, SearchMode::Normal) => "No matches found for the provided query",
+            (FilterState::All, SearchMode::Normal) => t("keymap-editor-no-matches"),
         };
 
         Label::new(hint).color(Color::Muted).into_any_element()
@@ -1662,7 +1662,7 @@ impl Item for KeymapEditor {
     type Event = ();
 
     fn tab_content_text(&self, _detail: usize, _cx: &App) -> ui::SharedString {
-        "Keymap Editor".into()
+        t("keymap-editor-title").into()
     }
 }
 
@@ -1672,7 +1672,7 @@ impl Render for KeymapEditor {
             let button = IconButton::new("keystrokes-exact-match", IconName::CaseSensitive)
                 .tooltip(move |_window, cx| {
                     Tooltip::for_action(
-                        "Toggle Exact Match Mode",
+                        t("keymap-editor-toggle-exact-match"),
                         &ToggleExactKeystrokeMatching,
                         cx,
                     )
@@ -1760,7 +1760,7 @@ impl Render for KeymapEditor {
 
                                             move |_window, cx| {
                                                 Tooltip::for_action_in(
-                                                    "Search by Keystroke",
+                                                    t("keymap-editor-search-keystroke"),
                                                     &ToggleKeystrokeSearch,
                                                     &focus_handle.clone(),
                                                     cx,
@@ -1797,9 +1797,9 @@ impl Render for KeymapEditor {
                                                 move |_window, cx| {
                                                     Tooltip::for_action_in(
                                                         match filter_state {
-                                                            FilterState::All => "Show Conflicts",
+                                                            FilterState::All => t("keymap-editor-show-conflicts"),
                                                             FilterState::Conflicts => {
-                                                                "Hide Conflicts"
+                                                                t("keymap-editor-hide-conflicts")
                                                             }
                                                         },
                                                         &ToggleConflictFilter,
@@ -1830,14 +1830,14 @@ impl Render for KeymapEditor {
                                                 PopoverMenu::new("open-keymap-menu")
                                                     .menu(move |window, cx| {
                                                         Some(ContextMenu::build(window, cx, |menu, _, _| {
-                                                            menu.header("View Default...")
+                                                            menu.header(t("keymap-editor-view-default"))
                                                                 .action(
-                                                                    "Zed Key Bindings",
+                                                                    t("keymap-editor-zed-bindings"),
                                                                     zed_actions::OpenDefaultKeymap
                                                                         .boxed_clone(),
                                                                 )
                                                                 .action(
-                                                                    "Vim Bindings",
+                                                                    t("keymap-editor-vim-bindings"),
                                                                     zed_actions::vim::OpenDefaultKeymap.boxed_clone(),
                                                                 )
                                                         }))
@@ -1857,7 +1857,7 @@ impl Render for KeymapEditor {
                                                             let focus_handle = focus_handle.clone();
                                                             move |_window, cx| {
                                                                 Tooltip::for_action_in(
-                                                                    "View Default...",
+                                                                    t("keymap-editor-view-default"),
                                                                     &zed_actions::OpenKeymapFile,
                                                                     &focus_handle,
                                                                     cx,
@@ -1867,7 +1867,7 @@ impl Render for KeymapEditor {
                                                     ),
                                             )
                                             .child(
-                                                Button::new("edit-in-json", "Edit in JSON")
+                                                Button::new("edit-in-json", t("keymap-editor-edit-json"))
                                                     .style(ButtonStyle::Subtle)
                                                     .key_binding(
                                                         ui::KeyBinding::for_action_in(&zed_actions::OpenKeymapFile, &focus_handle, cx)
@@ -1881,7 +1881,7 @@ impl Render for KeymapEditor {
                                                     })
                                             )
                                             .child(
-                                                Button::new("create", "Create Keybinding")
+                                                Button::new("create", t("keymap-editor-create"))
                                                     .style(ButtonStyle::Outlined)
                                                     .key_binding(
                                                         ui::KeyBinding::for_action_in(&OpenCreateKeybindingModal, &focus_handle, cx)
@@ -1938,7 +1938,14 @@ impl Render for KeymapEditor {
                         &self.current_widths,
                         cx,
                     )
-                    .header(vec!["", "Action", "Arguments", "Keystrokes", "Context", "Source"])
+                    .header(vec![
+                        SharedString::from(""),
+                        t("keymap-editor-table-action").into(),
+                        t("keymap-editor-table-args").into(),
+                        t("keymap-editor-table-keystrokes").into(),
+                        t("keymap-editor-table-context").into(),
+                        t("keymap-editor-table-source").into(),
+                    ])
                     .uniform_list(
                         "keymap-editor-table",
                         row_count,
@@ -1966,9 +1973,8 @@ impl Render for KeymapEditor {
                                                     .clone()
                                                     .into_any_element()
                                             } else {
-                                                const NULL: SharedString =
-                                                    SharedString::new_static("<null>");
-                                                muted_styled_text(NULL, cx)
+                                                let null_text: SharedString = t("keymap-editor-null").into();
+                                                muted_styled_text(null_text, cx)
                                                     .into_any_element()
                                             }
                                         })

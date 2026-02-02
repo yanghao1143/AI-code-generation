@@ -27,6 +27,7 @@ extension_host.workspace = true
 futures.workspace = true
 fuzzy.workspace = true
 gpui.workspace = true
+i18n.workspace = true
 language.workspace = true
 log.workspace = true
 markdown.workspace = true

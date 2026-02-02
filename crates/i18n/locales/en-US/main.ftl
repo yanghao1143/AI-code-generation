@@ -342,6 +342,52 @@ extensions-no-installed-match = No installed extensions match your search
 extensions-no-installed = No extensions installed
 extensions-no-not-installed-match = No uninstalled extensions match your search
 extensions-no-not-installed = All extensions are installed
+extensions-search-placeholder = Search extensions...
+extensions-rebuild = Rebuild
+extensions-configure = Configure
+extensions-author = { $author }
+extensions-authors = { $authors }
+extensions-installed-version = (installed: v{ $version })
+extensions-downloads = { $count } downloads
+extensions-visit-repo = Visit Repository
+extensions-install-another-version = Install Another Version...
+extensions-copy-extension-id = Copy Extension ID
+extensions-copy-author-info = Copy Author Info
+extensions-failed-install-dev = Failed to install dev extension: { $error }
+extensions-version-incompatible = v{ $version } is not compatible with this version of Chi Code.
+
+# Extension types
+extensions-themes = Themes
+extensions-icon-themes = Icon Themes
+extensions-languages = Languages
+extensions-grammars = Grammars
+extensions-language-servers = Language Servers
+extensions-mcp-servers = MCP Servers
+extensions-agent-servers = Agent Servers
+extensions-slash-commands = Slash Commands
+extensions-indexed-docs-providers = Indexed Docs Providers
+extensions-snippets = Snippets
+extensions-debug-adapters = Debug Adapters
+
+# Feature upsells - Built-in support messages
+extensions-upsell-claude = Claude Code support is built-in to Chi Code!
+extensions-upsell-codex = Codex CLI support is built-in to Chi Code!
+extensions-upsell-gemini = Gemini CLI support is built-in to Chi Code!
+extensions-upsell-basedpyright = Basedpyright (Python language server) support is built-in to Chi Code!
+extensions-upsell-ruff = Ruff (linter for Python) support is built-in to Chi Code!
+extensions-upsell-tailwind = Tailwind CSS support is built-in to Chi Code!
+extensions-upsell-ty = Ty (Python language server) support is built-in to Chi Code!
+extensions-upsell-git = Chi Code comes with basic Git support—more features are coming in the future.
+extensions-upsell-bash = Shell support is built-in to Chi Code!
+extensions-upsell-c = C support is built-in to Chi Code!
+extensions-upsell-cpp = C++ support is built-in to Chi Code!
+extensions-upsell-go = Go support is built-in to Chi Code!
+extensions-upsell-python = Python support is built-in to Chi Code!
+extensions-upsell-react = React support is built-in to Chi Code!
+extensions-upsell-rust = Rust support is built-in to Chi Code!
+extensions-upsell-typescript = Typescript support is built-in to Chi Code!
+extensions-upsell-openin = Chi Code supports linking to a source line on GitHub and others.
+extensions-upsell-vim = Vim support is built-in to Chi Code!
 
 # ============================================
 # Git
