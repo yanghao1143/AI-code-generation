@@ -726,7 +726,7 @@ impl ToolCallContent {
                 .get(&terminal_id)
                 .cloned()
                 .map(|terminal| Some(Self::Terminal(terminal)))
-                .ok_or_else(|| anyhow::anyhow!(t_args("acp-terminal-not-found", &[("id", terminal_id.to_string().into())]))),
+                .ok_or_else(|| anyhow::anyhow!("{}", t_args("acp-terminal-not-found", &[("id", terminal_id.to_string().into())]))),
             _ => Ok(None),
         }
     }
@@ -1537,7 +1537,7 @@ impl AcpThread {
                     !call.content.iter().any(|c| {
                         matches!(c, ToolCallContent::SubagentThread(existing) if existing == &update.thread)
                     }),
-                    t("acp-duplicate-subagent-update")
+                    "{}", t("acp-duplicate-subagent-update")
                 );
                 call.content
                     .push(ToolCallContent::SubagentThread(update.thread));
@@ -2066,7 +2066,7 @@ impl AcpThread {
         cx: &mut Context<Self>,
     ) -> Task<Result<()>> {
         let Some((_, message)) = self.user_message_mut(&id) else {
-            return Task::ready(Err(anyhow!(t("acp-message-not-found"))));
+            return Task::ready(Err(anyhow!("{}", t("acp-message-not-found"))));
         };
 
         let checkpoint = message
@@ -2097,7 +2097,7 @@ impl AcpThread {
     /// Unlike `restore_checkpoint`, this method does not restore from git.
     pub fn rewind(&mut self, id: UserMessageId, cx: &mut Context<Self>) -> Task<Result<()>> {
         let Some(truncate) = self.connection.truncate(&self.session_id, cx) else {
-            return Task::ready(Err(anyhow!(t("acp-not-supported"))));
+            return Task::ready(Err(anyhow!("{}", t("acp-not-supported"))));
         };
 
         let telemetry = ActionLogTelemetry::from(&*self);
@@ -3942,7 +3942,7 @@ mod tests {
             if self.auth_methods().iter().any(|m| m.id == method) {
                 Task::ready(Ok(()))
             } else {
-                Task::ready(Err(anyhow!(t("acp-invalid-auth-method"))))
+                Task::ready(Err(anyhow!("{}", t("acp-invalid-auth-method"))))
             }
         }
 

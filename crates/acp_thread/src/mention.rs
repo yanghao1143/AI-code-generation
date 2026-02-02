@@ -152,7 +152,7 @@ impl MentionUri {
                         match key.as_ref() {
                             "include_warnings" => include_warnings = value == "true",
                             "include_errors" => include_errors = value == "true",
-                            _ => bail!(t("acp-invalid-query-parameter")),
+                            _ => bail!("{}", t("acp-invalid-query-parameter")),
                         }
                     }
                     Ok(Self::Diagnostics {
@@ -207,14 +207,14 @@ impl MentionUri {
                         line_range,
                     })
                 } else {
-                    bail!(t_args(
+                    bail!("{}", t_args(
                         "acp-invalid-zed-url",
                         &[("input", input.into())],
                     ));
                 }
             }
             "http" | "https" => Ok(MentionUri::Fetch { url }),
-            other => bail!(t_args(
+            other => bail!("{}", t_args(
                 "acp-unrecognized-scheme",
                 &[("scheme", other.into())],
             )),
@@ -372,12 +372,12 @@ fn single_query_param(url: &Url, name: &'static str) -> Result<Option<String>> {
         [] => Ok(None),
         [(k, v)] => {
             if k != name {
-                bail!(t("acp-invalid-query-parameter"))
+                bail!("{}", t("acp-invalid-query-parameter"))
             }
 
             Ok(Some(v.to_string()))
         }
-        _ => bail!(t("acp-too-many-query-pairs")),
+        _ => bail!("{}", t("acp-too-many-query-pairs")),
     }
 }
 
