@@ -2714,10 +2714,18 @@ edit-prediction-no-data-captured = No data captured.
 edit-prediction-configure-excluded = Configure Excluded Files
 edit-prediction-excluded-files-desc = Open your settings to add sensitive paths for which Zed will never predict edits.
 edit-prediction-view-docs = View Docs
+edit-prediction-this-buffer = This Buffer
+edit-prediction-file-excluded = This file is excluded.
+edit-prediction-copilot-nes = Copilot: Next Edit Suggestions
+edit-prediction-context-retrieval = Context Retrieval
+edit-prediction-enable-context-retrieval = Enable Context Retrieval
+edit-prediction-configure-providers = Configure Providers
 
 # Quick Action Bar
 quick-action-edit-prediction-excluded = Edit Predictions are excluded from this file.
 quick-action-inline-diagnostics-disabled = Inline diagnostics are not available until regular diagnostics are enabled.
+quick-action-edit-predictions = Edit Predictions
+quick-action-inline-diagnostics = Inline Diagnostics
 
 # Open URL Modal
 open-url-paste-hint = Paste a URL to open.

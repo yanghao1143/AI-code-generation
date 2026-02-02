@@ -2452,7 +2452,7 @@ go-to-line-current = 第 { $line } 行，共 { $total } 行，第 { $col } 列
 # ============================================
 acp-copy-all-messages = 复制所有消息
 acp-clear-messages = 清除消息
-acp-terminal-not-found = 未找到终端: { $id }
+acp-terminal-not-found = 未找到终端 ID `{$id}`
 acp-failed-to-install = 安装失败: { $msg }
 acp-tool-call-completed = Agent 工具调用完成
 acp-loading-sessions-not-supported = Agent 不支持加载会话
@@ -2727,10 +2727,18 @@ edit-prediction-no-data-captured = 未捕获数据。
 edit-prediction-configure-excluded = 配置排除文件
 edit-prediction-excluded-files-desc = 打开设置以添加 Zed 永远不会预测编辑的敏感路径。
 edit-prediction-view-docs = 查看文档
+edit-prediction-this-buffer = 此缓冲区
+edit-prediction-file-excluded = 此文件已被排除。
+edit-prediction-copilot-nes = Copilot：下一步编辑建议
+edit-prediction-context-retrieval = 上下文检索
+edit-prediction-enable-context-retrieval = 启用上下文检索
+edit-prediction-configure-providers = 配置提供商
 
 # Quick Action Bar / 快捷操作栏
 quick-action-edit-prediction-excluded = 此文件已排除编辑预测。
 quick-action-inline-diagnostics-disabled = 在启用常规诊断之前，内联诊断不可用。
+quick-action-edit-predictions = 编辑预测
+quick-action-inline-diagnostics = 内联诊断
 
 # Open URL Modal / 打开 URL 对话框
 open-url-paste-hint = 粘贴要打开的 URL。

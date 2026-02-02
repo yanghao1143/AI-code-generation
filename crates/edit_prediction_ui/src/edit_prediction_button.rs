@@ -715,7 +715,7 @@ impl EditPredictionButton {
         });
 
         if let Some(editor_focus_handle) = self.editor_focus_handle.clone() {
-            let entry = ContextMenuEntry::new("This Buffer")
+            let entry = ContextMenuEntry::new(t("edit-prediction-this-buffer"))
                 .toggleable(IconPosition::Start, self.editor_show_predictions)
                 .action(Box::new(editor::actions::ToggleEditPrediction))
                 .handler(move |window, cx| {
@@ -937,7 +937,7 @@ impl EditPredictionButton {
 
         if !self.editor_enabled.unwrap_or(true) {
             menu = menu.item(
-                ContextMenuEntry::new("This file is excluded.")
+                ContextMenuEntry::new(t("edit-prediction-file-excluded"))
                     .disabled(true)
                     .icon(IconName::ZedPredictDisabled)
                     .icon_size(IconSize::Small),
@@ -1012,7 +1012,7 @@ impl EditPredictionButton {
 
             menu.separator()
                 .item(
-                    ContextMenuEntry::new("Copilot: Next Edit Suggestions")
+                    ContextMenuEntry::new(t("edit-prediction-copilot-nes"))
                         .toggleable(IconPosition::Start, next_edit_suggestions)
                         .handler({
                             let fs = self.fs.clone();
@@ -1163,8 +1163,8 @@ impl EditPredictionButton {
             if cx.has_flag::<Zeta2FeatureFlag>() {
                 let settings = all_language_settings(None, cx);
                 let context_retrieval = settings.edit_predictions.use_context;
-                menu = menu.separator().header("Context Retrieval").item(
-                    ContextMenuEntry::new("Enable Context Retrieval")
+                menu = menu.separator().header(t("edit-prediction-context-retrieval")).item(
+                    ContextMenuEntry::new(t("edit-prediction-enable-context-retrieval"))
                         .toggleable(IconPosition::Start, context_retrieval)
                         .action(workspace::ToggleEditPrediction.boxed_clone())
                         .handler({
@@ -1186,7 +1186,7 @@ impl EditPredictionButton {
 
             menu = self.add_provider_switching_section(menu, provider, cx);
             menu = menu.separator().item(
-                ContextMenuEntry::new("Configure Providers")
+                ContextMenuEntry::new(t("edit-prediction-configure-providers"))
                     .icon(IconName::Settings)
                     .icon_position(IconPosition::Start)
                     .icon_color(Color::Muted)
