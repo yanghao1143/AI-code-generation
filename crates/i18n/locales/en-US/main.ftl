@@ -2541,3 +2541,7 @@ key-context-key-mapping = cmd-{ $key } => cmd-{ $equivalent }
 # Dev Container
 dev-container-select-feature = Select Feature
 dev-container-confirm-selections = Confirm Selections
+
+# Git UI - Askpass Modal
+askpass-configure-git-github = You may need to configure git for Github.
+askpass-learn-more = Learn more

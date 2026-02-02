@@ -2552,3 +2552,7 @@ key-context-key-mapping = cmd-{ $key } => cmd-{ $equivalent }
 # Dev Container / 开发容器
 dev-container-select-feature = 选择功能
 dev-container-confirm-selections = 确认选择
+
+# Git UI - Askpass Modal / Git UI - 密码提示模态框
+askpass-configure-git-github = 您可能需要为 Github 配置 git。
+askpass-learn-more = 了解更多
