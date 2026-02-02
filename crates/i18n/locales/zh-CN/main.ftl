@@ -2451,64 +2451,65 @@ go-to-line-current = 绗?{ $line } 琛岋紝鍏?{ $total } 琛岋紝绗?{ $col }
 # ============================================
 # ACP Thread / ACP 绾跨▼
 # ============================================
-acp-copy-all-messages = 澶嶅埗鎵€鏈夋秷鎭?
-acp-clear-messages = 娓呴櫎娑堟伅
-acp-terminal-not-found = 鏈壘鍒扮粓绔?ID `{$id}`
-acp-failed-to-install = 瀹夎澶辫触: { $msg }
-acp-tool-call-completed = Agent 宸ュ叿璋冪敤瀹屾垚
-acp-loading-sessions-not-supported = Agent 涓嶆敮鎸佸姞杞戒細璇?
-acp-resuming-sessions-not-supported = Agent 涓嶆敮鎸佹仮澶嶄細璇?
-acp-auth-required = 闇€瑕佹巿鏉冩墠鑳芥墽琛屾鎿嶄綔
-acp-failed-get-old-checkpoint = 鑾峰彇鏃ф鏌ョ偣澶辫触
-acp-failed-get-new-checkpoint = 鑾峰彇鏂版鏌ョ偣澶辫触
-acp-retry-session-not-supported = 涓嶆敮鎸侀噸璇曚細璇?
-acp-invalid-path = 鏃犳晥璺緞
-acp-parse-line-range-start = 瑙ｆ瀽琛岃寖鍥磋捣濮嬩綅缃?
-acp-parse-line-range-end = 瑙ｆ瀽琛岃寖鍥寸粨鏉熶綅缃?
-acp-line-numbers-should-be-1-based = 琛屽彿搴斾粠1寮€濮?
-acp-missing-thread-name = 缂哄皯绾跨▼鍚嶇О
-acp-missing-rule-name = 缂哄皯瑙勫垯鍚嶇О
-acp-missing-fragment-untitled-buffer-selection = 缂哄皯鏈懡鍚嶇紦鍐插尯閫夋嫨鐨勭墖娈?
-acp-missing-path-for-symbol = 缂哄皯绗﹀彿璺緞
-acp-missing-path-for-file = 缂哄皯鏂囦欢璺緞
-acp-missing-path-for-directory = 缂哄皯鐩綍璺緞
-acp-missing-fragment-for-selection = 缂哄皯閫夋嫨鐨勭墖娈?
-acp-missing-path-for-selection = 缂哄皯閫夋嫨鐨勮矾寰?
-acp-invalid-query-parameter = 鏃犳晥鐨勬煡璇㈠弬鏁?
-acp-invalid-zed-url = 鏃犳晥鐨?Zed URL: { $input }
-acp-unrecognized-scheme = 鏃犳硶璇嗗埆鐨勫崗璁? { $scheme }
-acp-too-many-query-pairs = 鏌ヨ鍙傛暟杩囧
-acp-server-exited = 鏈嶅姟鍣ㄩ€€鍑猴紝鐘舵€佺爜: { $status }
-acp-duplicate-subagent-update = 閲嶅鐨勫瓙浠ｇ悊绾跨▼鏇存柊
-acp-use-either-send-update = 鍙兘浣跨敤 send_update 鎴?set_next_prompt_updates锛屼笉鑳藉悓鏃朵娇鐢?
-acp-read-beyond-file-end = 灏濊瘯璇诲彇瓒呭嚭鏂囦欢鏈熬鐨勫唴瀹癸紝琛?{ $line }:{ $col }
-acp-version-not-supported = 鏉ヨ嚜 { $path } 鐨勭増鏈?{ $current_version } 涓嶅彈鏀寔锛岃鏇存柊鑷?{ $minimum_version } 鎴栨洿楂樼増鏈?acp-user = 鐢ㄦ埛
-acp-assistant = 鍔╂墜
-acp-user-checkpoint = 鐢ㄦ埛 (妫€鏌ョ偣)
-acp-tool-call = 宸ュ叿璋冪敤
-acp-message-not-found = 娑堟伅鏈壘鍒?
-acp-not-supported = 涓嶆敮鎸?
-acp-delete-session-not-supported = Agent 涓嶆敮鎸佸垹闄や細璇?
-acp-delete-sessions-not-supported = Agent 涓嶆敮鎸佸垹闄や細璇?
-acp-invalid-auth-method = 鏃犳晥鐨勮璇佹柟娉?
+acp-copy-all-messages = 复制所有消息
+acp-clear-messages = 清除消息
+acp-terminal-not-found = 未找到终端 ID `{$id}`
+acp-failed-to-install = 安装失败: { $msg }
+acp-tool-call-completed = Agent 工具调用完成
+acp-loading-sessions-not-supported = Agent 不支持加载会话
+acp-resuming-sessions-not-supported = Agent 不支持恢复会话
+acp-auth-required = 需要授权才能执行此操作
+acp-failed-get-old-checkpoint = 获取旧检查点失败
+acp-failed-get-new-checkpoint = 获取新检查点失败
+acp-retry-session-not-supported = 不支持重试会话
+acp-invalid-path = 无效路径
+acp-parse-line-range-start = 解析行范围起始位置
+acp-parse-line-range-end = 解析行范围结束位置
+acp-line-numbers-should-be-1-based = 行号应从1开始
+acp-missing-thread-name = 缺少线程名称
+acp-missing-rule-name = 缺少规则名称
+acp-missing-fragment-untitled-buffer-selection = 缺少未命名缓冲区选择的片段
+acp-missing-path-for-symbol = 缺少符号路径
+acp-missing-path-for-file = 缺少文件路径
+acp-missing-path-for-directory = 缺少目录路径
+acp-missing-fragment-for-selection = 缺少选择的片段
+acp-missing-path-for-selection = 缺少选择的路径
+acp-invalid-query-parameter = 无效的查询参数
+acp-invalid-zed-url = 无效的 Zed URL: { $input }
+acp-unrecognized-scheme = 无法识别的协议: { $scheme }
+acp-too-many-query-pairs = 查询参数过多
+acp-server-exited = 服务器退出，状态码: { $status }
+acp-duplicate-subagent-update = 重复的子代理线程更新
+acp-use-either-send-update = 只能使用 send_update 或 set_next_prompt_updates，不能同时使用
+acp-read-beyond-file-end = 尝试读取超出文件末尾的内容，行 { $line }:{ $col }
+acp-version-not-supported = 来自 { $path } 的版本 { $current_version } 不受支持，请更新至 { $minimum_version } 或更高版本
+acp-user = 用户
+acp-assistant = 助手
+acp-user-checkpoint = 用户 (检查点)
+acp-tool-call = 工具调用
+acp-message-not-found = 消息未找到
+acp-not-supported = 不支持
+acp-delete-session-not-supported = Agent 不支持删除会话
+acp-delete-sessions-not-supported = Agent 不支持删除会话
+acp-invalid-auth-method = 无效的认证方法
 
-# Tool Status / 宸ュ叿鐘舵€?
-tool-status-pending = 绛夊緟涓?
-tool-status-waiting = 绛夊緟纭
-tool-status-in-progress = 杩涜涓?
-tool-status-completed = 宸插畬鎴?
-tool-status-failed = 澶辫触
-tool-status-rejected = 宸叉嫆缁?
-tool-status-canceled = 宸插彇娑?
-tool-call-not-found = 鏈壘鍒板伐鍏疯皟鐢?
+# Tool Status / 工具状态
+tool-status-pending = 等待中
+tool-status-waiting = 等待确认
+tool-status-in-progress = 进行中
+tool-status-completed = 已完成
+tool-status-failed = 失败
+tool-status-rejected = 已拒绝
+tool-status-canceled = 已取消
+tool-call-not-found = 未找到工具调用
 
-# Common / 閫氱敤
-status = 鐘舵€?
-terminal = 缁堢
-image = 鍥剧墖
-diagnostics = 璇婃柇
-untitled = 鏈懡鍚?
-diff = 宸紓
+# Common / 通用
+status = 状态
+terminal = 终端
+image = 图片
+diagnostics = 诊断
+untitled = 未命名
+diff = 差异
 
 # Auto Update UI / 鑷姩鏇存柊 UI
 auto-update-couldnt-load-release-notes = 鏃犳硶鍔犺浇鍙戝竷璇存槑

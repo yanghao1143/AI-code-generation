@@ -2252,9 +2252,9 @@ preferences = Preferences
 acp-terminal-not-found = Terminal with id `{$id}` not found
 acp-failed-to-install = Failed to install: {$msg}
 acp-tool-call-completed = Agent Tool Call Completed
-acp-loading-sessions-not-supported = Loading sessions is not supported
-acp-resuming-sessions-not-supported = Resuming sessions is not supported
-acp-auth-required = Authentication required
+acp-loading-sessions-not-supported = Agent does not support loading sessions
+acp-resuming-sessions-not-supported = Agent does not support resuming sessions
+acp-auth-required = Authorization required to perform this action
 acp-failed-get-old-checkpoint = Failed to get old checkpoint
 acp-failed-get-new-checkpoint = Failed to get new checkpoint
 acp-retry-session-not-supported = Retrying a session is not supported
@@ -2339,7 +2339,7 @@ favorite = Favorite
 unfavorite = Unfavorite
 acp-server-exited = Server exited with status {$status}
 acp-duplicate-subagent-update = Duplicate SubagentThread update for the same AcpThread entity
-acp-use-either-send-update = Use either send_update or set_next_prompt_updates
+acp-use-either-send-update = Use either send_update or set_next_prompt_updates, not both
 acp-read-beyond-file-end = Attempting to read beyond the end of the file, line { $line }:{ $col }
 tool-call-not-found = Tool call not found
 acp-user = User
@@ -2388,8 +2388,8 @@ edit-keystroke = Edit Keystroke
 edit-arguments = Edit Arguments
 acp-message-not-found = Message not found
 acp-not-supported = Not supported
-acp-delete-session-not-supported = delete_session not supported
-acp-delete-sessions-not-supported = delete_sessions not supported
+acp-delete-session-not-supported = Agent does not support deleting session
+acp-delete-sessions-not-supported = Agent does not support deleting sessions
 acp-invalid-auth-method = Invalid auth method
 
 # Agent UI internationalization
@@ -2420,30 +2420,6 @@ settings-github-copilot = GitHub Copilot
 settings-focus-content = Focus Content
 settings-focus-navbar = Focus Navbar
 
-# ACP Thread
-acp-version-not-supported = Version { $current_version } from { $path } is not supported (need at least { $minimum_version }).
-acp-failed-to-install = Failed to install: { $msg }
-acp-server-exited = Server exited with status: { $status }
-acp-use-either-send-update = Use either send_update or set_next_prompt_updates, not both
-acp-duplicate-subagent-update = Attempted to push duplicate subagent thread update
-acp-terminal-not-found = Terminal not found: { $id }
-acp-auth-required = Authorization required to perform this action.
-acp-user-checkpoint = User (Checkpoint)
-acp-user = User
-acp-assistant = Assistant
-acp-tool-call = Tool Call
-acp-tool-call-completed = Tool Call Completed
-acp-delete-session-not-supported = Agent does not support deleting sessions
-acp-delete-sessions-not-supported = Agent does not support deleting sessions
-acp-loading-sessions-not-supported = Agent does not support loading sessions
-acp-resuming-sessions-not-supported = Agent does not support resuming sessions
-tool-status-pending = Pending
-tool-status-waiting = Waiting
-tool-status-in-progress = In Progress
-tool-status-completed = Completed
-tool-status-failed = Failed
-tool-status-rejected = Rejected
-tool-status-canceled = Canceled
 
 # Agent UI - agent_ui module
 agent-llm-providers = LLM Providers
