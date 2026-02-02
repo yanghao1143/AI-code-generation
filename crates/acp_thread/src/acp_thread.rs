@@ -3942,7 +3942,7 @@ mod tests {
             if self.auth_methods().iter().any(|m| m.id == method) {
                 Task::ready(Ok(()))
             } else {
-                Task::ready(Err(anyhow!("Invalid Auth Method")))
+                Task::ready(Err(anyhow!(t("acp-invalid-auth-method"))))
             }
         }
 

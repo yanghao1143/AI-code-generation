@@ -2784,6 +2784,7 @@ acp-message-not-found = 未找到消息
 acp-not-supported = 不支持
 acp-delete-session-not-supported = 不支持 delete_session
 acp-delete-sessions-not-supported = 不支持 delete_sessions
+acp-invalid-auth-method = 无效的认证方法
 
 # Agent UI internationalization
 slash-command-create-custom = 创建你的命令
@@ -2840,3 +2841,7 @@ tool-status-canceled = 已取消
 
 
 
+a c p - i n v a l i d - a u t h - m e t h o d  
+ =  
+ �eHe�v�����e�l 
+ 
