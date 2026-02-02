@@ -100,7 +100,7 @@ impl Render for ExecutionControlView {
                             })),
                         )
                         .child(
-                            Button::new("stop", "Stop")
+                            Button::new("stop", t("stop"))
                                 .style(ButtonStyle::Subtle) // Destructive style not available in prelude?
                                 .on_click(cx.listener(|this, _, window, cx| {
                                     if let Some(callback) = &this.on_stop {

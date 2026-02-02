@@ -5,6 +5,7 @@ use anyhow::Result;
 use chrono::{DateTime, Utc};
 use collections::IndexMap;
 use gpui::{Entity, SharedString, Task};
+use i18n::t;
 use language_model::LanguageModelProviderId;
 use project::Project;
 use serde::{Deserialize, Serialize};
@@ -62,14 +63,12 @@ pub trait AgentConnection {
     /// Resume an existing session by ID without replaying previous messages.
     fn resume_session(
         self: Rc<Self>,
-        _session: AgentSessionInfo,
+        _session_id: String,
         _project: Entity<Project>,
         _cwd: &Path,
         _cx: &mut App,
     ) -> Task<Result<Entity<AcpThread>>> {
-        Task::ready(Err(anyhow::Error::msg(
-            t("acp-resuming-sessions-not-supported"),
-        )))
+        Task::ready(Err(anyhow::Error::msg(t("acp-resuming-sessions-not-supported"))))
     }
 
     /// Whether this agent supports showing session history.
@@ -313,9 +312,9 @@ impl AuthRequired {
 }
 
 impl Error for AuthRequired {}
-impl fmt::Display for AuthRequired {
+impl fmt::Display for AuthRequiredError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, t("acp-auth-required"))
+        write!(f, "{}", t("acp-auth-required"))
     }
 }
 

@@ -758,7 +758,7 @@ impl Render for ConfigurationView {
                                 )
                             } else {
                                 this.child(
-                                    Button::new("retry_lmstudio_models", "Connect")
+                                    Button::new("retry_lmstudio_models", t("connect"))
                                         .icon_position(IconPosition::Start)
                                         .icon_size(IconSize::XSmall)
                                         .icon(IconName::PlayFilled)

@@ -24,7 +24,7 @@ pub fn derive_refineable(input: TokenStream) -> TokenStream {
 
     if let Some(refineable_attr) = refineable_attr {
         let _ = refineable_attr.parse_nested_meta(|meta| {
-            if meta.path.is_ident("Debug") {
+            if meta.path.is_ident(t("debug")) {
                 impl_debug_on_refinement = true;
             } else {
                 if meta.path.is_ident("Serialize") {

@@ -217,7 +217,7 @@ impl Component for TabBar {
                         vec![single_example(
                             "Full TabBar",
                             TabBar::new("full_tab_bar")
-                                .start_child(Button::new("start_button", "Start"))
+                                .start_child(Button::new("start_button", t("start")))
                                 .child(Tab::new("tab1"))
                                 .child(Tab::new("tab2"))
                                 .child(Tab::new("tab3"))
