@@ -7,6 +7,7 @@ use gpui::{
     Subscription, Task, TextStyle, TitlebarOptions, WindowBounds, WindowHandle, WindowOptions,
     actions, point, size, transparent_black,
 };
+use i18n::{t, t_args};
 use language::{Buffer, LanguageRegistry, language_settings::SoftWrap};
 use language_model::{
     ConfiguredModel, LanguageModelRegistry, LanguageModelRequest, LanguageModelRequestMessage, Role,
@@ -123,7 +124,7 @@ pub fn open_rules_library(
             cx.open_window(
                 WindowOptions {
                     titlebar: Some(TitlebarOptions {
-                        title: Some("Rules Library".into()),
+                        title: Some(t("rules-library-title").into()),
                         appears_transparent: true,
                         traffic_light_position: Some(point(px(12.0), px(12.0))),
                     }),
@@ -205,7 +206,7 @@ impl PickerDelegate for RulePickerDelegate {
     }
 
     fn no_matches_text(&self, _window: &mut Window, _cx: &mut App) -> Option<SharedString> {
-        Some("No rules found matching your search.".into())
+        Some(t("rules-library-no-rules-found").into())
     }
 
     fn selected_index(&self) -> usize {
@@ -1142,7 +1143,7 @@ impl RulesLibrary {
                             .child(
                                 IconButton::new("new-rule", IconName::Plus)
                                     .tooltip(move |_window, cx| {
-                                        Tooltip::for_action("New Rule", &NewRule, cx)
+                                        Tooltip::for_action_in(t("rules-library-new-rule"), &NewRule, &focus, cx)
                                     })
                                     .on_click(|_, window, cx| {
                                         window.dispatch_action(Box::new(NewRule), cx);
@@ -1152,7 +1153,7 @@ impl RulesLibrary {
                 } else {
                     this.child(
                         h_flex().p_1().w_full().child(
-                            Button::new("new-rule", "New Rule")
+                            Button::new("new-rule", t("rules-library-new-rule"))
                                 .full_width()
                                 .style(ButtonStyle::Outlined)
                                 .icon(IconName::Plus)

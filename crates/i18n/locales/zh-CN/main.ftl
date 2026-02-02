@@ -2556,3 +2556,13 @@ dev-container-confirm-selections = 确认选择
 # Git UI - Askpass Modal / Git UI - 密码提示模态框
 askpass-configure-git-github = 您可能需要为 Github 配置 git。
 askpass-learn-more = 了解更多
+
+# Disconnected Overlay / 断开连接覆盖层
+disconnected-title = 已断开连接
+disconnected-close-window = 关闭窗口
+disconnected-reconnect = 重新连接
+
+# Rules Library / 规则库
+rules-library-title = 规则库
+rules-library-no-rules-found = 未找到匹配搜索的规则。
+rules-library-new-rule = 新建规则

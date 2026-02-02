@@ -2545,3 +2545,13 @@ dev-container-confirm-selections = Confirm Selections
 # Git UI - Askpass Modal
 askpass-configure-git-github = You may need to configure git for Github.
 askpass-learn-more = Learn more
+
+# Disconnected Overlay
+disconnected-title = Disconnected
+disconnected-close-window = Close Window
+disconnected-reconnect = Reconnect
+
+# Rules Library
+rules-library-title = Rules Library
+rules-library-no-rules-found = No rules found matching your search.
+rules-library-new-rule = New Rule
