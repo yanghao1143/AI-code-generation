@@ -204,6 +204,7 @@ use ui::{
     IconName, IconSize, Indicator, Key, Tooltip, h_flex, prelude::*, scrollbars::ScrollbarAutoHide,
 };
 use ui_input::ErasedEditor;
+use i18n::t;
 use util::{RangeExt, ResultExt, TryFutureExt, maybe, post_inc};
 use workspace::{
     CollaboratorId, Item as WorkspaceItem, ItemId, ItemNavHistory, NavigationEntry, OpenInTerminal,
@@ -9921,7 +9922,7 @@ impl Editor {
                                     .bg(Self::edit_prediction_line_popover_bg_color(cx))
                                     .when(self.edit_prediction_preview.released_too_fast(), |el| {
                                         el.child(
-                                            Label::new("Hold")
+                                            Label::new(t("editor-hold"))
                                                 .size(LabelSize::Small)
                                                 .when(accept_keystroke.is_none(), |el| {
                                                     el.strikethrough()
@@ -10046,7 +10047,7 @@ impl Editor {
                                         false,
                                     ))),
                             )
-                            .child(Label::new("Preview").into_any_element())
+                            .child(Label::new(t("editor-preview")).into_any_element())
                             .opacity(if has_completion { 1.0 } else { 0.4 }),
                     )
                 })
@@ -10123,7 +10124,7 @@ impl Editor {
                         .gap_2()
                         .flex_1()
                         .child(Icon::new(IconName::ZedPredict))
-                        .child(Label::new(format!("Jump to {file_name}"))),
+                        .child(Label::new(i18n::t_args("editor-jump-to", &[("file_name", file_name.into())]))),
                 )
             }
             EditPrediction::Edit {
@@ -28260,8 +28261,8 @@ impl Render for MissingEditPredictionKeybindingTooltip {
                     v_flex()
                         .flex_1()
                         .text_ui_sm(cx)
-                        .child(Label::new("Conflict with Accept Keybinding"))
-                        .child("Your keymap currently overrides the default accept keybinding. To continue, assign one keybinding for the `editor::AcceptEditPrediction` action.")
+                        .child(Label::new(t("editor-keybinding-conflict")))
+                        .child(t("editor-keybinding-conflict-message"))
                 )
                 .child(
                     h_flex()
@@ -28269,10 +28270,10 @@ impl Render for MissingEditPredictionKeybindingTooltip {
                         .gap_1()
                         .items_end()
                         .w_full()
-                        .child(Button::new("open-keymap", "Assign Keybinding").size(ButtonSize::Compact).on_click(|_ev, window, cx| {
+                        .child(Button::new("open-keymap", t("editor-assign-keybinding")).size(ButtonSize::Compact).on_click(|_ev, window, cx| {
                             window.dispatch_action(zed_actions::OpenKeymapFile.boxed_clone(), cx)
                         }))
-                        .child(Button::new("see-docs", "See Docs").size(ButtonSize::Compact).on_click(|_ev, _window, cx| {
+                        .child(Button::new("see-docs", t("editor-see-docs")).size(ButtonSize::Compact).on_click(|_ev, _window, cx| {
                             cx.open_url("https://zed.dev/docs/completions#edit-predictions-missing-keybinding");
                         })),
                 )

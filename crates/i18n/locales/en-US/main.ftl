@@ -652,6 +652,17 @@ editor-indent = Indent
 editor-tab-size = Tab Size
 editor-spaces = Spaces
 editor-tabs = Tabs
+editor-hold = Hold
+editor-preview = Preview
+editor-jump-to = Jump to { $file_name }
+editor-keybinding-conflict = Conflict with Accept Keybinding
+editor-keybinding-conflict-message = Your keymap currently overrides the default accept keybinding. To continue, assign one keybinding for the `editor::AcceptEditPrediction` action.
+editor-assign-keybinding = Assign Keybinding
+editor-see-docs = See Docs
+
+# Feedback
+feedback-copied-to-clipboard = Copied into clipboard
+ok = OK
 
 # ============================================
 # AI / Agent

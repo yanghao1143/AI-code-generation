@@ -1,4 +1,5 @@
 use gpui::{App, ClipboardItem, PromptLevel, actions};
+use i18n::t;
 use system_specs::{CopySystemSpecsIntoClipboard, SystemSpecs};
 use util::ResultExt;
 use workspace::Workspace;
@@ -57,9 +58,9 @@ pub fn init(cx: &mut App) {
 
                     cx.prompt(
                         PromptLevel::Info,
-                        "Copied into clipboard",
+                        &t("feedback-copied-to-clipboard"),
                         Some(&specs),
-                        &["OK"],
+                        &[&t("ok")],
                     )
                     .await
                 })

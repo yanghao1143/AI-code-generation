@@ -767,6 +767,18 @@ editor-indent = 缩进
 editor-tab-size = 制表符大小
 editor-spaces = 空格
 editor-tabs = 制表符
+editor-hold = 按住
+editor-preview = 预览
+editor-jump-to = 跳转到 { $file_name }
+editor-keybinding-conflict = 接受快捷键冲突
+editor-keybinding-conflict-message = 你的键盘映射目前覆盖了默认的接受快捷键。要继续，请为 `editor::AcceptEditPrediction` 操作分配一个快捷键。
+editor-assign-keybinding = 分配快捷键
+editor-see-docs = 查看文档
+
+# Feedback / 反馈
+feedback-copied-to-clipboard = 已复制到剪贴板
+ok = 确定
+
 outline-search-buffer-symbols = 搜索缓冲区符号...
 project-symbols-search-placeholder = 搜索项目符号...
 diagnostics-no-problems-in-workspace = 工作区中没有问题
@@ -2369,5 +2381,10 @@ repl-menu-kernel-state = { $name } 状态: { $state }
 repl-menu-run-code-on = 在 { $name } ({ $type }) 上运行代码
 repl-menu-interrupt-kernel-on = 中断 { $name } ({ $type }) 内核
 repl-menu-kernel-error = 内核 { $name } 出错: { $error }
+repl-menu-start-for = 为 { $name } 启动 REPL
+repl-menu-setup-for = 为 { $name } 设置 Chi Code REPL
+repl-menu-tooltip = REPL 菜单
 
-# REPL Menu
+# Multi Model Dispatch
+multi-model-dispatch-panel = 智能调度
+intelligent-dispatch = 智能调度
