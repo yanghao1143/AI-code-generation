@@ -2585,3 +2585,13 @@ terminal-task-finished-with-exit-code = 结束，退出代码：{ $code }
 terminal-task-terminated-by-signal = 被信号终止：{ $signal }
 terminal-task-finished = 已结束
 terminal-command-label = 命令
+
+# 其他通用 UI 键
+submit = 提交
+apply = 应用
+reset = 重置
+continue = 继续
+previous = 上一个
+help = 帮助
+settings = 设置
+options = 选项

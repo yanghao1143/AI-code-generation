@@ -2122,3 +2122,13 @@ terminal-task-terminated-by-signal = terminated by signal: { $signal }
 terminal-task-finished = finished
 terminal-command-label = Command
 got-it = Got it
+
+# Additional common UI keys
+submit = Submit
+apply = Apply
+reset = Reset
+continue = Continue
+previous = Previous
+help = Help
+settings = Settings
+options = Options
