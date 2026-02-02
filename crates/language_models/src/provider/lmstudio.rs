@@ -4,6 +4,7 @@ use futures::Stream;
 use futures::{FutureExt, StreamExt, future::BoxFuture, stream::BoxStream};
 use gpui::{AnyView, App, AsyncApp, Context, Entity, Subscription, Task};
 use http_client::HttpClient;
+use i18n::t;
 use language_model::{
     AuthenticateError, LanguageModelCompletionError, LanguageModelCompletionEvent,
     LanguageModelToolChoice, LanguageModelToolResultContent, LanguageModelToolUse, MessageContent,
@@ -672,22 +673,18 @@ impl Render for ConfigurationView {
     fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let is_authenticated = self.state.read(cx).is_authenticated();
 
-        let lmstudio_intro = "Run local LLMs like Llama, Phi, and Qwen.";
-
         if self.loading_models_task.is_some() {
-            div().child(Label::new("Loading models...")).into_any()
+            div().child(Label::new(t("lm-loading-models"))).into_any()
         } else {
             v_flex()
                 .gap_2()
                 .child(
-                    v_flex().gap_1().child(Label::new(lmstudio_intro)).child(
+                    v_flex().gap_1().child(Label::new(t("lm-lmstudio-intro"))).child(
                         List::new()
-                            .child(ListBulletItem::new(
-                                "LM Studio needs to be running with at least one model downloaded.",
-                            ))
+                            .child(ListBulletItem::new(t("lm-lmstudio-requirement")))
                             .child(
                                 ListBulletItem::new("")
-                                    .child(Label::new("To get your first model, try running"))
+                                    .child(Label::new(t("lm-lmstudio-get-model")))
                                     .child(Label::new("lms get qwen2.5-coder-7b").inline_code(cx)),
                             ),
                     ),
@@ -718,7 +715,7 @@ impl Render for ConfigurationView {
                                         this.child(
                                             Button::new(
                                                 "download_lmstudio_button",
-                                                "Download LM Studio",
+                                                t("lm-download-lmstudio"),
                                             )
                                             .style(ButtonStyle::Subtle)
                                             .icon(IconName::ArrowUpRight)
@@ -732,7 +729,7 @@ impl Render for ConfigurationView {
                                     }
                                 })
                                 .child(
-                                    Button::new("view-models", "Model Catalog")
+                                    Button::new("view-models", t("lm-model-catalog"))
                                         .style(ButtonStyle::Subtle)
                                         .icon(IconName::ArrowUpRight)
                                         .icon_size(IconSize::Small)
@@ -752,7 +749,7 @@ impl Render for ConfigurationView {
                                             h_flex()
                                                 .gap_2()
                                                 .child(Indicator::dot().color(Color::Success))
-                                                .child(Label::new("Connected"))
+                                                .child(Label::new(t("lm-connected")))
                                                 .into_any_element(),
                                         ),
                                 )

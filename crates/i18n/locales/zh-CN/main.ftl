@@ -2649,3 +2649,16 @@ lm-download-ollama = 下载 Ollama
 lm-view-all-models = 查看所有模型
 lm-connected = 已连接
 lm-refresh-models = 刷新模型
+
+# Language Models - Mistral / 语言模型 - Mistral
+lm-zed-agent-mistral = Zed 的 Mistral 代理
+lm-mistral-console = Mistral 控制台
+lm-mistral-ensure-credits = 确保您的 Mistral 账户有余额
+
+# Language Models - LM Studio / 语言模型 - LM Studio
+lm-loading-models = 正在加载模型...
+lm-lmstudio-intro = 运行本地大语言模型，如 Llama、Phi 和 Qwen。
+lm-lmstudio-requirement = LM Studio 需要正在运行且已下载至少一个模型。
+lm-lmstudio-get-model = 要获取您的第一个模型，请尝试运行
+lm-download-lmstudio = 下载 LM Studio
+lm-model-catalog = 模型目录

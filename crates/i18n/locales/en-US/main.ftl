@@ -2636,3 +2636,16 @@ lm-download-ollama = Download Ollama
 lm-view-all-models = View All Models
 lm-connected = Connected
 lm-refresh-models = Refresh Models
+
+# Language Models - Mistral
+lm-zed-agent-mistral = Zed's agent with Mistral
+lm-mistral-console = Mistral's console
+lm-mistral-ensure-credits = Ensure your Mistral account has credits
+
+# Language Models - LM Studio
+lm-loading-models = Loading models...
+lm-lmstudio-intro = Run local LLMs like Llama, Phi, and Qwen.
+lm-lmstudio-requirement = LM Studio needs to be running with at least one model downloaded.
+lm-lmstudio-get-model = To get your first model, try running
+lm-download-lmstudio = Download LM Studio
+lm-model-catalog = Model Catalog
