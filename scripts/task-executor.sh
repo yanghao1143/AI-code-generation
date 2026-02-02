@@ -49,25 +49,13 @@ do_context_monitor() {
 
 # L3 指挥官 - 给空闲 agent 派任务
 do_commander() {
-    # 检查任务队列
-    task=$(redis-cli RPOP "${REDIS_PREFIX}:task:queue")
-    
-    if [ -z "$task" ]; then
-        # 检查是否所有 agent 都空闲超过 5 分钟
-        all_idle=true
-        for pane in claude-agent gemini-agent codex-agent; do
-            status=$(redis-cli HGET "${REDIS_PREFIX}:agent:${pane}:state" "status")
-            if [ "$status" != "IDLE" ]; then
-                all_idle=false
-                break
-            fi
-        done
-        
-        if [ "$all_idle" = true ]; then
-            log "所有 agent 空闲，任务队列为空"
-        fi
-        return
-    fi
+    # 直接用 evolution-v4 检查和派活
+    /home/jinyang/.openclaw/workspace/scripts/evolution-v4.sh check 2>/dev/null
+}
+
+# L3 派发任务
+do_dispatch() {
+    local task="$1"
     
     # 解析任务 JSON (不用 jq)
     task_type=$(echo "$task" | grep -o '"type":"[^"]*"' | cut -d'"' -f4)
