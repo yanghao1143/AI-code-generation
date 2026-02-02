@@ -1076,3 +1076,73 @@ codex-agent)
 4. 协作执行（分工+集成）
 5. 自动部署
 
+
+### 2026-02-02 23:51 - 🎯 技术总监巡检学习 #1
+
+**巡检发现**:
+- Gemini 完成 API_REFERENCE.md 后空闲，需要立即派新任务
+- Claude 正在运行 cargo check，耗时较长（大项目编译慢）
+- Codex context 降到 74%，需要关注
+
+**学习经验**:
+1. **空闲检测要快** - agent 完成任务后要立即派新任务，不能让它闲着
+2. **任务要连续** - 完成一个任务后自动分配下一个相关任务
+3. **记录完成情况** - 用 Redis 记录每个 agent 的任务完成历史
+
+**派发策略**:
+- Gemini 擅长分析和文档，派 i18n 进度分析任务
+- Claude 擅长代码质量，继续让它做 bug 分析
+- Codex 擅长测试，让它继续做测试覆盖分析
+
+**下次改进**:
+- 检测到 idle 状态要在 30 秒内派新任务
+- 建立任务队列，agent 完成后自动取下一个任务
+
+### 2026-02-03 00:15 - 🆕 新项目：Koma Studio
+
+**项目信息**:
+- 仓库: https://github.com/Sundykin/Koma
+- 分支: dev-openclaw
+- 本地路径: /home/jinyang/Koma
+- 技术栈: React 19 + TypeScript + Vite 6 + Electron 39
+- 定位: AI 驱动的短剧创作工具
+
+**核心流程**: 剧本 → AI解析 → 资产生成 → 分镜 → 视频
+
+**项目规模**: 72,531 行代码
+
+**Bug 分析完成**:
+- 16+ TODO/未实现功能
+- 416 处 any 类型
+- 273 处 console.log
+- 详见 /home/jinyang/Koma/BUG_ANALYSIS.md
+
+**任务派发**:
+- Claude: 实现 FFmpeg 视频导出
+- Codex: 实现 Kling/Runway ITV Provider
+- Gemini: 修复 PlaybackEngine 类型安全
+
+**注意**: 这是新项目，不是之前的 zed i18n 项目！
+
+### 2026-02-03 00:20 - 🚀 多 Agent 协同修复 Koma 项目
+
+**任务分配**:
+- Claude: FFmpeg 视频导出 (进行中，7分钟)
+- Codex: Kling/Runway Provider (进行中，读取参考代码)
+- Gemini: PlaybackEngine 类型修复 (进行中)
+
+**已提交**:
+- BUG_ANALYSIS.md - Bug 分析报告
+- TASK_PLAN.md - 多 Agent 协同任务计划
+
+**注意事项**:
+- Codex/Gemini 运行在 Windows，需要用 `\\wsl.localhost\Ubuntu\` 路径访问 WSL
+- Codex 经常需要确认命令执行，需要发送 "y" Enter
+
+**任务队列** (18个任务):
+- Phase 1: 核心功能 (6个) - P0-1~P0-6
+- Phase 2: 配置测试 (3个) - P0-7~P0-9
+- Phase 3: 类型安全 (3个) - P1-1~P1-3
+- Phase 4: 服务层 (3个) - P1-4~P1-6
+- Phase 5: 错误处理 (3个) - P2-1~P2-3
+- Phase 6: 代码清理 (2个) - P3-1~P3-2
