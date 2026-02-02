@@ -6906,7 +6906,7 @@ impl AcpThreadView {
             .icon_color(Color::Muted)
             .when(!menu_visible, |this| {
                 this.tooltip(move |_window, cx| {
-                    Tooltip::with_meta("Add Context", None, "Or type @ to include context", cx)
+                    Tooltip::with_meta(t("agent-add-context"), None, t("agent-add-context-at-hint"), cx)
                 })
             })
             .on_click(cx.listener(move |_this, _, window, cx| {
@@ -7565,7 +7565,7 @@ impl AcpThreadView {
                             Some(ThreadFeedback::Positive) => {
                                 Tooltip::text(t("agent-thanks-for-feedback"))(window, cx)
                             }
-                            _ => Tooltip::with_meta("Helpful Response", None, tooltip_meta(), cx),
+                            _ => Tooltip::with_meta(t("agent-helpful-response"), None, tooltip_meta(), cx),
                         })
                         .on_click(cx.listener(move |this, _, window, cx| {
                             this.handle_feedback_click(ThreadFeedback::Positive, window, cx);
@@ -7581,12 +7581,10 @@ impl AcpThreadView {
                         })
                         .tooltip(move |window, cx| match feedback {
                             Some(ThreadFeedback::Negative) => {
-                                Tooltip::text(
-                                    "We appreciate your feedback and will use it to improve in the future.",
-                                )(window, cx)
+                                Tooltip::text(t("agent-feedback-appreciation"))(window, cx)
                             }
                             _ => {
-                                Tooltip::with_meta("Not Helpful Response", None, tooltip_meta(), cx)
+                                Tooltip::with_meta(t("agent-not-helpful-response"), None, tooltip_meta(), cx)
                             }
                         })
                         .on_click(cx.listener(move |this, _, window, cx| {
@@ -8201,7 +8199,7 @@ impl AcpThreadView {
     fn create_copy_button(&self, message: impl Into<String>) -> impl IntoElement {
         let message = message.into();
 
-        CopyButton::new("copy-error-message", message).tooltip_label("Copy Error Message")
+        CopyButton::new("copy-error-message", message).tooltip_label(t("agent-copy-error-message"))
     }
 
     fn dismiss_error_button(&self, cx: &mut Context<Self>) -> impl IntoElement {

@@ -726,6 +726,13 @@ notifications-mark-read = 标记为已读
 notifications-mark-all-read = 全部标记为已读
 notifications-clear = 清除
 notifications-clear-all = 清除全部
+notification-copy-description = 复制描述
+notification-suppress = 屏蔽
+notification-click-to-close = 点击关闭
+notification-close = 关闭
+notification-suppress-with-shift = Shift+点击屏蔽
+notification-suppress-hint = 屏蔽。\n点击关闭。
+notification-close-hint = 关闭。\nShift+点击屏蔽。
 
 # ============================================
 # Diagnostics / 诊断
@@ -1186,6 +1193,12 @@ agent-select-model = 选择模型
 agent-free-usage-exceeded = 免费使用额度已用完
 agent-free-tier-exceeded-message = 免费层已超出。请订阅并添加付款方式以继续使用 Zed LLM。超出部分将按令牌使用量计费。
 agent-dismiss = 关闭
+agent-delete = 删除
+agent-add-context-at-hint = 或输入 @ 来包含上下文
+agent-helpful-response = 有帮助的回复
+agent-not-helpful-response = 无帮助的回复
+agent-feedback-appreciation = 感谢你的反馈，我们会用它来改进未来的体验。
+agent-copy-error-message = 复制错误信息
 
 # AI Plans / AI 计划
 ai-plan-free = 免费版

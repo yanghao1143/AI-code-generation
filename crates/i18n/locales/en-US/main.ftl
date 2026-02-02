@@ -610,6 +610,13 @@ notifications-mark-read = Mark as Read
 notifications-mark-all-read = Mark All as Read
 notifications-clear = Clear
 notifications-clear-all = Clear All
+notification-copy-description = Copy Description
+notification-suppress = Suppress
+notification-click-to-close = Click to close
+notification-close = Close
+notification-suppress-with-shift = Suppress with shift-click
+notification-suppress-hint = Suppress.\nClose with click.
+notification-close-hint = Close.\nSuppress with shift-click.
 
 # ============================================
 # Diagnostics
@@ -915,6 +922,12 @@ agent-select-model = Select Model
 agent-free-usage-exceeded = Free Usage Exceeded
 agent-free-tier-exceeded-message = Free tier exceeded. Subscribe and add payment to continue using Zed LLMs. You'll be billed at cost for tokens used.
 agent-dismiss = Dismiss
+agent-delete = Delete
+agent-add-context-at-hint = Or type @ to include context
+agent-helpful-response = Helpful Response
+agent-not-helpful-response = Not Helpful Response
+agent-feedback-appreciation = We appreciate your feedback and will use it to improve in the future.
+agent-copy-error-message = Copy Error Message
 
 # AI Plans
 ai-plan-free = Free

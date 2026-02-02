@@ -16,6 +16,7 @@ use std::sync::{Arc, LazyLock};
 use std::{any::TypeId, time::Duration};
 use ui::{CopyButton, Tooltip, prelude::*};
 use util::ResultExt;
+use i18n::t;
 
 #[derive(Default)]
 pub struct Notifications {
@@ -356,23 +357,23 @@ impl Render for LanguageServerPrompt {
                                             "copy-description",
                                             request.message.clone(),
                                         )
-                                        .tooltip_label("Copy Description"),
+                                        .tooltip_label(t("notification-copy-description")),
                                     )
                                     .child(
                                         IconButton::new(close_id, close_icon)
                                             .tooltip(move |_window, cx| {
                                                 if suppress {
                                                     Tooltip::with_meta(
-                                                        "Suppress",
+                                                        t("notification-suppress"),
                                                         Some(&SuppressNotification),
-                                                        "Click to close",
+                                                        t("notification-click-to-close"),
                                                         cx,
                                                     )
                                                 } else {
                                                     Tooltip::with_meta(
-                                                        "Close",
+                                                        t("notification-close"),
                                                         Some(&menu::Cancel),
-                                                        "Suppress with shift-click",
+                                                        t("notification-suppress-with-shift"),
                                                         cx,
                                                     )
                                                 }
@@ -649,18 +650,18 @@ impl RenderOnce for NotificationFrame {
                                     .tooltip(move |_window, cx| {
                                         if suppress {
                                             Tooltip::for_action(
-                                                "Suppress.\nClose with click.",
+                                                t("notification-suppress-hint"),
                                                 &SuppressNotification,
                                                 cx,
                                             )
                                         } else if show_suppress_button {
                                             Tooltip::for_action(
-                                                "Close.\nSuppress with shift-click.",
+                                                t("notification-close-hint"),
                                                 &menu::Cancel,
                                                 cx,
                                             )
                                         } else {
-                                            Tooltip::for_action("Close", &menu::Cancel, cx)
+                                            Tooltip::for_action(t("notification-close"), &menu::Cancel, cx)
                                         }
                                     })
                                     .on_click({

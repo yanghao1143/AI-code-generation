@@ -14,6 +14,7 @@ use ui::{
     HighlightedLabel, IconButtonShape, ListItem, ListItemSpacing, Tab, Tooltip, WithScrollbar,
     prelude::*,
 };
+use i18n::t;
 
 const DEFAULT_TITLE: &SharedString = &SharedString::new_static("New Thread");
 
@@ -458,7 +459,7 @@ impl TextThreadHistory {
                                 .icon_size(IconSize::XSmall)
                                 .icon_color(Color::Muted)
                                 .tooltip(move |_window, cx| {
-                                    Tooltip::for_action("Delete", &RemoveSelectedThread, cx)
+                                    Tooltip::for_action(t("agent-delete"), &RemoveSelectedThread, cx)
                                 })
                                 .on_click(cx.listener(move |this, _, _window, cx| {
                                     this.remove_thread(ix, cx);
@@ -554,7 +555,7 @@ impl Render for TextThreadHistory {
                         .border_color(cx.theme().colors().border_variant)
                         .when(!self.confirming_delete_history, |this| {
                             this.child(
-                                Button::new("delete_history", "Delete All History")
+                                Button::new("delete_history", t("agent-delete-all-history"))
                                     .full_width()
                                     .style(ButtonStyle::Outlined)
                                     .label_size(LabelSize::Small)
@@ -573,11 +574,11 @@ impl Render for TextThreadHistory {
                                         .flex_wrap()
                                         .gap_1()
                                         .child(
-                                            Label::new("Delete all text threads?")
+                                            Label::new(t("agent-delete-all-text-threads"))
                                                 .size(LabelSize::Small),
                                         )
                                         .child(
-                                            Label::new("You won't be able to recover them later.")
+                                            Label::new(t("agent-cannot-recover"))
                                                 .size(LabelSize::Small)
                                                 .color(Color::Muted),
                                         ),
@@ -586,14 +587,14 @@ impl Render for TextThreadHistory {
                                     h_flex()
                                         .gap_1()
                                         .child(
-                                            Button::new("cancel_delete", "Cancel")
+                                            Button::new("cancel_delete", t("cancel"))
                                                 .label_size(LabelSize::Small)
                                                 .on_click(cx.listener(|this, _, window, cx| {
                                                     this.cancel_delete_history(window, cx);
                                                 })),
                                         )
                                         .child(
-                                            Button::new("confirm_delete", "Delete")
+                                            Button::new("confirm_delete", t("agent-delete"))
                                                 .style(ButtonStyle::Tinted(ui::TintColor::Error))
                                                 .color(Color::Error)
                                                 .label_size(LabelSize::Small)

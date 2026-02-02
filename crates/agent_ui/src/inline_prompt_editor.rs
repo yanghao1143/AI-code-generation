@@ -28,6 +28,7 @@ use theme::ThemeSettings;
 use ui::utils::WithRemSize;
 use ui::{IconButtonShape, KeyBinding, PopoverMenuHandle, Tooltip, prelude::*};
 use uuid::Uuid;
+use i18n::t;
 use workspace::notifications::NotificationId;
 use workspace::{Toast, Workspace};
 use zed_actions::{
@@ -133,7 +134,7 @@ impl<T: 'static> Render for PromptEditor<T> {
             .icon_color(Color::Muted)
             .when(!menu_visible, |this| {
                 this.tooltip(move |_window, cx| {
-                    Tooltip::with_meta("Add Context", None, "Or type @ to include context", cx)
+                    Tooltip::with_meta(t("agent-add-context"), None, t("agent-add-context-at-hint"), cx)
                 })
             })
             .on_click(cx.listener(move |this, _, window, cx| {
