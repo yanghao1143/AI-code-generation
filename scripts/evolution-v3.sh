@@ -151,8 +151,17 @@ repair_agent() {
             echo "context_reset"
             ;;
         loop_detected)
-            tmux -S "$SOCKET" send-keys -t "$agent" "1" Enter
-            echo "loop_broken"
+            # Gemini 循环检测: 先发 Enter 确认循环消息，清除输入框，再派新任务
+            # 注意: 循环消息会阻塞输入，必须先 Enter 确认
+            tmux -S "$SOCKET" send-keys -t "$agent" Enter
+            sleep 2
+            # 清除可能堆积的输入
+            for i in {1..50}; do
+                tmux -S "$SOCKET" send-keys -t "$agent" BSpace
+            done
+            sleep 0.3
+            dispatch_task "$agent"
+            echo "loop_broken_and_dispatched"
             ;;
         pending_input)
             tmux -S "$SOCKET" send-keys -t "$agent" Enter
@@ -192,15 +201,23 @@ auto_confirm() {
 # ============ 派活 ============
 dispatch_task() {
     local agent="$1"
-    local task=$(redis-cli LPOP "$REDIS_PREFIX:tasks:queue" 2>/dev/null)
     
+    # 优先从优先级队列获取
+    local task=$("$WORKSPACE/scripts/priority-queue.sh" get "$agent" 2>/dev/null)
+    
+    # 如果队列为空，从旧队列获取
+    if [[ -z "$task" ]]; then
+        task=$(redis-cli LPOP "$REDIS_PREFIX:tasks:queue" 2>/dev/null)
+    fi
+    
+    # 如果还是空，使用默认任务
     if [[ -z "$task" ]]; then
         case "$agent" in
             claude-agent)
                 task="继续 Chi Code 中文化，检查 crates/agent_ui 还有哪些硬编码字符串需要国际化。完成后提交代码。"
                 ;;
             gemini-agent)
-                task="继续 Chi Code 中文化，检查 crates/terminal 模块的硬编码字符串。完成后提交代码。"
+                task="继续 Chi Code 中文化，检查 crates/repl 模块的硬编码字符串。完成后提交代码。"
                 ;;
             codex-agent)
                 task="运行 cargo check 检查编译错误，修复发现的问题。完成后提交代码。"
@@ -210,6 +227,9 @@ dispatch_task() {
     
     tmux -S "$SOCKET" send-keys -t "$agent" "$task" Enter
     redis-cli HINCRBY "$REDIS_PREFIX:stats" "dispatched:$agent" 1 2>/dev/null
+    
+    # 记录事件
+    "$WORKSPACE/scripts/dashboard.sh" log "派发任务给 $agent: ${task:0:30}..." 2>/dev/null
 }
 
 # ============ 主检查 ============

@@ -503,3 +503,19 @@ RULES: [约束/验收标准]
 - 修复 Gemini "Allow once" 确认发送 "1" 而不是 Enter
 
 **当前状态**: 三个 agent 全部正常工作
+
+### 2026-02-02 13:05 - 🚀 进化 v3.1：Context 检测和重启优化
+
+**问题**: 
+1. Claude context 显示格式不同 ("auto-compact: 8%")，检测不到
+2. context_low 重启逻辑没有杀掉会话，命令堆积
+3. working 检测优先级太低，误判为 tool_error
+
+**修复**:
+1. ✅ 支持 Claude 的 context 格式 (跨行匹配)
+2. ✅ context_low 修复改为 kill-session 后重建
+3. ✅ working 检测提升到最高优先级
+4. ✅ 新增 "Transfiguring", "Exploring" 等工作状态关键词
+5. ✅ 移除 tool_error 中的 "Error:" 匹配（太宽泛）
+
+**当前状态**: 三个 agent 全部正常工作
