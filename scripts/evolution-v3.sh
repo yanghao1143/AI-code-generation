@@ -39,7 +39,14 @@ diagnose_agent() {
     fi
     
     # 4. Context 低 (<30%)
-    local ctx=$(echo "$output" | grep -oE "[0-9]+% context left" | tail -1 | grep -oE "^[0-9]+")
+    # 支持多种格式: "59% context left", "Context left until auto-compact: 8%"
+    local ctx=""
+    # Codex/Gemini 格式
+    ctx=$(echo "$output" | grep -oE "[0-9]+% context left" | tail -1 | grep -oE "^[0-9]+")
+    # Claude 格式 (可能跨行)
+    if [[ -z "$ctx" ]]; then
+        ctx=$(echo "$output" | tr '\n' ' ' | grep -oE "auto-compac[^0-9]*[0-9]+%" | tail -1 | grep -oE "[0-9]+")
+    fi
     if [[ -n "$ctx" && "$ctx" -lt 30 ]]; then
         echo "context_low"; return
     fi
@@ -130,16 +137,15 @@ repair_agent() {
             echo "error_bypassed"
             ;;
         context_low)
-            tmux -S "$SOCKET" send-keys -t "$agent" C-c
+            # 杀掉会话重建
+            tmux -S "$SOCKET" kill-session -t "$agent" 2>/dev/null
             sleep 1
-            if [[ "$agent" == "codex-agent" ]]; then
-                tmux -S "$SOCKET" send-keys -t "$agent" "/clear" Enter
-                sleep 1
-            fi
             local cmd="${AGENT_CONFIG[$agent:cmd]}"
             local workdir="${AGENT_CONFIG[$agent:workdir]}"
-            tmux -S "$SOCKET" send-keys -t "$agent" "cd $workdir && $cmd" Enter
-            sleep 5
+            tmux -S "$SOCKET" new-session -d -s "$agent" -c "$workdir"
+            sleep 1
+            tmux -S "$SOCKET" send-keys -t "$agent" "$cmd" Enter
+            sleep 8
             auto_confirm "$agent"
             dispatch_task "$agent"
             echo "context_reset"
@@ -243,7 +249,12 @@ status() {
     echo "===== $(date '+%H:%M:%S') ====="
     for agent in "${AGENTS[@]}"; do
         local diag=$(diagnose_agent "$agent")
-        local ctx=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p 2>/dev/null | grep -oE "[0-9]+% context" | tail -1)
+        local output=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p 2>/dev/null)
+        local ctx=$(echo "$output" | grep -oE "[0-9]+% context" | tail -1)
+        # Claude 格式
+        if [[ -z "$ctx" ]]; then
+            ctx=$(echo "$output" | tr '\n' ' ' | grep -oE "auto-compac[^0-9]*[0-9]+%" | tail -1 | sed 's/.*\([0-9]\+%\).*/\1 ctx/')
+        fi
         printf "%-14s %-20s %s\n" "$agent" "$diag" "${ctx:-}"
     done
 }
