@@ -233,7 +233,7 @@ impl ToolCall {
         let title = if tool_call.kind == acp::ToolKind::Execute {
             tool_call.title
         } else if let Some((first_line, _)) = tool_call.title.split_once("\n") {
-            first_line.to_owned() + "…"
+            first_line.to_owned() + &t("ellipsis")
         } else {
             tool_call.title
         };
@@ -306,7 +306,7 @@ impl ToolCall {
                 if self.kind == acp::ToolKind::Execute {
                     label.replace(title, cx);
                 } else if let Some((first_line, _)) = title.split_once("\n") {
-                    label.replace(first_line.to_owned() + "…", cx);
+                    label.replace(first_line.to_owned() + &t("ellipsis"), cx);
                 } else {
                     label.replace(title, cx);
                 }

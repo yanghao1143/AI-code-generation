@@ -2718,4 +2718,8 @@ edit-prediction-view-docs = View Docs
 # Quick Action Bar
 quick-action-edit-prediction-excluded = Edit Predictions are excluded from this file.
 quick-action-inline-diagnostics-disabled = Inline diagnostics are not available until regular diagnostics are enabled.
+
+# Open URL Modal
+open-url-paste-hint = Paste a URL to open.
+open-url-invalid-url = Invalid URL: { $error }
 ellipsis = ��

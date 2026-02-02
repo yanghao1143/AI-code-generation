@@ -2731,4 +2731,8 @@ edit-prediction-view-docs = 查看文档
 # Quick Action Bar / 快捷操作栏
 quick-action-edit-prediction-excluded = 此文件已排除编辑预测。
 quick-action-inline-diagnostics-disabled = 在启用常规诊断之前，内联诊断不可用。
+
+# Open URL Modal / 打开 URL 对话框
+open-url-paste-hint = 粘贴要打开的 URL。
+open-url-invalid-url = 无效的 URL：{ $error }
 ellipsis = ��
