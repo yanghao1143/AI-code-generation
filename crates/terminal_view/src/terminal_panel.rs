@@ -213,7 +213,7 @@ impl TerminalPanel {
                             }))
                             .tooltip(move |_window, cx| {
                                 Tooltip::for_action(
-                                    if zoomed { "Zoom Out" } else { "Zoom In" },
+                                    if zoomed { t("pane-zoom-out") } else { t("pane-zoom-in") },
                                     &ToggleZoom,
                                     cx,
                                 )
@@ -1746,8 +1746,8 @@ impl Panel for TerminalPanel {
         }
     }
 
-    fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<&'static str> {
-        Some("Terminal Panel")
+    fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<SharedString> {
+        Some(t("panel-terminal").into())
     }
 
     fn toggle_action(&self) -> Box<dyn gpui::Action> {
@@ -1807,7 +1807,7 @@ impl Render for InlineAssistTabBarButton {
                 window.dispatch_action(InlineAssist::default().boxed_clone(), cx);
             }))
             .tooltip(move |_window, cx| {
-                Tooltip::for_action_in("Inline Assist", &InlineAssist::default(), &focus_handle, cx)
+                Tooltip::for_action_in(t("terminal-inline-assist"), &InlineAssist::default(), &focus_handle, cx)
             })
     }
 }

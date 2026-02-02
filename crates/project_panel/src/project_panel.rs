@@ -871,7 +871,7 @@ impl ProjectPanel {
                                     true,
                                     window, cx,
                                 )
-                                .detach_and_prompt_err(t("project-failed-to-open"), window, cx, move |e, _, _| {
+                                .detach_and_prompt_err(&t("project-failed-to-open"), window, cx, move |e, _, _| {
                                     match e.error_code() {
                                         ErrorCode::Disconnected => if is_via_ssh {
                                             Some(t("project-disconnected-from-ssh").to_string())
@@ -2120,7 +2120,15 @@ impl ProjectPanel {
 
             let answer = if !action.skip_prompt {
                 let prompt = format!("{} {}?", t("project-discard-changes-to"), file_name);
-                Some(window.prompt(PromptLevel::Info, &prompt, None, &[t("project-restore"), t("cancel")], cx))
+                let restore_label = t("project-restore");
+                let cancel_label = t("cancel");
+                Some(window.prompt(
+                    PromptLevel::Info,
+                    &prompt,
+                    None,
+                    &[restore_label.as_str(), cancel_label.as_str()],
+                    cx,
+                ))
             } else {
                 None
             };
@@ -2263,7 +2271,13 @@ impl ProjectPanel {
                         )
                     }
                 };
-                Some(window.prompt(PromptLevel::Info, &prompt, None, &[&operation, &cancel], cx))
+                Some(window.prompt(
+                    PromptLevel::Info,
+                    &prompt,
+                    None,
+                    &[operation.as_str(), cancel.as_str()],
+                    cx,
+                ))
             } else {
                 None
             };
@@ -6598,8 +6612,8 @@ impl Panel for ProjectPanel {
             .then_some(IconName::FileTree)
     }
 
-    fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<&'static str> {
-        Some(t("panel-project"))
+    fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<SharedString> {
+        Some(t("panel-project").into())
     }
 
     fn toggle_action(&self) -> Box<dyn Action> {

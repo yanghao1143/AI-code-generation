@@ -22,6 +22,7 @@ use gpui::{
     IntoElement, KeyContext, ParentElement as _, Render, ScrollHandle, Styled, Subscription, Task,
     Window, actions, div,
 };
+use i18n::t;
 use language::{Language, LanguageRegistry};
 use project::{
     search::SearchQuery,
@@ -145,14 +146,14 @@ impl Render for BufferSearchBar {
             let (icon, label, tooltip_label) = if self.is_collapsed {
                 (
                     IconName::ChevronUpDown,
-                    "Expand All",
-                    "Expand All Search Results",
+                    t("buffer-search-expand-all"),
+                    t("buffer-search-expand-all-tooltip"),
                 )
             } else {
                 (
                     IconName::ChevronDownUp,
-                    "Collapse All",
-                    "Collapse All Search Results",
+                    t("buffer-search-collapse-all"),
+                    t("buffer-search-collapse-all-tooltip"),
                 )
             };
 
@@ -161,6 +162,7 @@ impl Render for BufferSearchBar {
                     .icon_position(IconPosition::Start)
                     .icon(icon)
                     .tooltip(move |_, cx| {
+                        let tooltip_label = tooltip_label.clone();
                         Tooltip::for_action_in(
                             tooltip_label,
                             &ToggleFoldAll,
@@ -180,6 +182,7 @@ impl Render for BufferSearchBar {
                 IconButton::new("multibuffer-collapse-expand", icon)
                     .shape(IconButtonShape::Square)
                     .tooltip(move |_, cx| {
+                        let tooltip_label = tooltip_label.clone();
                         Tooltip::for_action_in(
                             tooltip_label,
                             &ToggleFoldAll,
@@ -212,12 +215,12 @@ impl Render for BufferSearchBar {
 
         self.query_editor.update(cx, |query_editor, cx| {
             if query_editor.placeholder_text(cx).is_none() {
-                query_editor.set_placeholder_text("Search…", window, cx);
+                query_editor.set_placeholder_text(&t("buffer-search-placeholder"), window, cx);
             }
         });
 
         self.replacement_editor.update(cx, |editor, cx| {
-            editor.set_placeholder_text("Replace with…", window, cx);
+            editor.set_placeholder_text(&t("buffer-search-replace-placeholder"), window, cx);
         });
 
         let mut color_override = None;
@@ -304,7 +307,7 @@ impl Render for BufferSearchBar {
                     "buffer-search-bar-toggle",
                     IconName::Replace,
                     self.replace_enabled.then_some(ActionButtonState::Toggled),
-                    "Toggle Replace",
+                    t("buffer-search-toggle-replace"),
                     &ToggleReplace,
                     focus_handle.clone(),
                 ))
@@ -328,7 +331,7 @@ impl Render for BufferSearchBar {
                         let focus_handle = focus_handle.clone();
                         move |_window, cx| {
                             Tooltip::for_action_in(
-                                "Toggle Search Selection",
+                                t("buffer-search-toggle-selection"),
                                 &ToggleSelection,
                                 &focus_handle,
                                 cx,
@@ -350,7 +353,7 @@ impl Render for BufferSearchBar {
                         self.active_match_index
                             .is_none()
                             .then_some(ActionButtonState::Disabled),
-                        "Select Previous Match",
+                        t("buffer-search-select-prev"),
                         &SelectPreviousMatch,
                         query_focus.clone(),
                     ))
@@ -360,7 +363,7 @@ impl Render for BufferSearchBar {
                         self.active_match_index
                             .is_none()
                             .then_some(ActionButtonState::Disabled),
-                        "Select Next Match",
+                        t("buffer-search-select-next"),
                         &SelectNextMatch,
                         query_focus.clone(),
                     ))
@@ -380,7 +383,7 @@ impl Render for BufferSearchBar {
                     "buffer-search-nav-button",
                     IconName::SelectAll,
                     Default::default(),
-                    "Select All Matches",
+                    t("buffer-search-select-all"),
                     &SelectAllMatches,
                     query_focus,
                 ))
@@ -391,7 +394,7 @@ impl Render for BufferSearchBar {
                     "buffer-search",
                     IconName::Close,
                     Default::default(),
-                    "Close Search Bar",
+                    t("buffer-search-close"),
                     &Dismiss,
                     focus_handle.clone(),
                 ))
@@ -422,7 +425,7 @@ impl Render for BufferSearchBar {
                         "buffer-search-replace-button",
                         IconName::ReplaceNext,
                         Default::default(),
-                        "Replace Next Match",
+                        t("buffer-search-replace-next"),
                         &ReplaceNext,
                         focus_handle.clone(),
                     ))
@@ -430,7 +433,7 @@ impl Render for BufferSearchBar {
                         "buffer-search-replace-button",
                         IconName::ReplaceAll,
                         Default::default(),
-                        "Replace All Matches",
+                        t("buffer-search-replace-all"),
                         &ReplaceAll,
                         focus_handle,
                     ));
@@ -475,7 +478,7 @@ impl Render for BufferSearchBar {
                                 "buffer-search",
                                 IconName::Close,
                                 Default::default(),
-                                "Close Search Bar",
+                                t("buffer-search-close"),
                                 &Dismiss,
                                 focus_handle.clone(),
                             )),

@@ -12,7 +12,7 @@ use gpui::{
     Subscription, Task, TitlebarOptions, UniformListScrollHandle, WeakEntity, Window, WindowBounds,
     WindowHandle, WindowOptions, actions, div, list, point, prelude::*, px, uniform_list,
 };
-use i18n::t;
+use i18n::{t, t_args};
 
 use language::Buffer;
 use platform_title_bar::PlatformTitleBar;
@@ -380,7 +380,7 @@ impl Focusable for NonFocusableHandle {
 
 #[derive(Default)]
 struct SettingsFieldMetadata {
-    placeholder: Option<&'static str>,
+    placeholder: Option<SharedString>,
     should_do_titlecase: Option<bool>,
 }
 
@@ -3786,7 +3786,7 @@ fn render_text_field<T: From<String> + Into<String> + AsRef<str> + Clone>(
             editor.with_initial_text(text.as_ref().to_string())
         })
         .when_some(
-            metadata.and_then(|metadata| metadata.placeholder),
+            metadata.and_then(|metadata| metadata.placeholder.clone()),
             |editor, placeholder| editor.with_placeholder(placeholder),
         )
         .on_confirm({

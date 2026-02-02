@@ -14,7 +14,7 @@ use settings::{LanguageModelProviderSetting, LanguageModelSelection};
 use zed_actions::agent::{OpenClaudeCodeOnboardingModal, ReauthenticateAgent};
 
 use crate::ManageProfiles;
-use crate::ui::{AcpOnboardingModal, ClaudeCodeOnboardingModal};
+use crate::ui::{AcpOnboardingModal, ClaudeCodeOnboardingModal, ExecutionControlView, ProgressView, TaskInputView, AgentStatus, Step, StepStatus};
 use crate::{
     AddContextServer, AgentDiffPane, Follow, InlineAssistant, NewTextThread, NewThread,
     OpenActiveThreadAsMarkdown, OpenAgentDiff, OpenHistory, ResetTrialEndUpsell, ResetTrialUpsell,
@@ -44,8 +44,8 @@ use extension_host::ExtensionStore;
 use fs::Fs;
 use gpui::{
     Action, Animation, AnimationExt, AnyElement, App, AsyncWindowContext, Corner, DismissEvent,
-    Entity, EventEmitter, ExternalPaths, FocusHandle, Focusable, KeyContext, Pixels, Subscription,
-    Task, UpdateGlobal, WeakEntity, prelude::*, pulsating_between,
+    Entity, EventEmitter, ExternalPaths, FocusHandle, Focusable, KeyContext, Pixels, SharedString,
+    Subscription, Task, UpdateGlobal, WeakEntity, prelude::*, pulsating_between,
 };
 use i18n::t;
 use language::LanguageRegistry;
@@ -228,6 +228,11 @@ enum ActiveView {
         buffer_search_bar: Entity<BufferSearchBar>,
         _subscriptions: Vec<gpui::Subscription>,
     },
+    AutonomousAgent {
+        task_input: Entity<TaskInputView>,
+        execution_control: Entity<ExecutionControlView>,
+        progress: Entity<ProgressView>,
+    },
     History {
         kind: HistoryKind,
     },
@@ -249,6 +254,7 @@ pub enum AgentType {
     Gemini,
     ClaudeCode,
     Codex,
+    Autonomous,
     Custom {
         name: SharedString,
     },
@@ -257,11 +263,12 @@ pub enum AgentType {
 impl AgentType {
     fn label(&self) -> SharedString {
         match self {
-            Self::NativeAgent | Self::TextThread => "Zed Agent".into(),
-            Self::Gemini => "Gemini CLI".into(),
-            Self::ClaudeCode => "Claude Code".into(),
-            Self::Codex => "Codex".into(),
-            Self::Custom { name, .. } => name.into(),
+            Self::NativeAgent | Self::TextThread => t("agent-zed-agent").into(),
+            Self::Gemini => t("agent-gemini-cli").into(),
+            Self::ClaudeCode => t("agent-claude-code").into(),
+            Self::Codex => t("agent-codex").into(),
+            Self::Autonomous => t("agent-autonomous").into(),
+            Self::Custom { name, .. } => name.clone(),
         }
     }
 
@@ -271,6 +278,7 @@ impl AgentType {
             Self::Gemini => Some(IconName::AiGemini),
             Self::ClaudeCode => Some(IconName::AiClaude),
             Self::Codex => Some(IconName::AiOpenAi),
+            Self::Autonomous => Some(IconName::Sparkle), // Placeholder icon
             Self::Custom { .. } => Some(IconName::Sparkle),
         }
     }
@@ -293,6 +301,7 @@ impl ActiveView {
         match self {
             ActiveView::Uninitialized
             | ActiveView::ExternalAgentThread { .. }
+            | ActiveView::AutonomousAgent { .. }
             | ActiveView::History { .. } => WhichFontSize::AgentFont,
             ActiveView::TextThread { .. } => WhichFontSize::BufferFont,
             ActiveView::Configuration => WhichFontSize::None,
@@ -547,8 +556,8 @@ impl AgentPanel {
                             menu =
                                 Self::populate_recently_updated_menu_section(menu, panel, kind, cx);
                             let view_all_label = match kind {
-                                HistoryKind::AgentThreads => "View All",
-                                HistoryKind::TextThreads => "View All Text Threads",
+                                HistoryKind::AgentThreads => t("agent-view-all"),
+                                HistoryKind::TextThreads => t("agent-view-all-text-threads"),
                             };
                             menu = menu.action(view_all_label, Box::new(OpenHistory));
                         }
@@ -712,6 +721,7 @@ impl AgentPanel {
             ActiveView::ExternalAgentThread { thread_view, .. } => Some(thread_view),
             ActiveView::Uninitialized
             | ActiveView::TextThread { .. }
+            | ActiveView::AutonomousAgent { .. }
             | ActiveView::History { .. }
             | ActiveView::Configuration => None,
         }
@@ -785,6 +795,49 @@ impl AgentPanel {
             cx,
         );
         text_thread_editor.focus_handle(cx).focus(window, cx);
+    }
+
+    fn new_autonomous_agent_thread(&mut self, window: &mut Window, cx: &mut Context<Self>) {
+        let progress_view = cx.new(|_cx| ProgressView::new());
+        let execution_control_view = cx.new(|_cx| ExecutionControlView::new());
+
+        let weak_progress = progress_view.downgrade();
+        let weak_execution = execution_control_view.downgrade();
+
+        let task_input_view = cx.new(|cx| {
+            TaskInputView::new(window, cx).on_submit(move |task, _window, cx| {
+                if let (Some(progress), Some(execution)) =
+                    (weak_progress.upgrade(), weak_execution.upgrade())
+                {
+                    execution.update(cx, |view, _cx| view.set_status(AgentStatus::Thinking));
+                    progress.update(cx, |view, _cx| {
+                        view.add_log(format!("Starting task: {}", task));
+                        view.set_steps(vec![
+                            Step {
+                                description: "Analyzing task".into(),
+                                status: StepStatus::Active,
+                            },
+                            Step {
+                                description: "Planning".into(),
+                                status: StepStatus::Pending,
+                            },
+                        ]);
+                    });
+                    // Here we would trigger the actual agent logic
+                }
+            })
+        });
+
+        self.set_active_view(
+            ActiveView::AutonomousAgent {
+                task_input: task_input_view,
+                execution_control: execution_control_view,
+                progress: progress_view,
+            },
+            true,
+            window,
+            cx,
+        );
     }
 
     fn external_thread(
@@ -904,6 +957,7 @@ impl AgentPanel {
         match self.selected_agent {
             AgentType::NativeAgent => Some(HistoryKind::AgentThreads),
             AgentType::TextThread => Some(HistoryKind::TextThreads),
+            AgentType::Autonomous => None,
             AgentType::Gemini
             | AgentType::ClaudeCode
             | AgentType::Codex
@@ -1000,6 +1054,9 @@ impl AgentPanel {
                             text_thread_editor, ..
                         } => {
                             text_thread_editor.focus_handle(cx).focus(window, cx);
+                        }
+                        ActiveView::AutonomousAgent { task_input, .. } => {
+                            task_input.focus_handle(cx).focus(window, cx);
                         }
                         ActiveView::Uninitialized
                         | ActiveView::History { .. }
@@ -1175,6 +1232,7 @@ impl AgentPanel {
             }
             ActiveView::Uninitialized
             | ActiveView::TextThread { .. }
+            | ActiveView::AutonomousAgent { .. }
             | ActiveView::History { .. }
             | ActiveView::Configuration => {}
         }
@@ -1302,7 +1360,7 @@ impl AgentPanel {
                     return menu;
                 }
 
-                menu = menu.header("Recently Updated");
+                menu = menu.header(t("agent-recently-updated"));
 
                 for entry in entries {
                     let title = entry
@@ -1310,7 +1368,7 @@ impl AgentPanel {
                         .as_ref()
                         .filter(|title| !title.is_empty())
                         .cloned()
-                        .unwrap_or_else(|| SharedString::new_static(DEFAULT_THREAD_TITLE));
+                        .unwrap_or_else(|| t("agent-new-thread").into());
 
                     menu = menu.entry(title, None, {
                         let panel = panel.downgrade();
@@ -1340,11 +1398,11 @@ impl AgentPanel {
                     return menu;
                 }
 
-                menu = menu.header("Recent Text Threads");
+                menu = menu.header(t("agent-recent-text-threads"));
 
                 for entry in entries {
                     let title = if entry.title.is_empty() {
-                        SharedString::new_static(DEFAULT_THREAD_TITLE)
+                        t("agent-new-thread").into()
                     } else {
                         entry.title.clone()
                     };
@@ -1380,6 +1438,7 @@ impl AgentPanel {
             AgentType::ClaudeCode => Some(ExternalAgent::ClaudeCode),
             AgentType::Codex => Some(ExternalAgent::Codex),
             AgentType::Custom { name } => Some(ExternalAgent::Custom { name: name.clone() }),
+            AgentType::Autonomous => None,
             AgentType::TextThread => None,
         }
     }
@@ -1444,6 +1503,11 @@ impl AgentPanel {
                 self.selected_agent = AgentType::Codex;
                 self.serialize(cx);
                 self.external_thread(Some(crate::ExternalAgent::Codex), None, None, window, cx)
+            }
+            AgentType::Autonomous => {
+                self.selected_agent = AgentType::Autonomous;
+                self.serialize(cx);
+                self.new_autonomous_agent_thread(window, cx);
             }
             AgentType::Custom { name } => self.external_thread(
                 Some(crate::ExternalAgent::Custom { name }),
@@ -1525,6 +1589,7 @@ impl Focusable for AgentPanel {
             ActiveView::TextThread {
                 text_thread_editor, ..
             } => text_thread_editor.focus_handle(cx),
+            ActiveView::AutonomousAgent { task_input, .. } => task_input.focus_handle(cx),
             ActiveView::Configuration => {
                 if let Some(configuration) = self.configuration.as_ref() {
                     configuration.focus_handle(cx)
@@ -1602,8 +1667,8 @@ impl Panel for AgentPanel {
         (self.enabled(cx) && AgentSettings::get_global(cx).button).then_some(IconName::ZedAssistant)
     }
 
-    fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<&'static str> {
-        Some("Agent Panel")
+    fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<gpui::SharedString> {
+        Some("Agent Panel".into())
     }
 
     fn toggle_action(&self) -> Box<dyn Action> {
@@ -1630,7 +1695,7 @@ impl Panel for AgentPanel {
 
 impl AgentPanel {
     fn render_title_view(&self, _window: &mut Window, cx: &Context<Self>) -> AnyElement {
-        const LOADING_SUMMARY_PLACEHOLDER: &str = "Loading Summary…";
+        // const LOADING_SUMMARY_PLACEHOLDER: &str = "Loading Summary…";
 
         let content = match &self.active_view {
             ActiveView::ExternalAgentThread { thread_view } => {
@@ -1699,7 +1764,7 @@ impl AgentPanel {
                                 .child(title_editor.clone())
                                 .into_any_element()
                         } else {
-                            Label::new(LOADING_SUMMARY_PLACEHOLDER)
+                            Label::new(t("agent-loading-summary"))
                                 .truncate()
                                 .color(Color::Muted)
                                 .with_animation(
@@ -1728,8 +1793,8 @@ impl AgentPanel {
                                 })
                                 .tooltip(move |_window, cx| {
                                     cx.new(|_| {
-                                        Tooltip::new("Failed to generate title")
-                                            .meta("Click to try again")
+                                        Tooltip::new(t("agent-failed-to-generate-title"))
+                                            .meta(t("agent-click-to-retry"))
                                     })
                                     .into()
                                 }),
@@ -1743,6 +1808,9 @@ impl AgentPanel {
                     HistoryKind::TextThreads => t("agent-text-thread-history"),
                 };
                 Label::new(title).truncate().into_any_element()
+            }
+            ActiveView::AutonomousAgent { .. } => {
+                Label::new(t("agent-autonomous")).truncate().into_any_element()
             }
             ActiveView::Configuration => Label::new(t("agent-settings")).truncate().into_any_element(),
             ActiveView::Uninitialized => Label::new(t("agent-title")).truncate().into_any_element(),
@@ -1785,10 +1853,10 @@ impl AgentPanel {
     ) -> impl IntoElement {
         let focus_handle = self.focus_handle(cx);
 
-        let full_screen_label = if self.is_zoomed(window, cx) {
-            "Disable Full Screen"
+        let full_screen_label: SharedString = if self.is_zoomed(window, cx) {
+            t("agent-disable-full-screen").into()
         } else {
-            "Enable Full Screen"
+            t("agent-enable-full-screen").into()
         };
 
         let selected_agent = self.selected_agent.clone();
@@ -1830,7 +1898,7 @@ impl AgentPanel {
                     let focus_handle = focus_handle.clone();
                     move |_window, cx| {
                         Tooltip::for_action_in(
-                            "Toggle Agent Menu",
+                            t("agent-toggle-menu"),
                             &ToggleOptionsMenu,
                             &focus_handle,
                             cx,
@@ -1846,11 +1914,11 @@ impl AgentPanel {
                         menu = menu.context(focus_handle.clone());
 
                         if thread_with_messages | text_thread_with_messages {
-                            menu = menu.header("Current Thread");
+                            menu = menu.header(t("agent-current-thread"));
 
                             if let Some(text_thread_view) = text_thread_view.as_ref() {
                                 menu = menu
-                                    .entry("Regenerate Thread Title", None, {
+                                    .entry(t("agent-regenerate-title"), None, {
                                         let text_thread_view = text_thread_view.clone();
                                         move |_, cx| {
                                             Self::handle_regenerate_text_thread_title(
@@ -1864,7 +1932,7 @@ impl AgentPanel {
 
                             if let Some(thread_view) = thread_view.as_ref() {
                                 menu = menu
-                                    .entry("Regenerate Thread Title", None, {
+                                    .entry(t("agent-regenerate-title"), None, {
                                         let thread_view = thread_view.clone();
                                         move |_, cx| {
                                             Self::handle_regenerate_thread_title(
@@ -1878,9 +1946,9 @@ impl AgentPanel {
                         }
 
                         menu = menu
-                            .header("MCP Servers")
+                            .header(t("agent-mcp-servers"))
                             .action(
-                                "View Server Extensions",
+                                t("agent-view-server-extensions"),
                                 Box::new(zed_actions::Extensions {
                                     category_filter: Some(
                                         zed_actions::ExtensionCategoryFilter::ContextServers,
@@ -1888,16 +1956,16 @@ impl AgentPanel {
                                     id: None,
                                 }),
                             )
-                            .action("Add Custom Server…", Box::new(AddContextServer))
+                            .action(t("agent-add-custom-server"), Box::new(AddContextServer))
                             .separator()
-                            .action("Rules", Box::new(OpenRulesLibrary::default()))
-                            .action("Profiles", Box::new(ManageProfiles::default()))
-                            .action("Settings", Box::new(OpenSettings))
+                            .action(t("agent-rules"), Box::new(OpenRulesLibrary::default()))
+                            .action(t("agent-profiles"), Box::new(ManageProfiles::default()))
+                            .action(t("agent-settings"), Box::new(OpenSettings))
                             .separator()
-                            .action(full_screen_label, Box::new(ToggleZoom));
+                            .action(full_screen_label.clone(), Box::new(ToggleZoom));
 
                         if selected_agent == AgentType::Gemini {
-                            menu = menu.action("Reauthenticate", Box::new(ReauthenticateAgent))
+                            menu = menu.action(t("agent-reauthenticate"), Box::new(ReauthenticateAgent))
                         }
 
                         menu
@@ -1920,7 +1988,7 @@ impl AgentPanel {
                 {
                     move |_window, cx| {
                         Tooltip::for_action_in(
-                            "Toggle Recently Updated Threads",
+                            t("agent-toggle-recent"),
                             &ToggleNavigationMenu,
                             &focus_handle,
                             cx,
@@ -1985,6 +2053,7 @@ impl AgentPanel {
             }
             ActiveView::Uninitialized
             | ActiveView::TextThread { .. }
+            | ActiveView::AutonomousAgent { .. }
             | ActiveView::History { .. }
             | ActiveView::Configuration => None,
         };
@@ -2385,6 +2454,7 @@ impl AgentPanel {
             }
             ActiveView::Uninitialized
             | ActiveView::ExternalAgentThread { .. }
+            | ActiveView::AutonomousAgent { .. }
             | ActiveView::History { .. }
             | ActiveView::Configuration => return false,
         }
@@ -2682,7 +2752,10 @@ impl AgentPanel {
                     );
                 });
             }
-            ActiveView::Uninitialized | ActiveView::History { .. } | ActiveView::Configuration => {}
+            ActiveView::AutonomousAgent { .. }
+            | ActiveView::Uninitialized
+            | ActiveView::History { .. }
+            | ActiveView::Configuration => {}
         }
     }
 
@@ -2724,6 +2797,7 @@ impl AgentPanel {
         match &self.active_view {
             ActiveView::ExternalAgentThread { .. } => key_context.add("acp_thread"),
             ActiveView::TextThread { .. } => key_context.add("text_thread"),
+            ActiveView::AutonomousAgent { .. } => key_context.add("autonomous_agent"),
             ActiveView::Uninitialized | ActiveView::History { .. } | ActiveView::Configuration => {}
         }
         key_context
@@ -2811,6 +2885,14 @@ impl Render for AgentPanel {
                             cx,
                         ))
                 }
+                ActiveView::AutonomousAgent {
+                    task_input,
+                    execution_control,
+                    progress,
+                } => parent
+                    .child(execution_control.clone())
+                    .child(task_input.clone())
+                    .child(progress.clone()),
                 ActiveView::Configuration => parent.children(self.configuration.clone()),
             })
             .children(self.render_trial_end_upsell(window, cx));

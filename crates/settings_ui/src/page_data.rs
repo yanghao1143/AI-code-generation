@@ -93,7 +93,7 @@ fn general_page() -> SettingsPage {
                     },
                 }),
                 metadata: Some(Box::new(SettingsFieldMetadata {
-                    placeholder: Some("Project Name"),
+                    placeholder: Some(t("setting-project-name-placeholder").into()),
                     ..Default::default()
                 })),
             }),
@@ -7169,7 +7169,7 @@ fn network_page() -> SettingsPage {
                     },
                 }),
                 metadata: Some(Box::new(SettingsFieldMetadata {
-                    placeholder: Some("socks5h://localhost:10808"),
+                    placeholder: Some("socks5h://localhost:10808".into()),
                     ..Default::default()
                 })),
                 files: USER,
@@ -7185,7 +7185,7 @@ fn network_page() -> SettingsPage {
                     },
                 }),
                 metadata: Some(Box::new(SettingsFieldMetadata {
-                    placeholder: Some("https://zed.dev"),
+                    placeholder: Some("https://zed.dev".into()),
                     ..Default::default()
                 })),
                 files: USER,

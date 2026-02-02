@@ -20,6 +20,7 @@ file_icons.workspace = true
 futures.workspace = true
 fuzzy.workspace = true
 gpui.workspace = true
+i18n.workspace = true
 menu.workspace = true
 open_path_prompt.workspace = true
 picker.workspace = true

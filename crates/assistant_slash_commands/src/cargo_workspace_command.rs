@@ -5,6 +5,7 @@ use assistant_slash_command::{
 };
 use fs::Fs;
 use gpui::{App, Entity, Task, WeakEntity};
+use i18n::{t, t_args};
 use language::{BufferSnapshot, LspAdapterDelegate};
 use project::{Project, ProjectPath};
 use std::{
@@ -24,19 +25,20 @@ impl CargoWorkspaceSlashCommand {
         let cargo_toml: cargo_toml::Manifest = toml::from_str(&buffer)?;
 
         let mut message = String::new();
-        writeln!(message, "You are in a Rust project.")?;
+        writeln!(message, "{}", t("slash-command-cargo-workspace-in-rust"))?;
 
         if let Some(workspace) = cargo_toml.workspace {
             writeln!(
                 message,
-                "The project is a Cargo workspace with the following members:"
+                "{}",
+                t("slash-command-cargo-workspace-members")
             )?;
             for member in workspace.members {
                 writeln!(message, "- {member}")?;
             }
 
             if !workspace.default_members.is_empty() {
-                writeln!(message, "The default members are:")?;
+                writeln!(message, "{}", t("slash-command-cargo-workspace-default-members"))?;
                 for member in workspace.default_members {
                     writeln!(message, "- {member}")?;
                 }
@@ -45,7 +47,8 @@ impl CargoWorkspaceSlashCommand {
             if !workspace.dependencies.is_empty() {
                 writeln!(
                     message,
-                    "The following workspace dependencies are installed:"
+                    "{}",
+                    t("slash-command-cargo-workspace-workspace-deps")
                 )?;
                 for dependency in workspace.dependencies.keys() {
                     writeln!(message, "- {dependency}")?;
@@ -54,8 +57,8 @@ impl CargoWorkspaceSlashCommand {
         } else if let Some(package) = cargo_toml.package {
             writeln!(
                 message,
-                "The project name is \"{name}\".",
-                name = package.name
+                "{}",
+                t_args("slash-command-cargo-workspace-project-name", [("name", package.name.as_str())])
             )?;
 
             let description = package
@@ -63,11 +66,11 @@ impl CargoWorkspaceSlashCommand {
                 .as_ref()
                 .and_then(|description| description.get().ok().cloned());
             if let Some(description) = description.as_ref() {
-                writeln!(message, "It describes itself as \"{description}\".")?;
+                writeln!(message, "{}", t_args("slash-command-cargo-workspace-description-text", [("description", description.as_str())]))?;
             }
 
             if !cargo_toml.dependencies.is_empty() {
-                writeln!(message, "The following dependencies are installed:")?;
+                writeln!(message, "{}", t("slash-command-cargo-workspace-deps"))?;
                 for dependency in cargo_toml.dependencies.keys() {
                     writeln!(message, "- {dependency}")?;
                 }
@@ -97,11 +100,11 @@ impl SlashCommand for CargoWorkspaceSlashCommand {
     }
 
     fn description(&self) -> String {
-        "insert project workspace metadata".into()
+        t("slash-command-cargo-workspace-description")
     }
 
     fn menu_text(&self) -> String {
-        "Insert Project Workspace Metadata".into()
+        t("slash-command-cargo-workspace-description")
     }
 
     fn complete_argument(
@@ -112,7 +115,7 @@ impl SlashCommand for CargoWorkspaceSlashCommand {
         _window: &mut Window,
         _cx: &mut App,
     ) -> Task<Result<Vec<ArgumentCompletion>>> {
-        Task::ready(Err(anyhow!("this command does not require argument")))
+        Task::ready(Err(anyhow!(t("slash-command-no-argument"))))
     }
 
     fn requires_argument(&self) -> bool {
@@ -134,7 +137,7 @@ impl SlashCommand for CargoWorkspaceSlashCommand {
             let fs = workspace.project().read(cx).fs().clone();
             let path = Self::path_to_cargo_toml(project, cx);
             let output = cx.background_spawn(async move {
-                let path = path.with_context(|| "Cargo.toml not found")?;
+                let path = path.with_context(|| t("slash-command-cargo-workspace-not-found"))?;
                 Self::build_message(fs, &path).await
             });
 
@@ -146,7 +149,7 @@ impl SlashCommand for CargoWorkspaceSlashCommand {
                     sections: vec![SlashCommandOutputSection {
                         range,
                         icon: IconName::FileTree,
-                        label: "Project".into(),
+                        label: t("slash-command-cargo-workspace-label").into(),
                         metadata: None,
                     }],
                     run_commands_in_text: false,

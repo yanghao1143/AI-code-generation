@@ -4,6 +4,7 @@ use assistant_slash_command::{
     SlashCommandResult,
 };
 use gpui::{Task, WeakEntity};
+use i18n::t;
 use language::{BufferSnapshot, LspAdapterDelegate};
 use prompt_store::PromptStore;
 use std::{
@@ -21,7 +22,7 @@ impl SlashCommand for DefaultSlashCommand {
     }
 
     fn description(&self) -> String {
-        "Insert default prompt".into()
+        t("slash-command-default-description")
     }
 
     fn menu_text(&self) -> String {
@@ -40,7 +41,7 @@ impl SlashCommand for DefaultSlashCommand {
         _window: &mut Window,
         _cx: &mut App,
     ) -> Task<Result<Vec<ArgumentCompletion>>> {
-        Task::ready(Err(anyhow!("this command does not require argument")))
+        Task::ready(Err(anyhow!(t("slash-command-no-argument"))))
     }
 
     fn run(
@@ -79,7 +80,7 @@ impl SlashCommand for DefaultSlashCommand {
                 sections: vec![SlashCommandOutputSection {
                     range: 0..text.len(),
                     icon: IconName::Library,
-                    label: "Default".into(),
+                    label: t("slash-command-default-label").into(),
                     metadata: None,
                 }],
                 text,

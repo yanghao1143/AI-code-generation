@@ -4,6 +4,7 @@ use assistant_slash_command::{
     SlashCommandResult,
 };
 use gpui::{Task, WeakEntity};
+use i18n::{t, t_args};
 use language::{BufferSnapshot, LspAdapterDelegate};
 use prompt_store::{PromptMetadata, PromptStore};
 use std::sync::{Arc, atomic::AtomicBool};
@@ -18,7 +19,7 @@ impl SlashCommand for PromptSlashCommand {
     }
 
     fn description(&self) -> String {
-        "Insert prompt from library".into()
+        t("slash-command-prompt-description")
     }
 
     fn icon(&self) -> IconName {
@@ -76,7 +77,7 @@ impl SlashCommand for PromptSlashCommand {
     ) -> Task<SlashCommandResult> {
         let title = arguments.to_owned().join(" ");
         if title.trim().is_empty() {
-            return Task::ready(Err(anyhow!("missing prompt name")));
+            return Task::ready(Err(anyhow!(t("slash-command-prompt-missing-name"))));
         };
 
         let store = PromptStore::global(cx);
@@ -89,7 +90,12 @@ impl SlashCommand for PromptSlashCommand {
                     .read_with(cx, |store, cx| {
                         let prompt_id = store
                             .id_for_title(&title)
-                            .with_context(|| format!("no prompt found with title {:?}", title))?;
+                            .with_context(|| {
+                                t_args(
+                                    "slash-command-prompt-not-found",
+                                    &[("title", title.as_ref())].into_iter().collect(),
+                                )
+                            })?;
                         anyhow::Ok(store.load(prompt_id, cx))
                     })?
                     .await?;

@@ -8,6 +8,7 @@ use assistant_slash_command::{
 };
 use chrono::Local;
 use gpui::{Task, WeakEntity};
+use i18n::{t, t_args};
 use language::{BufferSnapshot, LspAdapterDelegate};
 use ui::prelude::*;
 use workspace::Workspace;
@@ -20,7 +21,7 @@ impl SlashCommand for NowSlashCommand {
     }
 
     fn description(&self) -> String {
-        "Insert current date and time".into()
+        t("slash-command-now-description")
     }
 
     fn menu_text(&self) -> String {
@@ -53,7 +54,11 @@ impl SlashCommand for NowSlashCommand {
         _cx: &mut App,
     ) -> Task<SlashCommandResult> {
         let now = Local::now();
-        let text = format!("Today is {now}.", now = now.to_rfc2822());
+        let now_text = now.to_rfc2822();
+        let text = t_args(
+            "slash-command-now-text",
+            &[("now", now_text.as_str())].into_iter().collect(),
+        );
         let range = 0..text.len();
 
         Task::ready(Ok(SlashCommandOutput {
@@ -61,7 +66,7 @@ impl SlashCommand for NowSlashCommand {
             sections: vec![SlashCommandOutputSection {
                 range,
                 icon: IconName::CountdownTimer,
-                label: now.to_rfc2822().into(),
+                label: now_text.into(),
                 metadata: None,
             }],
             run_commands_in_text: false,

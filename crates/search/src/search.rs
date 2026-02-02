@@ -1,7 +1,7 @@
 use bitflags::bitflags;
 pub use buffer_search::BufferSearchBar;
 use editor::SearchSettings;
-use gpui::{Action, App, ClickEvent, FocusHandle, IntoElement, actions};
+use gpui::{Action, App, ClickEvent, ElementId, FocusHandle, IntoElement, SharedString, actions};
 use i18n::t;
 use project::search::SearchQuery;
 pub use project_search::ProjectSearchView;
@@ -144,12 +144,10 @@ impl SearchOption {
         focus_handle: FocusHandle,
     ) -> impl IntoElement {
         let action = self.to_toggle_action();
-        let label = self.label();
+        let label: SharedString = self.label().into();
         let key = self.key();
-        IconButton::new(
-            (key, matches!(search_source, SearchSource::Buffer) as u32),
-            self.icon(),
-        )
+        let id = ElementId::named_usize(key, matches!(search_source, SearchSource::Buffer) as usize);
+        IconButton::new(id, self.icon())
         .map(|button| match search_source {
             SearchSource::Buffer => {
                 let focus_handle = focus_handle.clone();

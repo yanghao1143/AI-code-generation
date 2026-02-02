@@ -739,8 +739,8 @@ impl Panel for CcSwitchPanel {
         Some(IconName::Settings).filter(|_| CcSwitchSettings::get_global(cx).button)
     }
 
-    fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<&'static str> {
-        Some("CC Switch - AI Provider Manager")
+    fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<gpui::SharedString> {
+        Some("CC Switch - AI Provider Manager".into())
     }
 
     fn toggle_action(&self) -> Box<dyn gpui::Action> {

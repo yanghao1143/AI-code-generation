@@ -4,6 +4,7 @@ use gpui::{
     App, Context, DismissEvent, Entity, EventEmitter, Focusable, Render, UpdateGlobal, WeakEntity,
     Window,
 };
+use i18n::t;
 use picker::{Picker, PickerDelegate};
 use settings::{Settings as _, SettingsStore, update_settings_file};
 use std::sync::Arc;
@@ -147,7 +148,7 @@ impl PickerDelegate for IconThemeSelectorDelegate {
     type ListItem = ui::ListItem;
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Select Icon Theme...".into()
+        t("theme-selector-icon-placeholder").into()
     }
 
     fn match_count(&self) -> usize {
@@ -310,7 +311,7 @@ impl PickerDelegate for IconThemeSelectorDelegate {
                 .border_t_1()
                 .border_color(cx.theme().colors().border_variant)
                 .child(
-                    Button::new("docs", "View Icon Theme Docs")
+                    Button::new("docs", t("theme-selector-view-icon-docs"))
                         .icon(IconName::ArrowUpRight)
                         .icon_position(IconPosition::End)
                         .icon_size(IconSize::Small)
@@ -320,7 +321,7 @@ impl PickerDelegate for IconThemeSelectorDelegate {
                         }),
                 )
                 .child(
-                    Button::new("more-icon-themes", "Install Icon Themes").on_click(
+                    Button::new("more-icon-themes", t("theme-selector-install-icon-themes")).on_click(
                         move |_event, window, cx| {
                             window.dispatch_action(
                                 Box::new(Extensions {

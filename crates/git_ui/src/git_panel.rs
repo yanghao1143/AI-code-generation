@@ -37,9 +37,11 @@ use git::{
 use gpui::{
     Action, AsyncApp, AsyncWindowContext, Bounds, ClickEvent, Corner, DismissEvent, Entity,
     EventEmitter, FocusHandle, Focusable, KeyContext, MouseButton, MouseDownEvent, Point,
-    PromptLevel, ScrollStrategy, Subscription, Task, UniformListScrollHandle, WeakEntity, actions,
+    PromptLevel, ScrollStrategy, Subscription, Task, UniformListScrollHandle, WeakEntity,
     anchored, deferred, point, size, uniform_list,
 };
+use gpui::actions;
+use i18n::{t, t_args};
 use itertools::Itertools;
 use language::{Buffer, File};
 use language_model::{
@@ -154,41 +156,41 @@ fn git_panel_context_menu(
             .context(focus_handle)
             .action_disabled_when(
                 !state.has_unstaged_changes,
-                "Stage All",
+                t("git-stage-all"),
                 StageAll.boxed_clone(),
             )
             .action_disabled_when(
                 !state.has_staged_changes,
-                "Unstage All",
+                t("git-unstage-all"),
                 UnstageAll.boxed_clone(),
             )
             .separator()
             .action_disabled_when(
                 !(state.has_new_changes || state.has_tracked_changes),
-                "Stash All",
+                t("git-stash-all"),
                 StashAll.boxed_clone(),
             )
-            .action_disabled_when(!state.has_stash_items, "Stash Pop", StashPop.boxed_clone())
-            .action("View Stash", zed_actions::git::ViewStash.boxed_clone())
+            .action_disabled_when(!state.has_stash_items, t("git-stash-pop"), StashPop.boxed_clone())
+            .action(t("git-view-stash"), zed_actions::git::ViewStash.boxed_clone())
             .separator()
-            .action("Open Diff", project_diff::Diff.boxed_clone())
+            .action(t("git-open-diff"), project_diff::Diff.boxed_clone())
             .separator()
             .action_disabled_when(
                 !state.has_tracked_changes,
-                "Discard Tracked Changes",
+                t("git-discard-tracked-changes"),
                 RestoreTrackedFiles.boxed_clone(),
             )
             .action_disabled_when(
                 !state.has_new_changes,
-                "Trash Untracked Files",
+                t("git-trash-untracked-files"),
                 TrashUntrackedFiles.boxed_clone(),
             )
             .separator()
             .entry(
                 if state.tree_view {
-                    "Flat View"
+                    t("git-flat-view")
                 } else {
-                    "Tree View"
+                    t("git-tree-view")
                 },
                 Some(Box::new(ToggleTreeView)),
                 move |window, cx| window.dispatch_action(Box::new(ToggleTreeView), cx),
@@ -196,9 +198,9 @@ fn git_panel_context_menu(
             .when(!state.tree_view, |this| {
                 this.entry(
                     if state.sort_by_path {
-                        "Sort by Status"
+                        t("git-sort-by-status")
                     } else {
-                        "Sort by Path"
+                        t("git-sort-by-path")
                     },
                     Some(Box::new(ToggleSortByPath)),
                     move |window, cx| window.dispatch_action(Box::new(ToggleSortByPath), cx),
@@ -260,11 +262,11 @@ impl GitHeaderEntry {
             Section::New => status.is_created(),
         }
     }
-    pub fn title(&self) -> &'static str {
+    pub fn title(&self) -> String {
         match self.header {
-            Section::Conflict => "Conflicts",
-            Section::Tracked => "Tracked",
-            Section::New => "Untracked",
+            Section::Conflict => t("git-conflicts"),
+            Section::Tracked => t("git-tracked"),
+            Section::New => t("git-untracked"),
         }
     }
 }
@@ -652,7 +654,7 @@ pub(crate) fn commit_message_editor(
     commit_editor.set_use_modal_editing(true);
     commit_editor.set_show_wrap_guides(false, cx);
     commit_editor.set_show_indent_guides(false, cx);
-    let placeholder = placeholder.unwrap_or("Enter commit message".into());
+    let placeholder = placeholder.unwrap_or(t("git-enter-commit-message").into());
     commit_editor.set_placeholder_text(&placeholder, window, cx);
     commit_editor
 }
@@ -1323,15 +1325,20 @@ impl GitPanel {
             } else {
                 let prompt = window.prompt(
                     PromptLevel::Warning,
-                    &format!(
-                        "Are you sure you want to discard changes to {}?",
-                        entry
-                            .repo_path
-                            .file_name()
-                            .unwrap_or(entry.repo_path.display(path_style).as_ref()),
+                    &t_args(
+                        "git-discard-changes-confirm",
+                        &[(
+                            "file",
+                            entry
+                                .repo_path
+                                .file_name()
+                                .unwrap_or(entry.repo_path.display(path_style).as_ref()),
+                        )]
+                        .into_iter()
+                        .collect(),
                     ),
                     None,
-                    &["Discard Changes", "Cancel"],
+                    &[t("git-discard-changes").as_str(), t("cancel").as_str()],
                     cx,
                 );
                 cx.background_spawn(prompt)
@@ -1447,7 +1454,15 @@ impl GitPanel {
             if !entry.status.is_created() {
                 self.perform_checkout(vec![entry.clone()], window, cx);
             } else {
-                let prompt = prompt(&format!("Trash {}?", filename), None, window, cx);
+                let prompt = prompt(
+                    &t_args(
+                        "git-trash-file-confirm",
+                        &[("file", filename.as_str())].into_iter().collect(),
+                    ),
+                    None,
+                    window,
+                    cx,
+                );
                 cx.spawn_in(window, async move |_, cx| {
                     match prompt.await? {
                         TrashCancel::Trash => {}
@@ -1464,7 +1479,7 @@ impl GitPanel {
                     Ok(())
                 })
                 .detach_and_prompt_err(
-                    "Failed to trash file",
+                    &t("git-failed-to-trash-file"),
                     window,
                     cx,
                     |e, _, _| Some(format!("{e}")),
@@ -1541,7 +1556,7 @@ impl GitPanel {
             this.update_in(cx, |this, window, cx| {
                 if let Err(err) = result {
                     this.update_visible_entries(window, cx);
-                    this.show_error_toast("checkout", err, cx);
+                    this.show_error_toast(t("git-failed-checkout"), err, cx);
                 }
             })
             .ok();
@@ -1584,7 +1599,7 @@ impl GitPanel {
             Cancel,
         }
         let prompt = prompt(
-            "Discard changes to these files?",
+            &t("git-discard-files-confirm"),
             Some(&details),
             window,
             cx,
@@ -1636,7 +1651,7 @@ impl GitPanel {
             details.push_str(&format!("\nand {} more…", to_delete.len() - 5))
         }
 
-        let prompt = prompt("Trash these files?", Some(&details), window, cx);
+        let prompt = prompt(&t("git-trash-files-confirm"), Some(&details), window, cx);
         cx.spawn_in(window, async move |this, cx| {
             match prompt.await? {
                 TrashCancel::Trash => {}
@@ -1665,7 +1680,7 @@ impl GitPanel {
             }
             Ok(())
         })
-        .detach_and_prompt_err("Failed to trash files", window, cx, |e, _, _| {
+        .detach_and_prompt_err(&t("git-failed-to-trash-files"), window, cx, |e, _, _| {
             Some(format!("{e}"))
         });
     }
@@ -1693,7 +1708,7 @@ impl GitPanel {
 
                 this.update(cx, |this, cx| {
                     if let Err(err) = result {
-                        this.show_error_toast(if stage { "add" } else { "reset" }, err, cx);
+                        this.show_error_toast(if stage { t("git-failed-add") } else { t("git-failed-reset") }, err, cx);
                     }
                     cx.notify()
                 })
@@ -1911,7 +1926,7 @@ impl GitPanel {
 
                 this.update(cx, |this, cx| {
                     if let Err(err) = result {
-                        this.show_error_toast(if stage { "add" } else { "reset" }, err, cx);
+                        this.show_error_toast(if stage { t("git-failed-add") } else { t("git-failed-reset") }, err, cx);
                     }
                     cx.notify();
                 })
@@ -1937,7 +1952,7 @@ impl GitPanel {
                 this.update(cx, |this, cx| {
                     stash_task
                         .map_err(|e| {
-                            this.show_error_toast("stash pop", e, cx);
+                            this.show_error_toast(t("git-failed-stash-pop"), e, cx);
                         })
                         .ok();
                     cx.notify();
@@ -1960,7 +1975,7 @@ impl GitPanel {
                 this.update(cx, |this, cx| {
                     stash_task
                         .map_err(|e| {
-                            this.show_error_toast("stash apply", e, cx);
+                            this.show_error_toast(t("git-failed-stash-apply"), e, cx);
                         })
                         .ok();
                     cx.notify();
@@ -1983,7 +1998,7 @@ impl GitPanel {
                 this.update(cx, |this, cx| {
                     stash_task
                         .map_err(|e| {
-                            this.show_error_toast("stash", e, cx);
+                            this.show_error_toast(t("git-failed-stash"), e, cx);
                         })
                         .ok();
                     cx.notify();
@@ -3645,7 +3660,7 @@ impl GitPanel {
         self.select_first_entry_if_none(window, cx);
 
         let suggested_commit_message = self.suggest_commit_message(cx);
-        let placeholder_text = suggested_commit_message.unwrap_or("Enter commit message".into());
+        let placeholder_text = suggested_commit_message.unwrap_or_else(|| t("git-enter-commit-message"));
 
         self.commit_editor.update(cx, |editor, cx| {
             editor.set_placeholder_text(&placeholder_text, window, cx)
@@ -3926,12 +3941,12 @@ impl GitPanel {
                 })
                 .tooltip(move |_window, cx| {
                     if !can_commit {
-                        Tooltip::simple("No Changes to Commit", cx)
+                        Tooltip::simple(t("git-no-changes-to-commit"), cx)
                     } else if has_commit_model_configuration_error {
-                        Tooltip::simple("Configure an LLM provider to generate commit messages", cx)
+                        Tooltip::simple(t("git-configure-llm"), cx)
                     } else {
                         Tooltip::for_action_in(
-                            "Generate Commit Message",
+                            t("git-generate-commit-message"),
                             &git::GenerateCommitMessage,
                             &editor_focus_handle,
                             cx,
@@ -5575,8 +5590,8 @@ impl Panel for GitPanel {
         Some(ui::IconName::GitBranchAlt).filter(|_| GitPanelSettings::get_global(cx).button)
     }
 
-    fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<&'static str> {
-        Some("Git Panel")
+    fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<SharedString> {
+        Some(t("panel-git").into())
     }
 
     fn toggle_action(&self) -> Box<dyn Action> {
@@ -5780,7 +5795,7 @@ impl RenderOnce for PanelRepoFooter {
             })
             .trigger_with_tooltip(
                 repo_selector_trigger.disabled(single_repo).truncate(true),
-                Tooltip::text("Switch Active Repository"),
+                Tooltip::text(t("git-switch-repository")),
             )
             .anchor(Corner::BottomLeft)
             .into_any_element();

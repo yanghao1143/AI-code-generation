@@ -7,7 +7,7 @@ use gpui::{
     FocusHandle, Focusable, Global, IntoElement, KeyContext, Render, ScrollHandle, SharedString,
     Subscription, Task, WeakEntity, Window, actions,
 };
-use i18n::t;
+use i18n::{t, t_args};
 use notifications::status_toast::{StatusToast, ToastIcon};
 use schemars::JsonSchema;
 use serde::Deserialize;
@@ -449,9 +449,9 @@ pub async fn handle_import_vscode_settings(
                 zlog::error!("{err:?}");
                 let _ = cx.prompt(
                     gpui::PromptLevel::Info,
-                    &format!("Could not find or load a {source} settings file"),
+                    &t_args("settings-not-found", &[("source", source.to_string().as_str())].into_iter().collect()),
                     None,
-                    &["Ok"],
+                    &[t("ok").as_str()],
                 );
                 return;
             }
@@ -460,14 +460,21 @@ pub async fn handle_import_vscode_settings(
     if !skip_prompt {
         let prompt = cx.prompt(
             gpui::PromptLevel::Warning,
-            &format!(
-                "Importing {} settings may overwrite your existing settings. \
-                Will import settings from {}",
-                vscode_settings.source,
-                truncate_and_remove_front(&vscode_settings.path.to_string_lossy(), 128),
+            &t_args(
+                "settings-import-warning",
+                &[
+                    ("source", source.to_string().as_str()),
+                    (
+                        "path",
+                        truncate_and_remove_front(&vscode_settings.path.to_string_lossy(), 128)
+                            .as_ref(),
+                    ),
+                ]
+                .into_iter()
+                .collect(),
             ),
             None,
-            &["Ok", "Cancel"],
+            &[t("ok").as_str(), t("cancel").as_str()],
         );
         let result = cx.spawn(async move |_| prompt.await.ok()).await;
         if result != Some(0) {
@@ -492,7 +499,12 @@ pub async fn handle_import_vscode_settings(
         .update_in(cx, |workspace, _, cx| match result {
             Ok(_) => {
                 let confirmation_toast = StatusToast::new(
-                    format!("Your {} settings were successfully imported.", source),
+                    t_args(
+                        "settings-import-success",
+                        &[("source", source.to_string().as_str())]
+                            .into_iter()
+                            .collect(),
+                    ),
                     cx,
                     |this, _| {
                         this.icon(ToastIcon::new(IconName::Check).color(Color::Success))
@@ -511,11 +523,11 @@ pub async fn handle_import_vscode_settings(
             }
             Err(_) => {
                 let error_toast = StatusToast::new(
-                    "Failed to import settings. See log for details",
+                    t("settings-import-failed"),
                     cx,
                     |this, _| {
                         this.icon(ToastIcon::new(IconName::Close).color(Color::Error))
-                            .action("Open Log", |window, cx| {
+                            .action(t("onboarding-open-log"), |window, cx| {
                                 window.dispatch_action(workspace::OpenLog.boxed_clone(), cx)
                             })
                             .dismiss_button(true)

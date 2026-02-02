@@ -63,6 +63,7 @@ pub use element::{
 };
 pub use git::blame::BlameRenderer;
 pub use hover_popover::hover_markdown_style;
+use i18n::{t, t_args};
 pub use inlays::Inlay;
 pub use items::MAX_TAB_TITLE_LEN;
 pub use lsp::CompletionContext;
@@ -2939,7 +2940,7 @@ impl Editor {
         cx: &mut Context<Workspace>,
     ) {
         Self::new_in_workspace(workspace, window, cx).detach_and_prompt_err(
-            "Failed to create buffer",
+            &t("editor-failed-to-create-buffer"),
             window,
             cx,
             |e, _, _| match e.error_code() {
@@ -3021,7 +3022,7 @@ impl Editor {
             })?;
             anyhow::Ok(())
         })
-        .detach_and_prompt_err("Failed to create buffer", window, cx, |e, _, _| {
+        .detach_and_prompt_err(&t("editor-failed-to-create-buffer"), window, cx, |e, _, _| {
             match e.error_code() {
                 ErrorCode::RemoteUpgradeRequired => Some(format!(
                 "The remote instance of Zed does not support this yet. It must be upgraded to {}",
@@ -8070,7 +8071,7 @@ impl Editor {
             let Some(path) =
                 path.and_then(|path| workspace.project().read(cx).find_project_path(path, cx))
             else {
-                return Task::ready(Err(anyhow::anyhow!("Project path not found")));
+                return Task::ready(Err(anyhow::anyhow!(t("editor-project-path-not-found"))));
             };
             let target = text::ToPoint::to_point(&target, snapshot);
             let item = workspace.open_path(path, None, true, window, cx);
@@ -8660,7 +8661,7 @@ impl Editor {
                 .context(focus_handle)
                 .when(run_to_cursor, |this| {
                     let weak_editor = weak_editor.clone();
-                    this.entry("Run to cursor", None, move |window, cx| {
+                    this.entry(t("editor-run-to-cursor"), None, move |window, cx| {
                         weak_editor
                             .update(cx, |editor, cx| {
                                 editor.change_selections(
@@ -9162,7 +9163,7 @@ impl Editor {
                 let target_display_point = range.end.to_display_point(editor_snapshot);
 
                 self.render_edit_prediction_end_of_line_popover(
-                    "Accept",
+                    "Accept".into(),
                     editor_snapshot,
                     visible_row_range,
                     target_display_point,
@@ -9356,7 +9357,7 @@ impl Editor {
         if target_display_point.row().as_f64() < scroll_top {
             let mut element = self
                 .render_edit_prediction_line_popover(
-                    "Jump to Edit",
+                    t("editor-jump-to-edit"),
                     Some(IconName::ArrowUp),
                     window,
                     cx,
@@ -9375,7 +9376,7 @@ impl Editor {
         } else if (target_display_point.row().as_f64() + 1.) > scroll_bottom {
             let mut element = self
                 .render_edit_prediction_line_popover(
-                    "Jump to Edit",
+                    t("editor-jump-to-edit"),
                     Some(IconName::ArrowDown),
                     window,
                     cx,
@@ -9393,7 +9394,7 @@ impl Editor {
             Some((element, origin))
         } else {
             self.render_edit_prediction_end_of_line_popover(
-                "Jump to Edit",
+                t("editor-jump-to-edit").into(),
                 editor_snapshot,
                 visible_row_range,
                 target_display_point,
@@ -9409,7 +9410,7 @@ impl Editor {
 
     fn render_edit_prediction_end_of_line_popover(
         self: &mut Editor,
-        label: &'static str,
+        label: SharedString,
         editor_snapshot: &EditorSnapshot,
         visible_row_range: Range<DisplayRow>,
         target_display_point: DisplayPoint,
@@ -9426,7 +9427,7 @@ impl Editor {
         );
 
         let mut element = self
-            .render_edit_prediction_line_popover(label, None, window, cx)
+            .render_edit_prediction_line_popover(label.clone(), None, window, cx)
             .into_any();
 
         let size = element.layout_as_root(AvailableSpace::min_size(), window, cx);
@@ -10108,7 +10109,7 @@ impl Editor {
                                 Icon::new(IconName::ZedPredictUp)
                             },
                         )
-                        .child(Label::new("Jump to Edit")),
+                        .child(Label::new(t("editor-jump-to-edit"))),
                 )
             }
             EditPrediction::MoveOutside { snapshot, .. } => {
@@ -22047,7 +22048,7 @@ impl Editor {
                                 IconButton::new("diff-review-add", IconName::Return)
                                     .icon_color(ui::Color::Muted)
                                     .icon_size(action_icon_size)
-                                    .tooltip(Tooltip::text("Add comment"))
+                                    .tooltip(Tooltip::text(t("editor-add-comment")))
                                     .on_click(|_, window, cx| {
                                         window.dispatch_action(
                                             Box::new(crate::actions::SubmitDiffReviewComment),
@@ -28318,13 +28319,13 @@ fn render_diff_hunk_controls(
         .block_mouse_except_scroll()
         .shadow_md()
         .child(if status.has_secondary_hunk() {
-            Button::new(("stage", row as u64), "Stage")
+            Button::new(("stage", row as u64), t("editor-stage"))
                 .alpha(if status.is_pending() { 0.66 } else { 1.0 })
                 .tooltip({
                     let focus_handle = editor.focus_handle(cx);
                     move |_window, cx| {
                         Tooltip::for_action_in(
-                            "Stage Hunk",
+                            t("editor-stage-hunk"),
                             &::git::ToggleStaged,
                             &focus_handle,
                             cx,
@@ -28344,13 +28345,13 @@ fn render_diff_hunk_controls(
                     }
                 })
         } else {
-            Button::new(("unstage", row as u64), "Unstage")
+            Button::new(("unstage", row as u64), t("editor-unstage"))
                 .alpha(if status.is_pending() { 0.66 } else { 1.0 })
                 .tooltip({
                     let focus_handle = editor.focus_handle(cx);
                     move |_window, cx| {
                         Tooltip::for_action_in(
-                            "Unstage Hunk",
+                            t("editor-unstage-hunk"),
                             &::git::ToggleStaged,
                             &focus_handle,
                             cx,
@@ -28371,11 +28372,11 @@ fn render_diff_hunk_controls(
                 })
         })
         .child(
-            Button::new(("restore", row as u64), "Restore")
+            Button::new(("restore", row as u64), t("editor-restore"))
                 .tooltip({
                     let focus_handle = editor.focus_handle(cx);
                     move |_window, cx| {
-                        Tooltip::for_action_in("Restore Hunk", &::git::Restore, &focus_handle, cx)
+                        Tooltip::for_action_in(t("editor-restore-hunk"), &::git::Restore, &focus_handle, cx)
                     }
                 })
                 .on_click({
@@ -28401,7 +28402,7 @@ fn render_diff_hunk_controls(
                         .tooltip({
                             let focus_handle = editor.focus_handle(cx);
                             move |_window, cx| {
-                                Tooltip::for_action_in("Next Hunk", &GoToHunk, &focus_handle, cx)
+                                Tooltip::for_action_in(t("editor-next-hunk"), &GoToHunk, &focus_handle, cx)
                             }
                         })
                         .on_click({
@@ -28432,7 +28433,7 @@ fn render_diff_hunk_controls(
                             let focus_handle = editor.focus_handle(cx);
                             move |_window, cx| {
                                 Tooltip::for_action_in(
-                                    "Previous Hunk",
+                                    t("editor-prev-hunk"),
                                     &GoToPreviousHunk,
                                     &focus_handle,
                                     cx,

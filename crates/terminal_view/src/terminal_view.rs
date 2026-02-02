@@ -10,9 +10,10 @@ use editor::{EditorSettings, actions::SelectAll, blink_manager::BlinkManager};
 use gpui::{
     Action, AnyElement, App, ClipboardEntry, DismissEvent, Entity, EventEmitter, FocusHandle,
     Focusable, KeyContext, KeyDownEvent, Keystroke, MouseButton, MouseDownEvent, Pixels, Render,
-    ScrollWheelEvent, Styled, Subscription, Task, WeakEntity, actions, anchored, deferred, div,
+    ScrollWheelEvent, Styled, Subscription, Task, WeakEntity, actions, anchored,
+    deferred, div,
 };
-use i18n::t;
+use i18n::{t, t_args};
 use persistence::TERMINAL_DB;
 use project::{Project, search::SearchQuery};
 use schemars::JsonSchema;
@@ -1169,6 +1170,7 @@ impl Item for TerminalView {
             let terminal = self.terminal().read(cx);
             let title = terminal.title(false);
             let pid = terminal.pid_getter()?.fallback_pid();
+            let pid_string = pid.to_string();
 
             move |_, _| {
                 v_flex()
@@ -1176,7 +1178,10 @@ impl Item for TerminalView {
                     .child(Label::new(title.clone()))
                     .child(h_flex().flex_grow().child(Divider::horizontal()))
                     .child(
-                        Label::new(format!("Process ID (PID): {}", pid))
+                        Label::new(t_args(
+                            "terminal-process-id",
+                            &[("pid", pid_string.as_str())].into_iter().collect(),
+                        ))
                             .color(Color::Muted)
                             .size(LabelSize::Small),
                     )

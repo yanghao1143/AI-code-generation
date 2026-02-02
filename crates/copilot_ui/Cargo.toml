@@ -23,6 +23,7 @@ test-support = [
 anyhow.workspace = true
 copilot.workspace = true
 gpui.workspace = true
+i18n.workspace = true
 language.workspace = true
 log.workspace = true
 lsp.workspace = true

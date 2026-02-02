@@ -24,6 +24,7 @@ use gpui::{
     Global, Hsla, InteractiveElement, IntoElement, KeyContext, ParentElement, Point, Render,
     SharedString, Styled, Subscription, Task, UpdateGlobal, WeakEntity, Window, actions, div,
 };
+use i18n::t;
 use itertools::Itertools;
 use language::{Buffer, Language};
 use menu::Confirm;
@@ -436,11 +437,11 @@ impl Render for ProjectSearchView {
             let is_search_underway = model.pending_search.is_some();
 
             let heading_text = if is_search_underway {
-                "Searching…"
+                t("project-search-searching")
             } else if has_no_results {
-                "No Results"
+                t("search-no-results")
             } else {
-                "Search All Files"
+                t("project-search-all-files")
             };
 
             let heading_text = div()
@@ -450,7 +451,7 @@ impl Render for ProjectSearchView {
             let page_content: Option<AnyElement> = if let Some(no_results) = model.no_results {
                 if model.pending_search.is_none() && no_results {
                     Some(
-                        Label::new("No results found in this project for the provided query")
+                        Label::new(t("project-search-no-matches"))
                             .size(LabelSize::Small)
                             .into_any_element(),
                     )
@@ -497,7 +498,7 @@ impl Item for ProjectSearchView {
             .is_empty()
             .not()
             .then(|| query_text.into())
-            .or_else(|| Some("Project Search".into()))
+            .or_else(|| Some(t("project-search-tab-title").into()))
     }
 
     fn act_as_type<'a>(
@@ -541,7 +542,7 @@ impl Item for ProjectSearchView {
 
         last_query
             .filter(|query| !query.is_empty())
-            .unwrap_or_else(|| "Project Search".into())
+            .unwrap_or_else(|| t("project-search-tab-title").into())
     }
 
     fn telemetry_event_text(&self) -> Option<&'static str> {
@@ -823,7 +824,7 @@ impl ProjectSearchView {
 
         let query_editor = cx.new(|cx| {
             let mut editor = Editor::single_line(window, cx);
-            editor.set_placeholder_text("Search all files…", window, cx);
+            editor.set_placeholder_text(&t("project-search-placeholder"), window, cx);
             editor.set_text(query_text, window, cx);
             editor
         });
@@ -846,7 +847,7 @@ impl ProjectSearchView {
         );
         let replacement_editor = cx.new(|cx| {
             let mut editor = Editor::single_line(window, cx);
-            editor.set_placeholder_text("Replace in project…", window, cx);
+            editor.set_placeholder_text(&t("project-search-replace-placeholder"), window, cx);
             if let Some(text) = replacement_text {
                 editor.set_text(text, window, cx);
             }
@@ -887,7 +888,7 @@ impl ProjectSearchView {
 
         let included_files_editor = cx.new(|cx| {
             let mut editor = Editor::single_line(window, cx);
-            editor.set_placeholder_text("Include: crates/**/*.toml", window, cx);
+            editor.set_placeholder_text(&t("project-search-include-placeholder"), window, cx);
 
             editor
         });
@@ -900,7 +901,7 @@ impl ProjectSearchView {
 
         let excluded_files_editor = cx.new(|cx| {
             let mut editor = Editor::single_line(window, cx);
-            editor.set_placeholder_text("Exclude: vendor/*, *.lock", window, cx);
+            editor.set_placeholder_text(&t("project-search-exclude-placeholder"), window, cx);
 
             editor
         });
@@ -1155,13 +1156,20 @@ impl ProjectSearchView {
             let should_prompt_to_save = !skip_save_on_close && !will_autosave && is_dirty;
 
             let should_search = if should_prompt_to_save {
-                let options = &["Save", "Don't Save", "Cancel"];
+                let save_label = t("save");
+                let dont_save_label = t("dont-save");
+                let cancel_label = t("cancel");
+                let options = [
+                    save_label.as_str(),
+                    dont_save_label.as_str(),
+                    cancel_label.as_str(),
+                ];
                 let result_channel = this.update_in(cx, |_, window, cx| {
                     window.prompt(
                         gpui::PromptLevel::Warning,
-                        "Project search buffer contains unsaved edits. Do you want to save it?",
+                        &t("project-search-unsaved-changes"),
                         None,
-                        options,
+                        &options,
                         cx,
                     )
                 })?;
@@ -1544,12 +1552,12 @@ impl ProjectSearchView {
         v_flex()
             .gap_1()
             .child(
-                Label::new("Hit enter to search. For more options:")
+                Label::new(t("project-search-hint"))
                     .color(Color::Muted)
                     .mb_2(),
             )
             .child(
-                Button::new("filter-paths", "Include/exclude specific paths")
+                Button::new("filter-paths", t("project-search-filter-paths"))
                     .icon(IconName::Filter)
                     .icon_position(IconPosition::Start)
                     .icon_size(IconSize::Small)
@@ -1559,7 +1567,7 @@ impl ProjectSearchView {
                     }),
             )
             .child(
-                Button::new("find-replace", "Find and replace")
+                Button::new("find-replace", t("project-search-find-replace"))
                     .icon(IconName::Replace)
                     .icon_position(IconPosition::Start)
                     .icon_size(IconSize::Small)
@@ -1569,7 +1577,7 @@ impl ProjectSearchView {
                     }),
             )
             .child(
-                Button::new("regex", "Match with regex")
+                Button::new("regex", t("search-regex"))
                     .icon(IconName::Regex)
                     .icon_position(IconPosition::Start)
                     .icon_size(IconSize::Small)
@@ -1579,7 +1587,7 @@ impl ProjectSearchView {
                     }),
             )
             .child(
-                Button::new("match-case", "Match case")
+                Button::new("match-case", t("search-match-case"))
                     .icon(IconName::CaseSensitive)
                     .icon_position(IconPosition::Start)
                     .icon_size(IconSize::Small)
@@ -1593,7 +1601,7 @@ impl ProjectSearchView {
                     }),
             )
             .child(
-                Button::new("match-whole-words", "Match whole words")
+                Button::new("match-whole-words", t("search-whole-word"))
                     .icon(IconName::WholeWord)
                     .icon_position(IconPosition::Start)
                     .icon_size(IconSize::Small)

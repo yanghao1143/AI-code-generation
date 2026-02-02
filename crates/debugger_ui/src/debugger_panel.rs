@@ -873,6 +873,7 @@ impl DebugPanel {
                                                     t("debugger-terminate-all-threads")
                                                 };
                                                 move |_window, cx| {
+                                                    let label = label.clone();
                                                     Tooltip::for_action_in(
                                                         label,
                                                         &Stop,
@@ -1585,9 +1586,9 @@ impl Panel for DebugPanel {
             .then_some(IconName::Debug)
     }
 
-    fn icon_tooltip(&self, _window: &Window, cx: &App) -> Option<&'static str> {
+    fn icon_tooltip(&self, _window: &Window, cx: &App) -> Option<gpui::SharedString> {
         if DebuggerSettings::get_global(cx).button {
-            Some("Debug Panel")
+            Some("Debug Panel".into())
         } else {
             None
         }

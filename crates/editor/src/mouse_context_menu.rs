@@ -6,6 +6,7 @@ use crate::{
     actions::{Format, FormatSelections},
     selections_collection::SelectionsCollection,
 };
+use i18n::t;
 use gpui::prelude::FluentBuilder;
 use gpui::{Context, DismissEvent, Entity, Focusable as _, Pixels, Point, Subscription, Window};
 use project::DisableAiSettings;
@@ -222,69 +223,69 @@ pub fn deploy_context_menu(
             let builder = menu
                 .on_blur_subscription(Subscription::new(|| {}))
                 .when(run_to_cursor, |builder| {
-                    builder.action("Run to Cursor", Box::new(RunToCursor))
+                    builder.action(t("editor-run-to-cursor"), Box::new(RunToCursor))
                 })
                 .when(evaluate_selection && has_selections, |builder| {
-                    builder.action("Evaluate Selection", Box::new(EvaluateSelectedText))
+                    builder.action(t("editor-evaluate-selection"), Box::new(EvaluateSelectedText))
                 })
                 .when(
                     run_to_cursor || (evaluate_selection && has_selections),
                     |builder| builder.separator(),
                 )
-                .action("Go to Definition", Box::new(GoToDefinition))
-                .action("Go to Declaration", Box::new(GoToDeclaration))
-                .action("Go to Type Definition", Box::new(GoToTypeDefinition))
-                .action("Go to Implementation", Box::new(GoToImplementation))
+                .action(t("editor-go-to-definition"), Box::new(GoToDefinition))
+                .action(t("editor-go-to-declaration"), Box::new(GoToDeclaration))
+                .action(t("editor-go-to-type-definition"), Box::new(GoToTypeDefinition))
+                .action(t("editor-go-to-implementation"), Box::new(GoToImplementation))
                 .action(
-                    "Find All References",
+                    t("editor-find-all-references"),
                     Box::new(FindAllReferences::default()),
                 )
                 .separator()
-                .action("Rename Symbol", Box::new(Rename))
-                .action("Format Buffer", Box::new(Format))
+                .action(t("editor-rename-symbol"), Box::new(Rename))
+                .action(t("editor-format-buffer"), Box::new(Format))
                 .when(has_selections, |cx| {
-                    cx.action("Format Selections", Box::new(FormatSelections))
+                    cx.action(t("editor-format-selections"), Box::new(FormatSelections))
                 })
                 .action(
-                    "Show Code Actions",
+                    t("editor-show-code-actions"),
                     Box::new(ToggleCodeActions {
                         deployed_from: None,
                         quick_launch: false,
                     }),
                 )
                 .when(!disable_ai && has_selections, |this| {
-                    this.action("Add to Agent Thread", Box::new(AddSelectionToThread))
+                    this.action(t("editor-add-to-agent-thread"), Box::new(AddSelectionToThread))
                 })
                 .separator()
-                .action("Cut", Box::new(Cut))
-                .action("Copy", Box::new(Copy))
-                .action("Copy and Trim", Box::new(CopyAndTrim))
-                .action("Paste", Box::new(Paste))
+                .action(t("editor-cut"), Box::new(Cut))
+                .action(t("editor-copy"), Box::new(Copy))
+                .action(t("editor-copy-and-trim"), Box::new(CopyAndTrim))
+                .action(t("editor-paste"), Box::new(Paste))
                 .separator()
                 .action_disabled_when(
                     !has_reveal_target,
                     if cfg!(target_os = "macos") {
-                        "Reveal in Finder"
+                        t("editor-reveal-in-finder")
                     } else if cfg!(target_os = "windows") {
-                        "Reveal in File Explorer"
+                        t("editor-reveal-in-file-explorer")
                     } else {
-                        "Reveal in File Manager"
+                        t("editor-reveal-in-file-manager")
                     },
                     Box::new(RevealInFileManager),
                 )
                 .action_disabled_when(
                     !has_reveal_target,
-                    "Open in Terminal",
+                    t("editor-open-in-terminal"),
                     Box::new(OpenInTerminal),
                 )
                 .action_disabled_when(
                     !has_git_repo,
-                    "Copy Permalink",
+                    t("editor-copy-permalink"),
                     Box::new(CopyPermalinkToLine),
                 )
                 .action_disabled_when(
                     !has_git_repo,
-                    "View File History",
+                    t("editor-view-file-history"),
                     Box::new(git::FileHistory),
                 );
             match focus {

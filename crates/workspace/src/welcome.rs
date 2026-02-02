@@ -315,11 +315,11 @@ impl WelcomePage {
                 let name = path
                     .and_then(|p| p.file_name())
                     .map(|n| n.to_string_lossy().to_string())
-                    .unwrap_or_else(|| "Untitled".to_string());
+                    .unwrap_or_else(|| t("welcome-untitled").to_string());
                 (IconName::Folder, name)
             }
             SerializedWorkspaceLocation::Remote(_) => {
-                (IconName::Server, "Remote Project".to_string())
+                (IconName::Server, t("welcome-remote-project").to_string())
             }
         };
 
@@ -439,7 +439,7 @@ impl Item for WelcomePage {
     type Event = ItemEvent;
 
     fn tab_content_text(&self, _detail: usize, _cx: &App) -> SharedString {
-        "Welcome".into()
+        t("welcome-tab-welcome").into()
     }
 
     fn telemetry_event_text(&self) -> Option<&'static str> {

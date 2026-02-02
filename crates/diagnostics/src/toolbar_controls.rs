@@ -1,5 +1,6 @@
 use crate::{BufferDiagnosticsEditor, ProjectDiagnosticsEditor, ToggleDiagnosticsRefresh};
 use gpui::{Context, EventEmitter, ParentElement, Render, Window};
+use i18n::t;
 use language::DiagnosticEntry;
 use search::buffer_search;
 use text::{Anchor, BufferId};
@@ -47,9 +48,9 @@ impl Render for ToolbarControls {
         }
 
         let (warning_tooltip, warning_color) = if include_warnings {
-            ("Exclude Warnings", Color::Warning)
+            (t("diagnostics-exclude-warnings"), Color::Warning)
         } else {
-            ("Include Warnings", Color::Disabled)
+            (t("diagnostics-include-warnings"), Color::Disabled)
         };
 
         h_flex()
@@ -58,7 +59,7 @@ impl Render for ToolbarControls {
                 IconButton::new("toggle_search", IconName::MagnifyingGlass)
                     .icon_size(IconSize::Small)
                     .tooltip(Tooltip::for_action_title(
-                        "Buffer Search",
+                        t("diagnostics-buffer-search"),
                         &buffer_search::Deploy::find(),
                     ))
                     .on_click(|_, window, cx| {
@@ -69,7 +70,7 @@ impl Render for ToolbarControls {
                 IconButton::new("inline_assist", IconName::ZedAssistant)
                     .icon_size(IconSize::Small)
                     .tooltip(Tooltip::for_action_title(
-                        "Inline Assist",
+                        t("diagnostics-inline-assist"),
                         &InlineAssist::default(),
                     ))
                     .on_click(|_, window, cx| {
@@ -83,7 +84,7 @@ impl Render for ToolbarControls {
                             .icon_color(Color::Error)
                             .icon_size(IconSize::Small)
                             .tooltip(Tooltip::for_action_title(
-                                "Stop Siagnostics Update",
+                                t("diagnostics-stop-update"),
                                 &ToggleDiagnosticsRefresh,
                             ))
                             .on_click(cx.listener(move |toolbar_controls, _, _, cx| {
@@ -98,7 +99,7 @@ impl Render for ToolbarControls {
                         IconButton::new("refresh-diagnostics", IconName::ArrowCircle)
                             .icon_size(IconSize::Small)
                             .tooltip(Tooltip::for_action_title(
-                                "Refresh Diagnostics",
+                                t("diagnostics-refresh"),
                                 &ToggleDiagnosticsRefresh,
                             ))
                             .on_click(cx.listener({

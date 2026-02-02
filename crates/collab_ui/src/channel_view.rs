@@ -331,7 +331,7 @@ impl ChannelView {
                 workspace.show_toast(
                     Toast::new(
                         NotificationId::unique::<CopyLinkForPositionToast>(),
-                        "Link copied to clipboard",
+                        t("collab-link-copied"),
                     ),
                     cx,
                 );
@@ -406,13 +406,13 @@ impl ChannelView {
                 self.channel_buffer.read(cx).is_connected(),
             ) {
                 (false, true) => None,
-                (true, true) => Some("read-only"),
-                (_, false) => Some("disconnected"),
+                (true, true) => Some(t("collab-channel-read-only").into()),
+                (_, false) => Some(t("collab-channel-disconnected").into()),
             };
 
             (channel.name.clone(), status.map(Into::into))
         } else {
-            ("<unknown>".into(), Some("disconnected".into()))
+            (t("collab-channel-unknown").into(), Some(t("collab-channel-disconnected").into()))
         }
     }
 }

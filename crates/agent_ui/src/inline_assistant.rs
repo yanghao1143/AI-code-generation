@@ -28,7 +28,7 @@ use editor::scroll::ScrollOffset;
 use editor::{
     Anchor, AnchorRangeExt, CodeActionProvider, Editor, EditorEvent, ExcerptId, ExcerptRange,
     MultiBuffer, MultiBufferSnapshot, ToOffset as _, ToPoint,
-    actions::SelectAll,
+    actions::{SelectAll, ToggleFold},
     display_map::{
         BlockContext, BlockPlacement, BlockProperties, BlockStyle, CustomBlockId, EditorMargins,
         RenderBlock, ToDisplayPoint,
@@ -40,6 +40,7 @@ use gpui::{
     App, Context, Entity, Focusable, Global, HighlightStyle, Subscription, Task, UpdateGlobal,
     WeakEntity, Window, point,
 };
+use i18n::{t, t_args};
 use language::{Buffer, Point, Selection, TransactionId};
 use language_model::{ConfigurationError, ConfiguredModel, LanguageModelRegistry};
 use multi_buffer::MultiBufferRow;
@@ -319,7 +320,7 @@ impl InlineAssistant {
                             gpui::PromptLevel::Warning,
                             &error.to_string(),
                             None,
-                            &["Configure", "Cancel"],
+                            &[t("settings-configure").as_str(), t("cancel").as_str()],
                         )
                         .await
                         .ok();
@@ -1820,13 +1821,12 @@ impl InlineAssist {
                                 if let Some(sender) = &mut this._inline_assistant_completions {
                                     sender
                                         .unbounded_send(Err(anyhow::anyhow!(
-                                            "Inline assistant error: {}",
-                                            error
+                                            t_args("assistant-error", &[("error", error.to_string().as_str())].into_iter().collect())
                                         )))
                                         .ok();
                                 }
 
-                                let error = format!("Inline assistant error: {}", error);
+                                let error = t_args("assistant-error", &[("error", error.to_string().as_str())].into_iter().collect());
                                 workspace.update(cx, |workspace, cx| {
                                     struct InlineAssistantError;
 
@@ -1924,7 +1924,7 @@ impl CodeActionProvider for AssistantCodeActionProvider {
                 server_id: language::LanguageServerId(0),
                 range: snapshot.anchor_before(range.start)..snapshot.anchor_after(range.end),
                 lsp_action: LspAction::Action(Box::new(lsp::CodeAction {
-                    title: "Fix with Assistant".into(),
+                    title: t("assistant-fix-with").into(),
                     ..Default::default()
                 })),
                 resolved: true,
@@ -1994,7 +1994,7 @@ impl CodeActionProvider for AssistantCodeActionProvider {
                 let assist_id = assistant.suggest_assist(
                     &editor,
                     range,
-                    "Fix Diagnostics".into(),
+                    t("assistant-fix-diagnostics").to_string(),
                     None,
                     true,
                     workspace,

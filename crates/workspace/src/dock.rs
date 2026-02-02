@@ -103,7 +103,7 @@ pub trait Panel: Focusable + EventEmitter<PanelEvent> + Render + Sized {
     fn size(&self, window: &Window, cx: &App) -> Pixels;
     fn set_size(&mut self, size: Option<Pixels>, window: &mut Window, cx: &mut Context<Self>);
     fn icon(&self, window: &Window, cx: &App) -> Option<ui::IconName>;
-    fn icon_tooltip(&self, window: &Window, cx: &App) -> Option<&'static str>;
+    fn icon_tooltip(&self, window: &Window, cx: &App) -> Option<SharedString>;
     fn toggle_action(&self) -> Box<dyn Action>;
     fn icon_label(&self, _window: &Window, _: &App) -> Option<String> {
         None
@@ -143,7 +143,7 @@ pub trait PanelHandle: Send + Sync {
     fn size(&self, window: &Window, cx: &App) -> Pixels;
     fn set_size(&self, size: Option<Pixels>, window: &mut Window, cx: &mut App);
     fn icon(&self, window: &Window, cx: &App) -> Option<ui::IconName>;
-    fn icon_tooltip(&self, window: &Window, cx: &App) -> Option<&'static str>;
+    fn icon_tooltip(&self, window: &Window, cx: &App) -> Option<SharedString>;
     fn toggle_action(&self, window: &Window, cx: &App) -> Box<dyn Action>;
     fn icon_label(&self, window: &Window, cx: &App) -> Option<String>;
     fn panel_focus_handle(&self, cx: &App) -> FocusHandle;
@@ -227,7 +227,7 @@ where
         self.read(cx).icon(window, cx)
     }
 
-    fn icon_tooltip(&self, window: &Window, cx: &App) -> Option<&'static str> {
+    fn icon_tooltip(&self, window: &Window, cx: &App) -> Option<SharedString> {
         self.read(cx).icon_tooltip(window, cx)
     }
 
@@ -1164,7 +1164,7 @@ pub mod test {
             None
         }
 
-        fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<&'static str> {
+        fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<SharedString> {
             None
         }
 

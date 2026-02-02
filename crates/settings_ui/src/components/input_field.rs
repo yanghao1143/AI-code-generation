@@ -1,5 +1,5 @@
 use editor::Editor;
-use gpui::{Focusable, div};
+use gpui::{Focusable, SharedString, div};
 use ui::{
     ActiveTheme as _, App, FluentBuilder as _, InteractiveElement as _, IntoElement,
     ParentElement as _, RenderOnce, Styled as _, Window,
@@ -8,7 +8,7 @@ use ui::{
 #[derive(IntoElement)]
 pub struct SettingsInputField {
     initial_text: Option<String>,
-    placeholder: Option<&'static str>,
+    placeholder: Option<SharedString>,
     confirm: Option<Box<dyn Fn(Option<String>, &mut Window, &mut App)>>,
     tab_index: Option<isize>,
 }
@@ -29,8 +29,8 @@ impl SettingsInputField {
         self
     }
 
-    pub fn with_placeholder(mut self, placeholder: &'static str) -> Self {
-        self.placeholder = Some(placeholder);
+    pub fn with_placeholder(mut self, placeholder: impl Into<SharedString>) -> Self {
+        self.placeholder = Some(placeholder.into());
         self
     }
 
@@ -58,7 +58,7 @@ impl RenderOnce for SettingsInputField {
                 }
 
                 if let Some(placeholder) = self.placeholder {
-                    editor.set_placeholder_text(placeholder, window, cx);
+                    editor.set_placeholder_text(placeholder.as_ref(), window, cx);
                 }
                 // todo(settings_ui): We should have an observe global use for settings store
                 // so whenever a settings file is updated, the settings ui updates too

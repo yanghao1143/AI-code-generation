@@ -7,6 +7,7 @@ use collections::{HashMap, HashSet};
 use editor::Editor;
 use futures::future::join_all;
 use gpui::{Task, WeakEntity};
+use i18n::t;
 use language::{BufferSnapshot, CodeLabel, CodeLabelBuilder, HighlightId, LspAdapterDelegate};
 use std::sync::{Arc, atomic::AtomicBool};
 use ui::{ActiveTheme, App, Window, prelude::*};
@@ -25,7 +26,7 @@ impl SlashCommand for TabSlashCommand {
     }
 
     fn description(&self) -> String {
-        "Insert open tabs (active tab by default)".to_owned()
+        t("slash-command-tab-description")
     }
 
     fn icon(&self) -> IconName {
@@ -70,7 +71,7 @@ impl SlashCommand for TabSlashCommand {
         }
 
         let Some(workspace) = workspace.and_then(|workspace| workspace.upgrade()) else {
-            return Task::ready(Err(anyhow::anyhow!("no workspace")));
+            return Task::ready(Err(anyhow::anyhow!(t("slash-command-tab-no-workspace"))));
         };
 
         let active_item_path = workspace.update(cx, |workspace, cx| {
@@ -288,15 +289,15 @@ fn active_item_buffer(
 ) -> anyhow::Result<BufferSnapshot> {
     let active_editor = workspace
         .active_item(cx)
-        .context("no active item")?
+        .context(t("slash-command-tab-no-active-item"))?
         .downcast::<Editor>()
-        .context("active item is not an editor")?;
+        .context(t("slash-command-tab-not-editor"))?;
     let snapshot = active_editor
         .read(cx)
         .buffer()
         .read(cx)
         .as_singleton()
-        .context("active editor is not a singleton buffer")?
+        .context(t("slash-command-tab-not-singleton"))?
         .read(cx)
         .snapshot();
     Ok(snapshot)

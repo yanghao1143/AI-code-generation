@@ -12,6 +12,7 @@ use futures::AsyncReadExt;
 use gpui::{Task, WeakEntity};
 use html_to_markdown::{TagHandler, convert_html_to_markdown, markdown};
 use http_client::{AsyncBody, HttpClient, HttpClientWithUrl};
+use i18n::{t, t_args};
 use language::{BufferSnapshot, LspAdapterDelegate};
 use ui::prelude::*;
 use workspace::Workspace;
@@ -108,7 +109,7 @@ impl SlashCommand for FetchSlashCommand {
     }
 
     fn description(&self) -> String {
-        "Insert fetched URL contents".into()
+        t("slash-command-fetch-description")
     }
 
     fn icon(&self) -> IconName {
@@ -145,7 +146,7 @@ impl SlashCommand for FetchSlashCommand {
         cx: &mut App,
     ) -> Task<SlashCommandResult> {
         let Some(argument) = arguments.first() else {
-            return Task::ready(Err(anyhow!("missing URL")));
+            return Task::ready(Err(anyhow!(t("slash-command-fetch-missing-url"))));
         };
         let Some(workspace) = workspace.upgrade() else {
             return Task::ready(Err(anyhow!("workspace was dropped")));
@@ -163,7 +164,7 @@ impl SlashCommand for FetchSlashCommand {
         cx.foreground_executor().spawn(async move {
             let text = text.await?;
             if text.trim().is_empty() {
-                bail!("no textual content found");
+                bail!(t("slash-command-fetch-no-content"));
             }
 
             let range = 0..text.len();
@@ -172,7 +173,11 @@ impl SlashCommand for FetchSlashCommand {
                 sections: vec![SlashCommandOutputSection {
                     range,
                     icon: IconName::ToolWeb,
-                    label: format!("fetch {}", url).into(),
+                    label: t_args(
+                        "slash-command-fetch-label",
+                        &[("url", url.as_ref())].into_iter().collect(),
+                    )
+                    .into(),
                     metadata: None,
                 }],
                 run_commands_in_text: false,

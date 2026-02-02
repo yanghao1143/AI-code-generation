@@ -7,6 +7,7 @@ use assistant_slash_command::{
 use collections::HashSet;
 use futures::future;
 use gpui::{App, Task, WeakEntity, Window};
+use i18n::t;
 use language::{BufferSnapshot, LspAdapterDelegate};
 use std::sync::{Arc, atomic::AtomicBool};
 use text::OffsetRangeExt;
@@ -21,7 +22,7 @@ impl SlashCommand for DeltaSlashCommand {
     }
 
     fn description(&self) -> String {
-        "Re-insert changed files".into()
+        t("slash-command-delta-description")
     }
 
     fn menu_text(&self) -> String {
@@ -44,7 +45,7 @@ impl SlashCommand for DeltaSlashCommand {
         _window: &mut Window,
         _cx: &mut App,
     ) -> Task<Result<Vec<ArgumentCompletion>>> {
-        Task::ready(Err(anyhow!("this command does not require argument")))
+        Task::ready(Err(anyhow!(t("slash-command-no-argument"))))
     }
 
     fn run(
@@ -117,7 +118,7 @@ impl SlashCommand for DeltaSlashCommand {
                 }
             }
 
-            anyhow::ensure!(changes_detected, "no new changes detected");
+            anyhow::ensure!(changes_detected, t("slash-command-delta-no-changes"));
             Ok(output.into_event_stream())
         })
     }

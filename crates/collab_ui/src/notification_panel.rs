@@ -1,7 +1,7 @@
 use crate::NotificationPanelSettings;
 use anyhow::Result;
 use channel::ChannelStore;
-use i18n::t;
+use i18n::{t, t_args};
 use client::{ChannelId, Client, Notification, User, UserStore};
 use collections::HashMap;
 use db::kvp::KEY_VALUE_STORE;
@@ -299,9 +299,9 @@ impl NotificationPanel {
                                 .children(if let Some(is_accepted) = response {
                                     Some(div().flex().flex_grow().justify_end().child(Label::new(
                                         if is_accepted {
-                                            "You accepted"
+                                            t("notification-you-accepted")
                                         } else {
-                                            "You declined"
+                                            t("notification-you-declined")
                                         },
                                     )))
                                 } else if needs_response {
@@ -357,7 +357,12 @@ impl NotificationPanel {
                 let requester = user_store.get_cached_user(sender_id)?;
                 Some(NotificationPresenter {
                     icon: "icons/plus.svg",
-                    text: format!("{} wants to add you as a contact", requester.github_login),
+                    text: t_args(
+                        "notification-contact-request",
+                        &[("user", requester.github_login.as_ref())]
+                            .into_iter()
+                            .collect(),
+                    ),
                     needs_response: user_store.has_incoming_contact_request(requester.id),
                     actor: Some(requester),
                 })
@@ -366,7 +371,12 @@ impl NotificationPanel {
                 let responder = user_store.get_cached_user(responder_id)?;
                 Some(NotificationPresenter {
                     icon: "icons/plus.svg",
-                    text: format!("{} accepted your contact invite", responder.github_login),
+                    text: t_args(
+                        "notification-contact-accepted",
+                        &[("user", responder.github_login.as_ref())]
+                            .into_iter()
+                            .collect(),
+                    ),
                     needs_response: false,
                     actor: Some(responder),
                 })
@@ -379,9 +389,14 @@ impl NotificationPanel {
                 let inviter = user_store.get_cached_user(inviter_id)?;
                 Some(NotificationPresenter {
                     icon: "icons/hash.svg",
-                    text: format!(
-                        "{} invited you to join the #{channel_name} channel",
-                        inviter.github_login
+                    text: t_args(
+                        "notification-channel-invite",
+                        &[
+                            ("user", inviter.github_login.as_ref()),
+                            ("channel", channel_name.as_ref()),
+                        ]
+                        .into_iter()
+                        .collect(),
                     ),
                     needs_response: channel_store.has_channel_invitation(ChannelId(channel_id)),
                     actor: Some(inviter),
@@ -668,8 +683,8 @@ impl Panel for NotificationPanel {
         Some(IconName::BellDot)
     }
 
-    fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<&'static str> {
-        Some("Notification Panel")
+    fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<SharedString> {
+        Some(t("panel-notifications").into())
     }
 
     fn icon_label(&self, _window: &Window, cx: &App) -> Option<String> {
@@ -742,13 +757,13 @@ impl Render for NotificationToast {
                     .tooltip(move |_window, cx| {
                         if suppress {
                             Tooltip::for_action(
-                                "Suppress.\nClose with click.",
+                                t("notification-suppress-hint"),
                                 &workspace::SuppressNotification,
                                 cx,
                             )
                         } else {
                             Tooltip::for_action(
-                                "Close.\nSuppress with shift-click",
+                                t("notification-close-hint"),
                                 &menu::Cancel,
                                 cx,
                             )

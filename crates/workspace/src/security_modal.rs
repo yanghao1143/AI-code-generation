@@ -8,6 +8,7 @@ use std::{
 
 use collections::{HashMap, HashSet};
 use gpui::{DismissEvent, EventEmitter, FocusHandle, Focusable, WeakEntity};
+use i18n::{t, t_args};
 
 use project::{
     WorktreeId,
@@ -70,9 +71,9 @@ impl Render for SecurityModal {
         }
 
         let header_label = if self.restricted_paths.len() == 1 {
-            "Unrecognized Project"
+            t("security-unrecognized-project")
         } else {
-            "Unrecognized Projects"
+            t("security-unrecognized-projects")
         };
 
         let trust_label = self.build_trust_label();
@@ -135,24 +136,20 @@ impl Render for SecurityModal {
                     .child(
                         v_flex()
                             .child(
-                                Label::new(
-                                    "Untrusted projects are opened in Restricted Mode to protect your system.",
-                                )
+                                Label::new(t("security-untrusted-warning"))
                                 .color(Color::Muted),
                             )
                             .child(
-                                Label::new(
-                                    "Review .zed/settings.json for any extensions or commands configured by this project.",
-                                )
+                                Label::new(t("security-review-settings"))
                                 .color(Color::Muted),
                             ),
                     )
                     .child(
                         v_flex()
-                            .child(Label::new("Restricted Mode prevents:").color(Color::Muted))
-                            .child(ListBulletItem::new("Project settings from being applied"))
-                            .child(ListBulletItem::new("Language servers from running"))
-                            .child(ListBulletItem::new("MCP Server integrations from installing")),
+                            .child(Label::new(t("security-restricted-prevents")).color(Color::Muted))
+                            .child(ListBulletItem::new(t("security-prevents-project-settings")))
+                            .child(ListBulletItem::new(t("security-prevents-language-servers")))
+                            .child(ListBulletItem::new(t("security-prevents-mcp"))),
                     )
                     .map(|this| match trust_label {
                         Some(trust_label) => this.child(
@@ -176,7 +173,7 @@ impl Render for SecurityModal {
                     .gap_1()
                     .justify_end()
                     .child(
-                        Button::new("rm", "Stay in Restricted Mode")
+                        Button::new("rm", t("security-stay-restricted"))
                             .key_binding(
                                 KeyBinding::for_action(
                                     &ToggleWorktreeSecurity,
@@ -191,7 +188,7 @@ impl Render for SecurityModal {
                             })),
                     )
                     .child(
-                        Button::new("tc", "Trust and Continue")
+                        Button::new("tc", t("security-trust-continue"))
                             .style(ButtonStyle::Filled)
                             .layer(ui::ElevationIndex::ModalSurface)
                             .key_binding(
@@ -242,16 +239,17 @@ impl SecurityModal {
         match available_parents.len() {
             0 => {
                 if has_restricted_files {
-                    Some(Cow::Borrowed("Trust all single files"))
+                    Some(Cow::Owned(t("security-trust-single-files").to_string()))
                 } else {
                     None
                 }
             }
-            1 => Some(Cow::Owned(format!(
-                "Trust all projects in the {:} folder",
-                self.shorten_path(available_parents[0]).display()
-            ))),
-            _ => Some(Cow::Borrowed("Trust all projects in the parent folders")),
+            1 => {
+                let mut args = HashMap::default();
+                args.insert("folder", self.shorten_path(available_parents[0]).display().to_string());
+                Some(Cow::Owned(t_args("security-trust-folder", &args.iter().map(|(k, v)| (*k, v.as_str())).collect())))
+            },
+            _ => Some(Cow::Owned(t("security-trust-parent-folders").to_string())),
         }
     }
 

@@ -262,7 +262,7 @@ fn codestral_settings() -> Box<[SettingsPageItem]> {
                 json_path: Some("edit_predictions.codestral.api_url"),
             }),
             metadata: Some(Box::new(SettingsFieldMetadata {
-                placeholder: Some(CODESTRAL_API_URL),
+                placeholder: Some(CODESTRAL_API_URL.into()),
                 ..Default::default()
             })),
             files: USER,
@@ -325,7 +325,7 @@ fn codestral_settings() -> Box<[SettingsPageItem]> {
                 json_path: Some("edit_predictions.codestral.model"),
             }),
             metadata: Some(Box::new(SettingsFieldMetadata {
-                placeholder: Some("codestral-latest"),
+                placeholder: Some("codestral-latest".into()),
                 ..Default::default()
             })),
             files: USER,

@@ -17,7 +17,7 @@ use gpui::{
     InteractiveElement, KeyContext, ParentElement, Point, Render, Styled, Task, TextStyle,
     UniformListScrollHandle, WeakEntity, Window, actions, point, uniform_list,
 };
-use i18n::t;
+use i18n::{t, t_args};
 use num_format::{Locale, ToFormattedString};
 use project::DirectoryLister;
 use release_channel::ReleaseChannel;
@@ -155,10 +155,16 @@ pub fn init(cx: &mut App) {
                                 log::error!("Failed to install dev extension: {:?}", err);
                                 workspace_handle
                                     .update(cx, |workspace, cx| {
+                                        let error = err.to_string();
                                         workspace.show_error(
                                             // NOTE: using `anyhow::context` here ends up not printing
                                             // the error
-                                            &format!("Failed to install dev extension: {}", err),
+                                            &t_args(
+                                                "extensions-failed-install-dev",
+                                                &[("error", error.as_str())]
+                                                    .into_iter()
+                                                    .collect(),
+                                            ),
                                             cx,
                                         );
                                     })
@@ -181,19 +187,19 @@ pub fn init(cx: &mut App) {
     .detach();
 }
 
-fn extension_provides_label(provides: ExtensionProvides) -> &'static str {
+fn extension_provides_label(provides: ExtensionProvides) -> String {
     match provides {
-        ExtensionProvides::Themes => "Themes",
-        ExtensionProvides::IconThemes => "Icon Themes",
-        ExtensionProvides::Languages => "Languages",
-        ExtensionProvides::Grammars => "Grammars",
-        ExtensionProvides::LanguageServers => "Language Servers",
-        ExtensionProvides::ContextServers => "MCP Servers",
-        ExtensionProvides::AgentServers => "Agent Servers",
-        ExtensionProvides::SlashCommands => "Slash Commands",
-        ExtensionProvides::IndexedDocsProviders => "Indexed Docs Providers",
-        ExtensionProvides::Snippets => "Snippets",
-        ExtensionProvides::DebugAdapters => "Debug Adapters",
+        ExtensionProvides::Themes => t("extensions-themes"),
+        ExtensionProvides::IconThemes => t("extensions-icon-themes"),
+        ExtensionProvides::Languages => t("extensions-languages"),
+        ExtensionProvides::Grammars => t("extensions-grammars"),
+        ExtensionProvides::LanguageServers => t("extensions-language-servers"),
+        ExtensionProvides::ContextServers => t("extensions-mcp-servers"),
+        ExtensionProvides::AgentServers => t("extensions-agent-servers"),
+        ExtensionProvides::SlashCommands => t("extensions-slash-commands"),
+        ExtensionProvides::IndexedDocsProviders => t("extensions-indexed-docs-providers"),
+        ExtensionProvides::Snippets => t("extensions-snippets"),
+        ExtensionProvides::DebugAdapters => t("extensions-debug-adapters"),
     }
 }
 
@@ -345,7 +351,7 @@ impl ExtensionsPage {
 
             let query_editor = cx.new(|cx| {
                 let mut input = Editor::single_line(window, cx);
-                input.set_placeholder_text("Search extensions...", window, cx);
+                input.set_placeholder_text(&t("extensions-search-placeholder"), window, cx);
                 if let Some(id) = focus_extension_id {
                     input.set_text(format!("id:{id}"), window, cx);
                 }
@@ -629,7 +635,7 @@ impl ExtensionsPage {
                             .child(
                                 Button::new(
                                     SharedString::from(format!("rebuild-{}", extension.id)),
-                                    "Rebuild",
+                                    t("extensions-rebuild"),
                                 )
                                 .color(Color::Accent)
                                 .disabled(matches!(status, ExtensionStatus::Upgrading))
@@ -659,7 +665,7 @@ impl ExtensionsPage {
                                 this.child(
                                     Button::new(
                                         SharedString::from(format!("configure-{}", extension.id)),
-                                        "Configure",
+                                        t("extensions-configure"),
                                     )
                                     .color(Color::Accent)
                                     .disabled(matches!(status, ExtensionStatus::Installing))
@@ -688,20 +694,23 @@ impl ExtensionsPage {
                 h_flex()
                     .gap_2()
                     .justify_between()
-                    .child(
-                        Label::new(format!(
-                            "{}: {}",
-                            if extension.authors.len() > 1 {
-                                "Authors"
-                            } else {
-                                "Author"
-                            },
-                            extension.authors.join(", ")
-                        ))
+                    .child({
+                        let authors = extension.authors.join(", ");
+                        Label::new(if extension.authors.len() > 1 {
+                            t_args(
+                                "extensions-authors",
+                                &[("authors", authors.as_str())].into_iter().collect(),
+                            )
+                        } else {
+                            t_args(
+                                "extensions-author",
+                                &[("author", authors.as_str())].into_iter().collect(),
+                            )
+                        })
                         .size(LabelSize::Small)
                         .color(Color::Muted)
-                        .truncate(),
-                    )
+                        .truncate()
+                    })
                     .child(Label::new("<>").size(LabelSize::Small)),
             )
             .child(
@@ -769,7 +778,12 @@ impl ExtensionsPage {
                                 installed_version
                                     .filter(|installed_version| *installed_version != version)
                                     .map(|installed_version| {
-                                        Headline::new(format!("(v{installed_version} installed)",))
+                                        Headline::new(t_args(
+                                            "extensions-installed-version",
+                                            &[("version", installed_version.as_ref())]
+                                                .into_iter()
+                                                .collect(),
+                                        ))
                                             .size(HeadlineSize::XSmall)
                                     }),
                             )
@@ -818,13 +832,17 @@ impl ExtensionsPage {
                             .color(Color::Default)
                             .truncate()
                     }))
-                    .child(
-                        Label::new(format!(
-                            "Downloads: {}",
-                            extension.download_count.to_formatted_string(&Locale::en)
+                    .child({
+                        let download_count =
+                            extension.download_count.to_formatted_string(&Locale::en);
+                        Label::new(t_args(
+                            "extensions-downloads",
+                            &[("count", download_count.as_str())]
+                                .into_iter()
+                                .collect(),
                         ))
-                        .size(LabelSize::Small),
-                    ),
+                        .size(LabelSize::Small)
+                    }),
             )
             .child(
                 h_flex()
@@ -857,7 +875,7 @@ impl ExtensionsPage {
                                 .icon_size(IconSize::Small)
                                 .tooltip(move |_, cx| {
                                     Tooltip::with_meta(
-                                        "Visit Extension Repository",
+                                        t("extensions-visit-repo"),
                                         None,
                                         repo_url_for_tooltip.clone(),
                                         cx,
@@ -912,7 +930,7 @@ impl ExtensionsPage {
         ContextMenu::build(window, cx, |context_menu, window, _| {
             context_menu
                 .entry(
-                    "Install Another Version...",
+                    t("extensions-install-another-version"),
                     None,
                     window.handler_for(this, {
                         let extension_id = extension_id.clone();
@@ -921,13 +939,13 @@ impl ExtensionsPage {
                         }
                     }),
                 )
-                .entry("Copy Extension ID", None, {
+                .entry(t("extensions-copy-extension-id"), None, {
                     let extension_id = extension_id.clone();
                     move |_, cx| {
                         cx.write_to_clipboard(ClipboardItem::new_string(extension_id.to_string()));
                     }
                 })
-                .entry("Copy Author Info", None, {
+                .entry(t("extensions-copy-author-info"), None, {
                     let authors = authors.clone();
                     move |_, cx| {
                         cx.write_to_clipboard(ClipboardItem::new_string(authors.join(", ")));
@@ -1043,14 +1061,14 @@ impl ExtensionsPage {
             ExtensionStatus::Upgrading => ExtensionCardButtons {
                 install_or_uninstall: Button::new(
                     SharedString::from(extension.id.clone()),
-                    "Uninstall",
+                    t("extensions-uninstall"),
                 )
                 .style(ButtonStyle::OutlinedGhost)
                 .disabled(true),
                 configure: is_configurable.then(|| {
                     Button::new(
                         SharedString::from(format!("configure-{}", extension.id)),
-                        "Configure",
+                        t("extensions-configure"),
                     )
                     .disabled(true)
                 }),
@@ -1061,7 +1079,7 @@ impl ExtensionsPage {
             ExtensionStatus::Installed(installed_version) => ExtensionCardButtons {
                 install_or_uninstall: Button::new(
                     SharedString::from(extension.id.clone()),
-                    "Uninstall",
+                    t("extensions-uninstall"),
                 )
                 .style(ButtonStyle::OutlinedGhost)
                 .on_click({
@@ -1078,7 +1096,7 @@ impl ExtensionsPage {
                 configure: is_configurable.then(|| {
                     Button::new(
                         SharedString::from(format!("configure-{}", extension.id)),
-                        "Configure",
+                        t("extensions-configure"),
                     )
                     .style(ButtonStyle::OutlinedGhost)
                     .on_click({
@@ -1142,14 +1160,14 @@ impl ExtensionsPage {
             ExtensionStatus::Removing => ExtensionCardButtons {
                 install_or_uninstall: Button::new(
                     SharedString::from(extension.id.clone()),
-                    "Uninstall",
+                    t("extensions-uninstall"),
                 )
                 .style(ButtonStyle::OutlinedGhost)
                 .disabled(true),
                 configure: is_configurable.then(|| {
                     Button::new(
                         SharedString::from(format!("configure-{}", extension.id)),
-                        "Configure",
+                        t("extensions-configure"),
                     )
                     .disabled(true)
                 }),

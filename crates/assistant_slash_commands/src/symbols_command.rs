@@ -5,6 +5,7 @@ use assistant_slash_command::{
 };
 use editor::Editor;
 use gpui::{AppContext as _, Task, WeakEntity};
+use i18n::{t, t_args};
 use language::{BufferSnapshot, LspAdapterDelegate};
 use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
@@ -19,7 +20,7 @@ impl SlashCommand for OutlineSlashCommand {
     }
 
     fn description(&self) -> String {
-        "Insert symbols for active tab".into()
+        t("slash-command-symbols-description")
     }
 
     fn icon(&self) -> IconName {
@@ -38,7 +39,7 @@ impl SlashCommand for OutlineSlashCommand {
         _window: &mut Window,
         _cx: &mut App,
     ) -> Task<Result<Vec<ArgumentCompletion>>> {
-        Task::ready(Err(anyhow!("this command does not require argument")))
+        Task::ready(Err(anyhow!(t("slash-command-no-argument"))))
     }
 
     fn requires_argument(&self) -> bool {
@@ -57,13 +58,13 @@ impl SlashCommand for OutlineSlashCommand {
     ) -> Task<SlashCommandResult> {
         let output = workspace.update(cx, |workspace, cx| {
             let Some(active_item) = workspace.active_item(cx) else {
-                return Task::ready(Err(anyhow!("no active tab")));
+                return Task::ready(Err(anyhow!(t("slash-command-symbols-no-active-tab"))));
             };
             let Some(buffer) = active_item
                 .downcast::<Editor>()
                 .and_then(|editor| editor.read(cx).buffer().read(cx).as_singleton())
             else {
-                return Task::ready(Err(anyhow!("active tab is not an editor")));
+                return Task::ready(Err(anyhow!(t("slash-command-symbols-not-editor"))));
             };
 
             let snapshot = buffer.read(cx).snapshot();
@@ -72,8 +73,12 @@ impl SlashCommand for OutlineSlashCommand {
             cx.background_spawn(async move {
                 let outline = snapshot.outline(None);
 
-                let path = path.as_deref().unwrap_or("untitled");
-                let mut outline_text = format!("Symbols for {path}:\n");
+                let untitled = t("slash-command-symbols-untitled");
+                let path_str = path.as_deref().unwrap_or(untitled.as_str());
+                let mut outline_text = t_args(
+                    "slash-command-symbols-label",
+                    &[("path", path_str)].into_iter().collect(),
+                );
                 for item in &outline.path_candidates {
                     outline_text.push_str("- ");
                     outline_text.push_str(&item.string);
@@ -84,7 +89,7 @@ impl SlashCommand for OutlineSlashCommand {
                     sections: vec![SlashCommandOutputSection {
                         range: 0..outline_text.len(),
                         icon: IconName::ListTree,
-                        label: SharedString::new(path),
+                        label: SharedString::from(path_str.to_string()),
                         metadata: None,
                     }],
                     text: outline_text,

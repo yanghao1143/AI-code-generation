@@ -43,6 +43,7 @@ use crate::{
 };
 use crate::{CodeActionSource, EditorSettings};
 use collections::{HashSet, VecDeque};
+use i18n::{t, t_args};
 use settings::{CompletionDetailAlignment, Settings, SnippetSortOrder};
 
 pub const MENU_GAP: Pixels = px(4.);
@@ -1503,7 +1504,7 @@ impl CodeActionsItem {
         match self {
             Self::CodeAction { action, .. } => action.lsp_action.title().replace("\n", ""),
             Self::Task(_, task) => task.resolved_label.replace("\n", ""),
-            Self::DebugScenario(scenario) => format!("debug: {}", scenario.label),
+            Self::DebugScenario(scenario) => t_args("debug-prefix", &[("label", scenario.label.to_string().as_str())].into_iter().collect()),
         }
     }
 }
@@ -1659,7 +1660,7 @@ impl CodeActionsMenu {
                         action.lsp_action.title().chars().count()
                     }
                     CodeActionsItem::DebugScenario(scenario) => {
-                        format!("debug: {}", scenario.label).chars().count()
+                        t_args("debug-prefix", &[("label", scenario.label.to_string().as_str())].into_iter().collect()).chars().count()
                     }
                 })
                 .map(|(ix, _)| ix),

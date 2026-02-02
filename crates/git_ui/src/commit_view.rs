@@ -14,6 +14,7 @@ use gpui::{
     Element, Entity, EventEmitter, FocusHandle, Focusable, InteractiveElement, IntoElement,
     ParentElement, PromptLevel, Render, Styled, Task, WeakEntity, Window, actions,
 };
+use i18n::{t, t_args};
 use language::{
     Anchor, Buffer, Capability, DiskState, File, LanguageRegistry, LineEnding, OffsetRangeExt as _,
     Point, ReplicaId, Rope, TextBuffer,
@@ -265,7 +266,7 @@ impl CommitView {
                         .is_some_and(|text| is_binary_content(text.as_bytes()));
 
                 let new_text = if is_binary {
-                    "(binary file not shown)".to_string()
+                    t("git-binary-file-not-shown")
                 } else {
                     raw_new_text
                 };
@@ -580,7 +581,7 @@ impl CommitView {
                                                 let commit_sha = commit_sha.clone();
                                                 move |_, cx| {
                                                     Tooltip::with_meta(
-                                                        "Copy Commit SHA",
+                                                        t("git-copy-sha"),
                                                         None,
                                                         commit_sha.clone(),
                                                         cx,
@@ -617,7 +618,7 @@ impl CommitView {
                             _ => IconName::Link,
                         };
 
-                        Button::new("view_on_provider", format!("View on {}", provider_name))
+                        Button::new("view_on_provider", t_args("git-view-on", &[("provider", provider_name.as_ref())].into_iter().collect()))
                             .icon(icon)
                             .icon_color(Color::Muted)
                             .icon_size(IconSize::Small)
@@ -630,13 +631,13 @@ impl CommitView {
     fn apply_stash(workspace: &mut Workspace, window: &mut Window, cx: &mut App) {
         Self::stash_action(
             workspace,
-            "Apply",
+            &t("git-stash-apply"),
             window,
             cx,
             async move |repository, sha, stash, commit_view, workspace, cx| {
                 let result = repository.update(cx, |repo, cx| {
                     if !stash_matches_index(&sha, stash, repo) {
-                        return Err(anyhow::anyhow!("Stash has changed, not applying"));
+                        return Err(anyhow::anyhow!(t("git-stash-changed")));
                     }
                     Ok(repo.stash_apply(Some(stash), cx))
                 });
@@ -657,13 +658,13 @@ impl CommitView {
     fn pop_stash(workspace: &mut Workspace, window: &mut Window, cx: &mut App) {
         Self::stash_action(
             workspace,
-            "Pop",
+            &t("git-stash-pop-confirm"),
             window,
             cx,
             async move |repository, sha, stash, commit_view, workspace, cx| {
                 let result = repository.update(cx, |repo, cx| {
                     if !stash_matches_index(&sha, stash, repo) {
-                        return Err(anyhow::anyhow!("Stash has changed, pop aborted"));
+                        return Err(anyhow::anyhow!(t("git-stash-changed-pop")));
                     }
                     Ok(repo.stash_pop(Some(stash), cx))
                 });
@@ -684,13 +685,13 @@ impl CommitView {
     fn remove_stash(workspace: &mut Workspace, window: &mut Window, cx: &mut App) {
         Self::stash_action(
             workspace,
-            "Drop",
+            &t("git-stash-drop"),
             window,
             cx,
             async move |repository, sha, stash, commit_view, workspace, cx| {
                 let result = repository.update(cx, |repo, cx| {
                     if !stash_matches_index(&sha, stash, repo) {
-                        return Err(anyhow::anyhow!("Stash has changed, drop aborted"));
+                        return Err(anyhow::anyhow!(t("git-stash-changed-drop")));
                     }
                     Ok(repo.stash_drop(Some(stash), cx))
                 });
@@ -734,9 +735,17 @@ impl CommitView {
         let sha = commit_view.read(cx).commit.sha.clone();
         let answer = window.prompt(
             PromptLevel::Info,
-            &format!("{} stash@{{{}}}?", str_action, stash),
+            &t_args(
+                "git-stash-confirm",
+                &[
+                    ("action", str_action),
+                    ("index", stash.to_string().as_str()),
+                ]
+                .into_iter()
+                .collect(),
+            ),
             None,
-            &[str_action, "Cancel"],
+            &[str_action, t("cancel").as_str()],
             cx,
         );
 

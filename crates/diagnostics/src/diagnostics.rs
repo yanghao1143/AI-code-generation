@@ -38,6 +38,7 @@ use std::{
     sync::Arc,
     time::Duration,
 };
+use i18n::{t, t_args};
 use text::{BufferId, OffsetRangeExt};
 use theme::ActiveTheme;
 use toolbar_controls::DiagnosticsToolbarEditor;
@@ -104,9 +105,9 @@ impl Render for ProjectDiagnosticsEditor {
         let child =
             if warning_count + self.summary.error_count == 0 && self.editor.read(cx).is_empty(cx) {
                 let label = if self.summary.warning_count == 0 {
-                    SharedString::new_static("No problems in workspace")
+                    t("diagnostics-no-problems-in-workspace").into()
                 } else {
-                    SharedString::new_static("No errors in workspace")
+                    t("diagnostics-no-errors-in-workspace").into()
                 };
                 v_flex()
                     .key_context("EmptyPane")
@@ -118,14 +119,10 @@ impl Render for ProjectDiagnosticsEditor {
                     .bg(cx.theme().colors().editor_background)
                     .child(Label::new(label).color(Color::Muted))
                     .when(self.summary.warning_count > 0, |this| {
-                        let plural_suffix = if self.summary.warning_count > 1 {
-                            "s"
-                        } else {
-                            ""
-                        };
-                        let label = format!(
-                            "Show {} warning{}",
-                            self.summary.warning_count, plural_suffix
+                        let warning_count = self.summary.warning_count.to_string();
+                        let label = t_args(
+                            "diagnostics-show-warnings",
+                            &[("count", warning_count.as_str())].into_iter().collect(),
                         );
                         this.child(
                             Button::new("diagnostics-show-warning-label", label).on_click(
@@ -737,11 +734,11 @@ impl Item for ProjectDiagnosticsEditor {
     }
 
     fn tab_tooltip_text(&self, _: &App) -> Option<SharedString> {
-        Some("Project Diagnostics".into())
+        Some(t("diagnostics-project-diagnostics").into())
     }
 
     fn tab_content_text(&self, _detail: usize, _: &App) -> SharedString {
-        "Diagnostics".into()
+        t("diagnostics-diagnostics").into()
     }
 
     fn tab_content(&self, params: TabContentParams, _window: &Window, _: &App) -> AnyElement {
@@ -754,7 +751,7 @@ impl Item for ProjectDiagnosticsEditor {
                         h_flex()
                             .gap_1()
                             .child(Icon::new(IconName::Check).color(Color::Success))
-                            .child(Label::new("No problems").color(params.text_color())),
+                            .child(Label::new(t("diagnostics-no-problems")).color(params.text_color())),
                     )
                 },
             )

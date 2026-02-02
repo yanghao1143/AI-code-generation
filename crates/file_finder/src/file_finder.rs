@@ -10,9 +10,10 @@ use file_icons::FileIcons;
 use fuzzy::{CharBag, PathMatch, PathMatchCandidate};
 use gpui::{
     Action, AnyElement, App, Context, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable,
-    KeyContext, Modifiers, ModifiersChangedEvent, ParentElement, Render, Styled, Task, WeakEntity,
-    Window, actions, rems,
+    KeyContext, Modifiers, ModifiersChangedEvent, ParentElement, Render, SharedString, Styled,
+    Task, WeakEntity, Window, actions, rems,
 };
+use i18n::{t, t_args};
 use open_path_prompt::{
     OpenPathPrompt,
     file_finder_settings::{FileFinderSettings, FileFinderWidth},
@@ -1033,8 +1034,12 @@ impl FileFinderDelegate {
         cx: &App,
     ) -> (HighlightedLabel, HighlightedLabel) {
         let path_style = self.project.read(cx).path_style(cx);
-        let (file_name, file_name_positions, mut full_path, mut full_path_positions) =
-            match &path_match {
+        let (file_name, file_name_positions, mut full_path, mut full_path_positions): (
+            String,
+            Vec<usize>,
+            String,
+            Vec<usize>,
+        ) = match &path_match {
                 Match::History {
                     path: entry_path,
                     panel_match,
@@ -1075,12 +1080,18 @@ impl FileFinderDelegate {
                     }
                 }
                 Match::Search(path_match) => self.labels_for_path_match(&path_match.0, path_style),
-                Match::CreateNew(project_path) => (
-                    format!("Create file: {}", project_path.path.display(path_style)),
-                    vec![],
-                    String::from(""),
-                    vec![],
-                ),
+                Match::CreateNew(project_path) => {
+                    let display_path = project_path.path.display(path_style).to_string();
+                    (
+                        t_args(
+                            "file-finder-create-file",
+                            &[("path", display_path.as_str())].into_iter().collect(),
+                        ),
+                        vec![],
+                        String::from(""),
+                        vec![],
+                    )
+                }
             };
 
         if file_name_positions.is_empty() {
@@ -1143,8 +1154,8 @@ impl FileFinderDelegate {
         }
 
         (
-            HighlightedLabel::new(file_name, file_name_positions),
-            HighlightedLabel::new(full_path, full_path_positions)
+            HighlightedLabel::new(SharedString::from(file_name), file_name_positions),
+            HighlightedLabel::new(SharedString::from(full_path), full_path_positions)
                 .size(LabelSize::Small)
                 .color(Color::Muted),
         )
@@ -1301,7 +1312,7 @@ impl PickerDelegate for FileFinderDelegate {
     type ListItem = ListItem;
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Search project files...".into()
+        t("file-finder-placeholder").into()
     }
 
     fn match_count(&self) -> usize {
@@ -1676,109 +1687,108 @@ impl PickerDelegate for FileFinderDelegate {
                                 }),
                             {
                                 let focus_handle = focus_handle.clone();
-                                move |_window, cx| {
-                                    Tooltip::for_action_in(
-                                        "Filter Options",
-                                        &ToggleFilterMenu,
-                                        &focus_handle,
-                                        cx,
-                                    )
-                                }
-                            },
-                        )
-                        .menu({
-                            let focus_handle = focus_handle.clone();
-                            let include_ignored = self.include_ignored;
-
-                            move |window, cx| {
-                                Some(ContextMenu::build(window, cx, {
-                                    let focus_handle = focus_handle.clone();
-                                    move |menu, _, _| {
-                                        menu.context(focus_handle.clone())
-                                            .header("Filter Options")
-                                            .toggleable_entry(
-                                                "Include Ignored Files",
-                                                include_ignored.unwrap_or(false),
-                                                ui::IconPosition::End,
-                                                Some(ToggleIncludeIgnored.boxed_clone()),
-                                                move |window, cx| {
-                                                    window.focus(&focus_handle, cx);
-                                                    window.dispatch_action(
-                                                        ToggleIncludeIgnored.boxed_clone(),
-                                                        cx,
-                                                    );
-                                                },
-                                            )
-                                    }
-                                }))
-                            }
-                        }),
-                )
-                .child(
-                    h_flex()
-                        .gap_0p5()
-                        .child(
-                            PopoverMenu::new("split-menu-popover")
-                                .with_handle(self.split_popover_menu_handle.clone())
-                                .attach(gpui::Corner::BottomRight)
-                                .anchor(gpui::Corner::BottomLeft)
-                                .offset(gpui::Point {
-                                    x: px(1.0),
-                                    y: px(1.0),
-                                })
-                                .trigger(
-                                    ButtonLike::new("split-trigger")
-                                        .child(Label::new("Split…"))
-                                        .selected_style(ButtonStyle::Tinted(TintColor::Accent))
-                                        .child(
-                                            KeyBinding::for_action_in(
-                                                &ToggleSplitMenu,
-                                                &focus_handle,
-                                                cx,
-                                            )
-                                            .size(rems_from_px(12.)),
-                                        ),
-                                )
-                                .menu({
-                                    let focus_handle = focus_handle.clone();
-
-                                    move |window, cx| {
-                                        Some(ContextMenu::build(window, cx, {
-                                            let focus_handle = focus_handle.clone();
-                                            move |menu, _, _| {
-                                                menu.context(focus_handle)
-                                                    .action(
-                                                        "Split Left",
-                                                        pane::SplitLeft::default().boxed_clone(),
-                                                    )
-                                                    .action(
-                                                        "Split Right",
-                                                        pane::SplitRight::default().boxed_clone(),
-                                                    )
-                                                    .action(
-                                                        "Split Up",
-                                                        pane::SplitUp::default().boxed_clone(),
-                                                    )
-                                                    .action(
-                                                        "Split Down",
-                                                        pane::SplitDown::default().boxed_clone(),
-                                                    )
-                                            }
-                                        }))
-                                    }
-                                }),
-                        )
-                        .child(
-                            Button::new("open-selection", "Open")
-                                .key_binding(
-                                    KeyBinding::for_action_in(&menu::Confirm, &focus_handle, cx)
-                                        .map(|kb| kb.size(rems_from_px(12.))),
-                                )
-                                .on_click(|_, window, cx| {
-                                    window.dispatch_action(menu::Confirm.boxed_clone(), cx)
-                                }),
-                        ),
-                )
+                                                                move |_window, cx| {
+                                                                    Tooltip::for_action_in(
+                                                                        t("file-finder-filter-options"),
+                                                                        &ToggleFilterMenu,
+                                                                        &focus_handle,
+                                                                        cx,
+                                                                    )
+                                                                }
+                                                            },
+                                                        )
+                                                        .menu({
+                                                            let focus_handle = focus_handle.clone();
+                                                            let include_ignored = self.include_ignored;
+                                
+                                                            move |window, cx| {
+                                                                Some(ContextMenu::build(window, cx, {
+                                                                    let focus_handle = focus_handle.clone();
+                                                                    move |menu, _, _| {
+                                                                        menu.context(focus_handle.clone())
+                                                                            .header(t("file-finder-filter-options"))
+                                                                            .toggleable_entry(
+                                                                                t("file-finder-include-ignored"),
+                                                                                include_ignored.unwrap_or(false),
+                                                                                ui::IconPosition::End,
+                                                                                Some(ToggleIncludeIgnored.boxed_clone()),
+                                                                                move |window, cx| {
+                                                                                    window.focus(&focus_handle, cx);
+                                                                                    window.dispatch_action(
+                                                                                        ToggleIncludeIgnored.boxed_clone(),
+                                                                                        cx,
+                                                                                    );
+                                                                                },
+                                                                            )
+                                                                    }
+                                                                }))
+                                                            }
+                                                        }),
+                                                )
+                                                .child(
+                                                    h_flex()
+                                                        .gap_0p5()
+                                                        .child(
+                                                            PopoverMenu::new("split-menu-popover")
+                                                                .with_handle(self.split_popover_menu_handle.clone())
+                                                                .attach(gpui::Corner::BottomRight)
+                                                                .anchor(gpui::Corner::BottomLeft)
+                                                                .offset(gpui::Point {
+                                                                    x: px(1.0),
+                                                                    y: px(1.0),
+                                                                })
+                                                                .trigger(
+                                                                    ButtonLike::new("split-trigger")
+                                                                        .child(Label::new(t("file-finder-split")))
+                                                                        .selected_style(ButtonStyle::Tinted(TintColor::Accent))
+                                                                        .child(
+                                                                            KeyBinding::for_action_in(
+                                                                                &ToggleSplitMenu,
+                                                                                &focus_handle,
+                                                                                cx,
+                                                                            )
+                                                                            .size(rems_from_px(12.)),
+                                                                        ),
+                                                                )
+                                                                .menu({
+                                                                    let focus_handle = focus_handle.clone();
+                                
+                                                                    move |window, cx| {
+                                                                        Some(ContextMenu::build(window, cx, {
+                                                                            let focus_handle = focus_handle.clone();
+                                                                            move |menu, _, _| {
+                                                                                menu.context(focus_handle)
+                                                                                    .action(
+                                                                                        t("file-finder-split-left"),
+                                                                                        pane::SplitLeft::default().boxed_clone(),
+                                                                                    )
+                                                                                    .action(
+                                                                                        t("file-finder-split-right"),
+                                                                                        pane::SplitRight::default().boxed_clone(),
+                                                                                    )
+                                                                                    .action(
+                                                                                        t("file-finder-split-up"),
+                                                                                        pane::SplitUp::default().boxed_clone(),
+                                                                                    )
+                                                                                    .action(
+                                                                                        t("file-finder-split-down"),
+                                                                                        pane::SplitDown::default().boxed_clone(),
+                                                                                    )
+                                                                            }
+                                                                        }))
+                                                                    }
+                                                                }),
+                                                        )
+                                                        .child(
+                                                            Button::new("open-selection", t("file-finder-open"))
+                                                                .key_binding(
+                                                                    KeyBinding::for_action_in(&menu::Confirm, &focus_handle, cx)
+                                                                        .map(|kb| kb.size(rems_from_px(12.))),
+                                                                )
+                                                                .on_click(|_, window, cx| {
+                                                                    window.dispatch_action(menu::Confirm.boxed_clone(), cx)
+                                                                }),
+                                                        ),                )
                 .into_any(),
         )
     }

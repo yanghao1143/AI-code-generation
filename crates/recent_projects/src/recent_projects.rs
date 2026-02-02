@@ -19,6 +19,7 @@ use gpui::{
     Action, AnyElement, App, Context, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable,
     Subscription, Task, WeakEntity, Window,
 };
+use i18n::{t, t_args};
 use ordered_float::OrderedFloat;
 use picker::{
     Picker, PickerDelegate,
@@ -139,13 +140,9 @@ pub fn init(cx: &mut App) {
                     .collect::<Vec<_>>();
 
                 if paths.is_empty() {
-                    let message = indoc::indoc! { r#"
-                        Invalid path specified when trying to open a folder inside WSL.
+                    let message = t("recent-projects-wsl-invalid-path");
 
-                        Please note that Zed currently does not support opening network share folders inside wsl.
-                    "#};
-
-                    let _ = cx.prompt(gpui::PromptLevel::Critical, "Invalid path", Some(&message), &["Ok"]).await;
+                    let _ = cx.prompt(gpui::PromptLevel::Critical, &t("recent-projects-invalid-path"), Some(&message), &["Ok"]).await;
                     return;
                 }
 
@@ -245,7 +242,7 @@ pub fn init(cx: &mut App) {
                             log::error!("Failed to start Dev Container: {:?}", e);
                             cx.prompt(
                                 gpui::PromptLevel::Critical,
-                                "Failed to start Dev Container",
+                                &t("recent-projects-failed-launch-dev-container"),
                                 Some(&format!("{:?}", e)),
                                 &["Ok"],
                             )
@@ -271,7 +268,7 @@ pub fn init(cx: &mut App) {
                     log::error!("Failed to connect: {e:#}");
                     cx.prompt(
                         gpui::PromptLevel::Critical,
-                        "Failed to connect",
+                        &t("recent-projects-failed-connect"),
                         Some(&e.to_string()),
                         &["Ok"],
                     )
@@ -512,9 +509,11 @@ impl PickerDelegate for RecentProjectsDelegate {
                 window.keystroke_text_for(&menu::Confirm),
             )
         };
-        Arc::from(format!(
-            "{reuse_window} reuses this window, {create_window} opens a new one",
-        ))
+        t_args("recent-projects-placeholder", [
+            ("reuse", reuse_window.as_str()),
+            ("create", create_window.as_str()),
+        ])
+        .into()
     }
 
     fn match_count(&self) -> usize {
@@ -666,7 +665,7 @@ impl PickerDelegate for RecentProjectsDelegate {
                     }
                 }
                 .detach_and_prompt_err(
-                    "Failed to open project",
+                    &t("recent-projects-failed-open"),
                     window,
                     cx,
                     |_, _, _| None,
@@ -680,9 +679,9 @@ impl PickerDelegate for RecentProjectsDelegate {
 
     fn no_matches_text(&self, _window: &mut Window, _cx: &mut App) -> Option<SharedString> {
         let text = if self.workspaces.is_empty() {
-            "Recently opened projects will show up here".into()
+            t("recent-projects-empty").into()
         } else {
-            "No matches".into()
+            t("picker-no-matches").into()
         };
         Some(text)
     }
@@ -734,7 +733,7 @@ impl PickerDelegate for RecentProjectsDelegate {
                     .tooltip({
                         move |_, cx| {
                             Tooltip::for_action_in(
-                                "Open Project in New Window",
+                                t("recent-projects-open-new-window"),
                                 &menu::SecondaryConfirm,
                                 &focus_handle,
                                 cx,
@@ -751,7 +750,7 @@ impl PickerDelegate for RecentProjectsDelegate {
             .child(
                 IconButton::new("delete", IconName::Close)
                     .icon_size(IconSize::Small)
-                    .tooltip(Tooltip::text("Delete from Recent Projects"))
+                    .tooltip(Tooltip::text(t("recent-projects-delete")))
                     .on_click(cx.listener(move |this, _event, window, cx| {
                         cx.stop_propagation();
                         window.prevent_default();
@@ -824,7 +823,7 @@ impl PickerDelegate for RecentProjectsDelegate {
                 .border_t_1()
                 .border_color(cx.theme().colors().border_variant)
                 .child(
-                    Button::new("remote", "Open Remote Folder")
+                    Button::new("remote", t("recent-projects-open-remote"))
                         .key_binding(KeyBinding::for_action(
                             &OpenRemote {
                                 from_existing_connection: false,
@@ -844,7 +843,7 @@ impl PickerDelegate for RecentProjectsDelegate {
                         }),
                 )
                 .child(
-                    Button::new("local", "Open Local Folder")
+                    Button::new("local", t("recent-projects-open-local"))
                         .key_binding(KeyBinding::for_action(&workspace::Open, cx))
                         .on_click(|_, window, cx| {
                             window.dispatch_action(workspace::Open.boxed_clone(), cx)

@@ -125,23 +125,22 @@ pub fn init(cx: &mut App) {
                     let room_id = romo_id_fut.await.context("Failed to get livekit room")?;
                     workspace.update(cx, |workspace, cx| {
                         cx.write_to_clipboard(ClipboardItem::new_string(room_id));
-                        workspace.show_toast(
-                            workspace::Toast::new(
-                                NotificationId::unique::<RoomIdCopiedToast>(),
-                                "Room ID copied to clipboard",
-                            )
-                            .autohide(),
-                            cx,
-                        );
-                    })
-                })
-                .detach_and_notify_err(window, cx);
-            } else {
-                workspace.show_error(&"There’s no active call; join one first.", cx);
-            }
-        });
-        workspace.register_action(|workspace, _: &ShareProject, window, cx| {
-            let project = workspace.project().clone();
+                                                    workspace.show_toast(
+                                                    workspace::Toast::new(
+                                                        NotificationId::unique::<RoomIdCopiedToast>(),
+                                                        t("collab-room-id-copied"),
+                                                    )
+                                                    .autohide(),
+                                                    cx,
+                                                );
+                                            })
+                                        })
+                                        .detach_and_notify_err(window, cx);
+                                    } else {
+                                        workspace.show_error(&t("collab-no-active-call").as_str(), cx);
+                                    }
+                                });
+                                workspace.register_action(|workspace, _: &ShareProject, window, cx| {            let project = workspace.project().clone();
             println!("{project:?}");
             window.defer(cx, move |_window, cx| {
                 ActiveCall::global(cx).update(cx, move |call, cx| {
@@ -1029,7 +1028,7 @@ impl CollabPanel {
         cx: &mut Context<Self>,
     ) -> impl IntoElement {
         let project_name: SharedString = if worktree_root_names.is_empty() {
-            "untitled".to_string()
+            t("untitled").into()
         } else {
             worktree_root_names.join(", ")
         }
@@ -1043,7 +1042,7 @@ impl CollabPanel {
                         let app_state = workspace.app_state().clone();
                         workspace::join_in_room_project(project_id, host_user_id, app_state, cx)
                             .detach_and_prompt_err(
-                                "Failed to join project",
+                                t("collab-failed-join-project"),
                                 window,
                                 cx,
                                 |_, _, _| None,
@@ -2516,10 +2515,10 @@ impl CollabPanel {
                     channel_link = Some(channel.link(cx));
                     (channel_icon, channel_tooltip_text) = match channel.visibility {
                         proto::ChannelVisibility::Public => {
-                            (Some("icons/public.svg"), Some("Copy public channel link."))
+                            (Some("icons/public.svg"), Some(t("collab-copy-public-link")))
                         }
                         proto::ChannelVisibility::Members => {
-                            (Some("icons/hash.svg"), Some("Copy private channel link."))
+                            (Some("icons/hash.svg"), Some(t("collab-copy-private-link")))
                         }
                     };
 
@@ -2529,22 +2528,22 @@ impl CollabPanel {
                 if let Some(name) = channel_name {
                     SharedString::from(name.to_string())
                 } else {
-                    SharedString::from("Current Call")
+                    t("collab-current-call").into()
                 }
             }
-            Section::ContactRequests => SharedString::from("Requests"),
-            Section::Contacts => SharedString::from("Contacts"),
-            Section::Channels => SharedString::from("Channels"),
-            Section::ChannelInvites => SharedString::from("Invites"),
-            Section::Online => SharedString::from("Online"),
-            Section::Offline => SharedString::from("Offline"),
+            Section::ContactRequests => t("collab-requests").into(),
+            Section::Contacts => t("collab-contacts").into(),
+            Section::Channels => t("collab-channels").into(),
+            Section::ChannelInvites => t("collab-invites").into(),
+            Section::Online => t("collab-online").into(),
+            Section::Offline => t("collab-offline").into(),
         };
 
         let button = match section {
             Section::ActiveCall => channel_link.map(|channel_link| {
                 CopyButton::new("copy-channel-link", channel_link)
                     .visible_on_hover("section-header")
-                    .tooltip_label("Copy Channel Link")
+                    .tooltip_label(t("collab-copy-channel-link"))
                     .into_any_element()
             }),
             Section::Contacts => Some(
@@ -3134,8 +3133,8 @@ impl Panel for CollabPanel {
             .then_some(ui::IconName::UserGroup)
     }
 
-    fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<&'static str> {
-        Some("Collab Panel")
+    fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<SharedString> {
+        Some(t("panel-collab").into())
     }
 
     fn toggle_action(&self) -> Box<dyn gpui::Action> {

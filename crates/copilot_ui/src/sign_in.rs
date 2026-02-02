@@ -8,6 +8,7 @@ use gpui::{
     Focusable, InteractiveElement, IntoElement, MouseDownEvent, ParentElement, Render, Styled,
     Subscription, Window, WindowBounds, WindowOptions, div, point,
 };
+use i18n::t;
 use ui::{ButtonLike, CommonAnimationExt, ConfiguredApiCard, Vector, VectorName, prelude::*};
 use util::ResultExt as _;
 use workspace::{Toast, Workspace, notifications::NotificationId};
@@ -24,13 +25,13 @@ pub fn initiate_sign_in(copilot: Entity<Copilot>, window: &mut Window, cx: &mut 
 }
 
 pub fn initiate_sign_out(copilot: Entity<Copilot>, window: &mut Window, cx: &mut App) {
-    copilot_toast(Some("Signing out of Copilot…"), window, cx);
+    copilot_toast(Some(t("copilot-signing-out").into()), window, cx);
 
     let sign_out_task = copilot.update(cx, |copilot, cx| copilot.sign_out(cx));
     window
         .spawn(cx, async move |cx| match sign_out_task.await {
             Ok(()) => {
-                cx.update(|window, cx| copilot_toast(Some("Signed out of Copilot"), window, cx))
+                cx.update(|window, cx| copilot_toast(Some(t("copilot-signed-out").into()), window, cx))
             }
             Err(err) => cx.update(|window, cx| {
                 if let Some(workspace) = window.root::<Workspace>().flatten() {
@@ -77,7 +78,7 @@ fn open_copilot_code_verification_window(copilot: &Entity<Copilot>, window: &Win
     .log_err();
 }
 
-fn copilot_toast(message: Option<&'static str>, window: &Window, cx: &mut App) {
+fn copilot_toast(message: Option<SharedString>, window: &Window, cx: &mut App) {
     const NOTIFICATION_ID: NotificationId = NotificationId::unique::<CopilotStatusToast>();
 
     let Some(workspace) = window.root::<Workspace>().flatten() else {
@@ -86,7 +87,9 @@ fn copilot_toast(message: Option<&'static str>, window: &Window, cx: &mut App) {
 
     cx.defer(move |cx| {
         workspace.update(cx, |workspace, cx| match message {
-            Some(message) => workspace.show_toast(Toast::new(NOTIFICATION_ID, message), cx),
+            Some(message) => {
+                workspace.show_toast(Toast::new(NOTIFICATION_ID, message.to_string()), cx)
+            }
             None => workspace.dismiss_toast(&NOTIFICATION_ID, cx),
         });
     })
@@ -105,9 +108,9 @@ pub fn initiate_sign_in_impl(
         Status::Starting { task } => {
             copilot_toast(
                 Some(if is_reinstall {
-                    "Copilot is reinstalling…"
+                    t("copilot-reinstalling").into()
                 } else {
-                    "Copilot is starting…"
+                    t("copilot-starting").into()
                 }),
                 window,
                 cx,
@@ -118,7 +121,7 @@ pub fn initiate_sign_in_impl(
                     task.await;
                     cx.update(|window, cx| match copilot.read(cx).status() {
                         Status::Authorized => {
-                            copilot_toast(Some("Copilot has started."), window, cx)
+                            copilot_toast(Some(t("copilot-started").into()), window, cx)
                         }
                         _ => {
                             copilot_toast(None, window, cx);
@@ -218,7 +221,7 @@ impl CopilotCodeVerification {
                     .p_1()
                     .justify_between()
                     .child(Label::new(data.user_code.clone()))
-                    .child(Label::new(if copied { "Copied!" } else { "Copy" })),
+                    .child(Label::new(if copied { t("copilot-copy-copied") } else { t("copilot-copy") })),
             )
             .on_click({
                 let user_code = data.user_code.clone();
@@ -236,9 +239,9 @@ impl CopilotCodeVerification {
         cx: &mut Context<Self>,
     ) -> impl Element {
         let connect_button_label = if connect_clicked {
-            "Waiting for connection…"
+            t("copilot-waiting-connection")
         } else {
-            "Connect to GitHub"
+            t("copilot-connect-github")
         };
 
         v_flex()
@@ -246,14 +249,14 @@ impl CopilotCodeVerification {
             .gap_2p5()
             .items_center()
             .text_center()
-            .child(Headline::new("Use GitHub Copilot in Zed").size(HeadlineSize::Large))
+            .child(Headline::new(t("copilot-use-headline")).size(HeadlineSize::Large))
             .child(
-                Label::new("Using Copilot requires an active subscription on GitHub.")
+                Label::new(t("copilot-subscription-required"))
                     .color(Color::Muted),
             )
             .child(Self::render_device_code(data, cx))
             .child(
-                Label::new("Paste this code into GitHub after clicking the button below.")
+                Label::new(t("copilot-paste-instruction"))
                     .color(Color::Muted),
             )
             .child(
@@ -311,7 +314,7 @@ impl CopilotCodeVerification {
                             }),
                     )
                     .child(
-                        Button::new("copilot-enable-cancel-button", "Cancel")
+                        Button::new("copilot-enable-cancel-button", t("copilot-cancel"))
                             .full_width()
                             .size(ButtonSize::Medium)
                             .on_click(cx.listener(|_, _, _, cx| {
@@ -326,10 +329,10 @@ impl CopilotCodeVerification {
             .gap_2()
             .text_center()
             .justify_center()
-            .child(Headline::new("Copilot Enabled!").size(HeadlineSize::Large))
-            .child(Label::new("You're all set to use GitHub Copilot.").color(Color::Muted))
+            .child(Headline::new(t("copilot-enabled")).size(HeadlineSize::Large))
+            .child(Label::new(t("copilot-all-set")).color(Color::Muted))
             .child(
-                Button::new("copilot-enabled-done-button", "Done")
+                Button::new("copilot-enabled-done-button", t("copilot-done"))
                     .full_width()
                     .style(ButtonStyle::Outlined)
                     .size(ButtonSize::Medium)
@@ -343,26 +346,26 @@ impl CopilotCodeVerification {
             .as_deref()
             .unwrap_or(COPILOT_SIGN_UP_URL)
             .to_owned();
-        let description = "Enable Copilot by connecting your existing license once you have subscribed or renewed your subscription.";
+        let description = t("copilot-enable-instruction");
 
         v_flex()
             .gap_2()
             .text_center()
             .justify_center()
             .child(
-                Headline::new("You must have an active GitHub Copilot subscription.")
+                Headline::new(t("copilot-subscription-active-required"))
                     .size(HeadlineSize::Large),
             )
             .child(Label::new(description).color(Color::Warning))
             .child(
-                Button::new("copilot-subscribe-button", "Subscribe on GitHub")
+                Button::new("copilot-subscribe-button", t("copilot-subscribe-github"))
                     .full_width()
                     .style(ButtonStyle::Outlined)
                     .size(ButtonSize::Medium)
                     .on_click(move |_, _, cx| cx.open_url(&sign_up_url)),
             )
             .child(
-                Button::new("copilot-subscribe-cancel-button", "Cancel")
+                Button::new("copilot-subscribe-cancel-button", t("copilot-cancel"))
                     .full_width()
                     .size(ButtonSize::Medium)
                     .on_click(cx.listener(|_, _, _, cx| cx.emit(DismissEvent))),
@@ -374,10 +377,10 @@ impl CopilotCodeVerification {
             .gap_2()
             .text_center()
             .justify_center()
-            .child(Headline::new("An Error Happened").size(HeadlineSize::Large))
-            .child(Label::new(ERROR_LABEL).color(Color::Muted))
+            .child(Headline::new(t("copilot-error-happened")).size(HeadlineSize::Large))
+            .child(Label::new(t("copilot-issues-starting")).color(Color::Muted))
             .child(
-                Button::new("copilot-subscribe-button", "Reinstall Copilot and Sign In")
+                Button::new("copilot-subscribe-button", t("copilot-reinstall-signin"))
                     .full_width()
                     .style(ButtonStyle::Outlined)
                     .size(ButtonSize::Medium)
@@ -514,9 +517,9 @@ impl ConfigurationView {
 
     fn loading_message(&self) -> Option<SharedString> {
         if self.is_starting() {
-            Some("Starting Copilot…".into())
+            Some(t("copilot-starting").into())
         } else if self.is_signing_in() {
-            Some("Signing into Copilot…".into())
+            Some(t("copilot-signing-in").into())
         } else {
             None
         }
@@ -548,9 +551,9 @@ impl ConfigurationView {
 
     fn render_sign_in_button(&self, edit_prediction: bool) -> impl IntoElement {
         let label = if edit_prediction {
-            "Sign in to GitHub"
+            t("copilot-signin-github")
         } else {
-            "Sign in to use GitHub Copilot"
+            t("copilot-signin-use")
         };
 
         Button::new("sign_in", label)
@@ -575,9 +578,9 @@ impl ConfigurationView {
 
     fn render_reinstall_button(&self, edit_prediction: bool) -> impl IntoElement {
         let label = if edit_prediction {
-            "Reinstall and Sign in"
+            t("copilot-reinstall-short")
         } else {
-            "Reinstall Copilot and Sign in"
+            t("copilot-reinstall-signin")
         };
 
         Button::new("reinstall_and_sign_in", label)
@@ -610,7 +613,7 @@ impl ConfigurationView {
                     v_flex()
                         .w_full()
                         .max_w_1_2()
-                        .child(Label::new("Authenticate To Use"))
+                        .child(Label::new(t("copilot-authenticate-use")))
                         .child(
                             Label::new(description)
                                 .color(Color::Muted)
@@ -620,8 +623,8 @@ impl ConfigurationView {
                 .child(action)
         };
 
-        let start_label = "To use Copilot for edit predictions, you need to be logged in to GitHub. Note that your GitHub account must have an active Copilot subscription.".into();
-        let no_status_label = "Copilot requires an active GitHub Copilot subscription. Please ensure Copilot is configured and try again, or use a different edit predictions provider.".into();
+        let start_label = t("copilot-edit-prediction-desc").into();
+        let no_status_label = t("copilot-edit-prediction-no-sub").into();
 
         if let Some(msg) = self.loading_message() {
             container(
@@ -631,7 +634,7 @@ impl ConfigurationView {
             .into_any_element()
         } else if self.is_error() {
             container(
-                ERROR_LABEL.into(),
+                t("copilot-issues-starting").into(),
                 self.render_reinstall_button(true).into_any_element(),
             )
             .into_any_element()
@@ -651,8 +654,8 @@ impl ConfigurationView {
     }
 
     fn render_for_chat(&self) -> impl IntoElement {
-        let start_label = "To use Zed's agent with GitHub Copilot, you need to be logged in to GitHub. Note that your GitHub account must have an active Copilot Chat subscription.";
-        let no_status_label = "Copilot Chat requires an active GitHub Copilot subscription. Please ensure Copilot is configured and try again, or use a different LLM provider.";
+        let start_label = t("copilot-chat-desc");
+        let no_status_label = t("copilot-chat-no-sub");
 
         if let Some(msg) = self.loading_message() {
             v_flex()
@@ -663,7 +666,7 @@ impl ConfigurationView {
         } else if self.is_error() {
             v_flex()
                 .gap_2()
-                .child(Label::new(ERROR_LABEL))
+                .child(Label::new(t("copilot-issues-starting")))
                 .child(self.render_reinstall_button(false))
                 .into_any_element()
         } else if self.has_no_status() {
@@ -687,8 +690,8 @@ impl Render for ConfigurationView {
         let is_authenticated = &self.is_authenticated;
 
         if is_authenticated(cx) {
-            return ConfiguredApiCard::new("Authorized")
-                .button_label("Sign Out")
+            return ConfiguredApiCard::new(t("copilot-authorized"))
+                .button_label(t("copilot-sign-out"))
                 .on_click(|_, window, cx| {
                     if let Some(auth) = GlobalCopilotAuth::try_global(cx) {
                         initiate_sign_out(auth.0.clone(), window, cx);

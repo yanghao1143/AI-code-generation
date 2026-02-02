@@ -7,6 +7,7 @@ use futures::Stream;
 use futures::channel::mpsc;
 use fuzzy::PathMatch;
 use gpui::{App, Entity, Task, WeakEntity};
+use i18n::t;
 use language::{BufferSnapshot, CodeLabelBuilder, HighlightId, LineEnding, LspAdapterDelegate};
 use project::{PathMatchCandidateSet, Project};
 use serde::{Deserialize, Serialize};
@@ -121,7 +122,7 @@ impl SlashCommand for FileSlashCommand {
     }
 
     fn description(&self) -> String {
-        "Insert file and/or directory".into()
+        t("slash-command-file-description")
     }
 
     fn menu_text(&self) -> String {
@@ -206,7 +207,7 @@ impl SlashCommand for FileSlashCommand {
         };
 
         if arguments.is_empty() {
-            return Task::ready(Err(anyhow!("missing path")));
+            return Task::ready(Err(anyhow!(t("slash-command-file-missing-path"))));
         };
 
         Task::ready(Ok(collect_files(
@@ -227,12 +228,12 @@ fn collect_files(
         .iter()
         .map(|glob_input| {
             util::paths::PathMatcher::new(&[glob_input.to_owned()], project.read(cx).path_style(cx))
-                .with_context(|| format!("invalid path {glob_input}"))
+                .with_context(|| format!("{} {}", t("slash-command-file-invalid-path"), glob_input))
         })
         .collect::<anyhow::Result<Vec<util::paths::PathMatcher>>>()
     else {
         return futures::stream::once(async {
-            anyhow::bail!("invalid path");
+            anyhow::bail!(t("slash-command-file-invalid-path"));
         })
         .boxed();
     };
@@ -410,7 +411,7 @@ pub fn codeblock_fence_for_path(
 
         write!(text, "{path}").unwrap();
     } else {
-        write!(text, "untitled").unwrap();
+        write!(text, "{}", t("untitled")).unwrap();
     }
 
     if let Some(row_range) = row_range {
@@ -435,7 +436,7 @@ pub fn build_entry_output_section(
     let mut label = if let Some(path) = path {
         path.to_string()
     } else {
-        "untitled".to_string()
+        t("untitled")
     };
     if let Some(line_range) = line_range {
         write!(label, ":{}-{}", line_range.start, line_range.end).unwrap();

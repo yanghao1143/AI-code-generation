@@ -6,6 +6,7 @@ use assistant_slash_command::{
 use editor::{BufferOffset, Editor, MultiBufferSnapshot};
 use futures::StreamExt;
 use gpui::{App, SharedString, Task, WeakEntity, Window};
+use i18n::{t, t_args};
 use language::{BufferSnapshot, CodeLabel, LspAdapterDelegate};
 
 use rope::Point;
@@ -29,7 +30,7 @@ impl SlashCommand for SelectionCommand {
     }
 
     fn description(&self) -> String {
-        "Insert editor selection".into()
+        t("slash-command-selection-description")
     }
 
     fn icon(&self) -> IconName {
@@ -56,7 +57,7 @@ impl SlashCommand for SelectionCommand {
         _window: &mut Window,
         _cx: &mut App,
     ) -> Task<Result<Vec<ArgumentCompletion>>> {
-        Task::ready(Err(anyhow!("this command does not require argument")))
+        Task::ready(Err(anyhow!(t("slash-command-no-argument"))))
     }
 
     fn run(
@@ -93,7 +94,7 @@ impl SlashCommand for SelectionCommand {
                 None
             })
         else {
-            return Task::ready(Err(anyhow!("no active selection")));
+            return Task::ready(Err(anyhow!(t("slash-command-selection-no-selection"))));
         };
 
         for (text, title) in creases {
@@ -197,8 +198,11 @@ fn crease_for_buffer_range(
             codeblock_fence_for_path(filename.as_deref(), Some(start_buffer_row..=end_buffer_row));
 
         if let Some((line_comment_prefix, outline_text)) = line_comment_prefix.zip(outline_text) {
-            let breadcrumb = format!("{line_comment_prefix}Excerpt from: {outline_text}\n");
-            format!("{fence}{breadcrumb}{selected_text}\n```")
+            let breadcrumb = t_args(
+                "slash-command-selection-excerpt-from",
+                &[("outline", outline_text.as_str())].into_iter().collect(),
+            );
+            format!("{fence}{line_comment_prefix}{breadcrumb}{selected_text}\n```")
         } else {
             format!("{fence}{selected_text}\n```")
         }
@@ -208,12 +212,29 @@ fn crease_for_buffer_range(
         let start_line = start_buffer_row + 1;
         let end_line = end_buffer_row + 1;
         if start_line == end_line {
-            format!("{path}, Line {start_line}")
+            let line = start_line.to_string();
+            t_args(
+                "slash-command-selection-line",
+                &[("path", path.as_str()), ("line", line.as_str())]
+                    .into_iter()
+                    .collect(),
+            )
         } else {
-            format!("{path}, Lines {start_line} to {end_line}")
+            let start = start_line.to_string();
+            let end = end_line.to_string();
+            t_args(
+                "slash-command-selection-lines",
+                &[
+                    ("path", path.as_str()),
+                    ("start", start.as_str()),
+                    ("end", end.as_str()),
+                ]
+                .into_iter()
+                .collect(),
+            )
         }
     } else {
-        "Quoted selection".to_string()
+        t("slash-command-selection-quoted-selection")
     };
 
     Some((text, crease_title))
@@ -289,8 +310,11 @@ fn crease_for_range(
             codeblock_fence_for_path(filename.as_deref(), Some(start_buffer_row..=end_buffer_row));
 
         if let Some((line_comment_prefix, outline_text)) = line_comment_prefix.zip(outline_text) {
-            let breadcrumb = format!("{line_comment_prefix}Excerpt from: {outline_text}\n");
-            format!("{fence}{breadcrumb}{selected_text}\n```")
+            let breadcrumb = t_args(
+                "slash-command-selection-excerpt-from",
+                &[("outline", outline_text.as_str())].into_iter().collect(),
+            );
+            format!("{fence}{line_comment_prefix}{breadcrumb}{selected_text}\n```")
         } else {
             format!("{fence}{selected_text}\n```")
         }
@@ -300,12 +324,29 @@ fn crease_for_range(
         let start_line = start_buffer_row + 1;
         let end_line = end_buffer_row + 1;
         if start_line == end_line {
-            format!("{path}, Line {start_line}")
+            let line = start_line.to_string();
+            t_args(
+                "slash-command-selection-line",
+                &[("path", path.as_str()), ("line", line.as_str())]
+                    .into_iter()
+                    .collect(),
+            )
         } else {
-            format!("{path}, Lines {start_line} to {end_line}")
+            let start = start_line.to_string();
+            let end = end_line.to_string();
+            t_args(
+                "slash-command-selection-lines",
+                &[
+                    ("path", path.as_str()),
+                    ("start", start.as_str()),
+                    ("end", end.as_str()),
+                ]
+                .into_iter()
+                .collect(),
+            )
         }
     } else {
-        "Quoted selection".to_string()
+        t("slash-command-selection-quoted-selection")
     };
 
     Some((text, crease_title))

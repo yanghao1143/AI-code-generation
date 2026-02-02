@@ -1,4 +1,5 @@
 use gpui::{App, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Task, WeakEntity};
+use i18n::t;
 use itertools::Itertools;
 use picker::{Picker, PickerDelegate, PickerEditorPosition};
 use project::{Project, git_store::Repository};
@@ -155,7 +156,7 @@ impl PickerDelegate for RepositorySelectorDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Select a repository...".into()
+        t("git-select-repository").into()
     }
 
     fn editor_position(&self) -> PickerEditorPosition {

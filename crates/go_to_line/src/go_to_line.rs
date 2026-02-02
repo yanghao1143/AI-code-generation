@@ -10,6 +10,7 @@ use gpui::{
     App, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Render, SharedString, Styled,
     Subscription, div, prelude::*,
 };
+use i18n::t_args;
 use language::Buffer;
 use text::{Bias, Point};
 use theme::ActiveTheme;
@@ -131,11 +132,18 @@ impl GoToLine {
         });
         let line_editor_change = cx.subscribe_in(&line_editor, window, Self::on_line_editor_event);
 
-        let current_text = format!(
-            "Current Line: {} of {} (column {})",
-            line,
-            last_line + 1,
-            column
+        let line_text = line.to_string();
+        let total_text = (last_line + 1).to_string();
+        let col_text = column.to_string();
+        let current_text = t_args(
+            "go-to-line-current",
+            &[
+                ("line", line_text.as_str()),
+                ("total", total_text.as_str()),
+                ("col", col_text.as_str()),
+            ]
+            .into_iter()
+            .collect(),
         );
 
         Self {
@@ -281,9 +289,24 @@ impl Render for GoToLine {
     fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let help_text = match self.line_and_char_from_query(cx) {
             Some((line, Some(character))) => {
-                format!("Go to line {line}, character {character}").into()
+                let line_text = line.to_string();
+                let col_text = character.to_string();
+                t_args(
+                    "go-to-line-line-col",
+                    &[("line", line_text.as_str()), ("col", col_text.as_str())]
+                        .into_iter()
+                        .collect(),
+                )
+                .into()
             }
-            Some((line, None)) => format!("Go to line {line}").into(),
+            Some((line, None)) => {
+                let line_text = line.to_string();
+                t_args(
+                    "go-to-line-line",
+                    &[("line", line_text.as_str())].into_iter().collect(),
+                )
+                .into()
+            }
             None => self.current_text.clone(),
         };
 

@@ -5,6 +5,7 @@ use assistant_slash_command::{
 };
 use fuzzy::{PathMatch, StringMatchCandidate};
 use gpui::{App, Entity, Task, WeakEntity};
+use i18n::{t, t_args};
 use language::{
     Anchor, BufferSnapshot, DiagnosticEntryRef, DiagnosticSeverity, LspAdapterDelegate,
     OffsetRangeExt, ToOffset,
@@ -95,7 +96,7 @@ impl SlashCommand for DiagnosticsSlashCommand {
     }
 
     fn description(&self) -> String {
-        "Insert diagnostics".into()
+        t("slash-command-diagnostics-description")
     }
 
     fn icon(&self) -> IconName {
@@ -193,7 +194,7 @@ impl SlashCommand for DiagnosticsSlashCommand {
         window.spawn(cx, async move |_| {
             task.await?
                 .map(|output| output.into_event_stream())
-                .context("No diagnostics found")
+                .context(t("slash-command-diagnostics-no-diagnostics"))
         })
     }
 }
@@ -270,9 +271,17 @@ pub fn collect_diagnostics_output(
         let mut output = SlashCommandOutput::default();
 
         if let Some(error_source) = error_source.as_ref() {
-            writeln!(output.text, "diagnostics: {}", error_source).unwrap();
+            writeln!(
+                output.text,
+                "{}",
+                t_args(
+                    "slash-command-diagnostics-prefix",
+                    &[("source", error_source.as_ref())].into_iter().collect(),
+                )
+            )
+            .unwrap();
         } else {
-            writeln!(output.text, "diagnostics").unwrap();
+            writeln!(output.text, "{}", t("slash-command-diagnostics-prefix-no-source")).unwrap();
         }
 
         let mut project_summary = DiagnosticSummary::default();
@@ -331,24 +340,37 @@ pub fn collect_diagnostics_output(
             return Ok(None);
         }
 
-        let mut label = String::new();
-        label.push_str("Diagnostics");
-        if let Some(source) = error_source {
-            write!(label, " ({})", source).unwrap();
-        }
+        let mut label = if let Some(source) = error_source {
+            t_args(
+                "slash-command-diagnostics-label-with-source",
+                &[("source", source.as_ref())].into_iter().collect(),
+            )
+        } else {
+            t("slash-command-diagnostics-label")
+        };
 
         if project_summary.error_count > 0 || project_summary.warning_count > 0 {
-            label.push(':');
+            label.push('：');
 
             if project_summary.error_count > 0 {
-                write!(label, " {} errors", project_summary.error_count).unwrap();
+                let error_count = project_summary.error_count.to_string();
+                label.push(' ');
+                label.push_str(&t_args(
+                    "slash-command-diagnostics-errors",
+                    &[("count", error_count.as_str())].into_iter().collect(),
+                ));
                 if project_summary.warning_count > 0 {
-                    label.push_str(",");
+                    label.push_str("，");
                 }
             }
 
             if project_summary.warning_count > 0 {
-                write!(label, " {} warnings", project_summary.warning_count).unwrap();
+                let warning_count = project_summary.warning_count.to_string();
+                label.push(' ');
+                label.push_str(&t_args(
+                    "slash-command-diagnostics-warnings",
+                    &[("count", warning_count.as_str())].into_iter().collect(),
+                ));
             }
         }
 
@@ -393,13 +415,13 @@ fn collect_diagnostic(
             if !include_warnings {
                 return;
             }
-            ("warning", IconName::Warning)
+            (t("slash-command-diagnostics-warning"), IconName::Warning)
         }
         DiagnosticSeverity::ERROR => {
             if !include_errors {
                 return;
             }
-            ("error", IconName::XCircle)
+            (t("slash-command-diagnostics-error"), IconName::XCircle)
         }
         _ => return,
     };
