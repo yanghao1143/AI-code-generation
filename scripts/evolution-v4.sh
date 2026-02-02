@@ -72,14 +72,16 @@ diagnose_agent() {
         echo "env_error"; return
     fi
     
-    # 4. 正在工作 - 有进度指示 (必须在最后几行)
-    if echo "$last_10" | grep -qE "esc to interrupt|esc to interr|esc to cancel|Thinking|Working|Searching|Reading|Writing|Shenaniganing|Buffering|Rickrolling|Flowing|Running cargo|Transfiguring|Exploring|Investigating|Analyzing|Processing|Clarifying|Mining|Baking|Navigating|Checking|Compiling|Building|Cogitated|Searching text|Mulling|Limiting|Considering|Enumerating" 2>/dev/null; then
-        echo "working"; return
+    # 4. 等待用户确认 (优先于 working 检测)
+    # 包括 Codex 的 "Yes, proceed (y)" 确认界面
+    if echo "$last_10" | grep -qE "Allow execution of|Allow once|Yes, I accept|Do you want to proceed|\[y/N\]|\(y/n\)|Waiting for user confirmation|Press Enter to continue|Yes, proceed|Press enter to confirm" 2>/dev/null; then
+        echo "needs_confirm"; return
     fi
     
-    # 5. 等待用户确认 (各种格式)
-    if echo "$last_10" | grep -qE "Allow execution of|Allow once|Yes, I accept|Do you want to proceed|\[y/N\]|\(y/n\)|Waiting for user confirmation|Press Enter to continue" 2>/dev/null; then
-        echo "needs_confirm"; return
+    # 5. 正在工作 - 有进度指示 (必须在最后几行)
+    # 注意：Cogitated/Churned/Baked 表示已完成，不是正在工作
+    if echo "$last_10" | grep -qE "esc to interrupt|esc to interr|esc to cancel" 2>/dev/null; then
+        echo "working"; return
     fi
     
     # 6. 工具/请求错误
@@ -121,8 +123,11 @@ diagnose_agent() {
     fi
     
     # 10. Claude 特有: 有输入但未发送
-    if echo "$last_5" | grep -qE "^❯ .+" 2>/dev/null; then
-        if ! echo "$last_5" | grep -qE "esc to interrupt|bypass permissions" 2>/dev/null; then
+    # 检查是否有 ❯ 后面跟着实际内容（不是空的）
+    if echo "$last_10" | grep -qE "^❯ .{5,}" 2>/dev/null; then
+        # 有输入内容，检查是否正在执行
+        if ! echo "$last_5" | grep -qE "esc to interrupt|esc to interr|esc to cancel" 2>/dev/null; then
+            # 没有在执行，说明输入还没发送
             echo "pending_input"; return
         fi
     fi
@@ -314,9 +319,15 @@ repair_agent() {
         unknown)
             # 未知状态，尝试诊断
             local output=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p 2>/dev/null | tail -30)
+            local last_5=$(echo "$output" | tail -5)
             
+            # 检查是否是空闲状态（空提示符）
+            if echo "$last_5" | grep -qE "^❯$|^❯ *$|^›$|^› *$|Type your message" 2>/dev/null; then
+                # 空闲，直接派活
+                dispatch_task "$agent"
+                echo "idle_dispatched"
             # 检查是否有输入框堆积
-            if echo "$output" | grep -qE "^│ > .+[^│]|^❯ .+|^› .+" 2>/dev/null; then
+            elif echo "$output" | grep -qE "^│ > .+[^│]|^❯ .+|^› .+" 2>/dev/null; then
                 # 有堆积输入，清除后派活
                 tmux -S "$SOCKET" send-keys -t "$agent" Escape
                 sleep 0.3
@@ -496,17 +507,21 @@ dispatch_task() {
         task=$("$WORKSPACE/scripts/context-feeder.sh" generate "$agent" 2>/dev/null)
     fi
     
-    # 7. 使用默认任务
+    # 7. 使用默认任务 - 具体命令，不要分析
     if [[ -z "$task" ]]; then
+        # 从待处理模块列表取一个
+        local next_mod=$(redis-cli HGET "openclaw:ctx:i18n" "remaining" 2>/dev/null | tr ' ' '\n' | shuf | head -1)
+        next_mod=${next_mod:-terminal}
+        
         case "$agent" in
             claude-agent)
-                task="批量国际化 crates/ 下的模块。用 sed 批量替换硬编码字符串。直接改代码并提交。"
+                task="国际化 crates/$next_mod，用 t!() 包裹硬编码字符串，完成后 git commit"
                 ;;
             gemini-agent)
-                task="国际化 crates/ 下的模块。直接修改代码，不要分析。完成后提交。"
+                task="国际化 crates/$next_mod，完成后 git commit"
                 ;;
             codex-agent)
-                task="国际化 crates/ 下的模块。直接修改代码，不要分析。完成后提交。"
+                task="国际化 crates/$next_mod，完成后 git commit"
                 ;;
         esac
     fi
@@ -516,8 +531,17 @@ dispatch_task() {
         task="$task (上次进度: $cached_progress, 发现: ${cached_findings:0:100})"
     fi
     
-    # 发送任务
-    tmux -S "$SOCKET" send-keys -t "$agent" "$task" Enter
+    # 发送任务 (加延迟确保 Enter 生效)
+    echo "[dispatch] 发送任务给 $agent: ${task:0:50}..."
+    tmux -S "$SOCKET" send-keys -t "$agent" "$task"
+    sleep 0.5
+    tmux -S "$SOCKET" send-keys -t "$agent" Enter
+    sleep 0.3
+    # 再发一次 Enter 确保
+    tmux -S "$SOCKET" send-keys -t "$agent" Enter
+    sleep 0.2
+    # 第三次 Enter
+    tmux -S "$SOCKET" send-keys -t "$agent" Enter
     
     # 记录
     redis-cli HSET "$REDIS_PREFIX:task:$agent" "current" "${task:0:100}" "time" "$(date +%s)" 2>/dev/null
@@ -532,6 +556,36 @@ run_check() {
     
     # 先提取所有 agent 的上下文
     "$WORKSPACE/scripts/context-feeder.sh" extract 2>/dev/null
+    
+    # 检测产出：如果 5 分钟没有新提交，说明 agent 出工不出力
+    local last_commit_time=$(redis-cli GET "openclaw:metrics:commit_time" 2>/dev/null)
+    local last_commit_count=$(redis-cli GET "openclaw:metrics:commit_count" 2>/dev/null)
+    local now=$(date +%s)
+    local current_count=$(cd /mnt/d/ai软件/zed && git rev-list --count HEAD 2>/dev/null)
+    
+    if [[ -n "$last_commit_time" && -n "$last_commit_count" ]]; then
+        local elapsed=$((now - last_commit_time))
+        local new_commits=$((current_count - last_commit_count))
+        
+        # 如果 5 分钟没有新提交，强制中断所有 agent 重新派活
+        if [[ $elapsed -gt 300 && $new_commits -eq 0 ]]; then
+            for agent in "${AGENTS[@]}"; do
+                tmux -S "$SOCKET" send-keys -t "$agent" Escape 2>/dev/null
+                sleep 0.3
+                tmux -S "$SOCKET" send-keys -t "$agent" C-c 2>/dev/null
+                sleep 0.3
+                dispatch_task "$agent"
+            done
+            issues+=("no_output_5min:force_redispatch")
+            redis-cli SET "openclaw:metrics:commit_time" "$now" 2>/dev/null
+        fi
+    fi
+    
+    # 更新提交计数
+    redis-cli SET "openclaw:metrics:commit_count" "$current_count" 2>/dev/null
+    if [[ $current_count -gt ${last_commit_count:-0} ]]; then
+        redis-cli SET "openclaw:metrics:commit_time" "$now" 2>/dev/null
+    fi
     
     for agent in "${AGENTS[@]}"; do
         # 检查会话是否存在
