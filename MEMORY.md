@@ -997,6 +997,23 @@ RULES: [约束/验收标准]
 
 **当前状态**: 三个 agent 全部正常工作
 
+**当前状态**: 三个 agent 全部正常工作
+
+### 2026-02-02 20:11 - 🐛 修复 env_error 死循环 bug
+
+**问题**: unified-scheduler 执行时 codex-agent 陷入死循环
+- evolution-v4.sh 的 `fix_env_error` 函数直接发送中文提示到 bash
+- 导致 "command not found" 错误
+- 循环发送相同提示，形成死循环
+
+**修复**:
+- 改为直接重启会话，而不是发送提示
+- env_error 通常是 bash 层面问题，重启是最干净的解决方案
+
+**教训**:
+- 不要发送中文到 bash，bash 会把它当命令执行
+- 环境问题最好重启，不要尝试在线修复
+
 ---
 
 ## Chi Code 产品愿景 (2026-02-02)
