@@ -28,6 +28,7 @@ use gpui::{
     AppContext, ClipboardEntry, Context, Entity, EventEmitter, FocusHandle, Focusable, ImageFormat,
     KeyContext, SharedString, Subscription, Task, TextStyle, WeakEntity,
 };
+use i18n::t;
 use language::{Buffer, Language, language_settings::InlayHintKind};
 use project::{CompletionIntent, InlayHint, InlayHintLabel, InlayId, Project, Worktree};
 use prompt_store::PromptStore;
@@ -365,7 +366,7 @@ impl MessageEditor {
             .title
             .clone()
             .filter(|title| !title.is_empty())
-            .unwrap_or_else(|| SharedString::new_static("New Thread"));
+            .unwrap_or_else(|| t("agent-new-thread").into());
         let uri = MentionUri::Thread {
             id: thread.session_id,
             name: thread_title.to_string(),
