@@ -16,7 +16,7 @@ declare -A AGENT_CONFIG=(
     ["claude-agent:workdir"]="/mnt/d/ai软件/zed"
     ["gemini-agent:cmd"]="gemini"
     ["gemini-agent:workdir"]="/mnt/d/ai软件/zed"
-    ["codex-agent:cmd"]="codex"
+    ["codex-agent:cmd"]="/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command 'cd D:\\ai软件\\zed; codex'"
     ["codex-agent:workdir"]="/mnt/d/ai软件/zed"
 )
 
@@ -204,6 +204,8 @@ repair_agent() {
         needs_confirm)
             # 自动确认
             auto_confirm "$agent"
+            # 重置 retry 计数器 (确认成功后)
+            redis-cli HSET "$REDIS_PREFIX:retry:$agent" "count" 0 2>/dev/null
             echo "confirmed"
             ;;
         tool_error)
@@ -324,24 +326,56 @@ restart_agent() {
     "$WORKSPACE/scripts/dashboard.sh" log "重启 $agent" 2>/dev/null
 }
 
-# ============ 自动确认 ============
+# ============ 自动确认 (进化版) ============
 auto_confirm() {
     local agent="$1"
-    for i in {1..10}; do
-        sleep 2
-        local output=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p | tail -15)
+    local confirmed=false
+    
+    for i in {1..15}; do
+        sleep 1
+        local output=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p | tail -20)
+        
+        # 检测各种确认界面并处理
         if echo "$output" | grep -qE "Yes, I accept" 2>/dev/null; then
             tmux -S "$SOCKET" send-keys -t "$agent" Down Enter
-        elif echo "$output" | grep -qE "Allow once|1\. Allow|Allow execution" 2>/dev/null; then
+            confirmed=true
+        elif echo "$output" | grep -qE "● 1\. Allow once|Allow once|1\. Allow|Allow execution" 2>/dev/null; then
+            # Gemini 多选确认界面
             tmux -S "$SOCKET" send-keys -t "$agent" "1" Enter
+            confirmed=true
+        elif echo "$output" | grep -qE "Waiting for user confirmation" 2>/dev/null; then
+            # Gemini 等待确认状态 - 发送 1 选择 Allow once
+            tmux -S "$SOCKET" send-keys -t "$agent" "1" Enter
+            confirmed=true
         elif echo "$output" | grep -qE "Enter to confirm|Press Enter|Dark mode|Light mode|trust this" 2>/dev/null; then
             tmux -S "$SOCKET" send-keys -t "$agent" Enter
+            confirmed=true
         elif echo "$output" | grep -qE "\[y/N\]|\(y/n\)" 2>/dev/null; then
             tmux -S "$SOCKET" send-keys -t "$agent" "y" Enter
-        elif echo "$output" | grep -qE "^❯\s*$|^›\s*$|context left|Type your message" 2>/dev/null; then
+            confirmed=true
+        elif echo "$output" | grep -qE "^❯\s*$|^›\s*$|context left|Type your message|esc to interrupt|esc to cancel" 2>/dev/null; then
+            # 已经恢复正常，重置 retry 计数器
+            redis-cli HSET "$REDIS_PREFIX:retry:$agent" "count" 0 2>/dev/null
             return 0
         fi
+        
+        # 如果刚确认了，等待一下看是否恢复
+        if [[ "$confirmed" == "true" ]]; then
+            sleep 2
+            local new_output=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p | tail -10)
+            if echo "$new_output" | grep -qE "^❯\s*$|^›\s*$|context left|Type your message|esc to interrupt|esc to cancel" 2>/dev/null; then
+                # 恢复正常，重置 retry 计数器
+                redis-cli HSET "$REDIS_PREFIX:retry:$agent" "count" 0 2>/dev/null
+                return 0
+            fi
+            confirmed=false
+        fi
     done
+    
+    # 循环结束还没恢复，可能需要更强力的措施
+    # 尝试发送 Escape 取消当前操作
+    tmux -S "$SOCKET" send-keys -t "$agent" Escape
+    sleep 1
 }
 
 # ============ 智能派活 v4 ============
@@ -356,10 +390,11 @@ dispatch_task() {
         task=$(redis-cli LPOP "$REDIS_PREFIX:tasks:queue" 2>/dev/null)
     fi
     
-    # 3. 检查是否有未完成的任务需要继续
+    # 3. 检查是否有未完成的任务需要继续 (防止无限嵌套)
     if [[ -z "$task" ]]; then
         local last_task=$(redis-cli HGET "$REDIS_PREFIX:task:$agent" "current" 2>/dev/null)
-        if [[ -n "$last_task" && "$last_task" != "null" ]]; then
+        # 只有当 last_task 不包含 "继续之前的任务" 时才添加前缀
+        if [[ -n "$last_task" && "$last_task" != "null" && ! "$last_task" =~ "继续之前的任务" ]]; then
             task="继续之前的任务: $last_task"
         fi
     fi

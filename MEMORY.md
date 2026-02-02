@@ -904,3 +904,33 @@ RULES: [约束/验收标准]
 - 智能决策而非简单规则
 - 持续学习和进化
 - 生成报告和分析
+
+### 2026-02-02 15:30 - 🚀 进化 v4.3：系统级自动修复 + Codex 启动修复
+
+**问题**:
+1. OpenClaw cron 任务在 rate limit 时失效，agent 卡住没人管
+2. Gemini 的多选确认界面 ("● 1. Allow once") 检测不到
+3. Codex 任务派发导致 "继续之前的任务" 无限嵌套
+4. Codex 在 WSL 中启动失败 (命令找不到)
+
+**修复**:
+1. ✅ 新增 `scripts/auto-fix.sh` - 纯 bash 自动修复，不依赖 AI
+2. ✅ 添加系统 cron 任务 - 每分钟运行 auto-fix.sh
+3. ✅ 支持 Gemini 多选确认 - 检测 "● 1. Allow once" 并发送 "1"
+4. ✅ 修复任务嵌套 - 检查 last_task 是否已包含 "继续之前的任务"
+5. ✅ 修复 Codex 启动 - 使用完整 PowerShell 路径
+
+**系统 cron 任务**:
+```
+* * * * * /home/jinyang/.openclaw/workspace/scripts/auto-fix.sh
+```
+
+**Codex 启动命令**:
+```bash
+/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command 'cd D:\ai软件\zed; codex'
+```
+
+**当前状态**: 三个 agent 全部正常工作
+- Claude: working
+- Gemini: working (retry:7 需要关注)
+- Codex: working (100% context，刚重启)
