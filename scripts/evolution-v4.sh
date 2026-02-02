@@ -399,8 +399,11 @@ case "${1:-check}" in
         r=$(repair_agent "$2" "$d")
         echo "$2: $d → $r"
         ;;
+    diagnose)
+        diagnose_agent "$2"
+        ;;
     learn)
         learn "$2" "$3" "$4"
         ;;
-    *) echo "用法: $0 {check|status|repair <agent>|learn <agent> <problem> <solution>}" ;;
+    *) echo "用法: $0 {check|status|repair <agent>|diagnose <agent>|learn <agent> <problem> <solution>}" ;;
 esac
