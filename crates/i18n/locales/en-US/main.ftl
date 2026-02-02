@@ -2659,3 +2659,9 @@ lm-xai-custom-provider-note = Note that xAI is a custom OpenAI-compatible provid
 lm-zed-agent-vercel = Zed's agent with Vercel v0
 lm-vercel-console = Vercel v0's console
 lm-vercel-custom-provider-note = Note that Vercel v0 is a custom OpenAI-compatible provider.
+
+# Language Models - OpenRouter
+lm-zed-agent-openrouter = Zed's agent with OpenRouter
+lm-create-api-key-by-visiting = Create an API key by visiting
+lm-openrouter-console = OpenRouter's console
+lm-openrouter-ensure-credits = Ensure your OpenRouter account has credits

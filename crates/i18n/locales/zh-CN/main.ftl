@@ -2672,3 +2672,9 @@ lm-xai-custom-provider-note = 注意：xAI 是一个自定义的 OpenAI 兼容�
 lm-zed-agent-vercel = Zed 的 Vercel v0 代理
 lm-vercel-console = Vercel v0 控制台
 lm-vercel-custom-provider-note = 注意：Vercel v0 是一个自定义的 OpenAI 兼容提供商。
+
+# Language Models - OpenRouter / 语言模型 - OpenRouter
+lm-zed-agent-openrouter = Zed 的 OpenRouter 代理
+lm-create-api-key-by-visiting = 访问以下链接创建 API 密钥
+lm-openrouter-console = OpenRouter 控制台
+lm-openrouter-ensure-credits = 确保您的 OpenRouter 账户有余额
