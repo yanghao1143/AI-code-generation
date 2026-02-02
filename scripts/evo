@@ -127,6 +127,45 @@ case "${1:-help}" in
         ;;
     
     # 帮助
+    
+    # 协作
+    collab)
+        "$SCRIPTS/collaboration.sh" "${@:2}"
+        ;;
+    help-request)
+        "$SCRIPTS/collaboration.sh" help "$2" "$3" "$4" "$5"
+        ;;
+    share)
+        "$SCRIPTS/collaboration.sh" share "$2" "$3" "$4"
+        ;;
+    handoff)
+        "$SCRIPTS/collaboration.sh" handoff "$2" "$3" "$4" "$5"
+        ;;
+    
+    # 代码审查
+    review)
+        "$SCRIPTS/auto-review.sh" "${2:-report}" "${3:-30}"
+        ;;
+    
+    # 进度追踪
+    progress)
+        "$SCRIPTS/progress-tracker.sh" "${2:-summary}"
+        ;;
+    i18n)
+        "$SCRIPTS/progress-tracker.sh" i18n
+        ;;
+    
+    # 指标
+    metrics)
+        "$SCRIPTS/metrics.sh" "${2:-report}"
+        ;;
+    route)
+        "$SCRIPTS/smart-router-v2.sh" route "$2"
+        ;;
+    predict)
+        "$SCRIPTS/predictor.sh" "${2:-predict}"
+        ;;
+    
     help|--help|-h|*)
         show_help
         ;;
