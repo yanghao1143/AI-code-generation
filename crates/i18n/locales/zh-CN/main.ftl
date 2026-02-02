@@ -2600,3 +2600,6 @@ dev-container-overwrite-config = 覆盖现有配置？
 # Remote Servers - More / 远程服务器 - 更多
 remote-servers-dev-containers = 开发容器
 remote-servers-remote-projects = 远程项目
+
+# Agent Registry - Title / 代理注册表 - 标题
+agent-registry-title = ACP 代理注册表

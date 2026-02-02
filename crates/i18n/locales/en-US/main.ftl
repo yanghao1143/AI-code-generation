@@ -2587,3 +2587,6 @@ dev-container-overwrite-config = Overwrite Existing Configuration?
 # Remote Servers - More
 remote-servers-dev-containers = Dev Containers
 remote-servers-remote-projects = Remote Projects
+
+# Agent Registry - Title
+agent-registry-title = ACP Agent Registry

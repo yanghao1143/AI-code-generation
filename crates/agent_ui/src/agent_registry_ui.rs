@@ -546,7 +546,7 @@ impl Render for AgentRegistryPage {
                                 .gap_2()
                                 .items_baseline()
                                 .child(
-                                    Headline::new("ACP Agent Registry").size(HeadlineSize::XLarge),
+                                    Headline::new(t("agent-registry-title")).size(HeadlineSize::XLarge),
                                 )
                                 .child(div().id("beta-chip").child(Chip::new(t("agent-beta"))).tooltip(
                                     Tooltip::text(t("agent-beta-desc")),
@@ -635,7 +635,7 @@ impl Item for AgentRegistryPage {
     type Event = ItemEvent;
 
     fn tab_content_text(&self, _detail: usize, _cx: &App) -> SharedString {
-        "ACP Agent Registry".into()
+        t("agent-registry-title").into()
     }
 
     fn telemetry_event_text(&self) -> Option<&'static str> {
