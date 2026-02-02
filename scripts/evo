@@ -1,5 +1,5 @@
 #!/bin/bash
-# evo - 进化系统统一入口
+# evo - 进化系统统一入口 v4
 # 用法: evo <command> [args...]
 
 WORKSPACE="/home/jinyang/.openclaw/workspace"
@@ -13,13 +13,15 @@ NC='\033[0m'
 
 show_help() {
     echo -e "${CYAN}╔══════════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${CYAN}║              🧬 Multi-Agent 进化系统 v3.3                        ║${NC}"
+    echo -e "${CYAN}║              🧬 Multi-Agent 进化系统 v4                          ║${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════════╝${NC}"
     echo ""
     echo -e "${GREEN}监控命令:${NC}"
     echo "  evo status          - 查看 agent 状态"
     echo "  evo dashboard       - 实时监控仪表盘"
     echo "  evo check           - 检查并自动修复问题"
+    echo "  evo logs [hours]    - 查看日志分析"
+    echo "  evo health          - 系统健康报告"
     echo ""
     echo -e "${GREEN}任务管理:${NC}"
     echo "  evo add <task> [type] [agent]  - 添加任务"
@@ -27,7 +29,9 @@ show_help() {
     echo "  evo decompose <task>           - 智能分解任务"
     echo "  evo dispatch <agent>           - 手动派活"
     echo ""
-    echo -e "${GREEN}学习系统:${NC}"
+    echo -e "${GREEN}优化系统:${NC}"
+    echo "  evo optimize        - 运行自动优化"
+    echo "  evo optimize report - 查看优化报告"
     echo "  evo learn           - 从当前输出学习"
     echo "  evo report          - 生成学习报告"
     echo ""
@@ -40,18 +44,25 @@ show_help() {
     echo "  evo add '修复编译错误' compile codex-agent"
     echo "  evo decompose '国际化 crates/terminal 模块'"
     echo "  evo repair gemini-agent"
+    echo "  evo logs 6"
 }
 
 case "${1:-help}" in
     # 监控
     status)
-        "$SCRIPTS/evolution-v3.sh" status
+        "$SCRIPTS/evolution-v4.sh" status
         ;;
     dashboard|dash)
         "$SCRIPTS/dashboard.sh" "${2:-once}"
         ;;
     check)
-        "$SCRIPTS/evolution-v3.sh" check
+        "$SCRIPTS/evolution-v4.sh" check
+        ;;
+    logs)
+        "$SCRIPTS/log-analyzer.sh" full "${2:-6}"
+        ;;
+    health)
+        "$SCRIPTS/log-analyzer.sh" health
         ;;
     
     # 任务管理
@@ -69,41 +80,44 @@ case "${1:-help}" in
         ;;
     dispatch)
         if [[ -n "$2" ]]; then
-            source "$SCRIPTS/evolution-v3.sh"
+            source "$SCRIPTS/evolution-v4.sh"
             dispatch_task "$2"
         else
             echo "用法: evo dispatch <agent>"
         fi
         ;;
     
-    # 学习
+    # 优化
+    optimize)
+        if [[ "$2" == "report" ]]; then
+            "$SCRIPTS/auto-optimize.sh" report
+        else
+            "$SCRIPTS/auto-optimize.sh" run
+        fi
+        ;;
     learn)
-        "$SCRIPTS/auto-learn.sh" auto
+        "$SCRIPTS/auto-learn.sh" auto 2>/dev/null || echo "auto-learn.sh 不存在"
         ;;
     report)
-        "$SCRIPTS/auto-learn.sh" report
+        "$SCRIPTS/auto-learn.sh" report 2>/dev/null || "$SCRIPTS/log-analyzer.sh" full
         ;;
     
     # 维护
     repair)
-        "$SCRIPTS/evolution-v3.sh" repair "$2"
+        "$SCRIPTS/evolution-v4.sh" repair "$2"
         ;;
     restart)
         if [[ -n "$2" ]]; then
-            source "$SCRIPTS/evolution-v3.sh"
-            tmux -S /tmp/openclaw-agents.sock kill-session -t "$2" 2>/dev/null
-            sleep 1
-            local cmd="${AGENT_CONFIG[$2:cmd]}"
-            local workdir="${AGENT_CONFIG[$2:workdir]}"
-            tmux -S /tmp/openclaw-agents.sock new-session -d -s "$2" -c "$workdir"
-            tmux -S /tmp/openclaw-agents.sock send-keys -t "$2" "$cmd" Enter
+            source "$SCRIPTS/evolution-v4.sh"
+            restart_agent "$2"
             echo "✅ 已重启 $2"
         else
             echo "用法: evo restart <agent>"
         fi
         ;;
     cleanup)
-        "$SCRIPTS/priority-queue.sh" cleanup
+        "$SCRIPTS/priority-queue.sh" cleanup 2>/dev/null
+        "$SCRIPTS/auto-optimize.sh" cleanup
         ;;
     
     # 帮助
