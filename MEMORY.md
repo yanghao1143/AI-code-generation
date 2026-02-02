@@ -441,3 +441,23 @@ RULES: [约束/验收标准]
 - 智能决策而非简单规则
 - 持续学习和进化
 - 生成报告和分析
+
+### 2026-02-02 10:30 - 📦 配套项目：chicode-extensions
+
+**仓库**: https://github.com/yanghao1143/chicode-extensions
+
+**说明**: Chi Code 编辑器的官方扩展仓库
+- 包含语言支持、主题、LSP 等扩展
+- 自动同步上游 zed-industries/extensions
+- 同步时间: 每天北京时间 10:00
+
+**结构**:
+- `extensions/` - 扩展目录
+- `scripts/` - 脚本
+- `src/` - 源码
+- `descriptions-zh.json` - 中文描述
+- `extensions.toml` - 扩展配置
+
+**待办**: 
+- [ ] 检查是否需要中文化
+- [ ] 检查是否有需要修复的问题
