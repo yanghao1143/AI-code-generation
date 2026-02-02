@@ -2719,6 +2719,7 @@ acp-server-exited = 服务器已退出，状态码：{$status}
 acp-duplicate-subagent-update = 同一 AcpThread 实体的重复 SubagentThread 更新
 acp-use-either-send-update = 请使用 send_update 或 set_next_prompt_updates
 acp-read-beyond-file-end = 灝濊瘯璇诲彇瓒呭嚭鏂囦欢鏈熬鐨勫唴瀹癸紝琛 { $line }:{ $col }
+acp-version-not-supported = 鏉ヨ嚜 { $path } 鐨勭増鏈 { $current_version } 涓嶈鏀寔 (鑷冲皯闇€瑕 { $minimum_version })
 tool-call-not-found = 未找到工具调�
 acp-user = 用户
 acp-assistant = 助手

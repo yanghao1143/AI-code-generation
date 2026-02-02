@@ -1151,7 +1151,12 @@ impl Display for LoadError {
             } => {
                 write!(
                     f,
-                    "version {current_version} from {path} is not supported (need at least {minimum_version})"
+                    "{}",
+                    t_args("acp-version-not-supported", &[
+                        ("current_version", current_version.to_string().into()),
+                        ("path", path.to_string().into()),
+                        ("minimum_version", minimum_version.to_string().into())
+                    ])
                 )
             }
             LoadError::FailedToInstall(msg) => write!(f, t_args("acp-failed-to-install", &[("msg", msg.as_str().into())]).to_string()),
