@@ -484,3 +484,22 @@ RULES: [约束/验收标准]
 - 快速检查延迟: 16ms
 - 检查频率: 60次/小时 (原 12次/小时)
 - 响应速度: 提升 5x
+
+### 2026-02-02 12:55 - 🚀 进化 v3：精准状态检测
+
+**问题**: evolution-v2.sh 检测不准，agent 卡住但报告正常
+
+**修复**:
+1. ✅ 新增 `evolution-v3.sh` - 更精准的状态检测
+2. ✅ 检测 `needs_confirm` 支持 "Allow once", "Allow execution of"
+3. ✅ 检测 `tool_error` 支持 "Request cancelled", "params must have"
+4. ✅ 检测 `idle_with_suggestion` 识别 Codex 的 "Summarize recent commits"
+5. ✅ 检测 `working` 扩展到 last_20 行，支持更多关键词
+6. ✅ 更新 cron 使用 v3
+
+**关键改进**:
+- `last_5` → `last_20` 检测工作状态
+- 新增 "Running cargo", "Checking", "Flowing" 等关键词
+- 修复 Gemini "Allow once" 确认发送 "1" 而不是 Enter
+
+**当前状态**: 三个 agent 全部正常工作
