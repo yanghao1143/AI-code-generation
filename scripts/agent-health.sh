@@ -188,11 +188,18 @@ has_pending_input() {
     
     case "$cli_type" in
         gemini)
-            # Gemini: 检查输入框是否有内容 (> 后面有文字，但没有 spinner)
-            if echo "$last_lines" | grep -qE "^│ > .+[^│]" 2>/dev/null; then
-                # 确认没有在处理中
-                if ! echo "$last_lines" | grep -qE "(⠋|⠙|⠹|⠸|⠼|⠴|⠦|⠧|⠇|⠏|esc to cancel)" 2>/dev/null; then
-                    return 0
+            # Gemini: 检查输入框是否有内容 (> 后面有实际文字，不是提示语)
+            # 排除 "Type your message" 这种提示
+            if echo "$last_lines" | grep -qE "^│ > " 2>/dev/null; then
+                # 排除空输入框和提示语
+                if echo "$last_lines" | grep -qE "^│ > \s*Type your message|^│ >\s*│|^│ >\s*$" 2>/dev/null; then
+                    return 1
+                fi
+                # 确认有实际内容且没有在处理中
+                if echo "$last_lines" | grep -qE "^│ > [^T│ ]" 2>/dev/null; then
+                    if ! echo "$last_lines" | grep -qE "(⠋|⠙|⠹|⠸|⠼|⠴|⠦|⠧|⠇|⠏|esc to cancel)" 2>/dev/null; then
+                        return 0
+                    fi
                 fi
             fi
             ;;
