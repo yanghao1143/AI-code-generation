@@ -152,16 +152,36 @@ full_health_check() {
         fi
     done
     
-    # 3. Git 健康
-    echo -e "\n${BLUE}3. Git 健康检查${NC}"
+    # 3. Git 健康检查 (workspace)
+    echo -e "\n${BLUE}3. Git 健康检查 (workspace)${NC}"
     cd "$WORKSPACE"
     local unpushed=$(git log origin/master..HEAD --oneline 2>/dev/null | wc -l)
     if [[ $unpushed -gt 5 ]]; then
-        echo -e "  ${YELLOW}⚠️ 有 $unpushed 个未推送的提交${NC}"
+        echo -e "  ${YELLOW}⚠️ workspace 有 $unpushed 个未推送的提交${NC}"
         git push 2>/dev/null
         echo -e "  ${GREEN}  → 已推送${NC}"
         ((issues++))
         ((fixed++))
+    fi
+    
+    # 4. 主仓库提交检查 (让 agent 提交)
+    echo -e "\n${BLUE}4. 主仓库提交检查${NC}"
+    # 每30分钟提醒 agent 提交一次
+    local last_commit_remind=$(redis-cli GET "openclaw:director:last_commit_remind" 2>/dev/null)
+    local now=$(date +%s)
+    local remind_interval=1800  # 30分钟
+    
+    if [[ -z "$last_commit_remind" ]] || [[ $((now - last_commit_remind)) -gt $remind_interval ]]; then
+        echo -e "  ${YELLOW}提醒 agent 提交代码${NC}"
+        for agent in claude-agent gemini-agent codex-agent; do
+            local output=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p 2>/dev/null | tail -10)
+            # 只在空闲时提醒
+            if echo "$output" | tail -3 | grep -qE "^>\s*$|Type your message|context left.*shortcuts" 2>/dev/null; then
+                tmux -S "$SOCKET" send-keys -t "$agent" "git add -A && git status --short && git diff --cached --stat | head -5" Enter
+                echo -e "  ${GREEN}  → 已提醒 $agent 检查提交${NC}"
+            fi
+        done
+        redis-cli SET "openclaw:director:last_commit_remind" "$now" > /dev/null 2>&1
     fi
     
     # 汇总
@@ -202,10 +222,13 @@ smart_dispatch() {
             local task=""
             case "$agent" in
                 claude-agent)
-                    task="继续 i18n 国际化工作，找到下一个需要国际化的模块并处理，完成后 git commit 和 push"
+                    task="继续 i18n 国际化工作，找到下一个需要国际化的模块并处理，完成后 git add -A && git commit -m 'i18n: 模块国际化' && git push"
                     ;;
                 gemini-agent)
-                    task="继续 i18n 国际化工作，找到下一个需要国际化的模块并处理"
+                    task="继续 i18n 国际化工作，找到下一个需要国际化的模块并处理，完成后 git add -A && git commit -m 'i18n: 模块国际化' && git push"
+                    ;;
+                codex-agent)
+                    task="运行 cargo check，修复发现的编译错误，完成后 git add -A && git commit -m 'fix: 修复编译错误' && git push"
                     ;;
                 codex-agent)
                     task="运行 cargo check，修复发现的编译错误"
