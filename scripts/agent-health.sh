@@ -129,8 +129,8 @@ is_waiting_confirm() {
         fi
     fi
     
-    # 3. Codex CLI 特有: 权限确认
-    if echo "$last_lines" | grep -qE "Waiting for user confirmation" 2>/dev/null; then
+    # 3. Codex CLI 特有: 权限确认或选择确认
+    if echo "$last_lines" | grep -qE "Waiting for user confirmation|Yes, proceed|Press enter to confirm" 2>/dev/null; then
         return 0
     fi
     

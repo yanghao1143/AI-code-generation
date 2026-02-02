@@ -58,14 +58,42 @@ check_agents() {
         local output=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p 2>/dev/null | tail -20)
         local last_lines=$(echo "$output" | tail -5)
         
-        # 检查是否有未发送的输入
-        if echo "$last_lines" | grep -qE "^│ > .+|^> .+[^$]|^› .+[^$]" 2>/dev/null; then
-            # 排除空提示符和处理中状态
-            if ! echo "$output" | grep -qE "(⠋|⠙|⠹|⠸|Thinking|Working|esc to interrupt)" 2>/dev/null; then
-                if ! echo "$last_lines" | grep -qE "^>\s*$|^›\s*$|Type your message\s*$" 2>/dev/null; then
-                    log "⚠️ $agent 有未发送的输入"
+        # 检查是否正在处理中
+        local is_working=false
+        if echo "$output" | grep -qE "(⠋|⠙|⠹|⠸|Thinking|Working|Shenaniganing|Cogitat|Cooked|esc to interrupt|esc to cancel)" 2>/dev/null; then
+            is_working=true
+        fi
+        
+        # 如果不在工作中，检查是否有未发送的输入
+        if [[ "$is_working" == "false" ]]; then
+            # Claude: > 后面有内容
+            if echo "$last_lines" | grep -qE "^> .+" 2>/dev/null; then
+                # 排除空提示符
+                if ! echo "$last_lines" | grep -qE "^>\s*$" 2>/dev/null; then
+                    log "⚠️ $agent 有未发送的输入 (Claude)"
                     ((ISSUES++))
-                    # 修复: 发送 Enter
+                    tmux -S "$SOCKET" send-keys -t "$agent" Enter
+                    log "  → 已发送 Enter"
+                    ((FIXED++))
+                fi
+            fi
+            
+            # Gemini: │ > 后面有内容 (排除 Type your message)
+            if echo "$last_lines" | grep -qE "^│ > " 2>/dev/null; then
+                if ! echo "$last_lines" | grep -qE "Type your message|^│ >\s*│|^│ >\s*$" 2>/dev/null; then
+                    log "⚠️ $agent 有未发送的输入 (Gemini)"
+                    ((ISSUES++))
+                    tmux -S "$SOCKET" send-keys -t "$agent" Enter
+                    log "  → 已发送 Enter"
+                    ((FIXED++))
+                fi
+            fi
+            
+            # Codex: › 后面有内容
+            if echo "$last_lines" | grep -qE "^› .+" 2>/dev/null; then
+                if ! echo "$last_lines" | grep -qE "^›\s*$" 2>/dev/null; then
+                    log "⚠️ $agent 有未发送的输入 (Codex)"
+                    ((ISSUES++))
                     tmux -S "$SOCKET" send-keys -t "$agent" Enter
                     log "  → 已发送 Enter"
                     ((FIXED++))
@@ -74,12 +102,12 @@ check_agents() {
         fi
         
         # 检查是否卡在确认界面
-        if echo "$last_lines" | grep -qE "Do you want to proceed|Allow execution|Waiting for.*confirm|\[Y/n\]" 2>/dev/null; then
+        if echo "$last_lines" | grep -qE "Do you want to proceed|Allow execution|Waiting for.*confirm|\[Y/n\]|Yes, proceed|Press enter to confirm" 2>/dev/null; then
             log "⚠️ $agent 卡在确认界面"
             ((ISSUES++))
             # 修复: 发送确认
-            tmux -S "$SOCKET" send-keys -t "$agent" "y" Enter
-            log "  → 已发送确认"
+            tmux -S "$SOCKET" send-keys -t "$agent" Enter
+            log "  → 已发送 Enter 确认"
             ((FIXED++))
         fi
         
