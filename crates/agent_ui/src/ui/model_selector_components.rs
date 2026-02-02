@@ -1,4 +1,5 @@
 use gpui::{Action, ClickEvent, FocusHandle, prelude::*};
+use i18n::t;
 use ui::{ElevationIndex, KeyBinding, ListItem, ListItemSpacing, Tooltip, prelude::*};
 use zed_actions::agent::ToggleModelSelector;
 
@@ -137,9 +138,9 @@ impl RenderOnce for ModelSelectorListItem {
             .end_hover_slot(div().pr_1p5().when_some(self.on_toggle_favorite, {
                 |this, handle_click| {
                     let (icon, color, tooltip) = if is_favorite {
-                        (IconName::StarFilled, Color::Accent, "Unfavorite Model")
+                        (IconName::StarFilled, Color::Accent, t("model-unfavorite"))
                     } else {
-                        (IconName::Star, Color::Default, "Favorite Model")
+                        (IconName::Star, Color::Default, t("model-favorite"))
                     };
                     this.child(
                         IconButton::new(("toggle-favorite", self.index), icon)
@@ -180,7 +181,7 @@ impl RenderOnce for ModelSelectorFooter {
             .border_t_1()
             .border_color(cx.theme().colors().border_variant)
             .child(
-                Button::new("configure", "Configure")
+                Button::new("configure", t("model-configure"))
                     .full_width()
                     .style(ButtonStyle::Outlined)
                     .key_binding(
@@ -222,7 +223,7 @@ impl RenderOnce for ModelSelectorTooltip {
                 h_flex()
                     .gap_2()
                     .justify_between()
-                    .child(Label::new("Change Model"))
+                    .child(Label::new(t("model-change")))
                     .child(KeyBinding::for_action_in(
                         &ToggleModelSelector,
                         &self.focus_handle,
@@ -237,7 +238,7 @@ impl RenderOnce for ModelSelectorTooltip {
                         .border_t_1()
                         .border_color(cx.theme().colors().border_variant)
                         .justify_between()
-                        .child(Label::new("Cycle Favorited Models"))
+                        .child(Label::new(t("model-cycle-favorites")))
                         .child(KeyBinding::for_action_in(
                             &CycleFavoriteModels,
                             &self.focus_handle,

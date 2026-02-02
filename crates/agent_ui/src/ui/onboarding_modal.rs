@@ -1,6 +1,7 @@
 use gpui::{
     ClickEvent, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, MouseDownEvent, Render,
 };
+use i18n::t;
 use ui::{TintColor, Vector, VectorName, prelude::*};
 use workspace::{ModalView, Workspace};
 
@@ -132,11 +133,11 @@ impl Render for AgentOnboardingModal {
                     .w_full()
                     .gap_1()
                     .child(
-                        Label::new("Introducing")
+                        Label::new(t("onboarding-introducing"))
                             .size(LabelSize::Small)
                             .color(Color::Muted),
                     )
-                    .child(Headline::new("Agentic Editing in Zed").size(HeadlineSize::Large)),
+                    .child(Headline::new(t("onboarding-agentic-editing")).size(HeadlineSize::Large)),
             )
             .child(h_flex().absolute().top_2().right_2().child(
                 IconButton::new("cancel", IconName::Close).on_click(cx.listener(
@@ -147,20 +148,20 @@ impl Render for AgentOnboardingModal {
                 )),
             ));
 
-        let open_panel_button = Button::new("open-panel", "Get Started with the Agent Panel")
+        let open_panel_button = Button::new("open-panel", t("onboarding-get-started"))
             .icon_size(IconSize::Indicator)
             .style(ButtonStyle::Tinted(TintColor::Accent))
             .full_width()
             .on_click(cx.listener(Self::open_panel));
 
-        let blog_post_button = Button::new("view-blog", "Check out the Blog Post")
+        let blog_post_button = Button::new("view-blog", t("onboarding-view-blog"))
             .icon(IconName::ArrowUpRight)
             .icon_size(IconSize::Indicator)
             .icon_color(Color::Muted)
             .full_width()
             .on_click(cx.listener(Self::view_blog));
 
-        let copy = "Zed now natively supports agentic editing, enabling fluid collaboration between humans and AI.";
+        let copy = t("onboarding-description");
 
         base.child(Label::new(copy).color(Color::Muted)).child(
             v_flex()

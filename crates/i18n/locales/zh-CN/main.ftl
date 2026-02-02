@@ -33,6 +33,7 @@ env = 环境变量
 search = 搜索
 filter = 筛选
 clear = 清除
+clear-filter = 清除过滤器
 refresh = 刷新
 copy = 复制
 paste = 粘贴
@@ -748,6 +749,15 @@ diagnostics-no-problems = 未检测到问题
 search-in-project = 在项目中搜索
 search-replace = 替换
 search-replace-all = 全部替换
+search-replace-next = 替换下一个匹配
+search-select-prev = 选择上一个匹配
+search-select-next = 选择下一个匹配
+search-limits-reached = 已达到搜索限制。\n尝试缩小搜索范围。
+search-toggle-filters = 切换过滤器
+search-toggle-replace = 切换替换
+search-expand-all = 展开全部搜索结果
+search-collapse-all = 折叠全部搜索结果
+search-only-open-files = 仅搜索打开的文件
 search-whole-word = 全词匹配
 search-regex = 正则表达式
 search-no-results = 未找到结果
@@ -1191,6 +1201,34 @@ agent-next-hunk = 下一个代码块
 agent-previous-hunk = 上一个代码块
 agent-review-all-files = 审查所有文件
 agent-generating-changes = 正在生成更改…
+agent-allow = 允许
+agent-deny = 拒绝
+agent-keep = 保留
+agent-toggle-pane = 切换面板
+agent-close-pane = 关闭面板
+agent-select-thread-hint = 选择一个对话来查看
+
+# Model Selector / 模型选择器
+model-change = 更换模型
+model-cycle-favorites = 循环收藏的模型
+model-favorite = 收藏模型
+model-unfavorite = 取消收藏模型
+model-configure = 配置
+
+# MCP Server Configuration / MCP 服务器配置
+mcp-add-server = 添加 MCP 服务器
+mcp-configure-server = 配置 MCP 服务器
+mcp-configure-name = 配置 { $name }
+mcp-description = 访问 MCP 服务器配置文档以找到所有必要的参数和环境变量。
+mcp-open-repository = 打开仓库
+mcp-configure-local = 配置本地
+mcp-configure-remote = 配置远程
+mcp-configure-local-tooltip = 配置在 stdin/stdout 上运行的 MCP 服务器。
+mcp-configure-remote-tooltip = 配置通过 HTTP 连接的 MCP 服务器
+mcp-add-server-button = 添加服务器
+mcp-configure-server-button = 配置服务器
+mcp-waiting-for-server = 等待 Context Server
+mcp-server-configured-success = { $name } 配置成功。
 
 # Agent Panel / 智能助手面板
 agent-panel-title = 智能助手面板
@@ -1948,6 +1986,23 @@ edit-prediction-enable-desc = 使用 Chi Code 提供的 AI 代码预测
 
 # Onboarding messages / 入门消息
 onboarding-tagline = 下一代编辑器
+onboarding-introducing = 全新推出
+onboarding-agentic-editing = 智能代理编辑
+onboarding-get-started = 开始使用
+onboarding-view-blog = 查看博客文章
+onboarding-description = Chi Code 是一款极速原生编辑器，内置代码智能，从底层设计支持 AI 辅助编辑工作流程。
+onboarding-your-agent-here = 您的代理在此
+onboarding-new-gemini-thread = 新建 Gemini CLI 线程
+onboarding-new-claude-code-thread = 新建 Claude Code 线程
+onboarding-now-available = 现已推出
+onboarding-bring-your-agent = 将您的代理引入 Zed
+onboarding-acp-description = 通过我们全新的代理客户端协议 (ACP)，将您选择的代理引入 Zed，首先支持 Google 的 Gemini CLI 集成。
+onboarding-start-gemini = 使用 Gemini CLI 开始
+onboarding-add-other-agents = 添加其他代理
+onboarding-beta-release = 测试版发布
+onboarding-claude-code-in-zed = Claude Code：原生集成于 Zed
+onboarding-claude-code-description = 基于代理客户端协议，您现在可以在 Zed 的代理面板中将 Claude Code 作为一等公民运行。
+onboarding-start-claude-code = 使用 Claude Code 开始
 settings-import-success = 您的 { $source } 设置已成功导入。
 settings-import-failed = 导入设置失败。详情请查看日志
 settings-import-warning = 导入 { $source } 设置可能会覆盖您现有的设置。将从 { $path } 导入设置

@@ -3,6 +3,7 @@ use gpui::{
     ClickEvent, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, MouseDownEvent, Render,
     linear_color_stop, linear_gradient,
 };
+use i18n::t;
 use ui::{TintColor, Vector, VectorName, prelude::*};
 use workspace::{ModalView, Workspace};
 
@@ -154,7 +155,7 @@ impl Render for ClaudeCodeOnboardingModal {
                     .child(illustration_element(IconName::Stop, None, 0.15))
                     .child(illustration_element(
                         IconName::AiGemini,
-                        Some("New Gemini CLI Thread".into()),
+                        Some(t("onboarding-new-gemini-thread").into()),
                         0.3,
                     ))
                     .child(
@@ -172,11 +173,11 @@ impl Render for ClaudeCodeOnboardingModal {
                                     .size(IconSize::Small)
                                     .color(Color::Muted),
                             )
-                            .child(Label::new("New Claude Code Thread").size(LabelSize::Small)),
+                            .child(Label::new(t("onboarding-new-claude-code-thread")).size(LabelSize::Small)),
                     )
                     .child(illustration_element(
                         IconName::Stop,
-                        Some("Your Agent Here".into()),
+                        Some(t("onboarding-your-agent-here").into()),
                         0.3,
                     ))
                     .child(illustration_element(IconName::Stop, None, 0.15)),
@@ -186,21 +187,21 @@ impl Render for ClaudeCodeOnboardingModal {
             .w_full()
             .gap_1()
             .child(
-                Label::new("Beta Release")
+                Label::new(t("onboarding-beta-release"))
                     .size(LabelSize::Small)
                     .color(Color::Muted),
             )
-            .child(Headline::new("Claude Code: Natively in Zed").size(HeadlineSize::Large));
+            .child(Headline::new(t("onboarding-claude-code-in-zed")).size(HeadlineSize::Large));
 
-        let copy = "Powered by the Agent Client Protocol, you can now run Claude Code as\na first-class citizen in Zed's agent panel.";
+        let copy = t("onboarding-claude-code-description");
 
-        let open_panel_button = Button::new("open-panel", "Start with Claude Code")
+        let open_panel_button = Button::new("open-panel", t("onboarding-start-claude-code"))
             .icon_size(IconSize::Indicator)
             .style(ButtonStyle::Tinted(TintColor::Accent))
             .full_width()
             .on_click(cx.listener(Self::open_panel));
 
-        let docs_button = Button::new("add-other-agents", "Add Other Agents")
+        let docs_button = Button::new("add-other-agents", t("onboarding-add-other-agents"))
             .icon(IconName::ArrowUpRight)
             .icon_size(IconSize::Indicator)
             .icon_color(Color::Muted)

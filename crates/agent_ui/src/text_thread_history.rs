@@ -522,14 +522,14 @@ impl Render for TextThreadHistory {
 
                 if has_no_history {
                     view.justify_center().items_center().child(
-                        Label::new("You don't have any past text threads yet.")
+                        Label::new(t("agent-no-past-threads"))
                             .size(LabelSize::Small)
                             .color(Color::Muted),
                     )
                 } else if self.search_produced_no_matches() {
                     view.justify_center()
                         .items_center()
-                        .child(Label::new("No threads match your search.").size(LabelSize::Small))
+                        .child(Label::new(t("agent-no-matching-threads")).size(LabelSize::Small))
                 } else {
                     view.child(
                         uniform_list(

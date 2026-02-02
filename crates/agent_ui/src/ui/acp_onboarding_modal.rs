@@ -3,6 +3,7 @@ use gpui::{
     ClickEvent, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, MouseDownEvent, Render,
     linear_color_stop, linear_gradient,
 };
+use i18n::t;
 use ui::{TintColor, Vector, VectorName, prelude::*};
 use workspace::{ModalView, Workspace};
 
@@ -89,7 +90,7 @@ impl Render for AcpOnboardingModal {
                 .map(|this| {
                     if label {
                         this.child(
-                            Label::new("Your Agent Here")
+                            Label::new(t("onboarding-your-agent-here"))
                                 .size(LabelSize::Small)
                                 .color(Color::Muted),
                         )
@@ -168,7 +169,7 @@ impl Render for AcpOnboardingModal {
                                     .size(IconSize::Small)
                                     .color(Color::Muted),
                             )
-                            .child(Label::new("New Gemini CLI Thread").size(LabelSize::Small)),
+                            .child(Label::new(t("onboarding-new-gemini-thread")).size(LabelSize::Small)),
                     )
                     .child(illustration_element(true, 0.3))
                     .child(illustration_element(false, 0.15)),
@@ -178,21 +179,21 @@ impl Render for AcpOnboardingModal {
             .w_full()
             .gap_1()
             .child(
-                Label::new("Now Available")
+                Label::new(t("onboarding-now-available"))
                     .size(LabelSize::Small)
                     .color(Color::Muted),
             )
-            .child(Headline::new("Bring Your Own Agent to Zed").size(HeadlineSize::Large));
+            .child(Headline::new(t("onboarding-bring-your-agent")).size(HeadlineSize::Large));
 
-        let copy = "Bring the agent of your choice to Zed via our new Agent Client Protocol (ACP), starting with Google's Gemini CLI integration.";
+        let copy = t("onboarding-acp-description");
 
-        let open_panel_button = Button::new("open-panel", "Start with Gemini CLI")
+        let open_panel_button = Button::new("open-panel", t("onboarding-start-gemini"))
             .icon_size(IconSize::Indicator)
             .style(ButtonStyle::Tinted(TintColor::Accent))
             .full_width()
             .on_click(cx.listener(Self::open_panel));
 
-        let docs_button = Button::new("add-other-agents", "Add Other Agents")
+        let docs_button = Button::new("add-other-agents", t("onboarding-add-other-agents"))
             .icon(IconName::ArrowUpRight)
             .icon_size(IconSize::Indicator)
             .icon_color(Color::Muted)

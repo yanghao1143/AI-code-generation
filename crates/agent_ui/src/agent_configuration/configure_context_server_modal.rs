@@ -8,6 +8,7 @@ use gpui::{
     AsyncWindowContext, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, ScrollHandle,
     Task, TextStyle, TextStyleRefinement, UnderlineStyle, WeakEntity, prelude::*,
 };
+use i18n::{t, t_args};
 use language::{Language, LanguageRegistry};
 use markdown::{Markdown, MarkdownElement, MarkdownStyle};
 use notifications::status_toast::{StatusToast, ToastIcon};
@@ -563,11 +564,11 @@ impl ConfigureContextServerModal {
             .update(cx, {
                 |workspace, cx| {
                     let status_toast = StatusToast::new(
-                        format!("{} configured successfully.", id.0),
+                        t_args("mcp-server-configured-success", &[("name", id.0.clone().into())]).to_string(),
                         cx,
                         |this, _cx| {
                             this.icon(ToastIcon::new(IconName::ToolHammer).color(Color::Muted))
-                                .action("Dismiss", |_, _| {})
+                                .action(t("dismiss"), |_, _| {})
                         },
                     );
 
@@ -607,15 +608,15 @@ impl EventEmitter<DismissEvent> for ConfigureContextServerModal {}
 impl ConfigureContextServerModal {
     fn render_modal_header(&self) -> ModalHeader {
         let text: SharedString = match &self.source {
-            ConfigurationSource::New { .. } => "Add MCP Server".into(),
-            ConfigurationSource::Existing { .. } => "Configure MCP Server".into(),
-            ConfigurationSource::Extension { id, .. } => format!("Configure {}", id.0).into(),
+            ConfigurationSource::New { .. } => t("mcp-add-server").into(),
+            ConfigurationSource::Existing { .. } => t("mcp-configure-server").into(),
+            ConfigurationSource::Extension { id, .. } => t_args("mcp-configure-name", &[("name", id.0.clone().into())]).into(),
         };
         ModalHeader::new().headline(text)
     }
 
     fn render_modal_description(&self, window: &mut Window, cx: &mut Context<Self>) -> AnyElement {
-        const MODAL_DESCRIPTION: &str = "Visit the MCP server configuration docs to find all necessary arguments and environment variables.";
+        let modal_description = t("mcp-description");
 
         if let ConfigurationSource::Extension {
             installation_instructions: Some(installation_instructions),
@@ -631,7 +632,7 @@ impl ConfigureContextServerModal {
                 ))
                 .into_any_element()
         } else {
-            Label::new(MODAL_DESCRIPTION)
+            Label::new(modal_description)
                 .color(Color::Muted)
                 .into_any_element()
         }
@@ -692,7 +693,7 @@ impl ConfigureContextServerModal {
                 } = &self.source
                 {
                     Some(
-                        Button::new("open-repository", "Open Repository")
+                        Button::new("open-repository", t("mcp-open-repository"))
                             .icon(IconName::ArrowUpRight)
                             .icon_color(Color::Muted)
                             .icon_size(IconSize::Small)
@@ -700,7 +701,7 @@ impl ConfigureContextServerModal {
                                 let repository_url = repository_url.clone();
                                 move |_window, cx| {
                                     Tooltip::with_meta(
-                                        "Open Repository",
+                                        t("mcp-open-repository"),
                                         None,
                                         repository_url.clone(),
                                         cx,
@@ -714,14 +715,14 @@ impl ConfigureContextServerModal {
                     )
                 } else if let ConfigurationSource::New { is_http, .. } = &self.source {
                     let label = if *is_http {
-                        "Configure Local"
+                        t("mcp-configure-local")
                     } else {
-                        "Configure Remote"
+                        t("mcp-configure-remote")
                     };
                     let tooltip = if *is_http {
-                        "Configure an MCP server that runs on stdin/stdout."
+                        t("mcp-configure-local-tooltip")
                     } else {
-                        "Configure an MCP server that you connect to over HTTP"
+                        t("mcp-configure-remote-tooltip")
                     };
 
                     Some(
@@ -753,9 +754,9 @@ impl ConfigureContextServerModal {
                         Button::new(
                             "cancel",
                             if self.source.has_configuration_options() {
-                                "Cancel"
+                                t("cancel")
                             } else {
-                                "Dismiss"
+                                t("dismiss")
                             },
                         )
                         .key_binding(
@@ -770,9 +771,9 @@ impl ConfigureContextServerModal {
                         Button::new(
                             "add-server",
                             if self.source.is_new() {
-                                "Add Server"
+                                t("mcp-add-server-button")
                             } else {
-                                "Configure Server"
+                                t("mcp-configure-server-button")
                             },
                         )
                         .disabled(is_connecting)
@@ -800,7 +801,7 @@ impl ConfigureContextServerModal {
                     .into_any_element(),
             )
             .child(
-                Label::new("Waiting for Context Server")
+                Label::new(t("mcp-waiting-for-server"))
                     .size(LabelSize::Small)
                     .color(Color::Muted),
             )

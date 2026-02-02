@@ -4167,7 +4167,7 @@ impl AcpThreadView {
                 h_flex()
                     .gap_0p5()
                     .child(
-                        Button::new(("allow-btn", entry_ix), "Allow")
+                        Button::new(("allow-btn", entry_ix), t("agent-allow"))
                             .icon(IconName::Check)
                             .icon_color(Color::Success)
                             .icon_position(IconPosition::Start)
@@ -4199,7 +4199,7 @@ impl AcpThreadView {
                             })),
                     )
                     .child(
-                        Button::new(("deny-btn", entry_ix), "Deny")
+                        Button::new(("deny-btn", entry_ix), t("agent-deny"))
                             .icon(IconName::Close)
                             .icon_color(Color::Error)
                             .icon_position(IconPosition::Start)
@@ -5654,7 +5654,7 @@ impl AcpThreadView {
         if use_keep_reject_buttons {
             container
                 .child(
-                    Button::new(("review", index), "Review")
+                    Button::new(("review", index), t("agent-review"))
                         .label_size(LabelSize::Small)
                         .on_click({
                             let buffer = buffer.clone();
@@ -5683,7 +5683,7 @@ impl AcpThreadView {
                 )
                 .child(Divider::vertical().color(DividerColor::BorderVariant))
                 .child(
-                    Button::new(("reject-file", index), "Reject")
+                    Button::new(("reject-file", index), t("agent-reject"))
                         .label_size(LabelSize::Small)
                         .disabled(pending_edits)
                         .on_click({
@@ -5707,7 +5707,7 @@ impl AcpThreadView {
                         }),
                 )
                 .child(
-                    Button::new(("keep-file", index), "Keep")
+                    Button::new(("keep-file", index), t("agent-keep"))
                         .label_size(LabelSize::Small)
                         .disabled(pending_edits)
                         .on_click({
@@ -5732,7 +5732,7 @@ impl AcpThreadView {
         } else {
             container
                 .child(
-                    Button::new(("review", index), "Review")
+                    Button::new(("review", index), t("agent-review"))
                         .label_size(LabelSize::Small)
                         .on_click({
                             let buffer = buffer.clone();

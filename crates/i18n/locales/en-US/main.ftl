@@ -33,6 +33,7 @@ env = Env
 search = Search
 filter = Filter
 clear = Clear
+clear-filter = Clear Filter
 refresh = Refresh
 copy = Copy
 paste = Paste
@@ -688,11 +689,38 @@ diagnostics-no-problems = No problems detected
 search-in-project = Search in Project
 search-replace = Replace
 search-replace-all = Replace All
+search-replace-next = Replace Next Match
+search-select-prev = Select Previous Match
+search-select-next = Select Next Match
+search-limits-reached = Search limits reached.\nTry narrowing your search.
+search-toggle-filters = Toggle Filters
+search-toggle-replace = Toggle Replace
+search-expand-all = Expand All Search Results
+search-collapse-all = Collapse All Search Results
+search-only-open-files = Only Search Open Files
 search-match-case = Match Case
 search-whole-word = Whole Word
 search-regex = Regex
 search-no-results = No results found
 search-results = { $count } results
+
+# ============================================
+# Buffer Search
+# ============================================
+buffer-search-toggle-replace = Toggle Replace
+buffer-search-toggle-selection = Toggle Search Selection
+buffer-search-select-prev = Select Previous Match
+buffer-search-next = Select Next Match
+buffer-search-select-next = Select Next Match
+buffer-search-select-all = Select All Matches
+buffer-search-close = Close Search Bar
+buffer-search-replace-next = Replace Next Match
+buffer-search-replace-all = Replace All Matches
+buffer-search-expand-all = Expand All
+buffer-search-collapse-all = Collapse All
+buffer-search-placeholder = Search...
+buffer-search-replace-placeholder = Replace...
+
 
 # ============================================
 # Editor
@@ -904,6 +932,14 @@ agent-thanks-for-feedback = Thanks for your feedback!
 agent-sync-with-source-thread = Sync with source thread
 agent-share-thread = Share Thread
 agent-dismiss-warning = Dismiss Warning
+agent-allow = Allow
+agent-deny = Deny
+agent-review = Review
+agent-reject = Reject
+agent-keep = Keep
+agent-toggle-pane = Toggle Pane
+agent-close-pane = Close Pane
+agent-select-thread-hint = Select a thread to view
 agent-retry-generation = Retry Generation
 agent-copy-response = Copy This Agent Response
 agent-all-done = All Done
@@ -952,6 +988,28 @@ agent-remove-registry-agent = Remove Registry Agent
 
 # Agent Diff
 agent-diff-title = Agent Diff
+
+# Model Selector
+model-change = Change Model
+model-cycle-favorites = Cycle Favorited Models
+model-favorite = Favorite Model
+model-unfavorite = Unfavorite Model
+model-configure = Configure
+
+# MCP Server Configuration
+mcp-add-server = Add MCP Server
+mcp-configure-server = Configure MCP Server
+mcp-configure-name = Configure { $name }
+mcp-description = Visit the MCP server configuration docs to find all necessary arguments and environment variables.
+mcp-open-repository = Open Repository
+mcp-configure-local = Configure Local
+mcp-configure-remote = Configure Remote
+mcp-configure-local-tooltip = Configure an MCP server that runs on stdin/stdout.
+mcp-configure-remote-tooltip = Configure an MCP server that you connect to over HTTP
+mcp-add-server-button = Add Server
+mcp-configure-server-button = Configure Server
+mcp-waiting-for-server = Waiting for Context Server
+mcp-server-configured-success = { $name } configured successfully.
 agent-review = Review
 agent-no-changes-to-review = No changes to review
 agent-reject = Reject
@@ -1718,6 +1776,23 @@ edit-prediction-enable-desc = Use AI edit predictions powered by Chi Code
 
 # Onboarding messages
 onboarding-tagline = The editor for what's next
+onboarding-introducing = Introducing
+onboarding-agentic-editing = Agentic Editing
+onboarding-get-started = Get Started
+onboarding-view-blog = View Blog Post
+onboarding-description = Chi Code is a blazingly fast native editor, with built-in code intelligence, designed from the ground up to support AI-assisted editing workflows.
+onboarding-your-agent-here = Your Agent Here
+onboarding-new-gemini-thread = New Gemini CLI Thread
+onboarding-new-claude-code-thread = New Claude Code Thread
+onboarding-now-available = Now Available
+onboarding-bring-your-agent = Bring Your Own Agent to Zed
+onboarding-acp-description = Bring the agent of your choice to Zed via our new Agent Client Protocol (ACP), starting with Google's Gemini CLI integration.
+onboarding-start-gemini = Start with Gemini CLI
+onboarding-add-other-agents = Add Other Agents
+onboarding-beta-release = Beta Release
+onboarding-claude-code-in-zed = Claude Code: Natively in Zed
+onboarding-claude-code-description = Powered by the Agent Client Protocol, you can now run Claude Code as a first-class citizen in Zed's agent panel.
+onboarding-start-claude-code = Start with Claude Code
 settings-import-success = Your { $source } settings were successfully imported.
 settings-import-failed = Failed to import settings. See log for details
 settings-import-warning = Importing { $source } settings may overwrite your existing settings. Will import settings from { $path }
