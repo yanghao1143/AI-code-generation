@@ -2649,3 +2649,13 @@ lm-lmstudio-requirement = LM Studio needs to be running with at least one model 
 lm-lmstudio-get-model = To get your first model, try running
 lm-download-lmstudio = Download LM Studio
 lm-model-catalog = Model Catalog
+
+# Language Models - xAI
+lm-zed-agent-xai = Zed's agent with xAI
+lm-xai-console = xAI console
+lm-xai-custom-provider-note = Note that xAI is a custom OpenAI-compatible provider.
+
+# Language Models - Vercel
+lm-zed-agent-vercel = Zed's agent with Vercel v0
+lm-vercel-console = Vercel v0's console
+lm-vercel-custom-provider-note = Note that Vercel v0 is a custom OpenAI-compatible provider.

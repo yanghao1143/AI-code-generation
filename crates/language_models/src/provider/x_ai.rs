@@ -3,6 +3,7 @@ use collections::BTreeMap;
 use futures::{FutureExt, StreamExt, future::BoxFuture};
 use gpui::{AnyView, App, AsyncApp, Context, Entity, Task, Window};
 use http_client::HttpClient;
+use i18n::{t, t_args};
 use language_model::{
     ApiKeyState, AuthenticateError, EnvVar, IconOrSvg, LanguageModel, LanguageModelCompletionError,
     LanguageModelCompletionEvent, LanguageModelId, LanguageModelName, LanguageModelProvider,
@@ -440,41 +441,39 @@ impl Render for ConfigurationView {
     fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let env_var_set = self.state.read(cx).api_key_state.is_from_env_var();
         let configured_card_label = if env_var_set {
-            format!("API key set in {API_KEY_ENV_VAR_NAME} environment variable")
+            t_args("lm-api-key-env-var", &[("env_var", API_KEY_ENV_VAR_NAME.into())]).to_string()
         } else {
             let api_url = XAiLanguageModelProvider::api_url(cx);
             if api_url == XAI_API_URL {
-                "API key configured".to_string()
+                t("lm-api-key-configured").to_string()
             } else {
-                format!("API key configured for {}", api_url)
+                t_args("lm-api-key-configured-for", &[("url", api_url.to_string().into())]).to_string()
             }
         };
 
         let api_key_section = if self.should_render_editor(cx) {
             v_flex()
                 .on_action(cx.listener(Self::save_api_key))
-                .child(Label::new("To use Zed's agent with xAI, you need to add an API key. Follow these steps:"))
+                .child(Label::new(t_args("lm-api-key-steps", &[("agent", t("lm-zed-agent-xai"))])))
                 .child(
                     List::new()
                         .child(
                             ListBulletItem::new("")
-                                .child(Label::new("Create one by visiting"))
-                                .child(ButtonLink::new("xAI console", "https://console.x.ai/team/default/api-keys"))
+                                .child(Label::new(t("lm-create-key-by-visiting")))
+                                .child(ButtonLink::new(t("lm-xai-console"), "https://console.x.ai/team/default/api-keys"))
                         )
                         .child(
-                            ListBulletItem::new("Paste your API key below and hit enter to start using the agent")
+                            ListBulletItem::new(t("lm-paste-api-key-hint"))
                         ),
                 )
                 .child(self.api_key_editor.clone())
                 .child(
-                    Label::new(format!(
-                        "You can also set the {API_KEY_ENV_VAR_NAME} environment variable and restart Zed."
-                    ))
+                    Label::new(t_args("lm-env-var-hint", &[("env_var", API_KEY_ENV_VAR_NAME.into())]))
                     .size(LabelSize::Small)
                     .color(Color::Muted),
                 )
                 .child(
-                    Label::new("Note that xAI is a custom OpenAI-compatible provider.")
+                    Label::new(t("lm-xai-custom-provider-note"))
                         .size(LabelSize::Small)
                         .color(Color::Muted),
                 )
@@ -483,14 +482,14 @@ impl Render for ConfigurationView {
             ConfiguredApiCard::new(configured_card_label)
                 .disabled(env_var_set)
                 .when(env_var_set, |this| {
-                    this.tooltip_label(format!("To reset your API key, unset the {API_KEY_ENV_VAR_NAME} environment variable."))
+                    this.tooltip_label(t_args("lm-reset-api-key-hint", &[("env_var", API_KEY_ENV_VAR_NAME.into())]))
                 })
                 .on_click(cx.listener(|this, _, window, cx| this.reset_api_key(window, cx)))
                 .into_any_element()
         };
 
         if self.load_credentials_task.is_some() {
-            div().child(Label::new("Loading credentials…")).into_any()
+            div().child(Label::new(t("lm-loading-credentials"))).into_any()
         } else {
             v_flex().size_full().child(api_key_section).into_any()
         }

@@ -2662,3 +2662,13 @@ lm-lmstudio-requirement = LM Studio 需要正在运行且已下载至少一个�
 lm-lmstudio-get-model = 要获取您的第一个模型，请尝试运行
 lm-download-lmstudio = 下载 LM Studio
 lm-model-catalog = 模型目录
+
+# Language Models - xAI / 语言模型 - xAI
+lm-zed-agent-xai = Zed 的 xAI 代理
+lm-xai-console = xAI 控制台
+lm-xai-custom-provider-note = 注意：xAI 是一个自定义的 OpenAI 兼容提供商。
+
+# Language Models - Vercel / 语言模型 - Vercel
+lm-zed-agent-vercel = Zed 的 Vercel v0 代理
+lm-vercel-console = Vercel v0 控制台
+lm-vercel-custom-provider-note = 注意：Vercel v0 是一个自定义的 OpenAI 兼容提供商。
