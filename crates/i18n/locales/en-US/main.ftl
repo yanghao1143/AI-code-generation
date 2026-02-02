@@ -676,6 +676,141 @@ agent-current-plan-label = (Current Plan)
 agent-trial-expired = Your Chi Code Pro Trial has expired
 agent-reset-to-free = You've been automatically reset to the Free plan.
 
+# Agent Thread History
+agent-no-past-threads = You don't have any past threads yet.
+agent-no-matching-threads = No threads match your search.
+agent-delete-all-history = Delete All History
+agent-delete-all-threads = Delete all threads?
+agent-cannot-recover = You won't be able to recover them later.
+
+# Agent Mode Selector
+agent-toggle-mode-menu = Toggle Mode Menu
+agent-cycle-through-modes = Cycle Through Modes
+
+# Agent Thread View
+agent-restore-checkpoint = Restore Checkpoint
+agent-unavailable-editing = Unavailable Editing
+agent-run-command = Run Command
+agent-truncated = Truncated
+agent-choose-auth-option = Choose one of the following authentication options:
+agent-current = Current:
+agent-plan = Plan
+agent-edits = Edits
+agent-reject-all = Reject All
+agent-keep-all = Keep All
+agent-review-changes = Review Changes
+agent-clear-all = Clear All
+agent-queue-and-send = Queue and Send
+agent-send-immediately = Send Immediately
+agent-waiting-confirmation = Waiting Confirmation
+agent-start-new-thread = Start New Thread
+agent-open-in-wsl = Open in WSL
+agent-new-version-available = New version available
+agent-authenticate = Authenticate
+agent-upgrade = Upgrade
+
+# Agent Configuration
+agent-models = Models
+agent-add-model = Add Model
+agent-save-provider = Save Provider
+agent-add-provider = Add Provider
+agent-open-repository = Open Repository
+agent-waiting-for-context-server = Waiting for Context Server
+agent-customize = Customize
+agent-custom-profiles = Custom Profiles
+agent-add-new-profile = Add New Profile
+agent-fork-profile = Fork Profile
+agent-configure-default-model = Configure Default Model
+agent-configure-built-in-tools = Configure Built-in Tools
+agent-configure-mcp-tools = Configure MCP Tools
+agent-delete-profile = Delete Profile
+agent-go-back = Go Back
+agent-add-server = Add Server
+agent-no-mcp-servers = No MCP servers added yet.
+agent-add-agent = Add Agent
+
+# Agent Text Thread Editor
+agent-role-agent = Agent
+agent-role-system = System
+agent-error = Error
+agent-canceled = Canceled
+agent-send = Send
+agent-subscribe = Subscribe
+agent-error-interacting-llm = Error interacting with language model
+agent-thinking = Thinking…
+agent-thought-process = Thought Process
+
+# Agent Profile Selector
+agent-tools-unsupported = Tools Unsupported
+agent-toggle-profile-menu = Toggle Profile Menu
+agent-cycle-through-profiles = Cycle Through Profiles
+
+# Agent Diff
+agent-continue-iterating = Continue Iterating
+
+# Agent Registry
+agent-missing-registry-entry = Missing registry entry.
+agent-not-supported-platform = Not supported on this platform
+
+# Agent Slash Commands
+agent-create-custom-command = Create your custom command
+
+# Agent Text Thread History
+agent-no-past-text-threads = You don't have any past text threads yet.
+agent-delete-all-text-threads = Delete all text threads?
+
+# Agent Onboarding
+agent-start-with-gemini = Start with Gemini CLI
+agent-add-other-agents = Add Other Agents
+agent-view-panel = View Panel
+agent-start-with-claude = Start with Claude Code
+agent-stop = Stop
+agent-get-started-agent-panel = Get Started with the Agent Panel
+agent-check-blog = Check out the Blog Post
+agent-start-task = Start Task
+agent-unknown = Unknown
+
+# Agent Thread History
+agent-new-thread = New Thread
+agent-search-threads = Search threads...
+agent-just-now = Just now
+agent-today = Today
+agent-yesterday = Yesterday
+agent-this-week = This Week
+agent-past-week = Past Week
+agent-all = All
+agent-logs = Logs
+
+# Agent Profile Selector
+agent-tools-unsupported-desc = This model does not support tools.
+agent-search-profiles = Search profiles…
+agent-no-profiles = No profiles.
+agent-no-profiles-match = No profiles match your search.
+agent-profile-write-desc = Get help to write anything.
+agent-profile-ask-desc = Chat about your codebase.
+agent-profile-minimal-desc = Chat about anything with no tools.
+
+# Agent Registry
+agent-search-agents = Search agents...
+agent-loading-registry = Loading registry...
+agent-failed-load-registry = Failed to load the agent registry. Please check your connection and try again.
+agent-no-agents-match = No agents match your search.
+agent-no-agents-available = No agents available.
+agent-no-installed-agents-match = No installed agents match your search.
+agent-no-installed-agents = No installed agents.
+agent-no-uninstalled-agents-match = No uninstalled agents match your search.
+agent-no-uninstalled-agents = No uninstalled agents.
+agent-visit-repository = Visit agent repository
+agent-unavailable = Unavailable
+agent-install = Install
+agent-remove = Remove
+agent-installed = Installed
+agent-beta = Beta
+agent-beta-desc = The ACP Agent Registry is still in a beta testing phase. For more information, visit https://github.com/agentclientprotocol/registry
+agent-filter-all = All
+agent-filter-installed = Installed
+agent-filter-not-installed = Not Installed
+
 # AI Plans
 ai-plan-free = Free
 ai-plan-pro = Pro

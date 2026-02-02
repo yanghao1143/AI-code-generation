@@ -8,6 +8,7 @@ use gpui::{
     Action, AnyElement, App, BackgroundExecutor, Context, DismissEvent, Entity, FocusHandle,
     Focusable, ForegroundExecutor, SharedString, Subscription, Task, Window,
 };
+use i18n::t;
 use picker::{Picker, PickerDelegate, popover_menu::PickerPopoverMenu};
 use settings::{Settings as _, SettingsStore, update_settings_file};
 use std::{
@@ -150,11 +151,11 @@ impl Focusable for ProfileSelector {
 impl Render for ProfileSelector {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         if !self.provider.profiles_supported(cx) {
-            return Button::new("tools-not-supported-button", "Tools Unsupported")
+            return Button::new("tools-not-supported-button", t("agent-tools-unsupported"))
                 .disabled(true)
                 .label_size(LabelSize::Small)
                 .color(Color::Muted)
-                .tooltip(Tooltip::text("This model does not support tools."))
+                .tooltip(Tooltip::text(t("agent-tools-unsupported-desc")))
                 .into_any_element();
         }
 
@@ -166,7 +167,7 @@ impl Render for ProfileSelector {
 
         let selected_profile = profile
             .map(|profile| profile.name.clone())
-            .unwrap_or_else(|| "Unknown".into());
+            .unwrap_or_else(|| t("agent-unknown").into());
         let focus_handle = self.focus_handle.clone();
 
         let icon = if self.picker_handle.is_deployed() {
@@ -192,7 +193,7 @@ impl Render for ProfileSelector {
                     let container = || h_flex().gap_1().justify_between();
                     v_flex()
                         .gap_1()
-                        .child(container().child(Label::new("Toggle Profile Menu")).child(
+                        .child(container().child(Label::new(t("agent-toggle-profile-menu"))).child(
                             KeyBinding::for_action_in(&ToggleProfileSelector, &focus_handle, cx),
                         ))
                         .child(
@@ -200,7 +201,7 @@ impl Render for ProfileSelector {
                                 .pt_1()
                                 .border_t_1()
                                 .border_color(cx.theme().colors().border_variant)
-                                .child(Label::new("Cycle Through Profiles"))
+                                .child(Label::new(t("agent-cycle-through-profiles")))
                                 .child(KeyBinding::for_action_in(
                                     &CycleModeSelector,
                                     &focus_handle,
@@ -330,11 +331,11 @@ impl ProfilePickerDelegate {
             .collect()
     }
 
-    fn documentation(candidate: &ProfileCandidate) -> Option<&'static str> {
+    fn documentation(candidate: &ProfileCandidate) -> Option<SharedString> {
         match candidate.id.as_str() {
-            builtin_profiles::WRITE => Some("Get help to write anything."),
-            builtin_profiles::ASK => Some("Chat about your codebase."),
-            builtin_profiles::MINIMAL => Some("Chat about anything with no tools."),
+            builtin_profiles::WRITE => Some(t("agent-profile-write-desc").into()),
+            builtin_profiles::ASK => Some(t("agent-profile-ask-desc").into()),
+            builtin_profiles::MINIMAL => Some(t("agent-profile-minimal-desc").into()),
             _ => None,
         }
     }
@@ -346,7 +347,7 @@ impl ProfilePickerDelegate {
         for (idx, candidate) in candidates.iter().enumerate() {
             if !candidate.is_builtin && !inserted_custom_header {
                 if !entries.is_empty() {
-                    entries.push(ProfilePickerEntry::Header("Custom Profiles".into()));
+                    entries.push(ProfilePickerEntry::Header(t("agent-custom-profiles").into()));
                 }
                 inserted_custom_header = true;
             }
@@ -421,14 +422,14 @@ impl PickerDelegate for ProfilePickerDelegate {
     type ListItem = AnyElement;
 
     fn placeholder_text(&self, _: &mut Window, _: &mut App) -> Arc<str> {
-        "Search profiles…".into()
+        t("agent-search-profiles").into()
     }
 
     fn no_matches_text(&self, _window: &mut Window, _cx: &mut App) -> Option<SharedString> {
         let text = if self.candidates.is_empty() {
-            "No profiles.".into()
+            t("agent-no-profiles").into()
         } else {
-            "No profiles match your search.".into()
+            t("agent-no-profiles-match").into()
         };
         Some(text)
     }
@@ -670,7 +671,7 @@ impl PickerDelegate for ProfilePickerDelegate {
                 .border_color(cx.theme().colors().border_variant)
                 .p_1p5()
                 .child(
-                    Button::new("configure", "Configure")
+                    Button::new("configure", t("agent-configure"))
                         .full_width()
                         .style(ButtonStyle::Outlined)
                         .key_binding(

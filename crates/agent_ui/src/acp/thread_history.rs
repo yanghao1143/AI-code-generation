@@ -9,6 +9,7 @@ use gpui::{
     App, Entity, EventEmitter, FocusHandle, Focusable, ScrollStrategy, Task,
     UniformListScrollHandle, WeakEntity, Window, uniform_list,
 };
+use i18n::t;
 use std::{fmt::Display, ops::Range, rc::Rc};
 use text::Bias;
 use time::{OffsetDateTime, UtcOffset};
@@ -17,14 +18,18 @@ use ui::{
     WithScrollbar, prelude::*,
 };
 
-const DEFAULT_TITLE: &SharedString = &SharedString::new_static("New Thread");
+// 新会话的默认标题
+fn default_title() -> SharedString {
+    t("agent-new-thread").into()
+}
 
-fn thread_title(entry: &AgentSessionInfo) -> &SharedString {
+fn thread_title(entry: &AgentSessionInfo) -> SharedString {
     entry
         .title
         .as_ref()
         .filter(|title| !title.is_empty())
-        .unwrap_or(DEFAULT_TITLE)
+        .map(|t| t.clone())
+        .unwrap_or_else(default_title)
 }
 
 pub struct AcpThreadHistory {
@@ -79,7 +84,7 @@ impl AcpThreadHistory {
     ) -> Self {
         let search_editor = cx.new(|cx| {
             let mut editor = Editor::single_line(window, cx);
-            editor.set_placeholder_text("Search threads...", window, cx);
+            editor.set_placeholder_text(t("agent-search-threads"), window, cx);
             editor
         });
 
@@ -394,7 +399,7 @@ impl AcpThreadHistory {
                 let mut candidates = Vec::with_capacity(entries.len());
 
                 for (idx, entry) in entries.iter().enumerate() {
-                    candidates.push(StringMatchCandidate::new(idx, thread_title(entry)));
+                    candidates.push(StringMatchCandidate::new(idx, &thread_title(entry)));
                 }
 
                 const MAX_MATCHES: usize = 100;
@@ -630,7 +635,7 @@ impl AcpThreadHistory {
             .map(|time| {
                 EntryTimeFormat::DateAndTime.format_timestamp(time.timestamp(), self.local_timezone)
             })
-            .unwrap_or_else(|| "Unknown".to_string());
+            .unwrap_or_else(|| t("agent-unknown").to_string());
 
         h_flex()
             .w_full()
@@ -675,7 +680,7 @@ impl AcpThreadHistory {
                                 .icon_size(IconSize::XSmall)
                                 .icon_color(Color::Muted)
                                 .tooltip(move |_window, cx| {
-                                    Tooltip::for_action("Delete", &RemoveSelectedThread, cx)
+                                    Tooltip::for_action(t("delete"), &RemoveSelectedThread, cx)
                                 })
                                 .on_click(cx.listener(move |this, _, _, cx| {
                                     this.remove_thread(ix, cx);
@@ -740,14 +745,14 @@ impl Render for AcpThreadHistory {
 
                 if has_no_history {
                     view.justify_center().items_center().child(
-                        Label::new("You don't have any past threads yet.")
+                        Label::new(t("agent-no-past-threads"))
                             .size(LabelSize::Small)
                             .color(Color::Muted),
                     )
                 } else if self.search_produced_no_matches() {
                     view.justify_center()
                         .items_center()
-                        .child(Label::new("No threads match your search.").size(LabelSize::Small))
+                        .child(Label::new(t("agent-no-matching-threads")).size(LabelSize::Small))
                 } else {
                     view.child(
                         uniform_list(
@@ -773,7 +778,7 @@ impl Render for AcpThreadHistory {
                         .border_color(cx.theme().colors().border_variant)
                         .when(!self.confirming_delete_history, |this| {
                             this.child(
-                                Button::new("delete_history", "Delete All History")
+                                Button::new("delete_history", t("agent-delete-all-history"))
                                     .full_width()
                                     .style(ButtonStyle::Outlined)
                                     .label_size(LabelSize::Small)
@@ -792,11 +797,11 @@ impl Render for AcpThreadHistory {
                                         .flex_wrap()
                                         .gap_1()
                                         .child(
-                                            Label::new("Delete all threads?")
+                                            Label::new(t("agent-delete-all-threads"))
                                                 .size(LabelSize::Small),
                                         )
                                         .child(
-                                            Label::new("You won't be able to recover them later.")
+                                            Label::new(t("agent-cannot-recover"))
                                                 .size(LabelSize::Small)
                                                 .color(Color::Muted),
                                         ),
@@ -805,14 +810,14 @@ impl Render for AcpThreadHistory {
                                     h_flex()
                                         .gap_1()
                                         .child(
-                                            Button::new("cancel_delete", "Cancel")
+                                            Button::new("cancel_delete", t("cancel"))
                                                 .label_size(LabelSize::Small)
                                                 .on_click(cx.listener(|this, _, window, cx| {
                                                     this.cancel_delete_history(window, cx);
                                                 })),
                                         )
                                         .child(
-                                            Button::new("confirm_delete", "Delete")
+                                            Button::new("confirm_delete", t("delete"))
                                                 .style(ButtonStyle::Tinted(ui::TintColor::Error))
                                                 .color(Color::Error)
                                                 .label_size(LabelSize::Small)
@@ -886,10 +891,10 @@ impl RenderOnce for AcpHistoryEntryElement {
                 } else if duration.num_minutes() > 0 {
                     format!("{}m ago", duration.num_minutes())
                 } else {
-                    "Just now".to_string()
+                    t("agent-just-now").to_string()
                 }
             })
-            .unwrap_or_else(|| "Unknown".to_string());
+            .unwrap_or_else(|| t("agent-unknown").to_string());
 
         ListItem::new(id)
             .rounded()
@@ -915,7 +920,7 @@ impl RenderOnce for AcpHistoryEntryElement {
                         .icon_size(IconSize::XSmall)
                         .icon_color(Color::Muted)
                         .tooltip(move |_window, cx| {
-                            Tooltip::for_action("Delete", &RemoveSelectedThread, cx)
+                            Tooltip::for_action(t("delete"), &RemoveSelectedThread, cx)
                         })
                         .on_click({
                             let thread_view = self.thread_view.clone();
@@ -1025,11 +1030,11 @@ impl TimeBucket {
 impl Display for TimeBucket {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            TimeBucket::Today => write!(f, "Today"),
-            TimeBucket::Yesterday => write!(f, "Yesterday"),
-            TimeBucket::ThisWeek => write!(f, "This Week"),
-            TimeBucket::PastWeek => write!(f, "Past Week"),
-            TimeBucket::All => write!(f, "All"),
+            TimeBucket::Today => write!(f, "{}", t("agent-today")),
+            TimeBucket::Yesterday => write!(f, "{}", t("agent-yesterday")),
+            TimeBucket::ThisWeek => write!(f, "{}", t("agent-this-week")),
+            TimeBucket::PastWeek => write!(f, "{}", t("agent-past-week")),
+            TimeBucket::All => write!(f, "{}", t("agent-all")),
         }
     }
 }

@@ -8,6 +8,7 @@ use gpui::{
     RenderOnce, SharedString, Styled, TextStyle, UniformListScrollHandle, Window, point,
     uniform_list,
 };
+use i18n::t;
 use project::agent_server_store::{AllAgentServersSettings, CustomAgentServerSettings};
 use project::{AgentRegistryStore, RegistryAgent};
 use settings::{Settings, SettingsStore, update_settings_file};
@@ -98,7 +99,7 @@ impl AgentRegistryPage {
             let registry_store = AgentRegistryStore::global(cx);
             let query_editor = cx.new(|cx| {
                 let mut input = Editor::single_line(window, cx);
-                input.set_placeholder_text("Search agents...", window, cx);
+                input.set_placeholder_text(t("agent-search-agents"), window, cx);
                 input
             });
             cx.subscribe(&query_editor, Self::on_query_change).detach();
@@ -297,30 +298,30 @@ impl AgentRegistryPage {
         let registry_store = self.registry_store.read(cx);
 
         let message = if registry_store.is_fetching() {
-            "Loading registry..."
+            t("agent-loading-registry")
         } else if registry_store.fetch_error().is_some() {
-            "Failed to load the agent registry. Please check your connection and try again."
+            t("agent-failed-load-registry")
         } else {
             match self.filter {
                 RegistryFilter::All => {
                     if has_search {
-                        "No agents match your search."
+                        t("agent-no-agents-match")
                     } else {
-                        "No agents available."
+                        t("agent-no-agents-available")
                     }
                 }
                 RegistryFilter::Installed => {
                     if has_search {
-                        "No installed agents match your search."
+                        t("agent-no-installed-agents-match")
                     } else {
-                        "No installed agents."
+                        t("agent-no-installed-agents")
                     }
                 }
                 RegistryFilter::NotInstalled => {
                     if has_search {
-                        "No uninstalled agents match your search."
+                        t("agent-no-uninstalled-agents-match")
                     } else {
-                        "No uninstalled agents."
+                        t("agent-no-uninstalled-agents")
                     }
                 }
             }
@@ -360,7 +361,7 @@ impl AgentRegistryPage {
 
     fn render_missing_agent(&self) -> AgentRegistryCard {
         AgentRegistryCard::new().child(
-            Label::new("Missing registry entry.")
+            Label::new(t("agent-missing-registry-entry"))
                 .size(LabelSize::Small)
                 .color(Color::Muted),
         )
@@ -391,7 +392,7 @@ impl AgentRegistryPage {
                 IconName::Link,
             )
             .icon_size(IconSize::Small)
-            .tooltip(Tooltip::text("Visit agent repository"))
+            .tooltip(Tooltip::text(t("agent-visit-repository")))
             .on_click(move |_, _, cx| {
                 cx.open_url(repository.as_ref());
             })
@@ -445,7 +446,7 @@ impl AgentRegistryPage {
                     )
                     .when(!supports_current_platform, |this| {
                         this.child(
-                            Label::new("Not supported on this platform")
+                            Label::new(t("agent-not-supported-platform"))
                                 .size(LabelSize::Small)
                                 .color(Color::Warning),
                         )
@@ -463,7 +464,7 @@ impl AgentRegistryPage {
         let button_id = SharedString::from(format!("install-agent-{}", agent.id()));
 
         if !supports_current_platform {
-            return Button::new(button_id, "Unavailable")
+            return Button::new(button_id, t("agent-unavailable"))
                 .style(ButtonStyle::OutlinedGhost)
                 .disabled(true);
         }
@@ -472,7 +473,7 @@ impl AgentRegistryPage {
             RegistryInstallStatus::NotInstalled => {
                 let fs = <dyn Fs>::global(cx);
                 let agent_id = agent.id().to_string();
-                Button::new(button_id, "Install")
+                Button::new(button_id, t("agent-install"))
                     .style(ButtonStyle::Tinted(ui::TintColor::Accent))
                     .icon(IconName::Download)
                     .icon_size(IconSize::Small)
@@ -498,7 +499,7 @@ impl AgentRegistryPage {
             RegistryInstallStatus::InstalledRegistry => {
                 let fs = <dyn Fs>::global(cx);
                 let agent_id = agent.id().to_string();
-                Button::new(button_id, "Remove")
+                Button::new(button_id, t("agent-remove"))
                     .style(ButtonStyle::OutlinedGhost)
                     .on_click(move |_, _, cx| {
                         let agent_id = agent_id.clone();
@@ -517,10 +518,10 @@ impl AgentRegistryPage {
                         });
                     })
             }
-            RegistryInstallStatus::InstalledCustom => Button::new(button_id, "Installed")
+            RegistryInstallStatus::InstalledCustom => Button::new(button_id, t("agent-installed"))
                 .style(ButtonStyle::OutlinedGhost)
                 .disabled(true),
-            RegistryInstallStatus::InstalledExtension => Button::new(button_id, "Installed")
+            RegistryInstallStatus::InstalledExtension => Button::new(button_id, t("agent-installed"))
                 .style(ButtonStyle::OutlinedGhost)
                 .disabled(true),
         }
@@ -546,10 +547,8 @@ impl Render for AgentRegistryPage {
                                 .child(
                                     Headline::new("ACP Agent Registry").size(HeadlineSize::XLarge),
                                 )
-                                .child(div().id("beta-chip").child(Chip::new("Beta")).tooltip(
-                                    Tooltip::text(
-                                        "The ACP Agent Registry is still in an beta testing phase. For more information, visit https://github.com/agentclientprotocol/registry",
-                                    ),
+                                .child(div().id("beta-chip").child(Chip::new(t("agent-beta"))).tooltip(
+                                    Tooltip::text(t("agent-beta-desc")),
                                 )),
                         ),
                     )
@@ -565,7 +564,7 @@ impl Render for AgentRegistryPage {
                                         "registry-filter-buttons",
                                         [
                                             ToggleButtonSimple::new(
-                                                "All",
+                                                t("agent-filter-all"),
                                                 cx.listener(|this, _event, _, cx| {
                                                     this.filter = RegistryFilter::All;
                                                     this.filter_registry_agents(cx);
@@ -573,7 +572,7 @@ impl Render for AgentRegistryPage {
                                                 }),
                                             ),
                                             ToggleButtonSimple::new(
-                                                "Installed",
+                                                t("agent-filter-installed"),
                                                 cx.listener(|this, _event, _, cx| {
                                                     this.filter = RegistryFilter::Installed;
                                                     this.filter_registry_agents(cx);
@@ -581,7 +580,7 @@ impl Render for AgentRegistryPage {
                                                 }),
                                             ),
                                             ToggleButtonSimple::new(
-                                                "Not Installed",
+                                                t("agent-filter-not-installed"),
                                                 cx.listener(|this, _event, _, cx| {
                                                     this.filter = RegistryFilter::NotInstalled;
                                                     this.filter_registry_agents(cx);

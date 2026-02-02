@@ -1043,6 +1043,53 @@ agent-current-plan-label = (当前计划)
 agent-trial-expired = 你的 Chi Code 专业版试用已过期
 agent-reset-to-free = 你已被自动重置为免费版计划。
 
+# Agent Thread History / Agent 会话历史
+agent-search-threads = 搜索对话…
+agent-just-now = 刚刚
+agent-today = 今天
+agent-yesterday = 昨天
+agent-this-week = 本周
+agent-past-week = 上周
+agent-all = 全部
+agent-logs = 日志
+agent-unknown = 未知
+
+# Agent Profile Selector / Agent 配置选择器
+agent-tools-unsupported = 不支持工具
+agent-tools-unsupported-desc = 该模型不支持工具。
+agent-toggle-profile-menu = 切换配置菜单
+agent-cycle-through-profiles = 循环切换配置
+agent-search-profiles = 搜索配置…
+agent-no-profiles = 没有配置。
+agent-no-profiles-match = 没有匹配的配置。
+agent-custom-profiles = 自定义配置
+agent-profile-write-desc = 获取帮助撰写任何内容。
+agent-profile-ask-desc = 关于代码库的对话。
+agent-profile-minimal-desc = 不带工具的任意对话。
+
+# Agent Registry / Agent 注册表
+agent-search-agents = 搜索 Agent…
+agent-loading-registry = 正在加载注册表…
+agent-failed-load-registry = 加载 Agent 注册表失败。请检查网络连接后重试。
+agent-no-agents-match = 没有匹配的 Agent。
+agent-no-agents-available = 没有可用的 Agent。
+agent-no-installed-agents-match = 没有匹配的已安装 Agent。
+agent-no-installed-agents = 没有已安装的 Agent。
+agent-no-uninstalled-agents-match = 没有匹配的未安装 Agent。
+agent-no-uninstalled-agents = 没有未安装的 Agent。
+agent-missing-registry-entry = 缺少注册表条目。
+agent-visit-repository = 访问 Agent 仓库
+agent-not-supported-platform = 不支持此平台
+agent-unavailable = 不可用
+agent-install = 安装
+agent-remove = 移除
+agent-installed = 已安装
+agent-beta = 测试版
+agent-beta-desc = ACP Agent 注册表仍处于测试阶段。更多信息请访问 https://github.com/agentclientprotocol/registry
+agent-filter-all = 全部
+agent-filter-installed = 已安装
+agent-filter-not-installed = 未安装
+
 # AI Plans / AI 计划
 ai-plan-free = 免费版
 ai-plan-pro = 专业版
@@ -2210,3 +2257,43 @@ collab-screen = 屏幕
 collab-notes = 笔记
 collab-open-shared-screen = 打开共享屏幕
 collab-open-channel-notes = 打开频道笔记
+
+# REPL Menu
+repl-menu-kernel = 内核: { $name } ({ $type })
+repl-menu-run-selection = 运行选区
+repl-menu-run-line = 运行当前行
+repl-menu-interrupt = 中断
+repl-menu-clear-outputs = 清除输出
+repl-menu-shutdown-kernel = 关闭内核
+repl-menu-restart-kernel = 重启内核
+repl-menu-view-sessions = 查看会话
+repl-menu-select-kernel = 选择内核
+repl-menu-nothing-running = 没有正在运行的内核
+repl-menu-kernel-starting = { $name } 正在启动...
+repl-menu-kernel-restarting = 正在重启 { $name }...
+repl-menu-kernel-shutting-down = { $name } 正在关闭...
+repl-menu-kernel-auto-restarting = 正在自动重启 { $name }...
+repl-menu-kernel-state = { $name } 状态: { $state }
+repl-menu-run-code-on = 在 { $name } ({ $type }) 上运行代码
+repl-menu-interrupt-kernel-on = 中断 { $name } ({ $type }) 内核
+repl-menu-kernel-error = 内核 { $name } 出错: { $error }
+
+# REPL Menu
+repl-menu-kernel = 内核: { $name } ({ $type })
+repl-menu-run-selection = 运行选区
+repl-menu-run-line = 运行当前行
+repl-menu-interrupt = 中断
+repl-menu-clear-outputs = 清除输出
+repl-menu-shutdown-kernel = 关闭内核
+repl-menu-restart-kernel = 重启内核
+repl-menu-view-sessions = 查看会话
+repl-menu-select-kernel = 选择内核
+repl-menu-nothing-running = 没有正在运行的内核
+repl-menu-kernel-starting = { $name } 正在启动...
+repl-menu-kernel-restarting = 正在重启 { $name }...
+repl-menu-kernel-shutting-down = { $name } 正在关闭...
+repl-menu-kernel-auto-restarting = 正在自动重启 { $name }...
+repl-menu-kernel-state = { $name } 状态: { $state }
+repl-menu-run-code-on = 在 { $name } ({ $type }) 上运行代码
+repl-menu-interrupt-kernel-on = 中断 { $name } ({ $type }) 内核
+repl-menu-kernel-error = 内核 { $name } 出错: { $error }
