@@ -1,6 +1,7 @@
 use anyhow::Result;
 use buffer_diff::BufferDiff;
 use gpui::{App, AppContext, AsyncApp, Context, Entity, Subscription, Task};
+use i18n::t;
 use itertools::Itertools;
 use language::{
     Anchor, Buffer, Capability, LanguageRegistry, OffsetRangeExt as _, Point, TextBuffer,
@@ -173,7 +174,8 @@ impl Diff {
             Diff::Finalized(FinalizedDiff { path, .. }) => Some(path.as_str().into()),
         };
         format!(
-            "Diff: {}\n```\n{}\n```\n",
+            "{}: {}\n```\n{}\n```\n",
+            t("diff"),
             path.unwrap_or("untitled".into()),
             buffer_text
         )

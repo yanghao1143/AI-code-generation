@@ -2724,3 +2724,4 @@ acp-user = 用户
 acp-assistant = 助手
 acp-user-checkpoint = 用户 (检查点)
 acp-tool-call = 工具调用
+diff = 差异
