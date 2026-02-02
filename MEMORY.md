@@ -934,3 +934,30 @@ RULES: [约束/验收标准]
 - Claude: working
 - Gemini: working (retry:7 需要关注)
 - Codex: working (100% context，刚重启)
+
+### 2026-02-02 16:04 - 🧬 自我进化 v4.4-v4.7
+
+**问题分析**:
+1. Gemini 频繁卡在确认界面，retry 累积到 7 次
+2. `auto_confirm` 检测不到 "Waiting for user confirmation"
+3. `loop_detected` 处理时先发 Enter，导致堆积的 "1" 被发送
+4. `auto_confirm` 在 loop 状态下误发 "1"
+5. `panic` 关键词太宽泛，误判 Codex 为 crashed
+6. `unknown` 状态没有智能处理
+
+**修复内容**:
+1. **v4.4**: `auto_confirm` 新增检测 "Waiting for user confirmation" 和 "● 1. Allow once"
+2. **v4.5**: 改进 `loop_detected` 处理 - 先 Escape 再清除，不发 Enter
+3. **v4.5**: `unknown` 状态智能处理 - 检测堆积输入、工具错误、连续 unknown 重启
+4. **v4.5**: 扩大循环检测范围到 last_30，添加 "potential loop"
+5. **v4.6**: 增强清除逻辑 - 200 次 BSpace + 验证
+6. **v4.7**: `auto_confirm` 检测到 loop 消息时直接返回，不发送确认
+7. **v4.7**: 崩溃检测改为 "thread .* panicked" 避免误判
+
+**关键教训**:
+- 检测范围要精确：`last_5` vs `last_10` vs `last_30` 要根据场景选择
+- 状态检测要互斥：loop 状态下不应该触发 confirm 逻辑
+- 清除输入要彻底：Gemini 需要更多 BSpace
+- 关键词匹配要精确：避免 "panic" 这种宽泛匹配
+
+**当前状态**: 三个 agent 全部正常工作

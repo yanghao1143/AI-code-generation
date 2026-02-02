@@ -526,6 +526,9 @@ run_check() {
                 # 自动学习：记录成功的修复
                 if [[ "$result" != *"failed"* && "$result" != *"unknown"* ]]; then
                     redis-cli HINCRBY "$REDIS_PREFIX:learn:$diagnosis" "success" 1 2>/dev/null
+                    # 记录事件日志
+                    redis-cli LPUSH "$REDIS_PREFIX:events" "$(date +%s):$agent:$diagnosis:$result" 2>/dev/null
+                    redis-cli LTRIM "$REDIS_PREFIX:events" 0 999 2>/dev/null  # 保留最近 1000 条
                 fi
             fi
         else
@@ -571,6 +574,111 @@ learn() {
     echo "学习记录: $problem → $solution"
 }
 
+# ============ 性能报告 (新增) ============
+report() {
+    echo "╔══════════════════════════════════════════════════════════════════╗"
+    echo "║                    📊 进化系统性能报告                           ║"
+    echo "╚══════════════════════════════════════════════════════════════════╝"
+    echo ""
+    
+    # 1. 任务派发统计
+    echo "📋 任务派发统计:"
+    for agent in "${AGENTS[@]}"; do
+        local dispatched=$(redis-cli HGET "$REDIS_PREFIX:stats" "dispatched:$agent" 2>/dev/null)
+        local restarts=$(redis-cli HGET "$REDIS_PREFIX:stats" "restarts:$agent" 2>/dev/null)
+        printf "  %-14s 派发: %-5s 重启: %s\n" "$agent" "${dispatched:-0}" "${restarts:-0}"
+    done
+    echo ""
+    
+    # 2. 学习记录
+    echo "🧠 学习记录:"
+    for key in $(redis-cli KEYS "$REDIS_PREFIX:learn:*" 2>/dev/null); do
+        local problem=$(echo "$key" | sed "s|$REDIS_PREFIX:learn:||")
+        local success=$(redis-cli HGET "$key" "success" 2>/dev/null)
+        printf "  %-20s 成功修复: %s 次\n" "$problem" "${success:-0}"
+    done
+    echo ""
+    
+    # 3. 当前状态
+    echo "🔍 当前状态:"
+    for agent in "${AGENTS[@]}"; do
+        local diag=$(diagnose_agent "$agent")
+        local retry=$(redis-cli HGET "$REDIS_PREFIX:retry:$agent" "count" 2>/dev/null)
+        local unknown=$(redis-cli HGET "$REDIS_PREFIX:unknown:$agent" "count" 2>/dev/null)
+        printf "  %-14s 状态: %-15s retry:%s unknown:%s\n" "$agent" "$diag" "${retry:-0}" "${unknown:-0}"
+    done
+    echo ""
+    
+    # 4. 优化建议
+    echo "💡 优化建议:"
+    local total_restarts=0
+    for agent in "${AGENTS[@]}"; do
+        local restarts=$(redis-cli HGET "$REDIS_PREFIX:stats" "restarts:$agent" 2>/dev/null)
+        total_restarts=$((total_restarts + ${restarts:-0}))
+    done
+    
+    if [[ $total_restarts -gt 10 ]]; then
+        echo "  ⚠️ 重启次数过多 ($total_restarts)，考虑检查网络或 API 稳定性"
+    fi
+    
+    local gemini_confirms=$(redis-cli HGET "$REDIS_PREFIX:learn:needs_confirm" "success" 2>/dev/null)
+    if [[ ${gemini_confirms:-0} -gt 20 ]]; then
+        echo "  ⚠️ Gemini 确认次数过多 ($gemini_confirms)，考虑优化工作流"
+    fi
+    
+    local loop_count=$(redis-cli HGET "$REDIS_PREFIX:learn:loop_detected" "success" 2>/dev/null)
+    if [[ ${loop_count:-0} -gt 5 ]]; then
+        echo "  ⚠️ 循环检测次数过多 ($loop_count)，考虑改进任务描述"
+    fi
+    
+    echo ""
+    echo "报告生成时间: $(date '+%Y-%m-%d %H:%M:%S')"
+}
+
+# ============ 趋势分析 (新增) ============
+trends() {
+    echo "📈 趋势分析 (最近 1 小时):"
+    echo ""
+    
+    # 从 Redis 事件日志分析
+    local events=$(redis-cli LRANGE "$REDIS_PREFIX:events" -100 -1 2>/dev/null)
+    local confirm_count=0
+    local loop_count=0
+    local restart_count=0
+    
+    while IFS= read -r event; do
+        if echo "$event" | grep -q "needs_confirm"; then
+            ((confirm_count++))
+        elif echo "$event" | grep -q "loop_detected"; then
+            ((loop_count++))
+        elif echo "$event" | grep -q "restart"; then
+            ((restart_count++))
+        fi
+    done <<< "$events"
+    
+    echo "  确认事件: $confirm_count"
+    echo "  循环事件: $loop_count"
+    echo "  重启事件: $restart_count"
+    echo ""
+    
+    # 健康评分
+    local health_score=100
+    health_score=$((health_score - confirm_count * 2))
+    health_score=$((health_score - loop_count * 5))
+    health_score=$((health_score - restart_count * 10))
+    [[ $health_score -lt 0 ]] && health_score=0
+    
+    echo "  系统健康评分: $health_score/100"
+    
+    if [[ $health_score -lt 50 ]]; then
+        echo "  ⚠️ 系统健康状况不佳，建议检查"
+    elif [[ $health_score -lt 80 ]]; then
+        echo "  📊 系统运行正常，有改进空间"
+    else
+        echo "  ✅ 系统运行良好"
+    fi
+}
+
 # ============ 入口 ============
 case "${1:-check}" in
     check) run_check quick ;;
@@ -586,5 +694,47 @@ case "${1:-check}" in
     learn)
         learn "$2" "$3" "$4"
         ;;
-    *) echo "用法: $0 {check|status|repair <agent>|diagnose <agent>|learn <agent> <problem> <solution>}" ;;
+    report)
+        report
+        ;;
+    trends)
+        trends
+        ;;
+    *) echo "用法: $0 {check|status|repair <agent>|diagnose <agent>|learn <agent> <problem> <solution>|report|trends}" ;;
 esac
+
+# ============ Agent 专长分析 (新增) ============
+analyze_skills() {
+    echo "🎯 Agent 专长分析:"
+    echo ""
+    
+    # 从历史任务分析每个 agent 的专长
+    for agent in "${AGENTS[@]}"; do
+        echo "--- $agent ---"
+        local tasks=$(redis-cli LRANGE "$REDIS_PREFIX:task_history:$agent" 0 -1 2>/dev/null)
+        
+        # 统计任务类型
+        local i18n_count=0
+        local fix_count=0
+        local test_count=0
+        local refactor_count=0
+        
+        while IFS= read -r task; do
+            if echo "$task" | grep -qiE "国际化|i18n|翻译"; then
+                ((i18n_count++))
+            elif echo "$task" | grep -qiE "修复|fix|bug"; then
+                ((fix_count++))
+            elif echo "$task" | grep -qiE "测试|test"; then
+                ((test_count++))
+            elif echo "$task" | grep -qiE "重构|refactor"; then
+                ((refactor_count++))
+            fi
+        done <<< "$tasks"
+        
+        echo "  国际化: $i18n_count"
+        echo "  修复: $fix_count"
+        echo "  测试: $test_count"
+        echo "  重构: $refactor_count"
+        echo ""
+    done
+}
