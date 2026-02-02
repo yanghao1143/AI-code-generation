@@ -2570,3 +2570,11 @@ remote-servers-connect-ssh = Connect SSH Server
 remote-servers-connect-container = Connect Dev Container
 remote-servers-add-wsl = Add WSL Distro
 remote-servers-no-servers = No remote servers registered yet.
+
+# Debugger UI - Onboarding
+debugger-zeds-debugger = Zed's Debugger
+debugger-native-support-copy = It's finally here: Native support for debugging across multiple programming languages.
+
+# Git UI - Onboarding
+git-native-support = Native Git Support
+git-native-support-copy = First-class support for staging, committing, pulling, pushing, viewing diffs, and more. All without leaving Zed.

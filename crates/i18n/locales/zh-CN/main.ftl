@@ -2581,3 +2581,11 @@ remote-servers-connect-ssh = 连接 SSH 服务器
 remote-servers-connect-container = 连接开发容器
 remote-servers-add-wsl = 添加 WSL 发行版
 remote-servers-no-servers = 尚未注册远程服务器。
+
+# Debugger UI - Onboarding / 调试器 UI - 引导
+debugger-zeds-debugger = Zed 调试器
+debugger-native-support-copy = 终于来了：原生支持多种编程语言的调试功能。
+
+# Git UI - Onboarding / Git UI - 引导
+git-native-support = 原生 Git 支持
+git-native-support-copy = 一流的暂存、提交、拉取、推送、查看差异等功能支持。无需离开 Zed。

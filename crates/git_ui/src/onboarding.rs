@@ -108,7 +108,7 @@ impl Render for GitOnboardingModal {
                             .size(LabelSize::Small)
                             .color(Color::Muted),
                     )
-                    .child(Headline::new("Native Git Support").size(HeadlineSize::Large)),
+                    .child(Headline::new(t("git-native-support")).size(HeadlineSize::Large)),
             )
             .child(h_flex().absolute().top_2().right_2().child(
                 IconButton::new("cancel", IconName::Close).on_click(cx.listener(
@@ -132,9 +132,7 @@ impl Render for GitOnboardingModal {
             .full_width()
             .on_click(cx.listener(Self::view_blog));
 
-        let copy = "First-class support for staging, committing, pulling, pushing, viewing diffs, and more. All without leaving Zed.";
-
-        base.child(Label::new(copy).color(Color::Muted)).child(
+        base.child(Label::new(t("git-native-support-copy")).color(Color::Muted)).child(
             v_flex()
                 .w_full()
                 .mt_2()

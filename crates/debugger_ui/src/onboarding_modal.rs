@@ -129,7 +129,7 @@ impl Render for DebuggerOnboardingModal {
                             .size(LabelSize::Small)
                             .color(Color::Muted),
                     )
-                    .child(Headline::new("Zed's Debugger").size(HeadlineSize::Large)),
+                    .child(Headline::new(t("debugger-zeds-debugger")).size(HeadlineSize::Large)),
             )
             .child(h_flex().absolute().top_2().right_2().child(
                 IconButton::new("cancel", IconName::Close).on_click(cx.listener(
@@ -153,9 +153,7 @@ impl Render for DebuggerOnboardingModal {
             .full_width()
             .on_click(cx.listener(Self::view_blog));
 
-        let copy = "It's finally here: Native support for debugging across multiple programming languages.";
-
-        base.child(Label::new(copy).color(Color::Muted)).child(
+        base.child(Label::new(t("debugger-native-support-copy")).color(Color::Muted)).child(
             v_flex()
                 .w_full()
                 .mt_2()
