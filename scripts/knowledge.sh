@@ -1,116 +1,146 @@
 #!/bin/bash
-# knowledge.sh - 知识库管理系统
-# 记录问题、解决方案、最佳实践
+# knowledge.sh - 知识库系统
+# 积累和应用经验知识
 
 WORKSPACE="/home/jinyang/.openclaw/workspace"
+REDIS_PREFIX="openclaw:knowledge"
 
-# 记录问题和解决方案
-learn() {
-    local problem="$1"
-    local solution="$2"
-    local agent="${3:-unknown}"
-    local success="${4:-true}"
+# 颜色
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+
+# 记录知识
+record_knowledge() {
+    local category="$1"
+    local key="$2"
+    local value="$3"
     
-    local key="openclaw:knowledge:$(echo "$problem" | tr ' ' '_' | tr '[:upper:]' '[:lower:]')"
+    redis-cli HSET "${REDIS_PREFIX}:${category}" "$key" "$value" >/dev/null
+    redis-cli HINCRBY "${REDIS_PREFIX}:${category}:count" "$key" 1 >/dev/null
     
-    redis-cli HSET "$key" \
-        problem "$problem" \
-        solution "$solution" \
-        agent "$agent" \
-        success "$success" \
-        learned_at "$(date -Iseconds)" \
-        count 1 > /dev/null 2>&1
-    
-    # 增加计数
-    redis-cli HINCRBY "$key" count 1 > /dev/null 2>&1
-    
-    echo "✅ 已学习: $problem -> $solution"
+    echo -e "${GREEN}✓ 知识已记录: [$category] $key${NC}"
 }
 
-# 查询解决方案
-query() {
-    local problem="$1"
-    local key="openclaw:knowledge:$(echo "$problem" | tr ' ' '_' | tr '[:upper:]' '[:lower:]')"
+# 查询知识
+query_knowledge() {
+    local category="$1"
+    local key="$2"
     
-    local solution=$(redis-cli HGET "$key" solution 2>/dev/null)
+    local value=$(redis-cli HGET "${REDIS_PREFIX}:${category}" "$key" 2>/dev/null)
+    local count=$(redis-cli HGET "${REDIS_PREFIX}:${category}:count" "$key" 2>/dev/null || echo 0)
     
-    if [[ -n "$solution" ]]; then
-        echo "$solution"
+    if [[ -n "$value" ]]; then
+        echo -e "${CYAN}[$category] $key (使用 $count 次):${NC}"
+        echo "  $value"
     else
-        echo ""
+        echo -e "${YELLOW}未找到知识: [$category] $key${NC}"
     fi
 }
 
 # 列出所有知识
-list() {
-    echo "📚 知识库"
-    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+list_knowledge() {
+    local category="${1:-*}"
     
-    local keys=$(redis-cli KEYS "openclaw:knowledge:*" 2>/dev/null)
+    echo -e "${CYAN}╔══════════════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${CYAN}║                    📚 知识库                                      ║${NC}"
+    echo -e "${CYAN}╚══════════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+    
+    local keys=$(redis-cli KEYS "${REDIS_PREFIX}:*" 2>/dev/null | grep -v ":count$" | sort)
     
     for key in $keys; do
-        local problem=$(redis-cli HGET "$key" problem 2>/dev/null)
-        local solution=$(redis-cli HGET "$key" solution 2>/dev/null)
-        local count=$(redis-cli HGET "$key" count 2>/dev/null)
-        echo "  [$count] $problem"
-        echo "      → $solution"
+        local cat=$(echo "$key" | sed "s/${REDIS_PREFIX}://")
+        echo -e "${GREEN}[$cat]${NC}"
+        redis-cli HGETALL "$key" 2>/dev/null | while read -r k; do
+            read -r v
+            local count=$(redis-cli HGET "${key}:count" "$k" 2>/dev/null || echo 0)
+            echo "  $k: $v (×$count)"
+        done
         echo ""
     done
 }
 
-# 导出知识库
-export_kb() {
-    local output="$WORKSPACE/memory/knowledge-base.md"
+# 应用知识解决问题
+apply_knowledge() {
+    local problem="$1"
     
-    cat > "$output" << EOF
-# 知识库 - $(date '+%Y-%m-%d %H:%M')
-
-## 问题与解决方案
-
-EOF
-
-    local keys=$(redis-cli KEYS "openclaw:knowledge:*" 2>/dev/null)
+    echo -e "${CYAN}🔍 搜索相关知识: $problem${NC}"
+    
+    # 搜索所有类别
+    local found=false
+    local keys=$(redis-cli KEYS "${REDIS_PREFIX}:*" 2>/dev/null | grep -v ":count$")
     
     for key in $keys; do
-        local problem=$(redis-cli HGET "$key" problem 2>/dev/null)
-        local solution=$(redis-cli HGET "$key" solution 2>/dev/null)
-        local agent=$(redis-cli HGET "$key" agent 2>/dev/null)
-        local count=$(redis-cli HGET "$key" count 2>/dev/null)
-        
-        cat >> "$output" << EOF
-### $problem
-
-- **解决方案**: $solution
-- **相关 Agent**: $agent
-- **出现次数**: $count
-
-EOF
+        local matches=$(redis-cli HGETALL "$key" 2>/dev/null | grep -i "$problem")
+        if [[ -n "$matches" ]]; then
+            local cat=$(echo "$key" | sed "s/${REDIS_PREFIX}://")
+            echo -e "${GREEN}找到相关知识 [$cat]:${NC}"
+            echo "$matches"
+            found=true
+        fi
     done
     
-    echo "✅ 已导出到: $output"
+    if [[ "$found" == "false" ]]; then
+        echo -e "${YELLOW}未找到相关知识${NC}"
+    fi
+}
+
+# 导出知识库
+export_knowledge() {
+    local output="${1:-knowledge_export.json}"
+    
+    echo "{"
+    local keys=$(redis-cli KEYS "${REDIS_PREFIX}:*" 2>/dev/null | grep -v ":count$" | sort)
+    local first=true
+    
+    for key in $keys; do
+        local cat=$(echo "$key" | sed "s/${REDIS_PREFIX}://")
+        [[ "$first" == "false" ]] && echo ","
+        first=false
+        echo "  \"$cat\": {"
+        redis-cli HGETALL "$key" 2>/dev/null | {
+            local inner_first=true
+            while read -r k; do
+                read -r v
+                [[ "$inner_first" == "false" ]] && echo ","
+                inner_first=false
+                echo -n "    \"$k\": \"$v\""
+            done
+            echo ""
+        }
+        echo -n "  }"
+    done
+    echo ""
+    echo "}"
 }
 
 # 主入口
 case "${1:-list}" in
-    learn)
-        learn "$2" "$3" "$4" "$5"
+    record|add)
+        record_knowledge "$2" "$3" "$4"
         ;;
-    query)
-        query "$2"
+    query|get)
+        query_knowledge "$2" "$3"
         ;;
     list)
-        list
+        list_knowledge "$2"
+        ;;
+    apply|search)
+        apply_knowledge "$2"
         ;;
     export)
-        export_kb
+        export_knowledge "$2"
         ;;
     *)
-        echo "用法: $0 [learn|query|list|export]"
+        echo "用法: $0 <command> [args...]"
         echo ""
         echo "命令:"
-        echo "  learn <problem> <solution> [agent] [success]"
-        echo "  query <problem>"
-        echo "  list"
-        echo "  export"
+        echo "  record <category> <key> <value>  - 记录知识"
+        echo "  query <category> <key>           - 查询知识"
+        echo "  list [category]                  - 列出知识"
+        echo "  apply <problem>                  - 应用知识"
+        echo "  export [file]                    - 导出知识库"
         ;;
 esac
