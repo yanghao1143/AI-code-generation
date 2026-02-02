@@ -111,6 +111,25 @@ check_agents() {
             ((FIXED++))
         fi
         
+        # 检查 context 使用率 (Codex 特有)
+        if [[ "$agent" == "codex-agent" ]]; then
+            local ctx_left=$(echo "$output" | grep -oE "[0-9]+% context left" | grep -oE "[0-9]+" | head -1)
+            if [[ -n "$ctx_left" && $ctx_left -lt 25 ]]; then
+                log "⚠️ $agent context 只剩 ${ctx_left}%，需要重启"
+                ((ISSUES++))
+                # 重启 Codex
+                tmux -S "$SOCKET" send-keys -t "$agent" C-c
+                sleep 1
+                tmux -S "$SOCKET" send-keys -t "$agent" "/exit" Enter
+                sleep 2
+                tmux -S "$SOCKET" send-keys -t "$agent" "codex" Enter
+                sleep 3
+                tmux -S "$SOCKET" send-keys -t "$agent" "继续之前的工作，运行 cargo check 检查编译错误" Enter
+                log "  → 已重启 Codex"
+                ((FIXED++))
+            fi
+        fi
+        
         # 检查是否空闲太久 (超过10分钟)
         local idle_check=$(echo "$last_lines" | grep -qE "^>\s*$|^›\s*$|Type your message" && echo "idle")
         if [[ "$idle_check" == "idle" ]]; then
