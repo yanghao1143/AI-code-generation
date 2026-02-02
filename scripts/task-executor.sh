@@ -11,81 +11,24 @@ log() {
     echo "[$(date '+%H:%M:%S')] $1"
 }
 
-# L0 解卡
+# L0 解卡 - 使用 evolution-v4
 do_unblock() {
-    for pane in claude-agent gemini-agent codex-agent; do
-        output=$(tmux -S "$SOCKET" capture-pane -t "$pane" -p 2>/dev/null | tail -5)
-        if echo "$output" | grep -qiE "(y/n|yes/no|\[Y/n\]|\(y\))"; then
-            tmux -S "$SOCKET" send-keys -t "$pane" "y" Enter
-            log "$pane: 自动确认"
-        fi
-    done
+    local result=$(/home/jinyang/.openclaw/workspace/scripts/evolution-v4.sh check 2>/dev/null)
+    if [[ -n "$result" && "$result" != *"no_action"* ]]; then
+        log "evolution-v4: $result"
+    fi
 }
 
-# L1 状态感知
+# L1 状态感知 - 使用 evolution-v4
 do_state_detect() {
-    for pane in claude-agent gemini-agent codex-agent; do
-        output=$(tmux -S "$SOCKET" capture-pane -t "$pane" -p 2>/dev/null | tail -15)
-        
-        # 判断状态
-        if echo "$output" | grep -qiE "error|failed|panic|not recognized|cannot find"; then
-            status="ERROR"
-        elif echo "$output" | grep -qiE "waiting|confirm|y/n|\? "; then
-            status="WAITING"
-        elif echo "$output" | grep -qiE "compiling|running|building|Compiling"; then
-            status="WORKING"
-        elif [ -z "$(echo "$output" | tr -d '[:space:]')" ]; then
-            status="IDLE"
-        else
-            # 检查是否有命令提示符
-            if echo "$output" | grep -qE '(\$|>)\s*$'; then
-                status="IDLE"
-            else
-                status="WORKING"
-            fi
-        fi
-        
-        redis-cli HSET "${REDIS_PREFIX}:agent:${pane}:state" \
-            "status" "$status" \
-            "checked_at" "$(date +%s)" > /dev/null
-        
-        # 如果状态变化，写入事件队列
-        old_status=$(redis-cli HGET "${REDIS_PREFIX}:agent:${pane}:state" "prev_status")
-        if [ "$status" != "$old_status" ]; then
-            redis-cli LPUSH "${REDIS_PREFIX}:events:queue" \
-                "{\"type\":\"STATE_CHANGE\",\"agent\":\"$pane\",\"from\":\"$old_status\",\"to\":\"$status\",\"ts\":$(date +%s)}" > /dev/null
-            redis-cli HSET "${REDIS_PREFIX}:agent:${pane}:state" "prev_status" "$status" > /dev/null
-        fi
-        
-        log "$pane: $status"
-    done
+    /home/jinyang/.openclaw/workspace/scripts/evolution-v4.sh status 2>/dev/null
 }
 
-# L2 异常处理
+# L2 异常处理 - 使用 evolution-v4
 do_exception() {
-    recovered=0
-    for pane in claude-agent gemini-agent codex-agent; do
-        status=$(redis-cli HGET "${REDIS_PREFIX}:agent:${pane}:state" "status")
-        if [ "$status" = "ERROR" ]; then
-            log "$pane: 检测到异常，尝试恢复..."
-            
-            # 发送 Ctrl+C
-            tmux -S "$SOCKET" send-keys -t "$pane" C-c
-            sleep 1
-            
-            # 尝试恢复命令
-            tmux -S "$SOCKET" send-keys -t "$pane" "echo 'agent recovered at $(date)'" Enter
-            
-            recovered=$((recovered + 1))
-            
-            # 记录恢复事件
-            redis-cli LPUSH "${REDIS_PREFIX}:events:queue" \
-                "{\"type\":\"RECOVERED\",\"agent\":\"$pane\",\"ts\":$(date +%s)}" > /dev/null
-        fi
-    done
-    
-    if [ $recovered -gt 0 ]; then
-        log "恢复了 $recovered 个异常 agent"
+    local result=$(/home/jinyang/.openclaw/workspace/scripts/evolution-v4.sh check 2>/dev/null)
+    if [[ -n "$result" && "$result" != *"no_action"* ]]; then
+        log "evolution-v4 异常处理: $result"
     fi
 }
 
