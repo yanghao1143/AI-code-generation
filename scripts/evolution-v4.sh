@@ -416,12 +416,12 @@ auto_confirm() {
             tmux -S "$SOCKET" send-keys -t "$agent" Down Enter
             confirmed=true
         elif echo "$last_5" | grep -qE "● 1\. Allow once|1\. Allow|Allow execution" 2>/dev/null; then
-            # Gemini 多选确认界面 - 必须在最后几行
-            tmux -S "$SOCKET" send-keys -t "$agent" "1" Enter
+            # Gemini 多选确认界面 - 选择 2 (Allow for this session) 减少后续确认
+            tmux -S "$SOCKET" send-keys -t "$agent" "2" Enter
             confirmed=true
         elif echo "$last_5" | grep -qE "Waiting for user confirmation" 2>/dev/null; then
-            # Gemini 等待确认状态 - 发送 1 选择 Allow once
-            tmux -S "$SOCKET" send-keys -t "$agent" "1" Enter
+            # Gemini 等待确认状态 - 发送 2 选择 Allow for this session
+            tmux -S "$SOCKET" send-keys -t "$agent" "2" Enter
             confirmed=true
         elif echo "$last_5" | grep -qE "Enter to confirm|Press Enter|Dark mode|Light mode|trust this" 2>/dev/null; then
             tmux -S "$SOCKET" send-keys -t "$agent" Enter
