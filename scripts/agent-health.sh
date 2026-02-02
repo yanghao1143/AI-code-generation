@@ -155,23 +155,28 @@ is_idle() {
     local output="$1"
     local cli_type="$2"
     
+    # 首先检查是否在处理中
+    if echo "$output" | tail -15 | grep -qE "(⠋|⠙|⠹|⠸|⠼|⠴|⠦|⠧|⠇|⠏|Thinking|thinking|Working|working|Shenaniganing|Cogitat|Burrowing|esc to interrupt|esc to cancel)" 2>/dev/null; then
+        return 1
+    fi
+    
     # 检查是否显示输入提示符
     case "$cli_type" in
         claude)
-            # Claude 的输入提示: > 或 ────
-            if echo "$output" | tail -5 | grep -qE "^>|^────" 2>/dev/null; then
+            # Claude 的输入提示: 空的 > 提示符
+            if echo "$output" | tail -5 | grep -qE "^>\s*$" 2>/dev/null; then
                 return 0
             fi
             ;;
         gemini)
-            # Gemini 的输入提示: > Type your message
-            if echo "$output" | tail -5 | grep -qE "Type your message|^>" 2>/dev/null; then
+            # Gemini 的输入提示: Type your message
+            if echo "$output" | tail -5 | grep -qE "Type your message" 2>/dev/null; then
                 return 0
             fi
             ;;
         codex)
-            # Codex 的输入提示: › 或 context left
-            if echo "$output" | tail -5 | grep -qE "^›|context left" 2>/dev/null; then
+            # Codex 的输入提示: 空的 › 提示符或 context left (没有 esc to interrupt)
+            if echo "$output" | tail -5 | grep -qE "context left.*shortcuts" 2>/dev/null; then
                 return 0
             fi
             ;;
