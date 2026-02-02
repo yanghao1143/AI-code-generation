@@ -8,6 +8,7 @@ use gpui::{
     AppContext as _, Entity, EventEmitter, FocusHandle, Focusable, InteractiveElement,
     ParentElement, Render, SharedString, Styled, Task, div,
 };
+use i18n::t_args;
 use std::sync::Arc;
 use ui::{Icon, IconName, prelude::*};
 
@@ -84,7 +85,7 @@ impl Item for SharedScreen {
     type Event = Event;
 
     fn tab_tooltip_text(&self, _: &App) -> Option<SharedString> {
-        Some(format!("{}'s screen", self.user.github_login).into())
+        Some(t_args("shared-screen-tab", &[("user", self.user.github_login.clone().into())]).into())
     }
 
     fn deactivated(&mut self, _window: &mut Window, cx: &mut Context<Self>) {
@@ -98,7 +99,7 @@ impl Item for SharedScreen {
     }
 
     fn tab_content_text(&self, _detail: usize, _cx: &App) -> SharedString {
-        format!("{}'s screen", self.user.github_login).into()
+        t_args("shared-screen-tab", &[("user", self.user.github_login.clone().into())]).into()
     }
 
     fn telemetry_event_text(&self) -> Option<&'static str> {

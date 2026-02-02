@@ -10,6 +10,7 @@ use gpui::{
     Along, AnyView, AnyWeakView, Axis, Bounds, Entity, Hsla, IntoElement, MouseButton, Pixels,
     Point, StyleRefinement, WeakEntity, Window, point, size,
 };
+use i18n::t_args;
 use parking_lot::Mutex;
 use project::Project;
 use schemars::JsonSchema;
@@ -400,26 +401,26 @@ impl PaneLeaderDecorator for PaneRenderContext<'_> {
                     } => {
                         if Some(leader_project_id) == self.project.read(cx).remote_id() {
                             is_in_unshared_view.then(|| {
-                                Label::new(format!(
-                                    "{} is in an unshared pane",
-                                    leader.user.github_login
+                                Label::new(t_args(
+                                    "pane-user-in-unshared-pane",
+                                    &[("user", leader.user.github_login.clone().into())],
                                 ))
                             })
                         } else {
                             leader_join_data = Some((leader_project_id, leader.user.id));
-                            Some(Label::new(format!(
-                                "Follow {} to their active project",
-                                leader.user.github_login,
+                            Some(Label::new(t_args(
+                                "pane-follow-to-project",
+                                &[("user", leader.user.github_login.clone().into())],
                             )))
                         }
                     }
-                    ParticipantLocation::UnsharedProject => Some(Label::new(format!(
-                        "{} is viewing an unshared Zed project",
-                        leader.user.github_login
+                    ParticipantLocation::UnsharedProject => Some(Label::new(t_args(
+                        "pane-user-viewing-unshared-project",
+                        &[("user", leader.user.github_login.clone().into())],
                     ))),
-                    ParticipantLocation::External => Some(Label::new(format!(
-                        "{} is viewing a window outside of Zed",
-                        leader.user.github_login
+                    ParticipantLocation::External => Some(Label::new(t_args(
+                        "pane-user-viewing-external-window",
+                        &[("user", leader.user.github_login.clone().into())],
                     ))),
                 };
                 status_box = leader_status_box.map(|status| {

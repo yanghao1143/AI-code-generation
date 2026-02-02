@@ -1903,3 +1903,32 @@ multi-model-dispatch = Dispatch
 # ============================================
 component-preview-all = All Components
 component-preview-launch-toast = Launch Toast
+
+# ============================================
+# Workspace - Pane
+# ============================================
+pane-save-changes-prompt = Do you want to save changes to the following files?
+pane-save-all = Save all
+pane-discard-all = Discard all
+pane-unable-to-save = Unable to save file: { $error }
+pane-close-without-saving = Close Without Saving
+pane-this-buffer = This buffer
+pane-unsaved-edits-prompt = { $path } contains unsaved edits. Do you want to save it?
+
+# ============================================
+# Workspace - Pane Group (Collaboration)
+# ============================================
+pane-user-in-unshared-pane = { $user } is in an unshared pane
+pane-follow-to-project = Follow { $user } to their active project
+pane-user-viewing-unshared-project = { $user } is viewing an unshared Zed project
+pane-user-viewing-external-window = { $user } is viewing a window outside of Zed
+
+# ============================================
+# Workspace - Shared Screen
+# ============================================
+shared-screen-tab = { $user }'s screen
+
+# ============================================
+# Workspace - Notifications
+# ============================================
+notification-see-docs = See docs

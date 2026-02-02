@@ -25,7 +25,7 @@ use gpui::{
     PromptLevel, Render, ScrollHandle, Subscription, Task, WeakEntity, WeakFocusHandle, Window,
     actions, anchored, deferred, prelude::*,
 };
-use i18n::t;
+use i18n::{t, t_args};
 use itertools::Itertools;
 use language::{Capability, DiagnosticSeverity};
 use parking_lot::Mutex;
@@ -1924,9 +1924,9 @@ impl Pane {
                     let detail = Self::file_names_for_prompt(&mut dirty_items.iter(), cx);
                     window.prompt(
                         PromptLevel::Warning,
-                        "Do you want to save changes to the following files?",
+                        &t("pane-save-changes-prompt"),
                         Some(&detail),
-                        &["Save all", "Discard all", "Cancel"],
+                        &[&t("pane-save-all"), &t("pane-discard-all"), &t("cancel")],
                         cx,
                     )
                 })?;
@@ -1966,9 +1966,9 @@ impl Pane {
                                 );
                                 window.prompt(
                                     PromptLevel::Warning,
-                                    &format!("Unable to save file: {}", &err),
+                                    &t_args("pane-unable-to-save", &[("error", err.to_string().into())]),
                                     Some(&detail),
-                                    &["Close Without Saving", "Cancel"],
+                                    &[&t("pane-close-without-saving"), &t("cancel")],
                                     cx,
                                 )
                             })?;
@@ -4732,9 +4732,9 @@ fn dirty_message_for(buffer_path: Option<ProjectPath>, path_style: PathStyle) ->
             let path = p.path.display(path_style);
             if path.is_empty() { None } else { Some(path) }
         })
-        .unwrap_or("This buffer".into());
+        .unwrap_or_else(|| t("pane-this-buffer").to_string());
     let path = truncate_and_remove_front(&path, 80);
-    format!("{path} contains unsaved edits. Do you want to save it?")
+    t_args("pane-unsaved-edits-prompt", &[("path", path.into())]).to_string()
 }
 
 pub fn tab_details(items: &[Box<dyn ItemHandle>], _window: &Window, cx: &App) -> Vec<usize> {

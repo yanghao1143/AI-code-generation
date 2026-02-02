@@ -2430,3 +2430,32 @@ multi-model-dispatch = 调度
 # ============================================
 component-preview-all = 所有组件
 component-preview-launch-toast = 启动提示
+
+# ============================================
+# 工作区 - 面板
+# ============================================
+pane-save-changes-prompt = 是否保存对以下文件的更改？
+pane-save-all = 全部保存
+pane-discard-all = 全部放弃
+pane-unable-to-save = 无法保存文件：{ $error }
+pane-close-without-saving = 不保存并关闭
+pane-this-buffer = 此缓冲区
+pane-unsaved-edits-prompt = { $path } 包含未保存的编辑。是否保存？
+
+# ============================================
+# 工作区 - 面板组（协作）
+# ============================================
+pane-user-in-unshared-pane = { $user } 在未共享的面板中
+pane-follow-to-project = 跟随 { $user } 到其活动项目
+pane-user-viewing-unshared-project = { $user } 正在查看未共享的 Zed 项目
+pane-user-viewing-external-window = { $user } 正在查看 Zed 外部的窗口
+
+# ============================================
+# 工作区 - 共享屏幕
+# ============================================
+shared-screen-tab = { $user } 的屏幕
+
+# ============================================
+# 工作区 - 通知
+# ============================================
+notification-see-docs = 查看文档
