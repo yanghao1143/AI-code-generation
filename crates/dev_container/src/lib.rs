@@ -510,7 +510,7 @@ impl PickerDelegate for FeaturePickerDelegate {
                 .border_t_1()
                 .border_color(cx.theme().colors().border_variant)
                 .child(
-                    Button::new("run-action", "Select Feature")
+                    Button::new("run-action", t("dev-container-select-feature"))
                         .key_binding(
                             KeyBinding::for_action(&menu::Confirm, cx)
                                 .map(|kb| kb.size(rems_from_px(12.))),
@@ -520,7 +520,7 @@ impl PickerDelegate for FeaturePickerDelegate {
                         }),
                 )
                 .child(
-                    Button::new("run-action-secondary", "Confirm Selections")
+                    Button::new("run-action-secondary", t("dev-container-confirm-selections"))
                         .key_binding(
                             KeyBinding::for_action(&menu::SecondaryConfirm, cx)
                                 .map(|kb| kb.size(rems_from_px(12.))),

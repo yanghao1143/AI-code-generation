@@ -2537,3 +2537,7 @@ key-context-no-match = (no match)
 key-context-key-equivalents = Key Equivalents
 key-context-key-equivalents-description = Shortcuts defined using some characters have been remapped so that shortcuts can be typed without holding option.
 key-context-key-mapping = cmd-{ $key } => cmd-{ $equivalent }
+
+# Dev Container
+dev-container-select-feature = Select Feature
+dev-container-confirm-selections = Confirm Selections

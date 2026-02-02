@@ -2548,3 +2548,7 @@ key-context-no-match = (不匹配)
 key-context-key-equivalents = 按键等效
 key-context-key-equivalents-description = 使用某些字符定义的快捷键已被重新映射，以便无需按住 option 键即可输入快捷键。
 key-context-key-mapping = cmd-{ $key } => cmd-{ $equivalent }
+
+# Dev Container / 开发容器
+dev-container-select-feature = 选择功能
+dev-container-confirm-selections = 确认选择
