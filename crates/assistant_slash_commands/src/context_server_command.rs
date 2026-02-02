@@ -6,7 +6,7 @@ use assistant_slash_command::{
 use collections::HashMap;
 use context_server::{ContextServerId, types::Prompt};
 use gpui::{App, Entity, Task, WeakEntity, Window};
-use i18n::t_args;
+use i18n::{t, t_args};
 use language::{BufferSnapshot, CodeLabel, LspAdapterDelegate};
 use project::context_server_store::ContextServerStore;
 use std::sync::Arc;
@@ -92,7 +92,7 @@ impl SlashCommand for ContextServerSlashCommand {
         cx: &mut App,
     ) -> Task<Result<Vec<ArgumentCompletion>>> {
         let Ok((arg_name, arg_value)) = completion_argument(&self.prompt, arguments) else {
-            return Task::ready(Err(anyhow!("Failed to complete argument")));
+            return Task::ready(Err(anyhow!(t("slash-command-failed-complete-argument"))));
         };
 
         let server_id = self.server_id.clone();
@@ -100,7 +100,7 @@ impl SlashCommand for ContextServerSlashCommand {
 
         if let Some(server) = self.store.read(cx).get_running_server(&server_id) {
             cx.foreground_executor().spawn(async move {
-                let protocol = server.client().context("Context server not initialized")?;
+                let protocol = server.client().context(t("slash-command-context-server-not-initialized"))?;
 
                 let response = protocol
                     .request::<context_server::types::requests::CompletionComplete>(
@@ -134,7 +134,7 @@ impl SlashCommand for ContextServerSlashCommand {
                 Ok(completions)
             })
         } else {
-            Task::ready(Err(anyhow!("Context server not found")))
+            Task::ready(Err(anyhow!(t("slash-command-context-server-not-found"))))
         }
     }
 
@@ -159,7 +159,7 @@ impl SlashCommand for ContextServerSlashCommand {
         let store = self.store.read(cx);
         if let Some(server) = store.get_running_server(&server_id) {
             cx.foreground_executor().spawn(async move {
-                let protocol = server.client().context("Context server not initialized")?;
+                let protocol = server.client().context(t("slash-command-context-server-not-initialized"))?;
                 let response = protocol
                     .request::<context_server::types::requests::PromptsGet>(
                         context_server::types::PromptsGetParams {
@@ -175,7 +175,7 @@ impl SlashCommand for ContextServerSlashCommand {
                         .messages
                         .iter()
                         .all(|msg| matches!(msg.role, context_server::types::Role::User)),
-                    "Prompt contains non-user roles, which is not supported"
+                    t("slash-command-prompt-non-user-roles")
                 );
 
                 // Extract text from user messages into a single prompt string
@@ -213,13 +213,13 @@ impl SlashCommand for ContextServerSlashCommand {
                 .into_event_stream())
             })
         } else {
-            Task::ready(Err(anyhow!("Context server not found")))
+            Task::ready(Err(anyhow!(t("slash-command-context-server-not-found"))))
         }
     }
 }
 
 fn completion_argument(prompt: &Prompt, arguments: &[String]) -> Result<(String, String)> {
-    anyhow::ensure!(!arguments.is_empty(), "No arguments given");
+    anyhow::ensure!(!arguments.is_empty(), t("slash-command-no-arguments-given"));
 
     match &prompt.arguments {
         Some(args) if args.len() == 1 => {
@@ -227,15 +227,15 @@ fn completion_argument(prompt: &Prompt, arguments: &[String]) -> Result<(String,
             let arg_value = arguments.join(" ");
             Ok((arg_name, arg_value))
         }
-        Some(_) => anyhow::bail!("Prompt must have exactly one argument"),
-        None => anyhow::bail!("Prompt has no arguments"),
+        Some(_) => anyhow::bail!(t("slash-command-prompt-must-have-one-argument")),
+        None => anyhow::bail!(t("slash-command-prompt-has-no-arguments")),
     }
 }
 
 fn prompt_arguments(prompt: &Prompt, arguments: &[String]) -> Result<HashMap<String, String>> {
     match &prompt.arguments {
         Some(args) if args.len() > 1 => {
-            anyhow::bail!("Prompt has more than one argument, which is not supported");
+            anyhow::bail!(t("slash-command-prompt-too-many-arguments"));
         }
         Some(args) if args.len() == 1 => {
             if !arguments.is_empty() {
@@ -245,13 +245,13 @@ fn prompt_arguments(prompt: &Prompt, arguments: &[String]) -> Result<HashMap<Str
             } else if arguments.is_empty() && args[0].required == Some(false) {
                 Ok(HashMap::default())
             } else {
-                anyhow::bail!("Prompt expects argument but none given");
+                anyhow::bail!(t("slash-command-prompt-expects-argument"));
             }
         }
         Some(_) | None => {
             anyhow::ensure!(
                 arguments.is_empty(),
-                "Prompt expects no arguments but some were given"
+                t("slash-command-prompt-expects-no-arguments")
             );
             Ok(HashMap::default())
         }

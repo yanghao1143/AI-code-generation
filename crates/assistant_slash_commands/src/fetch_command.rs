@@ -40,7 +40,7 @@ impl FetchSlashCommand {
             .body_mut()
             .read_to_end(&mut body)
             .await
-            .context("error reading response body")?;
+            .context(t("slash-command-fetch-error-reading-body"))?;
 
         if response.status().is_client_error() {
             let text = String::from_utf8_lossy(body.as_slice());
@@ -51,11 +51,11 @@ impl FetchSlashCommand {
         }
 
         let Some(content_type) = response.headers().get("content-type") else {
-            bail!("missing Content-Type header");
+            bail!(t("slash-command-fetch-missing-content-type"));
         };
         let content_type = content_type
             .to_str()
-            .context("invalid Content-Type header")?;
+            .context(t("slash-command-fetch-invalid-content-type"))?;
         let content_type = if content_type.starts_with("text/html") {
             ContentType::Html
         } else if content_type.starts_with("text/plain") {
@@ -149,7 +149,7 @@ impl SlashCommand for FetchSlashCommand {
             return Task::ready(Err(anyhow!(t("slash-command-fetch-missing-url"))));
         };
         let Some(workspace) = workspace.upgrade() else {
-            return Task::ready(Err(anyhow!("workspace was dropped")));
+            return Task::ready(Err(anyhow!(t("workspace-was-dropped"))));
         };
 
         let http_client = workspace.read(cx).client().http_client();

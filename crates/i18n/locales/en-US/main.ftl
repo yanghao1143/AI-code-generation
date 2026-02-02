@@ -743,6 +743,8 @@ editor-keybinding-conflict = Conflict with Accept Keybinding
 editor-keybinding-conflict-message = Your keymap currently overrides the default accept keybinding. To continue, assign one keybinding for the `editor::AcceptEditPrediction` action.
 editor-assign-keybinding = Assign Keybinding
 editor-see-docs = See Docs
+editor-open-file = Open File
+editor-copy-diagnostic = Copy Diagnostic
 
 # Feedback
 feedback-copied-to-clipboard = Copied into clipboard
@@ -2000,6 +2002,21 @@ slash-command-run-prompt-from-server = Run '{ $prompt }' from { $server }
 slash-command-result-from-prompt = Result from { $prompt }
 slash-command-streaming-example-description = An example slash command that showcases streaming.
 slash-command-section-number = Section { $n }
+slash-command-failed-complete-argument = Failed to complete argument
+slash-command-context-server-not-initialized = Context server not initialized
+slash-command-context-server-not-found = Context server not found
+slash-command-prompt-non-user-roles = Prompt contains non-user roles, which is not supported
+slash-command-no-arguments-given = No arguments given
+slash-command-prompt-must-have-one-argument = Prompt must have exactly one argument
+slash-command-prompt-has-no-arguments = Prompt has no arguments
+slash-command-prompt-too-many-arguments = Prompt has more than one argument, which is not supported
+slash-command-prompt-expects-argument = Prompt expects argument but none given
+slash-command-prompt-expects-no-arguments = Prompt expects no arguments but some were given
+slash-command-fetch-error-reading-body = Error reading response body
+slash-command-fetch-missing-content-type = Missing Content-Type header
+slash-command-fetch-invalid-content-type = Invalid Content-Type header
+workspace-was-dropped = Workspace was dropped
+project-was-dropped = Project was dropped
 
 # ============================================
 # ACP Tools

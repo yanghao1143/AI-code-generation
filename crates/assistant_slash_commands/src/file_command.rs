@@ -146,7 +146,7 @@ impl SlashCommand for FileSlashCommand {
         cx: &mut App,
     ) -> Task<Result<Vec<ArgumentCompletion>>> {
         let Some(workspace) = workspace.and_then(|workspace| workspace.upgrade()) else {
-            return Task::ready(Err(anyhow!("workspace was dropped")));
+            return Task::ready(Err(anyhow!(t("workspace-was-dropped"))));
         };
 
         let path_style = workspace.read(cx).path_style(cx);
@@ -203,7 +203,7 @@ impl SlashCommand for FileSlashCommand {
         cx: &mut App,
     ) -> Task<SlashCommandResult> {
         let Some(workspace) = workspace.upgrade() else {
-            return Task::ready(Err(anyhow!("workspace was dropped")));
+            return Task::ready(Err(anyhow!(t("workspace-was-dropped"))));
         };
 
         if arguments.is_empty() {

@@ -12,6 +12,7 @@ use fs::{Fs, RemoveOptions};
 use futures::StreamExt;
 use fuzzy::StringMatchCandidate;
 use gpui::{App, AppContext as _, AsyncApp, Context, Entity, Task, WeakEntity};
+use i18n::t;
 use itertools::Itertools;
 use language::LanguageRegistry;
 use paths::text_threads_dir;
@@ -394,7 +395,7 @@ impl TextThreadStore {
 
     pub fn create_remote(&mut self, cx: &mut Context<Self>) -> Task<Result<Entity<TextThread>>> {
         let Some(project) = self.project.upgrade() else {
-            return Task::ready(Err(anyhow::anyhow!("project was dropped")));
+            return Task::ready(Err(anyhow::anyhow!(t("project-was-dropped"))));
         };
         let project = project.read(cx);
         let Some(project_id) = project.remote_id() else {
@@ -579,7 +580,7 @@ impl TextThreadStore {
         cx: &mut Context<Self>,
     ) -> Task<Result<Entity<TextThread>>> {
         let Some(project) = self.project.upgrade() else {
-            return Task::ready(Err(anyhow::anyhow!("project was dropped")));
+            return Task::ready(Err(anyhow::anyhow!(t("project-was-dropped"))));
         };
         let project = project.read(cx);
         let Some(project_id) = project.remote_id() else {

@@ -784,6 +784,8 @@ editor-keybinding-conflict = 接受快捷键冲突
 editor-keybinding-conflict-message = 你的键盘映射目前覆盖了默认的接受快捷键。要继续，请为 `editor::AcceptEditPrediction` 操作分配一个快捷键。
 editor-assign-keybinding = 分配快捷键
 editor-see-docs = 查看文档
+editor-open-file = 打开文件
+editor-copy-diagnostic = 复制诊断信息
 
 # Feedback / 反馈
 feedback-copied-to-clipboard = 已复制到剪贴板
@@ -2464,6 +2466,21 @@ slash-command-run-prompt-from-server = 从 { $server } 运行 '{ $prompt }'
 slash-command-result-from-prompt = { $prompt } 的结果
 slash-command-streaming-example-description = 展示流式输出的示例斜杠命令。
 slash-command-section-number = 第 { $n } 节
+slash-command-failed-complete-argument = 无法完成参数
+slash-command-context-server-not-initialized = 上下文服务器未初始化
+slash-command-context-server-not-found = 未找到上下文服务器
+slash-command-prompt-non-user-roles = 提示包含非用户角色，不受支持
+slash-command-no-arguments-given = 未提供参数
+slash-command-prompt-must-have-one-argument = 提示必须恰好有一个参数
+slash-command-prompt-has-no-arguments = 提示没有参数
+slash-command-prompt-too-many-arguments = 提示有多个参数，不受支持
+slash-command-prompt-expects-argument = 提示需要参数但未提供
+slash-command-prompt-expects-no-arguments = 提示不需要参数但提供了一些
+slash-command-fetch-error-reading-body = 读取响应正文时出错
+slash-command-fetch-missing-content-type = 缺少 Content-Type 头
+slash-command-fetch-invalid-content-type = 无效的 Content-Type 头
+workspace-was-dropped = 工作区已被释放
+project-was-dropped = 项目已被释放
 
 # ============================================
 # ACP 工具

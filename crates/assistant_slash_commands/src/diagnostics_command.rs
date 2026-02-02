@@ -124,7 +124,7 @@ impl SlashCommand for DiagnosticsSlashCommand {
         cx: &mut App,
     ) -> Task<Result<Vec<ArgumentCompletion>>> {
         let Some(workspace) = workspace.and_then(|workspace| workspace.upgrade()) else {
-            return Task::ready(Err(anyhow!("workspace was dropped")));
+            return Task::ready(Err(anyhow!(t("workspace-was-dropped"))));
         };
         let path_style = workspace.read(cx).project().read(cx).path_style(cx);
         let query = arguments.last().cloned().unwrap_or_default();
@@ -182,7 +182,7 @@ impl SlashCommand for DiagnosticsSlashCommand {
         cx: &mut App,
     ) -> Task<SlashCommandResult> {
         let Some(workspace) = workspace.upgrade() else {
-            return Task::ready(Err(anyhow!("workspace was dropped")));
+            return Task::ready(Err(anyhow!(t("workspace-was-dropped"))));
         };
 
         let project = workspace.read(cx).project();
