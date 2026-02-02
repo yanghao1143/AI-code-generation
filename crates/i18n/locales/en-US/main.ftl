@@ -317,6 +317,62 @@ terminal-working-directory = Working Directory
 terminal-inline-assist = Inline Assist
 
 # ============================================
+# REPL
+# ============================================
+repl-sessions-title = REPL Sessions
+repl-install-kernels = Install kernels
+repl-copy-output = Copy output
+repl-output-title = REPL Output
+repl-full-error-title = Full Error
+repl-unknown-status = Unknown status
+repl-kernel-shutdown = Kernel shut down
+repl-more-options = More options
+repl-select-kernel = Select kernel
+repl-select-kernel-placeholder = Select a kernel...
+repl-restart-kernel = Restart kernel
+repl-interrupt-kernel = Interrupt kernel
+repl-shutting-down = Shutting down
+repl-python-environment = Python environment
+repl-kernel-docs = Kernel docs
+repl-no-kernels-available = No Jupyter kernels available
+repl-no-kernels-instructions = To run code interactively in the editor, install and configure Jupyter kernels.
+repl-no-sessions = No Jupyter kernel sessions
+repl-no-sessions-instructions = To run code in a Jupyter kernel, select some code and use the 'repl::Run' command.
+repl-kernel-sessions = Jupyter kernel sessions
+repl-open-in-buffer = Open in buffer
+repl-copy-full-error = Copy full error
+repl-open-full-error-in-buffer = Open full error in buffer
+repl-connecting-to-kernel = Connecting to kernel...
+repl-executing = Executing...
+repl-kernel-shutting-down = Kernel shutting down...
+repl-kernel-restarting = Kernel restarting...
+repl-queued = Queued...
+repl-kernel-error = Kernel error: { $error }
+repl-kernel-status-idle = Idle
+repl-kernel-status-busy = Busy
+repl-kernel-status-starting = Starting
+repl-kernel-status-error = Error
+repl-kernel-status-shutting-down = Shutting down
+repl-kernel-status-shutdown = Shut down
+repl-kernel-status-restarting = Restarting
+repl-type-jupyter = Jupyter
+repl-type-python-env = Python environment
+repl-type-remote = Remote
+repl-run-all = Run all
+repl-clear-all-outputs = Clear all outputs
+repl-move-cell-up = Move cell up
+repl-move-cell-down = Move cell down
+repl-add-markdown = Add markdown cell
+repl-add-code = Add code cell
+repl-kernel-status-tooltip = Kernel { $name }: { $status }
+repl-kernel-tooltip = Kernel { $name } ({ $status })
+repl-close-output-area = Close output area
+repl-click-to-edit-markdown = Click to edit markdown...
+repl-running = Running...
+repl-failed-to-load-image = Failed to load image: { $error }
+repl-unsupported-media-type = Unsupported media type
+
+# ============================================
 # Extensions
 # ============================================
 extensions-title = Extensions
@@ -1932,3 +1988,31 @@ shared-screen-tab = { $user }'s screen
 # Workspace - Notifications
 # ============================================
 notification-see-docs = See docs
+
+# ============================================
+# Agent UI V2
+# ============================================
+agent-toggle-pane = Toggle Agent Pane
+agent-close-pane = Close Agent Pane
+agent-select-thread-hint = Select a thread to view details
+
+# ============================================
+# LLM Provider Configuration
+# ============================================
+llm-provider-models = Models
+llm-provider-add-model = Add Model
+llm-provider-remove-model = Remove Model
+llm-provider-save = Save Provider
+
+# ============================================
+# Agent Profile Management
+# ============================================
+profile-customize = Customize
+profile-custom-profiles = Custom Profiles
+profile-add-new = Add New Profile
+profile-fork = Fork Profile
+profile-configure-model = Configure Default Model
+profile-configure-builtin-tools = Configure Built-in Tools
+profile-configure-mcp-tools = Configure MCP Tools
+profile-delete = Delete Profile
+profile-go-back = Go Back

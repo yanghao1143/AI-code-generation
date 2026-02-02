@@ -8,6 +8,7 @@ use fs::Fs;
 use gpui::{
     Entity, EventEmitter, Focusable, Pixels, SharedString, Subscription, WeakEntity, prelude::*,
 };
+use i18n::t;
 use project::Project;
 use prompt_store::PromptStore;
 use serde::{Deserialize, Serialize};
@@ -168,7 +169,7 @@ impl AgentThreadPane {
         let pane_toggle_button = |workspace: WeakEntity<Workspace>| {
             IconButton::new("toggle_utility_pane", toggle_icon)
                 .icon_size(IconSize::Small)
-                .tooltip(Tooltip::text("Toggle Agent Pane"))
+                .tooltip(Tooltip::text(t("agent-toggle-pane")))
                 .on_click(move |_, window, cx| {
                     workspace
                         .update(cx, |workspace, cx| {
@@ -207,7 +208,7 @@ impl AgentThreadPane {
                     .child(
                         IconButton::new("close_btn", IconName::Close)
                             .icon_size(IconSize::Small)
-                            .tooltip(Tooltip::text("Close Agent Pane"))
+                            .tooltip(Tooltip::text(t("agent-close-pane")))
                             .on_click(cx.listener(|this, _: &gpui::ClickEvent, _window, cx| {
                                 cx.emit(ClosePane);
                                 this.thread_view = None;
@@ -271,7 +272,7 @@ impl Render for AgentThreadPane {
                 .flex()
                 .items_center()
                 .justify_center()
-                .child(Label::new("Select a thread to view details").size(LabelSize::Default))
+                .child(Label::new(t("agent-select-thread-hint")).size(LabelSize::Default))
         };
 
         div()

@@ -976,6 +976,19 @@ repl-kernel-status-restarting = 正在重启
 repl-type-jupyter = Jupyter
 repl-type-python-env = Python 环境
 repl-type-remote = 远程
+repl-run-all = 运行全部
+repl-clear-all-outputs = 清除所有输出
+repl-move-cell-up = 上移单元格
+repl-move-cell-down = 下移单元格
+repl-add-markdown = 添加 Markdown 单元格
+repl-add-code = 添加代码单元格
+repl-kernel-status-tooltip = 内核 { $name }：{ $status }
+repl-kernel-tooltip = 内核 { $name }（{ $status }）
+repl-close-output-area = 关闭输出区域
+repl-click-to-edit-markdown = 点击编辑 Markdown...
+repl-running = 正在运行...
+repl-failed-to-load-image = 加载图片失败：{ $error }
+repl-unsupported-media-type = 不支持的媒体类型
 
 # Activity Indicator
 activity-indicator-ls-status = 语言服务器 { $server_name }:\n\n{ $status }
@@ -2459,3 +2472,31 @@ shared-screen-tab = { $user } 的屏幕
 # 工作区 - 通知
 # ============================================
 notification-see-docs = 查看文档
+
+# ============================================
+# Agent UI V2
+# ============================================
+agent-toggle-pane = 切换 Agent 面板
+agent-close-pane = 关闭 Agent 面板
+agent-select-thread-hint = 选择一个对话以查看详情
+
+# ============================================
+# LLM 提供商配置
+# ============================================
+llm-provider-models = 模型
+llm-provider-add-model = 添加模型
+llm-provider-remove-model = 移除模型
+llm-provider-save = 保存提供商
+
+# ============================================
+# Agent 配置文件管理
+# ============================================
+profile-customize = 自定义
+profile-custom-profiles = 自定义配置
+profile-add-new = 添加新配置
+profile-fork = 复制配置
+profile-configure-model = 配置默认模型
+profile-configure-builtin-tools = 配置内置工具
+profile-configure-mcp-tools = 配置 MCP 工具
+profile-delete = 删除配置
+profile-go-back = 返回

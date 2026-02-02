@@ -6,6 +6,7 @@ use fs::Fs;
 use gpui::{
     DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Render, ScrollHandle, Task,
 };
+use i18n::t;
 use language_model::LanguageModelRegistry;
 use language_models::provider::open_ai_compatible::{AvailableModel, ModelCapabilities};
 use settings::{OpenAiCompatibleSettingsContent, update_settings_file};
@@ -337,9 +338,9 @@ impl AddLlmProviderModal {
             .child(
                 h_flex()
                     .justify_between()
-                    .child(Label::new("Models").size(LabelSize::Small))
+                    .child(Label::new(t("llm-provider-models")).size(LabelSize::Small))
                     .child(
-                        Button::new("add-model", "Add Model")
+                        Button::new("add-model", t("llm-provider-add-model"))
                             .icon(IconName::Plus)
                             .icon_position(IconPosition::Start)
                             .icon_size(IconSize::XSmall)
@@ -445,7 +446,7 @@ impl AddLlmProviderModal {
             )
             .when(has_more_than_one_model, |this| {
                 this.child(
-                    Button::new(("remove-model", ix), "Remove Model")
+                    Button::new(("remove-model", ix), t("llm-provider-remove-model"))
                         .icon(IconName::Trash)
                         .icon_position(IconPosition::Start)
                         .icon_size(IconSize::XSmall)
@@ -554,7 +555,7 @@ impl Render for AddLlmProviderModal {
                             h_flex()
                                 .gap_1()
                                 .child(
-                                    Button::new("cancel", "Cancel")
+                                    Button::new("cancel", t("cancel"))
                                         .key_binding(
                                             KeyBinding::for_action_in(
                                                 &menu::Cancel,
@@ -568,7 +569,7 @@ impl Render for AddLlmProviderModal {
                                         })),
                                 )
                                 .child(
-                                    Button::new("save-server", "Save Provider")
+                                    Button::new("save-server", t("llm-provider-save"))
                                         .key_binding(
                                             KeyBinding::for_action_in(
                                                 &menu::Confirm,
