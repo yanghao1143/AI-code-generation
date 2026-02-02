@@ -513,3 +513,40 @@ case "$action" in
         echo "  status  - 简洁状态输出"
         ;;
 esac
+
+# 检测是否有未发送的输入 (输入框有内容但没执行)
+has_pending_input() {
+    local output="$1"
+    local cli_type="$2"
+    local last_lines=$(echo "$output" | tail -10)
+    
+    case "$cli_type" in
+        gemini)
+            # Gemini: 检查输入框是否有内容 (> 后面有文字，但没有 spinner)
+            if echo "$last_lines" | grep -qE "^│ > .+[^│]" 2>/dev/null; then
+                # 确认没有在处理中
+                if ! echo "$last_lines" | grep -qE "(⠋|⠙|⠹|⠸|⠼|⠴|⠦|⠧|⠇|⠏|esc to cancel)" 2>/dev/null; then
+                    return 0
+                fi
+            fi
+            ;;
+        claude)
+            # Claude: 检查 > 后面有多行内容但没有 thinking/working
+            if echo "$last_lines" | grep -qE "^> .+" 2>/dev/null; then
+                if ! echo "$last_lines" | grep -qE "(Thinking|thinking|Working|·.*tokens)" 2>/dev/null; then
+                    return 0
+                fi
+            fi
+            ;;
+        codex)
+            # Codex: 检查 › 后面有内容但没有处理中标志
+            if echo "$last_lines" | grep -qE "^› .+" 2>/dev/null; then
+                if ! echo "$last_lines" | grep -qE "(Searching|Investigating|esc to interrupt)" 2>/dev/null; then
+                    return 0
+                fi
+            fi
+            ;;
+    esac
+    
+    return 1
+}

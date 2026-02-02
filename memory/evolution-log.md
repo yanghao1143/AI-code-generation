@@ -27,3 +27,32 @@
 3. 任务分配优化
 4. 死锁检测增强
 
+### 08:28 自我检查
+
+**指标**:
+- claude_recoveries=3
+- gemini_recoveries=1
+- codex_recoveries=1
+- total_deadlocks=3
+- context_overflows=
+- tasks_completed=0
+- tasks_failed=0
+
+**发现的问题**:
+  - claude-agent: needs_confirm
+
+**改进建议**:
+- 系统运行良好
+
+
+### 08:29 发现新问题模式
+
+**问题**: Gemini agent 任务在输入框但没发送，健康检查显示 "active" 但实际没工作
+
+**根因**: 派发任务时只 send-keys 了文本，没有发送 Enter
+
+**修复**: 
+1. 手动发送 Enter 启动任务
+2. TODO: 改进健康检查，检测"输入框有内容但没执行"的状态
+
+**学习**: 派发任务后要确认任务真正开始执行，不能只看输入框有内容
