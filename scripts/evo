@@ -183,6 +183,17 @@ case "${1:-help}" in
     next)
         "$SCRIPTS/task-finder.sh" next "$2"
         ;;
+    # 学习
+    learn)
+        "$SCRIPTS/auto-learn.sh" auto
+        ;;
+    report)
+        "$SCRIPTS/auto-learn.sh" report
+        ;;
+    # 分解
+    decompose)
+        "$SCRIPTS/task-decomposer.sh" smart "$2"
+        ;;
     help|--help|-h|*)
         show_help
         ;;
