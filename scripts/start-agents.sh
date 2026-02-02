@@ -64,7 +64,7 @@ restart_agent() {
             tmux -S "$SOCKET" send-keys -t "$agent" "gemini" Enter
             ;;
         codex-agent)
-            tmux -S "$SOCKET" send-keys -t "$agent" "codex" Enter
+            tmux -S "$SOCKET" send-keys -t "$agent" "/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command 'cd D:\\ai软件\\zed; codex'" Enter
             ;;
     esac
     echo "✅ $agent 已重启"
