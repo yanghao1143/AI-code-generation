@@ -2716,3 +2716,5 @@ unpin = 取消固定
 favorite = 收藏
 unfavorite = 取消收藏
 acp-server-exited = 服务器已退出，状态码：{$status}
+acp-duplicate-subagent-update = 同一 AcpThread 实体的重复 SubagentThread 更新
+acp-use-either-send-update = 请使用 send_update 或 set_next_prompt_updates

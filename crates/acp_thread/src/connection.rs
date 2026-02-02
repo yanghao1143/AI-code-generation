@@ -551,7 +551,7 @@ mod test_support {
         ) {
             assert!(
                 self.next_prompt_updates.lock().is_empty(),
-                "Use either send_update or set_next_prompt_updates"
+                t("acp-use-either-send-update")
             );
 
             self.sessions
