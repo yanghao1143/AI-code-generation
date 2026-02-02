@@ -1231,6 +1231,7 @@ agent-enable-thinking-mode = 启用思考模�?
 # Agent Configuration / Agent 配置
 agent-no-config-view-for = 没有配置视图�?
 agent-remove-provider = 移除提供�?
+agent-compatible-apis = 兼容的 API
 agent-install-from-extensions = 从扩展安�?
 agent-mcp-servers-title = Model Context Protocol (MCP) 服务�?
 agent-mcp-servers-desc = 所有直接连接或通过 Zed 扩展连接�?MCP 服务器�?

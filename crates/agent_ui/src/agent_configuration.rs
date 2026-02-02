@@ -439,7 +439,7 @@ impl AgentConfiguration {
                 let workspace = self.workspace.clone();
                 move |window, cx| {
                     Some(ContextMenu::build(window, cx, |menu, _window, _cx| {
-                        menu.header("Compatible APIs").entry("OpenAI", None, {
+                        menu.header(t("agent-compatible-apis")).entry("OpenAI", None, {
                             let workspace = workspace.clone();
                             move |window, cx| {
                                 workspace

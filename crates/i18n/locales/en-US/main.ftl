@@ -880,6 +880,7 @@ agent-models = Models
 agent-add-model = Add Model
 agent-save-provider = Save Provider
 agent-add-provider = Add Provider
+agent-compatible-apis = Compatible APIs
 agent-open-repository = Open Repository
 agent-waiting-for-context-server = Waiting for Context Server
 agent-customize = Customize
