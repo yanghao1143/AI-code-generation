@@ -459,6 +459,9 @@ auto_confirm() {
 dispatch_task() {
     local agent="$1"
     
+    # 0. 先保存当前上下文
+    "$WORKSPACE/scripts/context-cache.sh" save "$agent" 2>/dev/null
+    
     # 1. 优先从优先级队列获取
     local task=$("$WORKSPACE/scripts/priority-queue.sh" get "$agent" 2>/dev/null)
     
@@ -467,7 +470,11 @@ dispatch_task() {
         task=$(redis-cli LPOP "$REDIS_PREFIX:tasks:queue" 2>/dev/null)
     fi
     
-    # 3. 检查是否有未完成的任务需要继续 (防止无限嵌套)
+    # 3. 获取缓存的上下文信息
+    local cached_progress=$(redis-cli HGET "openclaw:ctx:$agent" "progress" 2>/dev/null)
+    local cached_findings=$(redis-cli HGET "openclaw:ctx:$agent" "findings" 2>/dev/null)
+    
+    # 4. 检查是否有未完成的任务需要继续 (防止无限嵌套)
     if [[ -z "$task" ]]; then
         local last_task=$(redis-cli HGET "$REDIS_PREFIX:task:$agent" "current" 2>/dev/null)
         # 只有当 last_task 不包含 "继续之前的任务" 时才添加前缀
@@ -476,24 +483,32 @@ dispatch_task() {
         fi
     fi
     
-    # 4. 使用 task-finder 智能发现任务
+    # 5. 获取下一个待处理模块
     if [[ -z "$task" ]]; then
-        task=$("$WORKSPACE/scripts/task-finder.sh" next "$agent" 2>/dev/null)
+        local next_module=$("$WORKSPACE/scripts/context-cache.sh" next 2>/dev/null)
+        if [[ -n "$next_module" ]]; then
+            task="国际化 crates/$next_module 模块。直接修改代码，不要分析。完成后提交。"
+        fi
     fi
     
-    # 5. 使用默认任务
+    # 6. 使用默认任务
     if [[ -z "$task" ]]; then
         case "$agent" in
             claude-agent)
-                task="继续 Chi Code 中文化工作。检查 crates/ 目录下还有哪些模块需要国际化。优先处理用户界面相关的字符串。完成后提交代码。"
+                task="批量国际化 crates/ 下的模块。用 sed 批量替换硬编码字符串。直接改代码并提交。"
                 ;;
             gemini-agent)
-                task="继续 Chi Code 中文化工作。检查 crates/ 目录下的模块，找出硬编码的英文字符串并进行国际化。完成后提交代码。"
+                task="国际化 crates/ 下的模块。直接修改代码，不要分析。完成后提交。"
                 ;;
             codex-agent)
-                task="运行 cargo check 检查编译错误。如果有错误，修复它们。如果没有错误，运行 cargo clippy 检查代码质量。完成后提交代码。"
+                task="国际化 crates/ 下的模块。直接修改代码，不要分析。完成后提交。"
                 ;;
         esac
+    fi
+    
+    # 7. 如果有缓存的上下文，附加到任务
+    if [[ -n "$cached_progress" || -n "$cached_findings" ]]; then
+        task="$task (上次进度: $cached_progress, 发现: ${cached_findings:0:100})"
     fi
     
     # 发送任务
