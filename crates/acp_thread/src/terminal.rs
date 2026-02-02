@@ -2,6 +2,7 @@ use agent_client_protocol as acp;
 use anyhow::Result;
 use futures::{FutureExt as _, future::Shared};
 use gpui::{App, AppContext, AsyncApp, Context, Entity, Task};
+use i18n::t;
 use language::LanguageRegistry;
 use markdown::Markdown;
 use project::Project;
@@ -185,7 +186,8 @@ impl Terminal {
 
     pub fn to_markdown(&self, cx: &App) -> String {
         format!(
-            "Terminal:\n```\n{}\n```\n",
+            "{}:\n```\n{}\n```\n",
+            t("terminal"),
             self.terminal.read(cx).get_content()
         )
     }

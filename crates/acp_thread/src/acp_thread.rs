@@ -46,6 +46,7 @@ use itertools::Itertools;
 use language::{Anchor, Buffer, BufferSnapshot, LanguageRegistry, Point, ToPoint, text_diff};
 use markdown::Markdown;
 use project::{AgentLocation, Project, git_store::GitStoreCheckpoint};
+use std::borrow::Cow;
 use std::collections::HashMap;
 use std::error::Error;
 use std::fmt::{Formatter, Write};
@@ -593,7 +594,7 @@ impl ContentBlock {
             }
             (ContentBlock::Image { .. }, _) => {
                 let new_content = Self::block_string_contents(&block, path_style);
-                let combined = format!("`Image`\n{}", new_content);
+                let combined = format!("`{}`\n{}", t("image"), new_content);
                 *self = Self::create_markdown_block(combined, language_registry, cx);
             }
         }
@@ -648,15 +649,15 @@ impl ContentBlock {
     }
 
     fn image_md(_image: &acp::ImageContent) -> String {
-        "`Image`".into()
+        format!("`{}`", t("image"))
     }
 
-    pub fn to_markdown<'a>(&'a self, cx: &'a App) -> &'a str {
+    pub fn to_markdown<'a>(&'a self, cx: &'a App) -> Cow<'a, str> {
         match self {
-            ContentBlock::Empty => "",
-            ContentBlock::Markdown { markdown } => markdown.read(cx).source(),
-            ContentBlock::ResourceLink { resource_link } => &resource_link.uri,
-            ContentBlock::Image { .. } => "`Image`",
+            ContentBlock::Empty => Cow::Borrowed(""),
+            ContentBlock::Markdown { markdown } => Cow::Borrowed(markdown.read(cx).source()),
+            ContentBlock::ResourceLink { resource_link } => Cow::Borrowed(&resource_link.uri),
+            ContentBlock::Image { .. } => Cow::Owned(format!("`{}`", t("image"))),
         }
     }
 
@@ -722,7 +723,7 @@ impl ToolCallContent {
                 .get(&terminal_id)
                 .cloned()
                 .map(|terminal| Some(Self::Terminal(terminal)))
-                .ok_or_else(|| anyhow::anyhow!(t("acp-terminal-not-found"), terminal_id)),
+                .ok_or_else(|| anyhow::anyhow!(t_args("acp-terminal-not-found", &[("id", terminal_id.to_string().into())]))),
             _ => Ok(None),
         }
     }
