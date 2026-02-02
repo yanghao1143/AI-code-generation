@@ -2839,9 +2839,3 @@ tool-status-failed = 失败
 tool-status-rejected = 已拒绝
 tool-status-canceled = 已取消
 
-
-
-a c p - i n v a l i d - a u t h - m e t h o d  
- =  
- �eHe�v�����e�l 
- 

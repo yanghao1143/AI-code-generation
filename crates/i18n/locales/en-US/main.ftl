@@ -2380,9 +2380,3 @@ tool-status-failed = Failed
 tool-status-rejected = Rejected
 tool-status-canceled = Canceled
 
-a c p - i n v a l i d - a u t h - m e t h o d  
- =  
- I n v a l i d  
- A u t h  
- M e t h o d  
- 
