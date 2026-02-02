@@ -651,4 +651,34 @@ RULES: [约束/验收标准]
 ./scripts/evo optimize    # 运行自动优化
 ```
 
+### 2026-02-02 13:24 - 🚀 进化 v4.2：性能指标 + 智能路由 + 异常预测
+
+**新增功能**:
+
+1. **性能指标收集器** (`scripts/metrics.sh`)
+   - 收集 Context 使用率、工作时间、文件操作数
+   - 时间序列存储到 Redis
+   - 趋势分析和平均值计算
+   - 完整性能报告
+
+2. **智能任务路由器 v2** (`scripts/smart-router-v2.sh`)
+   - Agent 能力矩阵 (每个 agent 对每种任务的评分)
+   - 任务关键词自动检测
+   - 综合评分 (能力 + 状态 + Context)
+   - 路由历史记录
+
+3. **异常预测系统** (`scripts/predictor.sh`)
+   - Context 耗尽预测 (基于下降趋势)
+   - 循环频率预测
+   - 网络问题预测
+   - 自动预防措施
+
+**使用方法**:
+```bash
+./scripts/evo metrics           # 查看当前指标
+./scripts/evo route "任务描述"  # 智能路由建议
+./scripts/predictor.sh predict  # 异常预测
+./scripts/predictor.sh prevent  # 自动预防
+```
+
 **当前状态**: 三个 agent 全部正常工作
