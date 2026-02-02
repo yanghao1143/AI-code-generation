@@ -208,44 +208,39 @@ schedule_and_run() {
     # 负载检查
     local load=$("$(dirname "$0")/smart-router.sh" load 2>/dev/null || echo 0)
     if [ "$load" -ge 3 ]; then
-        # 过载，跳过本次调度
         return 0
     fi
     
-    local task=$(get_next_task)
+    # 执行最多 5 个过期任务
+    local executed=0
+    local max_tasks=5
     
-    if [ -z "$task" ]; then
-        return 0
-    fi
-    
-    # 检查是否有任务正在运行
-    local running=$(redis-cli GET "${REDIS_PREFIX}:running")
-    if [ -n "$running" ]; then
-        local started=$(redis-cli HGET "${REDIS_PREFIX}:task:${running}" "started_at")
-        local now=$(date +%s)
-        local elapsed=$((now - started))
+    while [ $executed -lt $max_tasks ]; do
+        local task=$(get_next_task)
         
-        if [ "$elapsed" -gt 300 ]; then
-            mark_task_done "$running" 0
-            redis-cli DEL "${REDIS_PREFIX}:running" > /dev/null
-        else
-            return 0
+        if [ -z "$task" ]; then
+            break
         fi
-    fi
+        
+        # 标记开始
+        mark_task_start "$task"
+        
+        # 执行任务
+        local executor="$(dirname "$0")/task-executor.sh"
+        if [ -x "$executor" ]; then
+            "$executor" "$task"
+            local result=$?
+            mark_task_done "$task" $((1 - result))
+        else
+            mark_task_done "$task" 0
+        fi
+        
+        executed=$((executed + 1))
+        echo "DONE:$task"
+    done
     
-    # 标记开始
-    redis-cli SET "${REDIS_PREFIX}:running" "$task" EX 600 > /dev/null
-    mark_task_start "$task"
-    
-    # 执行任务
-    local executor="$(dirname "$0")/task-executor.sh"
-    if [ -x "$executor" ]; then
-        "$executor" "$task"
-        local result=$?
-        mark_task_done "$task" $((1 - result))
-    else
-        echo "执行器不存在: $executor"
-        mark_task_done "$task" 0
+    if [ $executed -eq 0 ]; then
+        return 0
     fi
     
     redis-cli DEL "${REDIS_PREFIX}:running" > /dev/null

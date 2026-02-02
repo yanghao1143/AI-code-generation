@@ -43,7 +43,7 @@ start_codex() {
         tmux -S "$SOCKET" new-session -d -s codex-agent
         sleep 1
     fi
-    tmux -S "$SOCKET" send-keys -t codex-agent "cd /mnt/d/ai软件/zed && codex" Enter
+    tmux -S "$SOCKET" send-keys -t codex-agent "/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command 'cd D:\\ai软件\\zed; codex'" Enter
     echo "✅ codex-agent 启动"
 }
 
