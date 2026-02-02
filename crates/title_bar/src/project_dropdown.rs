@@ -6,10 +6,12 @@ use gpui::{
     Action, App, Context, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, Subscription,
     WeakEntity, actions,
 };
+use i18n::{t, t_args};
 use menu;
 use project::{Project, Worktree, git_store::Repository};
 use recent_projects::{RecentProjectEntry, delete_recent_project, get_recent_projects};
 use settings::WorktreeId;
+use std::collections::HashMap;
 use ui::{ContextMenu, DocumentationAside, DocumentationSide, Tooltip, prelude::*};
 use workspace::{CloseIntent, Workspace};
 
@@ -133,7 +135,7 @@ impl ProjectDropdown {
                 }
             }
 
-            let mut menu = menu.header("Open Folders");
+            let mut menu = menu.header(t("title-bar-open-folders"));
 
             for entry in entries {
                 let worktree_id = entry.worktree_id;
@@ -181,13 +183,13 @@ impl ProjectDropdown {
                                         if let Some(menu_entity) = menu_shell.borrow().as_ref() {
                                             let focus_handle = menu_entity.focus_handle(cx);
                                             Tooltip::for_action_in(
-                                                "Remove Folder",
+                                                t("title-bar-remove-folder"),
                                                 &RemoveSelectedFolder,
                                                 &focus_handle,
                                                 cx,
                                             )
                                         } else {
-                                            Tooltip::text("Remove Folder")(window, cx)
+                                            Tooltip::text(t("title-bar-remove-folder"))(window, cx)
                                         }
                                     }
                                 })
@@ -223,7 +225,7 @@ impl ProjectDropdown {
             let recent = recent_projects.borrow();
 
             if !recent.is_empty() {
-                menu = menu.header("Recent Projects");
+                menu = menu.header(t("title-bar-recent-projects"));
 
                 let enter_hint = window.keystroke_text_for(&menu::Confirm);
                 let cmd_enter_hint = window.keystroke_text_for(&menu::SecondaryConfirm);
@@ -251,7 +253,7 @@ impl ProjectDropdown {
                     let menu_shell_for_submenu = menu_shell.clone();
                     let recent_projects_for_submenu = recent_projects.clone();
 
-                    menu = menu.submenu("View More…", move |submenu, window, _cx| {
+                    menu = menu.submenu(t("title-bar-view-more"), move |submenu, window, _cx| {
                         let enter_hint = window.keystroke_text_for(&menu::Confirm);
                         let cmd_enter_hint = window.keystroke_text_for(&menu::SecondaryConfirm);
 
@@ -276,7 +278,7 @@ impl ProjectDropdown {
             drop(recent);
 
             menu.action(
-                "Add Folder to Workspace",
+                t("title-bar-add-folder"),
                 workspace::AddFolderToProject.boxed_clone(),
             )
         })
@@ -304,6 +306,10 @@ impl ProjectDropdown {
         let docs_aside = DocumentationAside {
             side: DocumentationSide::Right,
             render: Rc::new(move |cx| {
+                let mut enter_args = HashMap::default();
+                enter_args.insert("key", enter_hint.as_str());
+                let mut cmd_args = HashMap::default();
+                cmd_args.insert("key", cmd_enter_hint.as_str());
                 v_flex()
                     .gap_1()
                     .child(Label::new(full_path_for_docs.clone()).size(LabelSize::Small))
@@ -314,12 +320,12 @@ impl ProjectDropdown {
                             .border_t_1()
                             .border_color(cx.theme().colors().border_variant)
                             .child(
-                                Label::new(format!("{} reuses this window", enter_hint))
+                                Label::new(t_args("title-bar-reuses-window", &enter_args))
                                     .size(LabelSize::Small)
                                     .color(Color::Muted),
                             )
                             .child(
-                                Label::new(format!("{} opens a new one", cmd_enter_hint))
+                                Label::new(t_args("title-bar-opens-new-window", &cmd_args))
                                     .size(LabelSize::Small)
                                     .color(Color::Muted),
                             ),
@@ -348,7 +354,7 @@ impl ProjectDropdown {
                                 .visible_on_hover(name)
                                 .icon_size(IconSize::Small)
                                 .icon_color(Color::Muted)
-                                .tooltip(Tooltip::text("Remove from Recent Projects"))
+                                .tooltip(Tooltip::text(t("title-bar-remove-recent")))
                                 .on_click({
                                     move |_, window, cx| {
                                         let menu_shell = menu_shell.clone();
