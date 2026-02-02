@@ -520,6 +520,31 @@ RULES: [约束/验收标准]
 
 **当前状态**: 三个 agent 全部正常工作
 
+### 2026-02-02 13:16 - 🚀 进化 v4：网络重试检测 + 环境问题修复
+
+**问题**:
+1. Gemini 网络重试 (Trying to reach, Attempt X/10) 没有被检测
+2. Claude 找不到 cargo (WSL 环境问题) 没有处理
+3. 缺少智能重试计数和超时重启
+
+**修复**:
+1. ✅ 新增 `network_retry` 状态检测 - 识别 "Trying to reach", "Attempt X/10"
+2. ✅ 新增 `env_error` 状态检测 - 识别 "command not found", "No such file"
+3. ✅ 智能重试计数 - 超过 5 次自动重启会话
+4. ✅ 环境问题自动修复 - 提示 agent 使用完整路径或设置环境
+5. ✅ 更新 task-executor.sh 使用 evolution-v4
+
+**新增文件**:
+- `scripts/evolution-v4.sh` - 进化框架 v4
+
+**关键改进**:
+- 网络问题: 等待重试，超过阈值自动重启
+- 环境问题: 自动提示 agent 使用替代方案
+- 编译错误: 检测后让 agent 自己修复
+- 重试计数: Redis 记录，防止无限重试
+
+**当前状态**: 三个 agent 全部正常工作
+
 ### 2026-02-02 13:13 - 🚀 进化 v3.2：仪表盘 + 优先级队列 + 循环修复
 
 **新增功能**:
