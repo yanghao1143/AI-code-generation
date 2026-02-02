@@ -166,6 +166,23 @@ case "${1:-help}" in
         "$SCRIPTS/predictor.sh" "${2:-predict}"
         ;;
     
+    # 监控
+    monitor)
+        "$SCRIPTS/monitor.sh" "${@:2}"
+        ;;
+    alerts)
+        "$SCRIPTS/monitor.sh" alerts
+        ;;
+    watch)
+        "$SCRIPTS/monitor.sh" watch "${2:-5}"
+        ;;
+    # 任务发现
+    find)
+        "$SCRIPTS/task-finder.sh" "${@:2}"
+        ;;
+    next)
+        "$SCRIPTS/task-finder.sh" next "$2"
+        ;;
     help|--help|-h|*)
         show_help
         ;;

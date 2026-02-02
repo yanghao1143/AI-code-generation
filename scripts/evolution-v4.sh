@@ -27,7 +27,30 @@ diagnose_agent() {
     local last_30=$(echo "$output" | tail -30)
     local last_10=$(echo "$output" | tail -10)
     local last_5=$(echo "$output" | tail -5)
+    local last_3=$(echo "$output" | tail -3)
     
+    # 0. 先检测明确的空闲状态 (最高优先级)
+    # 但要排除正在工作的情况
+    local is_working=false
+    if echo "$last_10" | grep -qE "esc to cancel|esc to interrupt" 2>/dev/null; then
+        is_working=true
+    fi
+    
+    if [[ "$is_working" == "false" ]]; then
+        # Gemini 空闲: 最后几行有 "Type your message" 且没有进度指示
+        if echo "$last_5" | grep -qE "Type your message" 2>/dev/null; then
+            echo "idle"; return
+        fi
+        # Claude 空闲: 最后几行有空的 ❯ 提示符
+        if echo "$last_3" | grep -qE "^❯\s*$" 2>/dev/null; then
+            echo "idle"; return
+        fi
+        # Codex 空闲: 最后几行有空的 › 提示符
+        if echo "$last_3" | grep -qE "^›\s*$" 2>/dev/null; then
+            echo "idle"; return
+        fi
+    fi
+
     # 1. 网络重试中 (新增)
     if echo "$last_10" | grep -qE "Trying to reach|Attempt [0-9]+/[0-9]+|Retrying|Reconnecting" 2>/dev/null; then
         echo "network_retry"; return
@@ -43,8 +66,8 @@ diagnose_agent() {
         echo "env_error"; return
     fi
     
-    # 4. 正在工作 (优先检测) - 有进度指示
-    if echo "$last_30" | grep -qE "esc to interrupt|esc to cancel|Thinking|Working|Searching|Reading|Writing|Shenaniganing|Buffering|Rickrolling|Flowing|Running cargo|Checking|Transfiguring|Exploring|Investigating|Analyzing|Processing" 2>/dev/null; then
+    # 4. 正在工作 - 有进度指示 (必须在最后几行)
+    if echo "$last_10" | grep -qE "esc to interrupt|esc to cancel|Thinking|Working|Searching|Reading|Writing|Shenaniganing|Buffering|Rickrolling|Flowing|Running cargo|Transfiguring|Exploring|Investigating|Analyzing|Processing" 2>/dev/null; then
         echo "working"; return
     fi
     
@@ -307,7 +330,12 @@ dispatch_task() {
         fi
     fi
     
-    # 4. 使用默认任务
+    # 4. 使用 task-finder 智能发现任务
+    if [[ -z "$task" ]]; then
+        task=$("$WORKSPACE/scripts/task-finder.sh" next "$agent" 2>/dev/null)
+    fi
+    
+    # 5. 使用默认任务
     if [[ -z "$task" ]]; then
         case "$agent" in
             claude-agent)
