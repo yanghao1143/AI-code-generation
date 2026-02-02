@@ -101,6 +101,12 @@ case "${1:-help}" in
     report)
         "$SCRIPTS/auto-learn.sh" report 2>/dev/null || "$SCRIPTS/log-analyzer.sh" full
         ;;
+    metrics)
+        "$SCRIPTS/metrics.sh" "${2:-current}"
+        ;;
+    route)
+        "$SCRIPTS/smart-router-v2.sh" suggest "$2"
+        ;;
     
     # 维护
     repair)
