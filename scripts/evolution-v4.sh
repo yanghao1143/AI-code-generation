@@ -130,16 +130,25 @@ repair_agent() {
     
     case "$diagnosis" in
         network_retry)
-            # 网络重试中，等待一会儿看是否恢复
+            # 网络重试中，智能等待
+            # Gemini 经常有网络问题，需要更耐心
             local retry_count=$(redis-cli HINCRBY "$REDIS_PREFIX:retry:$agent" "count" 1 2>/dev/null)
-            if [[ "$retry_count" -gt 5 ]]; then
+            
+            # 根据重试次数决定策略
+            if [[ "$retry_count" -gt 8 ]]; then
                 # 重试太多次，重启会话
                 tmux -S "$SOCKET" send-keys -t "$agent" C-c
                 sleep 2
                 restart_agent "$agent"
                 redis-cli HSET "$REDIS_PREFIX:retry:$agent" "count" 0 2>/dev/null
                 echo "restarted_after_retry"
+            elif [[ "$retry_count" -gt 5 ]]; then
+                # 尝试取消当前请求，让 agent 重新开始
+                tmux -S "$SOCKET" send-keys -t "$agent" Escape
+                sleep 2
+                echo "cancelled_retry_$retry_count"
             else
+                # 继续等待，网络可能会恢复
                 echo "waiting_retry_$retry_count"
             fi
             ;;
