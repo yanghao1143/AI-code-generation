@@ -170,7 +170,9 @@ full_health_check() {
     # 2. 检查编译状态
     echo -e "${GREEN}2. 检查编译状态...${NC}"
     cd "$PROJECT_PATH" 2>/dev/null
-    local errors=$(cargo check 2>&1 | grep -c "^error" || echo 0)
+    local errors=$(cargo check 2>&1 | grep -c "^error" 2>/dev/null || echo 0)
+    errors=$(echo "$errors" | head -1 | tr -d ' ')
+    [[ -z "$errors" ]] && errors=0
     if [[ $errors -gt 0 ]]; then
         issues+=("有 $errors 个编译错误")
     fi
