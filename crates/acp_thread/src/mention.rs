@@ -1,4 +1,4 @@
-use i18n::t;
+use i18n::{t, t_args};
 use agent_client_protocol as acp;
 use anyhow::{Context as _, Result, bail};
 use file_icons::FileIcons;
@@ -74,14 +74,14 @@ impl MentionUri {
 
             let start_line = start
                 .parse::<u32>()
-                .context("Parsing line range start")?
+                .context(t("acp-parse-line-range-start"))?
                 .checked_sub(1)
-                .context("Line numbers should be 1-based")?;
+                .context(t("acp-line-numbers-should-be-1-based"))?;
             let end_line = end
                 .parse::<u32>()
-                .context("Parsing line range end")?
+                .context(t("acp-parse-line-range-end"))?
                 .checked_sub(1)
-                .context("Line numbers should be 1-based")?;
+                .context(t("acp-line-numbers-should-be-1-based"))?;
 
             Ok(start_line..=end_line)
         }
@@ -124,19 +124,22 @@ impl MentionUri {
             }
             "zed" => {
                 if let Some(thread_id) = path.strip_prefix("/agent/thread/") {
-                    let name = single_query_param(&url, "name")?.context("Missing thread name")?;
+                    let name =
+                        single_query_param(&url, "name")?.context(t("acp-missing-thread-name"))?;
                     Ok(Self::Thread {
                         id: acp::SessionId::new(thread_id),
                         name,
                     })
                 } else if let Some(path) = path.strip_prefix("/agent/text-thread/") {
-                    let name = single_query_param(&url, "name")?.context("Missing thread name")?;
+                    let name =
+                        single_query_param(&url, "name")?.context(t("acp-missing-thread-name"))?;
                     Ok(Self::TextThread {
                         path: path.into(),
                         name,
                     })
                 } else if let Some(rule_id) = path.strip_prefix("/agent/rule/") {
-                    let name = single_query_param(&url, "name")?.context("Missing rule name")?;
+                    let name = single_query_param(&url, "name")?
+                        .context(t("acp-missing-rule-name"))?;
                     let rule_id = UserPromptId(rule_id.parse()?);
                     Ok(Self::Rule {
                         id: rule_id.into(),
@@ -149,7 +152,7 @@ impl MentionUri {
                         match key.as_ref() {
                             "include_warnings" => include_warnings = value == "true",
                             "include_errors" => include_errors = value == "true",
-                            _ => bail!("invalid query parameter"),
+                            _ => bail!(t("acp-invalid-query-parameter")),
                         }
                     }
                     Ok(Self::Diagnostics {
@@ -161,7 +164,7 @@ impl MentionUri {
                 } else if path.starts_with("/agent/untitled-buffer") {
                     let fragment = url
                         .fragment()
-                        .context("Missing fragment for untitled buffer selection")?;
+                        .context(t("acp-missing-fragment-untitled-buffer-selection"))?;
                     let line_range = parse_line_range(fragment)?;
                     Ok(Self::Selection {
                         abs_path: None,
@@ -170,10 +173,10 @@ impl MentionUri {
                 } else if let Some(name) = path.strip_prefix("/agent/symbol/") {
                     let fragment = url
                         .fragment()
-                        .context("Missing fragment for untitled buffer selection")?;
+                        .context(t("acp-missing-fragment-untitled-buffer-selection"))?;
                     let line_range = parse_line_range(fragment)?;
                     let path =
-                        single_query_param(&url, "path")?.context("Missing path for symbol")?;
+                        single_query_param(&url, "path")?.context(t("acp-missing-path-for-symbol"))?;
                     Ok(Self::Symbol {
                         name: name.to_string(),
                         abs_path: path.into(),
@@ -181,31 +184,40 @@ impl MentionUri {
                     })
                 } else if path.starts_with("/agent/file") {
                     let path =
-                        single_query_param(&url, "path")?.context("Missing path for file")?;
+                        single_query_param(&url, "path")?.context(t("acp-missing-path-for-file"))?;
                     Ok(Self::File {
                         abs_path: path.into(),
                     })
                 } else if path.starts_with("/agent/directory") {
                     let path =
-                        single_query_param(&url, "path")?.context("Missing path for directory")?;
+                        single_query_param(&url, "path")?
+                            .context(t("acp-missing-path-for-directory"))?;
                     Ok(Self::Directory {
                         abs_path: path.into(),
                     })
                 } else if path.starts_with("/agent/selection") {
-                    let fragment = url.fragment().context("Missing fragment for selection")?;
+                    let fragment =
+                        url.fragment().context(t("acp-missing-fragment-for-selection"))?;
                     let line_range = parse_line_range(fragment)?;
                     let path =
-                        single_query_param(&url, "path")?.context("Missing path for selection")?;
+                        single_query_param(&url, "path")?
+                            .context(t("acp-missing-path-for-selection"))?;
                     Ok(Self::Selection {
                         abs_path: Some(path.into()),
                         line_range,
                     })
                 } else {
-                    bail!("invalid zed url: {:?}", input);
+                    bail!(t_args(
+                        "acp-invalid-zed-url",
+                        &[("input", input.into())],
+                    ));
                 }
             }
             "http" | "https" => Ok(MentionUri::Fetch { url }),
-            other => bail!("unrecognized scheme {:?}", other),
+            other => bail!(t_args(
+                "acp-unrecognized-scheme",
+                &[("scheme", other.into())],
+            )),
         }
     }
 
@@ -360,12 +372,12 @@ fn single_query_param(url: &Url, name: &'static str) -> Result<Option<String>> {
         [] => Ok(None),
         [(k, v)] => {
             if k != name {
-                bail!("invalid query parameter")
+                bail!(t("acp-invalid-query-parameter"))
             }
 
             Ok(Some(v.to_string()))
         }
-        _ => bail!("too many query pairs"),
+        _ => bail!(t("acp-too-many-query-pairs")),
     }
 }
 
