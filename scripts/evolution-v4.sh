@@ -225,8 +225,20 @@ repair_agent() {
             fi
             ;;
         pending_input)
-            tmux -S "$SOCKET" send-keys -t "$agent" Enter
-            echo "input_sent"
+            # 检查是否有多行堆积的输入
+            local input_lines=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p 2>/dev/null | tail -10 | grep -c "^❯ \|继续之前的任务")
+            if [[ $input_lines -gt 2 ]]; then
+                # 多行堆积，先清理
+                tmux -S "$SOCKET" send-keys -t "$agent" C-c
+                sleep 0.3
+                tmux -S "$SOCKET" send-keys -t "$agent" C-u
+                sleep 0.3
+                dispatch_task "$agent"
+                echo "cleared_and_dispatched"
+            else
+                tmux -S "$SOCKET" send-keys -t "$agent" Enter
+                echo "input_sent"
+            fi
             ;;
         idle|idle_with_suggestion)
             tmux -S "$SOCKET" send-keys -t "$agent" C-u
