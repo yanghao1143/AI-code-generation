@@ -376,7 +376,16 @@ fn render_conflict_buttons(
         .gap_1()
         .bg(cx.theme().colors().editor_background)
         .child(
-            Button::new("head", t_args("git-use-branch", &[("branch", conflict.ours_branch_name.clone().into())]))
+            Button::new(
+                "head",
+                t_args(
+                    "git-use-branch",
+                    &std::collections::HashMap::from([(
+                        "branch",
+                        conflict.ours_branch_name.as_ref(),
+                    )]),
+                ),
+            )
                 .label_size(LabelSize::Small)
                 .on_click({
                     let editor = editor.clone();
@@ -396,7 +405,16 @@ fn render_conflict_buttons(
                 }),
         )
         .child(
-            Button::new("origin", t_args("git-use-branch", &[("branch", conflict.theirs_branch_name.clone().into())]))
+            Button::new(
+                "origin",
+                t_args(
+                    "git-use-branch",
+                    &std::collections::HashMap::from([(
+                        "branch",
+                        conflict.theirs_branch_name.as_ref(),
+                    )]),
+                ),
+            )
                 .label_size(LabelSize::Small)
                 .on_click({
                     let editor = editor.clone();

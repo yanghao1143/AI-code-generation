@@ -965,7 +965,7 @@ impl NotebookEditor {
                         IconButton::new("repl", icon)
                             .icon_color(icon_color)
                             .tooltip(move |window, cx| {
-                                let mut args = HashMap::new();
+                                let mut args = std::collections::HashMap::new();
                                 args.insert("name", kernel_name.as_str());
                                 let status_label = kernel_status.label();
                                 args.insert("status", status_label.as_ref());
@@ -1052,7 +1052,7 @@ impl NotebookEditor {
                         .icon_color(status_color)
                         .icon_position(IconPosition::Start),
                     Tooltip::text({
-                        let mut args = HashMap::new();
+                        let mut args = std::collections::HashMap::new();
                         args.insert("name", kernel_name.as_str());
                         let status_label = kernel_status.label();
                         args.insert("status", status_label.as_ref());

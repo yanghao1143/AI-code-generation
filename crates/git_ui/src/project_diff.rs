@@ -1323,7 +1323,7 @@ impl Render for ProjectDiffToolbar {
                         el.child(
                             Button::new("stage", t("git-toggle-staged"))
                                 .tooltip(Tooltip::for_action_title_in(
-                                    t("git-toggle-staged").as_ref(),
+                                    t("git-toggle-staged"),
                                     &ToggleStaged,
                                     &focus_handle,
                                 ))
@@ -1337,7 +1337,7 @@ impl Render for ProjectDiffToolbar {
                         el.child(
                             Button::new("stage", t("git-stage"))
                                 .tooltip(Tooltip::for_action_title_in(
-                                    t("git-stage-and-next").as_ref(),
+                                    t("git-stage-and-next"),
                                     &StageAndNext,
                                     &focus_handle,
                                 ))
@@ -1353,7 +1353,7 @@ impl Render for ProjectDiffToolbar {
                         .child(
                             Button::new("unstage", t("git-unstage"))
                                 .tooltip(Tooltip::for_action_title_in(
-                                    t("git-unstage-and-next").as_ref(),
+                                    t("git-unstage-and-next"),
                                     &UnstageAndNext,
                                     &focus_handle,
                                 ))
@@ -1408,7 +1408,7 @@ impl Render for ProjectDiffToolbar {
                             el.child(
                                 Button::new("unstage-all", t("git-unstage-all"))
                                     .tooltip(Tooltip::for_action_title_in(
-                                        t("git-unstage-all-changes").as_ref(),
+                                        t("git-unstage-all-changes"),
                                         &UnstageAll,
                                         &focus_handle,
                                     ))
@@ -1428,7 +1428,7 @@ impl Render for ProjectDiffToolbar {
                                     Button::new("stage-all", t("git-stage-all"))
                                         .disabled(!button_states.stage_all)
                                         .tooltip(Tooltip::for_action_title_in(
-                                            t("git-stage-all-changes").as_ref(),
+                                            t("git-stage-all-changes"),
                                             &StageAll,
                                             &focus_handle,
                                         ))
@@ -1449,7 +1449,7 @@ impl Render for ProjectDiffToolbar {
                             },
                         )
                         .tooltip(Tooltip::for_action_title_in(
-                            t("git-toggle-split-view").as_ref(),
+                            t("git-toggle-split-view"),
                             &ToggleSplitDiff,
                             &focus_handle,
                         ))
@@ -1460,7 +1460,7 @@ impl Render for ProjectDiffToolbar {
                     .child(
                         Button::new("commit", t("git-commit"))
                             .tooltip(Tooltip::for_action_title_in(
-                                t("git-commit").as_ref(),
+                                t("git-commit"),
                                 &Commit,
                                 &focus_handle,
                             ))
@@ -1483,14 +1483,16 @@ impl Render for ProjectDiffToolbar {
 }
 
 fn render_send_review_to_agent_button(review_count: usize, focus_handle: &FocusHandle) -> Button {
+    let review_count_string = review_count.to_string();
+    let args = std::collections::HashMap::from([("count", review_count_string.as_str())]);
     Button::new(
         "send-review",
-        t_args("git-send-review-to-agent", &[("count", review_count.into())]),
+        t_args("git-send-review-to-agent", &args),
     )
     .icon(IconName::ZedAssistant)
     .icon_position(IconPosition::Start)
     .tooltip(Tooltip::for_action_title_in(
-        t("git-send-review-tooltip").as_ref(),
+        t("git-send-review-tooltip"),
         &SendReviewToAgent,
         focus_handle,
     ))
@@ -1640,12 +1642,19 @@ impl RenderOnce for ProjectDiffEmptyState {
                 .map(|this| {
                     if ahead_of_remote {
                         let ahead_count = change_count(branch).0;
-                        let ahead_string = t_args("git-commits-ahead", &[("count", ahead_count.into())]);
+                        let ahead_count_string = ahead_count.to_string();
+                        let ahead_args = std::collections::HashMap::from([(
+                            "count",
+                            ahead_count_string.as_str(),
+                        )]);
+                        let ahead_string = t_args("git-commits-ahead", &ahead_args);
+                        let push_args =
+                            std::collections::HashMap::from([("branch", branch.name())]);
                         this.child(
                             v_flex()
                                 .child(Headline::new(ahead_string).size(HeadlineSize::Small))
                                 .child(
-                                    Label::new(t_args("git-push-changes", &[("branch", branch.name().into())]))
+                                    Label::new(t_args("git-push-changes", &push_args))
                                         .color(Color::Muted),
                                 ),
                         )
@@ -1655,11 +1664,13 @@ impl RenderOnce for ProjectDiffEmptyState {
                             ahead_count as u32,
                         )))
                     } else if branch_not_on_remote {
+                        let create_branch_args =
+                            std::collections::HashMap::from([("branch", branch.name())]);
                         this.child(
                             v_flex()
                                 .child(Headline::new(t("git-publish-branch")).size(HeadlineSize::Small))
                                 .child(
-                                    Label::new(t_args("git-create-branch-remote", &[("branch", branch.name().into())]))
+                                    Label::new(t_args("git-create-branch-remote", &create_branch_args))
                                         .color(Color::Muted),
                                 ),
                         )

@@ -1,5 +1,5 @@
 use gpui::{Context, IntoElement, ParentElement, Render, StatefulInteractiveElement, Styled, Window};
-use ui::FluentBuilder as _;
+use i18n::t;
 use ui::prelude::*;
 use ui::{Icon, IconName, Label};
 
@@ -43,6 +43,7 @@ impl Render for ProgressView {
     fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         v_flex()
             .flex_grow()
+            .id("progress-view")
             .overflow_y_scroll()
             .gap_4()
             .p_2()
@@ -75,7 +76,7 @@ impl Render for ProgressView {
                     .border_t_1()
                     .border_color(cx.theme().colors().border)
                     .pt_2()
-                    .child(Label::new("Logs").weight(gpui::FontWeight::BOLD))
+                    .child(Label::new(t("agent-logs")).weight(gpui::FontWeight::BOLD))
                     .child(
                         v_flex()
                             .gap_1()

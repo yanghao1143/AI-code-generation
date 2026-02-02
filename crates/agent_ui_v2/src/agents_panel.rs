@@ -16,7 +16,7 @@ use prompt_store::PromptStore;
 use serde::{Deserialize, Serialize};
 use settings::{Settings as _, update_settings_file};
 use std::sync::Arc;
-use ui::{App, Context, IconName, IntoElement, ParentElement, Render, Styled, Window};
+use ui::{App, Context, IconName, IntoElement, ParentElement, Render, SharedString, Styled, Window};
 use util::ResultExt;
 use workspace::{
     Panel, Workspace,
@@ -457,8 +457,8 @@ impl Panel for AgentsPanel {
         (self.enabled(cx) && AgentSettings::get_global(cx).button).then_some(IconName::ZedAgentTwo)
     }
 
-    fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<&'static str> {
-        Some("Agents Panel")
+    fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<SharedString> {
+        Some("Agents Panel".into())
     }
 
     fn toggle_action(&self) -> Box<dyn Action> {

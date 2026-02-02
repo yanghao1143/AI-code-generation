@@ -764,12 +764,12 @@ impl EventEmitter<SessionEvent> for Session {}
 
 impl Render for Session {
     fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
-        let (status_text, interrupt_button) = match &self.kernel {
+        let (status_text, interrupt_button): (Option<String>, Option<_>) = match &self.kernel {
             Kernel::RunningKernel(kernel) => (
                 kernel
                     .kernel_info()
                     .as_ref()
-                    .map(|info| info.language_info.name.clone()),
+                    .map(|info| info.language_info.name.to_string()),
                 Some(
                     Button::new("interrupt", t("repl-interrupt-kernel"))
                         .style(ButtonStyle::Subtle)
@@ -778,11 +778,11 @@ impl Render for Session {
                         })),
                 ),
             ),
-            Kernel::StartingKernel(_) => (Some(t("repl-kernel-status-starting").to_string()), None),
+            Kernel::StartingKernel(_) => (Some(t("repl-kernel-status-starting")), None),
             Kernel::ErroredLaunch(err) => (Some(format!("{}: {err}", t("repl-kernel-status-error"))), None),
-            Kernel::ShuttingDown => (Some(t("repl-kernel-status-shutting-down").to_string()), None),
-            Kernel::Shutdown => (Some(t("repl-kernel-status-shutdown").to_string()), None),
-            Kernel::Restarting => (Some(t("repl-kernel-status-restarting").to_string()), None),
+            Kernel::ShuttingDown => (Some(t("repl-kernel-status-shutting-down")), None),
+            Kernel::Shutdown => (Some(t("repl-kernel-status-shutdown")), None),
+            Kernel::Restarting => (Some(t("repl-kernel-status-restarting")), None),
         };
 
         KernelListItem::new(self.kernel_specification.clone())

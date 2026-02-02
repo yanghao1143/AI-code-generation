@@ -27,7 +27,7 @@ use gpui::{
     UniformListScrollHandle, WeakEntity, Window, actions, anchored, deferred, div, hsla,
     linear_color_stop, linear_gradient, point, px, size, transparent_white, uniform_list,
 };
-use i18n::t;
+use i18n::{t, t_args};
 use language::DiagnosticSeverity;
 use menu::{Confirm, SelectFirst, SelectLast, SelectNext, SelectPrevious};
 use notifications::status_toast::{StatusToast, ToastIcon};
@@ -2119,7 +2119,7 @@ impl ProjectPanel {
             let file_name = entry.path.file_name()?.to_string();
 
             let answer = if !action.skip_prompt {
-                let mut args = HashMap::default();
+                let mut args = std::collections::HashMap::new();
                 args.insert("name", file_name.as_str());
                 let prompt = t_args("project-discard-changes-question", &args);
                 let restore_label = t("project-restore");
@@ -2151,7 +2151,7 @@ impl ProjectPanel {
                 if let Err(e) = task.await {
                     panel
                         .update(cx, |panel, cx| {
-                            let mut args = HashMap::default();
+                            let mut args = std::collections::HashMap::new();
                             args.insert("name", file_name.as_str());
                             let error_str = e.to_string();
                             args.insert("error", error_str.as_str());
@@ -2237,7 +2237,7 @@ impl ProjectPanel {
                             "".to_string()
                         };
 
-                        let mut args = HashMap::default();
+                        let mut args = std::collections::HashMap::new();
                         args.insert("operation", operation.as_str());
                         args.insert("name", path.as_str());
                         args.insert("unsaved_warning", unsaved_warning.as_str());
@@ -2256,7 +2256,7 @@ impl ProjectPanel {
                             if truncated_path_counts == 1 {
                                 paths.push(format!(".. {}", t("project-one-file-not-shown")));
                             } else {
-                                let mut args = HashMap::default();
+                                let mut args = std::collections::HashMap::new();
                                 let count_str = truncated_path_counts.to_string();
                                 args.insert("count", count_str.as_str());
                                 paths.push(t_args("project-more-files-not-shown", &args));
@@ -2270,13 +2270,13 @@ impl ProjectPanel {
                         } else if dirty_buffers == 1 {
                             format!("\n\n{}", t("project-one-unsaved-changes-lost"))
                         } else {
-                            let mut args = HashMap::default();
+                            let mut args = std::collections::HashMap::new();
                             let count_str = dirty_buffers.to_string();
                             args.insert("count", count_str.as_str());
                             t_args("project-many-unsaved-changes-warning", &args)
                         };
 
-                        let mut args = HashMap::default();
+                        let mut args = std::collections::HashMap::new();
                         args.insert("operation", operation.as_str());
                         let count_str = file_paths.len().to_string();
                         args.insert("count", count_str.as_str());
