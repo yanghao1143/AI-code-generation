@@ -2161,3 +2161,14 @@ overwrite = Overwrite
 profile = Profile
 account = Account
 preferences = Preferences
+
+# ACP Thread
+acp-terminal-not-found = Terminal with id `{$id}` not found
+acp-failed-to-install = Failed to install: {$msg}
+acp-tool-call-completed = Agent Tool Call Completed
+acp-loading-sessions-not-supported = Loading sessions is not supported
+acp-resuming-sessions-not-supported = Resuming sessions is not supported
+acp-auth-required = Authentication required
+image = Image
+diagnostics = Diagnostics
+untitled = Untitled

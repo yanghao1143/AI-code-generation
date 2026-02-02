@@ -1,3 +1,4 @@
+use i18n::t;
 use agent_client_protocol as acp;
 use anyhow::{Context as _, Result, bail};
 use file_icons::FileIcons;
@@ -215,12 +216,12 @@ impl MentionUri {
                 .unwrap_or_default()
                 .to_string_lossy()
                 .into_owned(),
-            MentionUri::PastedImage => "Image".to_string(),
+            MentionUri::PastedImage => t("image").to_string(),
             MentionUri::Symbol { name, .. } => name.clone(),
             MentionUri::Thread { name, .. } => name.clone(),
             MentionUri::TextThread { name, .. } => name.clone(),
             MentionUri::Rule { name, .. } => name.clone(),
-            MentionUri::Diagnostics { .. } => "Diagnostics".to_string(),
+            MentionUri::Diagnostics { .. } => t("diagnostics").to_string(),
             MentionUri::Selection {
                 abs_path: path,
                 line_range,
@@ -372,7 +373,7 @@ pub fn selection_name(path: Option<&Path>, line_range: &RangeInclusive<u32>) -> 
     format!(
         "{} ({}:{})",
         path.and_then(|path| path.file_name())
-            .unwrap_or("Untitled".as_ref())
+            .unwrap_or(t("untitled").as_ref())
             .display(),
         *line_range.start() + 1,
         *line_range.end() + 1

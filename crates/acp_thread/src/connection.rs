@@ -1,3 +1,4 @@
+use i18n::t;
 use crate::AcpThread;
 use agent_client_protocol::{self as acp};
 use anyhow::Result;
@@ -50,7 +51,7 @@ pub trait AgentConnection {
         _cwd: &Path,
         _cx: &mut App,
     ) -> Task<Result<Entity<AcpThread>>> {
-        Task::ready(Err(anyhow::Error::msg("Loading sessions is not supported")))
+        Task::ready(Err(anyhow::Error::msg(t("acp-loading-sessions-not-supported"))))
     }
 
     /// Whether this agent supports resuming existing sessions without loading history.
@@ -67,7 +68,7 @@ pub trait AgentConnection {
         _cx: &mut App,
     ) -> Task<Result<Entity<AcpThread>>> {
         Task::ready(Err(anyhow::Error::msg(
-            "Resuming sessions is not supported",
+            t("acp-resuming-sessions-not-supported"),
         )))
     }
 
@@ -314,7 +315,7 @@ impl AuthRequired {
 impl Error for AuthRequired {}
 impl fmt::Display for AuthRequired {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Authentication required")
+        write!(f, t("acp-auth-required"))
     }
 }
 

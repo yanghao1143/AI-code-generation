@@ -2624,3 +2624,14 @@ overwrite = 覆盖
 profile = 配置
 account = 账户
 preferences = 首选项
+
+# ACP 线程
+acp-terminal-not-found = 找不到 ID 为 `{$id}` 的终端
+acp-failed-to-install = 安装失败：{$msg}
+acp-tool-call-completed = Agent 工具调用完成
+acp-loading-sessions-not-supported = 不支持加载会话
+acp-resuming-sessions-not-supported = 不支持恢复会话
+acp-auth-required = 需要认证
+image = 图片
+diagnostics = 诊断
+untitled = 无标题

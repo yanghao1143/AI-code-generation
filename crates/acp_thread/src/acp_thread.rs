@@ -41,6 +41,7 @@ use agent_client_protocol::{self as acp};
 use anyhow::{Context as _, Result, anyhow};
 use futures::{FutureExt, channel::oneshot, future::BoxFuture};
 use gpui::{AppContext, AsyncApp, Context, Entity, EventEmitter, SharedString, Task, WeakEntity};
+use i18n::{t, t_args};
 use itertools::Itertools;
 use language::{Anchor, Buffer, BufferSnapshot, LanguageRegistry, Point, ToPoint, text_diff};
 use markdown::Markdown;
@@ -510,13 +511,13 @@ impl Display for ToolCallStatus {
             f,
             "{}",
             match self {
-                ToolCallStatus::Pending => "Pending",
-                ToolCallStatus::WaitingForConfirmation { .. } => "Waiting for confirmation",
-                ToolCallStatus::InProgress => "In Progress",
-                ToolCallStatus::Completed => "Completed",
-                ToolCallStatus::Failed => "Failed",
-                ToolCallStatus::Rejected => "Rejected",
-                ToolCallStatus::Canceled => "Canceled",
+                ToolCallStatus::Pending => t("tool-status-pending"),
+                ToolCallStatus::WaitingForConfirmation { .. } => t("tool-status-waiting"),
+                ToolCallStatus::InProgress => t("tool-status-in-progress"),
+                ToolCallStatus::Completed => t("tool-status-completed"),
+                ToolCallStatus::Failed => t("tool-status-failed"),
+                ToolCallStatus::Rejected => t("tool-status-rejected"),
+                ToolCallStatus::Canceled => t("tool-status-canceled"),
             }
         )
     }
@@ -721,7 +722,7 @@ impl ToolCallContent {
                 .get(&terminal_id)
                 .cloned()
                 .map(|terminal| Some(Self::Terminal(terminal)))
-                .ok_or_else(|| anyhow::anyhow!("Terminal with id `{}` not found", terminal_id)),
+                .ok_or_else(|| anyhow::anyhow!(t("acp-terminal-not-found"), terminal_id)),
             _ => Ok(None),
         }
     }
@@ -1149,7 +1150,7 @@ impl Display for LoadError {
                     "version {current_version} from {path} is not supported (need at least {minimum_version})"
                 )
             }
-            LoadError::FailedToInstall(msg) => write!(f, "Failed to install: {msg}"),
+            LoadError::FailedToInstall(msg) => write!(f, t_args("acp-failed-to-install", &[("msg", msg.as_str().into())]).to_string()),
             LoadError::Exited { status } => write!(f, "Server exited with status {status}"),
             LoadError::Other(msg) => write!(f, "{msg}"),
         }
@@ -1481,10 +1482,10 @@ impl AcpThread {
                 // Tool call not found - create a failed tool call entry
                 let failed_tool_call = ToolCall {
                     id: update.id().clone(),
-                    label: cx.new(|cx| Markdown::new("Tool call not found".into(), None, None, cx)),
+                    label: cx.new(|cx| Markdown::new(t("tool-call-not-found").into(), None, None, cx)),
                     kind: acp::ToolKind::Fetch,
                     content: vec![ToolCallContent::ContentBlock(ContentBlock::new(
-                        "Tool call not found".into(),
+                        t("tool-call-not-found").into(),
                         &languages,
                         path_style,
                         cx,
@@ -1569,7 +1570,7 @@ impl AcpThread {
                 "failed"
             };
             telemetry::event!(
-                "Agent Tool Call Completed",
+                t("acp-tool-call-completed"),
                 agent_telemetry_id,
                 session,
                 status
