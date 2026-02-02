@@ -2420,3 +2420,15 @@ agent-status-idle = ����
 agent-status-thinking = ˼����...
 agent-status-executing = ִ����...
 agent-status-paused = ����ͣ
+
+# Diagnostics / 诊断
+diagnostics-buffer-search = 缓冲区搜索
+diagnostics-diagnostics = 诊断
+diagnostics-exclude-warnings = 排除警告
+diagnostics-include-warnings = 包含警告
+diagnostics-inline-assist = 内联助手
+diagnostics-no-errors-in-workspace = 工作区中没有错误
+diagnostics-no-problems-in-workspace = 工作区中没有问题
+diagnostics-project-diagnostics = 项目诊断
+diagnostics-refresh = 刷新
+diagnostics-stop-update = 停止更新

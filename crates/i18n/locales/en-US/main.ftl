@@ -2470,3 +2470,15 @@ agent-status-idle = Idle
 agent-status-thinking = Thinking...
 agent-status-executing = Executing...
 agent-status-paused = Paused
+
+# Diagnostics
+diagnostics-buffer-search = Buffer Search
+diagnostics-diagnostics = Diagnostics
+diagnostics-exclude-warnings = Exclude Warnings
+diagnostics-include-warnings = Include Warnings
+diagnostics-inline-assist = Inline Assist
+diagnostics-no-errors-in-workspace = No errors in workspace
+diagnostics-no-problems-in-workspace = No problems in workspace
+diagnostics-project-diagnostics = Project Diagnostics
+diagnostics-refresh = Refresh
+diagnostics-stop-update = Stop Update
