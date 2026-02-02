@@ -1,4 +1,3 @@
-use i18n::t;
 use crate::AcpThread;
 use agent_client_protocol::{self as acp};
 use anyhow::Result;

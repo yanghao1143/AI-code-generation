@@ -14,7 +14,7 @@
 -            return Ok(String::new());
 +            return Ok(());
          }
-         anyhow::bail!("git blame process failed: {stderr}");
+         anyhow::bail!("git blame process t('failed'): {stderr}");
      }
 -
 -    Ok(String::from_utf8(output.stdout)?)

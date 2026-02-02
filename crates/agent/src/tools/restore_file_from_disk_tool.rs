@@ -146,14 +146,14 @@ impl AgentTool for RestoreFileFromDiskTool {
                 }
             }
             if !open_errors.is_empty() {
-                lines.push(format!("Open failed ({}):", open_errors.len()));
+                lines.push(format!("Open t('failed') ({}):", open_errors.len()));
                 for (path, error) in &open_errors {
                     lines.push(format!("- {}: {}", path.display(), error));
                 }
             }
             if !dirty_check_errors.is_empty() {
                 lines.push(format!(
-                    "Dirty check failed ({}):",
+                    "Dirty check t('failed') ({}):",
                     dirty_check_errors.len()
                 ));
                 for (path, error) in &dirty_check_errors {
@@ -161,7 +161,7 @@ impl AgentTool for RestoreFileFromDiskTool {
                 }
             }
             if !reload_errors.is_empty() {
-                lines.push(format!("Reload failed ({}):", reload_errors.len()));
+                lines.push(format!("Reload t('failed') ({}):", reload_errors.len()));
                 for error in &reload_errors {
                     lines.push(format!("- {}", error));
                 }

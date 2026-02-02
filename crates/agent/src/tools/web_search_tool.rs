@@ -35,7 +35,7 @@ pub struct WebSearchToolOutput(WebSearchResponse);
 impl From<WebSearchToolOutput> for LanguageModelToolResultContent {
     fn from(value: WebSearchToolOutput) -> Self {
         serde_json::to_string(&value.0)
-            .expect("Failed to serialize WebSearchResponse")
+            .expect("t('failed') to serialize WebSearchResponse")
             .into()
     }
 }
@@ -110,7 +110,7 @@ impl AgentTool for WebSearchTool {
                         Ok(response) => response,
                         Err(err) => {
                             event_stream
-                                .update_fields(acp::ToolCallUpdateFields::new().title("Web Search Failed"));
+                                .update_fields(acp::ToolCallUpdateFields::new().title("Web Search t('failed')"));
                             return Err(err);
                         }
                     }

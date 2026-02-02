@@ -950,7 +950,7 @@ impl Thread {
                 .0
                 .unbounded_send(Ok(ThreadEvent::ToolCall(
                     acp::ToolCall::new(tool_use.id.to_string(), tool_use.name.to_string())
-                        .status(acp::ToolCallStatus::Failed)
+                        .status(acp::ToolCallStatus::t('failed'))
                         .raw_input(tool_use.input.clone()),
                 )))
                 .ok();
@@ -989,9 +989,9 @@ impl Thread {
                 .status(
                     tool_result
                         .as_ref()
-                        .map_or(acp::ToolCallStatus::Failed, |result| {
+                        .map_or(acp::ToolCallStatus::t('failed'), |result| {
                             if result.is_error {
-                                acp::ToolCallStatus::Failed
+                                acp::ToolCallStatus::t('failed')
                             } else {
                                 acp::ToolCallStatus::Completed
                             }
@@ -1548,7 +1548,7 @@ impl Thread {
                         event_stream.send_stop(acp::StopReason::EndTurn);
                     }
                     Err(error) => {
-                        log::error!("Turn execution failed: {:?}", error);
+                        log::error!("Turn execution t('failed'): {:?}", error);
                         match error.downcast::<CompletionError>() {
                             Ok(CompletionError::Refusal) => {
                                 event_stream.send_stop(acp::StopReason::Refusal);
@@ -1678,7 +1678,7 @@ impl Thread {
                     &tool_result.tool_use_id,
                     acp::ToolCallUpdateFields::new()
                         .status(if tool_result.is_error {
-                            acp::ToolCallStatus::Failed
+                            acp::ToolCallStatus::t('failed')
                         } else {
                             acp::ToolCallStatus::Completed
                         })
@@ -2155,7 +2155,7 @@ impl Thread {
                 anyhow::Ok(())
             };
 
-            if generate.await.context("failed to generate title").is_ok() {
+            if generate.await.context("t('failed') to generate title").is_ok() {
                 _ = this.update(cx, |this, cx| this.set_title(title.into(), cx));
             }
             _ = this.update(cx, |this, _| this.pending_title_generation = None);
@@ -2463,7 +2463,7 @@ impl Thread {
             model_name: self.model.as_ref().map(|m| m.name().0.to_string()),
         }
         .render(&self.templates)
-        .context("failed to build system prompt")
+        .context("t('failed') to build system prompt")
         .expect("Invalid template");
         let mut messages = vec![LanguageModelRequestMessage {
             role: Role::System,
@@ -3331,7 +3331,7 @@ impl UserMessageContent {
                         content: String::new(),
                     },
                     Err(err) => {
-                        log::error!("Failed to parse mention link: {}", err);
+                        log::error!("t('failed') to parse mention link: {}", err);
                         Self::Text(format!("[{}]({})", resource_link.name, resource_link.uri))
                     }
                 }
@@ -3344,7 +3344,7 @@ impl UserMessageContent {
                             content: resource.text,
                         },
                         Err(err) => {
-                            log::error!("Failed to parse mention link: {}", err);
+                            log::error!("t('failed') to parse mention link: {}", err);
                             Self::Text(
                                 MarkdownCodeBlock {
                                     tag: &resource.uri,

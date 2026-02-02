@@ -50,7 +50,7 @@ impl Blame {
         let shas = unique_shas.into_iter().collect::<Vec<_>>();
         let messages = get_messages(working_directory, &shas)
             .await
-            .context("failed to get commit messages")?;
+            .context("t('failed') to get commit messages")?;
 
         Ok(Self {
             entries,

@@ -1349,7 +1349,7 @@ mod tests {
                 auth.await.unwrap();
                 assert!(
                     stream_rx.try_next().is_err(),
-                    "Failed for case: {} - path: {} - expected no confirmation but got one",
+                    "t('failed') for case: {} - path: {} - expected no confirmation but got one",
                     description,
                     path
                 );
@@ -1460,7 +1460,7 @@ mod tests {
                 auth.await.unwrap();
                 assert!(
                     stream_rx.try_next().is_err(),
-                    "Failed for case: {} - path: {} - expected no confirmation but got one",
+                    "t('failed') for case: {} - path: {} - expected no confirmation but got one",
                     description,
                     path
                 );
@@ -1553,7 +1553,7 @@ mod tests {
             } else {
                 assert!(
                     stream_rx.try_next().is_err(),
-                    "Failed for case: {} - path: {} - expected no confirmation but got one",
+                    "t('failed') for case: {} - path: {} - expected no confirmation but got one",
                     description,
                     path
                 );

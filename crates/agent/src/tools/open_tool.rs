@@ -84,7 +84,7 @@ impl AgentTool for OpenTool {
                 Some(path) => open::that(path),
                 None => open::that(&input.path_or_url),
             }
-            .context("Failed to open URL or file path")?;
+            .context("t('failed') to open URL or file path")?;
 
             Ok(format!("Successfully opened {}", input.path_or_url))
         })
@@ -114,7 +114,7 @@ mod tests {
     #[gpui::test]
     async fn test_to_absolute_path(cx: &mut TestAppContext) {
         init_test(cx);
-        let temp_dir = TempDir::new().expect("Failed to create temp directory");
+        let temp_dir = TempDir::new().expect("t('failed') to create temp directory");
         let temp_path = temp_dir.path().to_string_lossy().into_owned();
 
         let fs = FakeFs::new(cx.executor());
@@ -147,7 +147,7 @@ mod tests {
             assert!(
                 to_absolute_path(&format!("{root_dir_name}/src/main.rs"), project.clone(), cx)
                     .is_some(),
-                "Failed to resolve main.rs path"
+                "t('failed') to resolve main.rs path"
             );
 
             assert!(
@@ -157,7 +157,7 @@ mod tests {
                     cx,
                 )
                 .is_some(),
-                "Failed to resolve readme.md path"
+                "t('failed') to resolve readme.md path"
             );
 
             // External URL should return None

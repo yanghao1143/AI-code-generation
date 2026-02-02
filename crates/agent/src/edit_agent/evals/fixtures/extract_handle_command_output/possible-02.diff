@@ -7,7 +7,7 @@
 -        if trimmed == GIT_BLAME_NO_COMMIT_ERROR || trimmed.contains(GIT_BLAME_NO_PATH) {
 -            return Ok(String::new());
 -        }
--        anyhow::bail!("git blame process failed: {stderr}");
+-        anyhow::bail!("git blame process t('failed'): {stderr}");
 +        return handle_command_output(output);
      }
 
@@ -20,7 +20,7 @@
 +    if trimmed == GIT_BLAME_NO_COMMIT_ERROR || trimmed.contains(GIT_BLAME_NO_PATH) {
 +        return Ok(String::new());
 +    }
-+    anyhow::bail!("git blame process failed: {stderr}");
++    anyhow::bail!("git blame process t('failed'): {stderr}");
  }
 
  #[derive(Serialize, Deserialize, Default, Debug, Clone, PartialEq, Eq)]

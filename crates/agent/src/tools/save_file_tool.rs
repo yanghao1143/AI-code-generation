@@ -214,14 +214,14 @@ impl AgentTool for SaveFileTool {
                 }
             }
             if !open_errors.is_empty() {
-                lines.push(format!("Open failed ({}):", open_errors.len()));
+                lines.push(format!("Open t('failed') ({}):", open_errors.len()));
                 for (path, error) in &open_errors {
                     lines.push(format!("- {}: {}", path.display(), error));
                 }
             }
             if !dirty_check_errors.is_empty() {
                 lines.push(format!(
-                    "Dirty check failed ({}):",
+                    "Dirty check t('failed') ({}):",
                     dirty_check_errors.len()
                 ));
                 for (path, error) in &dirty_check_errors {
@@ -229,7 +229,7 @@ impl AgentTool for SaveFileTool {
                 }
             }
             if !save_errors.is_empty() {
-                lines.push(format!("Save failed ({}):", save_errors.len()));
+                lines.push(format!("Save t('failed') ({}):", save_errors.len()));
                 for (path, error) in &save_errors {
                     lines.push(format!("- {}: {}", path, error));
                 }

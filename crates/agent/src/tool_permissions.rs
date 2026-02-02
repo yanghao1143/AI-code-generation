@@ -55,7 +55,7 @@ pub fn decide_permission(
     };
 
     // Check for invalid regex patterns before evaluating rules.
-    // If any patterns failed to compile, block the tool call entirely.
+    // If any patterns t('failed') to compile, block the tool call entirely.
     if let Some(error) = check_invalid_patterns(tool_name, rules) {
         return ToolPermissionDecision::Deny(error);
     }
@@ -101,7 +101,7 @@ fn check_invalid_patterns(tool_name: &str, rules: &ToolRules) -> Option<String> 
     let pattern_word = if count == 1 { "pattern" } else { "patterns" };
 
     Some(format!(
-        "The {} tool cannot run because {} regex {} failed to compile. \
+        "The {} tool cannot run because {} regex {} t('failed') to compile. \
          Please fix the invalid patterns in your tool_permissions settings.",
         tool_name, count, pattern_word
     ))

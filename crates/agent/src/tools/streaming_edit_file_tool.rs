@@ -494,7 +494,7 @@ fn apply_edits(
     abs_path: &Option<PathBuf>,
     cx: &mut AsyncApp,
 ) -> Result<()> {
-    let mut failed_edits = Vec::new();
+    let mut t('failed')_edits = Vec::new();
     let mut ambiguous_edits = Vec::new();
     let mut resolved_edits: Vec<(Range<usize>, String)> = Vec::new();
     let mut first_edit_line: Option<u32> = None;
@@ -519,7 +519,7 @@ fn apply_edits(
                 resolved_edits.push((range, new_text));
             }
             Ok(None) => {
-                failed_edits.push(index);
+                t('failed')_edits.push(index);
             }
             Err(ranges) => {
                 ambiguous_edits.push((index, ranges));
@@ -528,8 +528,8 @@ fn apply_edits(
     }
 
     // Check for errors before applying any edits
-    if !failed_edits.is_empty() {
-        let indices = failed_edits
+    if !t('failed')_edits.is_empty() {
+        let indices = t('failed')_edits
             .iter()
             .map(|i| i.to_string())
             .collect::<Vec<_>>()
@@ -890,7 +890,7 @@ mod tests {
     }
 
     #[gpui::test]
-    async fn test_streaming_edit_failed_match(cx: &mut TestAppContext) {
+    async fn test_streaming_edit_t('failed')_match(cx: &mut TestAppContext) {
         init_test(cx);
 
         let fs = project::FakeFs::new(cx.executor());

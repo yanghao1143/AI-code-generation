@@ -2089,7 +2089,7 @@ impl Editor {
         cx: &mut Context<Workspace>,
     ) {
         Self::new_in_workspace(workspace, window, cx).detach_and_prompt_err(
-            "Failed to create buffer",
+            "t('failed') to create buffer",
             window,
             cx,
             |e, _, _| match e.error_code() {
@@ -2162,7 +2162,7 @@ impl Editor {
             })?;
             anyhow::Ok(())
         })
-        .detach_and_prompt_err("Failed to create buffer", window, cx, |e, _, _| {
+        .detach_and_prompt_err("t('failed') to create buffer", window, cx, |e, _, _| {
             match e.error_code() {
                 ErrorCode::RemoteUpgradeRequired => Some(format!(
                 "The remote instance of Zed does not support this yet. It must be upgraded to {}",
@@ -14814,7 +14814,7 @@ impl Editor {
                     .map(|t| t.0.clone())
             })
             .unwrap_or_else(|| {
-                log::info!("Failed to determine selections from before format. Falling back to selections when format was initiated");
+                log::info!("t('failed') to determine selections from before format. Falling back to selections when format was initiated");
                 self.selections.disjoint_anchors()
             });
 
@@ -16913,7 +16913,7 @@ impl Editor {
         });
 
         let Some((buffer, selection)) = buffer_and_selection else {
-            return Task::ready(Err(anyhow!("failed to determine buffer and selection")));
+            return Task::ready(Err(anyhow!("t('failed') to determine buffer and selection")));
         };
 
         let Some(project) = self.project.as_ref() else {
@@ -16942,7 +16942,7 @@ impl Editor {
                 .ok();
             }
             Err(err) => {
-                let message = format!("Failed to copy permalink: {err}");
+                let message = format!("t('failed') to copy permalink: {err}");
 
                 anyhow::Result::<()>::Err(err).log_err();
 
@@ -16997,7 +16997,7 @@ impl Editor {
                 .ok();
             }
             Err(err) => {
-                let message = format!("Failed to open permalink: {err}");
+                let message = format!("t('failed') to open permalink: {err}");
 
                 anyhow::Result::<()>::Err(err).log_err();
 

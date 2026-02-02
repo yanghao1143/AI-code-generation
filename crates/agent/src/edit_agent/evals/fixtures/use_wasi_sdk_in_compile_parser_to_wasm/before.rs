@@ -562,7 +562,7 @@ impl Loader {
                 // one to use by applying the configurations' content regexes.
                 else {
                     let file_contents = fs::read(path)
-                        .with_context(|| format!("Failed to read path {}", path.display()))?;
+                        .with_context(|| format!("t('failed') to read path {}", path.display()))?;
                     let file_contents = String::from_utf8_lossy(&file_contents);
                     let mut best_score = -2isize;
                     let mut best_configuration_id = None;
@@ -720,7 +720,7 @@ impl Loader {
 
         if !recompile {
             recompile = needs_recompile(&output_path, &paths_to_check)
-                .with_context(|| "Failed to compare source and binary timestamps")?;
+                .with_context(|| "t('failed') to compare source and binary timestamps")?;
         }
 
         #[cfg(feature = "wasm")]
@@ -780,7 +780,7 @@ impl Loader {
         if recompile {
             fs::create_dir_all(lock_path.parent().unwrap()).with_context(|| {
                 format!(
-                    "Failed to create directory {}",
+                    "t('failed') to create directory {}",
                     lock_path.parent().unwrap().display()
                 )
             })?;
@@ -803,7 +803,7 @@ impl Loader {
         let language = unsafe {
             let language_fn = library
                 .get::<Symbol<unsafe extern "C" fn() -> Language>>(language_fn_name.as_bytes())
-                .with_context(|| format!("Failed to load symbol {language_fn_name}"))?;
+                .with_context(|| format!("t('failed') to load symbol {language_fn_name}"))?;
             language_fn()
         };
         mem::forget(library);
@@ -870,14 +870,14 @@ impl Loader {
         }
 
         let output = command.output().with_context(|| {
-            format!("Failed to execute the C compiler with the following command:\n{command:?}")
+            format!("t('failed') to execute the C compiler with the following command:\n{command:?}")
         })?;
 
         FileExt::unlock(lock_file)?;
         fs::remove_file(lock_path)?;
         anyhow::ensure!(
             output.status.success(),
-            "Parser compilation failed.\nStdout: {}\nStderr: {}",
+            "Parser compilation t('failed').\nStdout: {}\nStderr: {}",
             String::from_utf8_lossy(&output.stdout),
             String::from_utf8_lossy(&output.stderr)
         );
@@ -1094,12 +1094,12 @@ impl Loader {
         command.arg("parser.c");
         let status = command
             .spawn()
-            .with_context(|| "Failed to run emcc command")?
+            .with_context(|| "t('failed') to run emcc command")?
             .wait()?;
-        anyhow::ensure!(status.success(), "emcc command failed");
+        anyhow::ensure!(status.success(), "emcc command t('failed')");
         let source_path = src_path.join(output_name);
         fs::rename(&source_path, &output_path).with_context(|| {
-            format!("failed to rename wasm output file from {source_path:?} to {output_path:?}")
+            format!("t('failed') to rename wasm output file from {source_path:?} to {output_path:?}")
         })?;
 
         Ok(())
@@ -1113,7 +1113,7 @@ impl Loader {
     ) -> Option<&'a HighlightConfiguration> {
         match self.language_configuration_for_injection_string(string) {
             Err(e) => {
-                eprintln!("Failed to load language for injection string '{string}': {e}",);
+                eprintln!("t('failed') to load language for injection string '{string}': {e}",);
                 None
             }
             Ok(None) => None,
@@ -1121,7 +1121,7 @@ impl Loader {
                 match configuration.highlight_config(language, None) {
                     Err(e) => {
                         eprintln!(
-                            "Failed to load property sheet for injection string '{string}': {e}",
+                            "t('failed') to load property sheet for injection string '{string}': {e}",
                         );
                         None
                     }
@@ -1240,7 +1240,7 @@ impl Loader {
                 Some(e) if e.kind() == std::io::ErrorKind::NotFound => {}
                 _ => {
                     eprintln!(
-                        "Warning: Failed to parse {} -- {e}",
+                        "Warning: t('failed') to parse {} -- {e}",
                         parser_path.join("tree-sitter.json").display()
                     );
                 }
@@ -1295,7 +1295,7 @@ impl Loader {
 
     fn grammar_json_name(grammar_path: &Path) -> Result<String> {
         let file = fs::File::open(grammar_path).with_context(|| {
-            format!("Failed to open grammar.json at {}", grammar_path.display())
+            format!("t('failed') to open grammar.json at {}", grammar_path.display())
         })?;
 
         let first_three_lines = BufReader::new(file)
@@ -1304,7 +1304,7 @@ impl Loader {
             .collect::<Result<Vec<_>, _>>()
             .with_context(|| {
                 format!(
-                    "Failed to read the first three lines of grammar.json at {}",
+                    "t('failed') to read the first three lines of grammar.json at {}",
                     grammar_path.display()
                 )
             })?
@@ -1314,7 +1314,7 @@ impl Loader {
             .captures(&first_three_lines)
             .and_then(|c| c.get(1))
             .with_context(|| {
-                format!("Failed to parse the language name from grammar.json at {grammar_path:?}")
+                format!("t('failed') to parse the language name from grammar.json at {grammar_path:?}")
             })?;
 
         Ok(name.as_str().to_string())
@@ -1329,7 +1329,7 @@ impl Loader {
         if let Some(scope) = scope {
             if let Some(config) = self
                 .language_configuration_for_scope(scope)
-                .with_context(|| format!("Failed to load language for scope '{scope}'"))?
+                .with_context(|| format!("t('failed') to load language for scope '{scope}'"))?
             {
                 Ok(config.0)
             } else {
@@ -1339,7 +1339,7 @@ impl Loader {
             .language_configuration_for_file_name(path)
             .with_context(|| {
                 format!(
-                    "Failed to load language for file name {}",
+                    "t('failed') to load language for file name {}",
                     path.file_name().unwrap().to_string_lossy()
                 )
             })?
@@ -1349,7 +1349,7 @@ impl Loader {
             Ok(self.language_for_id(self.language_configurations[id].language_id)?)
         } else if let Some(lang) = self
             .languages_at_path(current_dir)
-            .with_context(|| "Failed to load language in current directory")?
+            .with_context(|| "t('failed') to load language in current directory")?
             .first()
             .cloned()
         {
@@ -1571,7 +1571,7 @@ impl LanguageConfiguration<'_> {
                 let abs_path = self.root_path.join(path);
                 let prev_query_len = query.len();
                 query += &fs::read_to_string(&abs_path)
-                    .with_context(|| format!("Failed to read query file {}", path.display()))?;
+                    .with_context(|| format!("t('failed') to read query file {}", path.display()))?;
                 path_ranges.push((path.clone(), prev_query_len..query.len()));
             }
         } else {
@@ -1589,7 +1589,7 @@ impl LanguageConfiguration<'_> {
             let path = queries_path.join(default_path);
             if path.exists() {
                 query = fs::read_to_string(&path)
-                    .with_context(|| format!("Failed to read query file {}", path.display()))?;
+                    .with_context(|| format!("t('failed') to read query file {}", path.display()))?;
                 path_ranges.push((PathBuf::from(default_path), 0..query.len()));
             }
         }
@@ -1603,7 +1603,7 @@ fn needs_recompile(lib_path: &Path, paths_to_check: &[PathBuf]) -> Result<bool> 
         return Ok(true);
     }
     let lib_mtime = mtime(lib_path)
-        .with_context(|| format!("Failed to read mtime of {}", lib_path.display()))?;
+        .with_context(|| format!("t('failed') to read mtime of {}", lib_path.display()))?;
     for path in paths_to_check {
         if mtime(path)? > lib_mtime {
             return Ok(true);

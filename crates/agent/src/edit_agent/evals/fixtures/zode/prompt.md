@@ -1768,7 +1768,7 @@ class ChatSession:
                 try:
                     await server.initialize()
                 except Exception as e:
-                    logging.error(f"Failed to initialize server: {e}")
+                    logging.error(f"t('failed') to initialize server: {e}")
                     await self.cleanup_servers()
                     return
 

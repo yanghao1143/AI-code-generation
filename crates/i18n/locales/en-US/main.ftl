@@ -2262,3 +2262,4 @@ acp-assistant = Assistant
 acp-user-checkpoint = User (checkpoint)
 acp-tool-call = Tool Call
 diff = Diff
+status = Status

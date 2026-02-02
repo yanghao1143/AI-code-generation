@@ -8,6 +8,7 @@ use assistant_slash_command::{
     SlashCommandResult,
 };
 use gpui::{App, Entity, Task, WeakEntity};
+use i18n::t;
 use language::{BufferSnapshot, CodeLabel, LspAdapterDelegate};
 use ui::prelude::*;
 use workspace::{Workspace, dock::Panel};
@@ -30,7 +31,7 @@ impl SlashCommand for TerminalSlashCommand {
     }
 
     fn description(&self) -> String {
-        "Insert terminal output".into()
+        t("terminal-slash-command-description")
     }
 
     fn icon(&self) -> IconName {
@@ -71,11 +72,11 @@ impl SlashCommand for TerminalSlashCommand {
         cx: &mut App,
     ) -> Task<SlashCommandResult> {
         let Some(workspace) = workspace.upgrade() else {
-            return Task::ready(Err(anyhow::anyhow!("workspace was dropped")));
+            return Task::ready(Err(anyhow::anyhow!(t("workspace-was-dropped"))));
         };
 
         let Some(active_terminal) = resolve_active_terminal(&workspace, cx) else {
-            return Task::ready(Err(anyhow::anyhow!("no active terminal")));
+            return Task::ready(Err(anyhow::anyhow!(t("terminal-no-active-terminal"))));
         };
 
         let line_count = arguments
@@ -90,7 +91,8 @@ impl SlashCommand for TerminalSlashCommand {
             .last_n_non_empty_lines(line_count);
 
         let mut text = String::new();
-        text.push_str("Terminal output:\n");
+        text.push_str(&t("terminal-slash-command-output-prefix"));
+        text.push('\n');
         text.push_str(&lines.join("\n"));
         let range = 0..text.len();
 
@@ -99,7 +101,7 @@ impl SlashCommand for TerminalSlashCommand {
             sections: vec![SlashCommandOutputSection {
                 range,
                 icon: IconName::Terminal,
-                label: "Terminal".into(),
+                label: t("terminal-title").into(),
                 metadata: None,
             }],
             run_commands_in_text: false,

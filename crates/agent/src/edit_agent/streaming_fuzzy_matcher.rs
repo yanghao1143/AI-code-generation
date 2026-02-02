@@ -651,7 +651,7 @@ mod tests {
                 let tool = cx
                     .update(|cx| working_set.tool(&tool_name, cx))
                     .map_err(|err| {
-                        anyhow!("Failed to look up tool '{}': {}", tool_name, err)
+                        anyhow!("t('failed') to look up tool '{}': {}", tool_name, err)
                     })?;
 
                 let Some(tool) = tool else {
@@ -663,7 +663,7 @@ mod tests {
                 let messages = messages.clone();
                 let tool_result = cx
                     .update(|cx| tool.run(invocation.input, &messages, project, action_log, cx))
-                    .map_err(|err| anyhow!("Failed to start tool '{}': {}", tool_name, err))?;
+                    .map_err(|err| anyhow!("t('failed') to start tool '{}': {}", tool_name, err))?;
 
                 tasks.push(tool_result.output);
             "#},
@@ -704,7 +704,7 @@ mod tests {
         let query = "return 42;\n";
 
         // Test with line hint pointing to second function (around line 5)
-        let best_match = matcher.push(query, Some(5)).expect("Failed to match query");
+        let best_match = matcher.push(query, Some(5)).expect("t('failed') to match query");
 
         let matched_text = snapshot
             .text_for_range(best_match.clone())

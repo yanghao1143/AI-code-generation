@@ -33,7 +33,7 @@ const CONTEXT_LOW_THRESHOLD: f32 = 0.25;
 ///
 /// Use this tool when you want to do any of the following:
 /// - Perform an investigation where all you need to know is the outcome, not the research that led to that outcome.
-/// - Complete a self-contained task where you need to know if it succeeded or failed (and how), but none of its intermediate output.
+/// - Complete a self-contained task where you need to know if it succeeded or t('failed') (and how), but none of its intermediate output.
 /// - Run multiple tasks in parallel that would take significantly longer to run sequentially.
 ///
 /// You control what each subagent does by providing:

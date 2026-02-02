@@ -213,7 +213,7 @@ impl LanguageModels {
                                 }
                                 _ => {
                                     log::error!(
-                                        "Failed to authenticate provider: {}: {err:#}",
+                                        "t('failed') to authenticate provider: {}: {err:#}",
                                         provider_name.0
                                     );
                                 }
@@ -796,7 +796,7 @@ impl NativeAgent {
                         .update(cx, |thread, cx| thread.summary(cx))
                 })?
                 .await
-                .context("Failed to generate summary")?;
+                .context("t('failed') to generate summary")?;
             drop(acp_thread);
             Ok(result)
         })
@@ -845,7 +845,7 @@ impl NativeAgent {
                 let session = this
                     .sessions
                     .get(&session_id)
-                    .context("Failed to get session")?;
+                    .context("t('failed') to get session")?;
                 anyhow::Ok((session.acp_thread.clone(), session.thread.clone()))
             })??;
 
@@ -1392,7 +1392,7 @@ impl acp_thread::AgentTelemetry for NativeAgentConnection {
 
         let task = session.thread.read(cx).to_db(cx);
         cx.background_spawn(async move {
-            serde_json::to_value(task.await).context("Failed to serialize thread")
+            serde_json::to_value(task.await).context("t('failed') to serialize thread")
         })
     }
 }

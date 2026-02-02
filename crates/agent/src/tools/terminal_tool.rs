@@ -243,10 +243,10 @@ fn process_content(
             }
             Some(exit_code) => {
                 if is_empty {
-                    format!("Command \"{command}\" failed with exit code {}.", exit_code)
+                    format!("Command \"{command}\" t('failed') with exit code {}.", exit_code)
                 } else {
                     format!(
-                        "Command \"{command}\" failed with exit code {}.\n\n{content}",
+                        "Command \"{command}\" t('failed') with exit code {}.\n\n{content}",
                         exit_code
                     )
                 }
@@ -528,8 +528,8 @@ mod tests {
             result
         );
         assert!(
-            !result.contains("failed"),
-            "Success should not say 'failed', got: {}",
+            !result.contains("t('failed')"),
+            "Success should not say 't('failed')', got: {}",
             result
         );
     }
@@ -556,7 +556,7 @@ mod tests {
         let result = process_content(output, "false", false, false);
 
         assert!(
-            result.contains("failed with exit code 1"),
+            result.contains("t('failed') with exit code 1"),
             "Expected failure message, got: {}",
             result
         );
@@ -575,7 +575,7 @@ mod tests {
         let result = process_content(output, "false", false, false);
 
         assert!(
-            result.contains("failed with exit code 1"),
+            result.contains("t('failed') with exit code 1"),
             "Expected failure message, got: {}",
             result
         );

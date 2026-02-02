@@ -794,7 +794,7 @@ mod tests {
                     result
                 }
             }
-            Err(e) => panic!("Failed to run grep tool: {}", e),
+            Err(e) => panic!("t('failed') to run grep tool: {}", e),
         }
     }
 

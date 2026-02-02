@@ -905,7 +905,7 @@ async fn test_tool_hallucination(cx: &mut TestAppContext) {
     assert_eq!(tool_call.title, "nonexistent_tool");
     assert_eq!(tool_call.status, acp::ToolCallStatus::Pending);
     let update = expect_tool_call_update_fields(&mut events).await;
-    assert_eq!(update.fields.status, Some(acp::ToolCallStatus::Failed));
+    assert_eq!(update.fields.status, Some(acp::ToolCallStatus::t('failed')));
 }
 
 async fn expect_tool_call(events: &mut UnboundedReceiver<Result<ThreadEvent>>) -> acp::ToolCall {

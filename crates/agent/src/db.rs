@@ -355,7 +355,7 @@ impl ThreadsDatabase {
                 data BLOB NOT NULL
             )
         "})?()
-        .map_err(|e| anyhow!("Failed to create threads table: {}", e))?;
+        .map_err(|e| anyhow!("t('failed') to create threads table: {}", e))?;
 
         let db = Self {
             executor,
@@ -511,8 +511,8 @@ mod tests {
             version: SharedThread::VERSION.to_string(),
         };
 
-        let bytes = original.to_bytes().expect("Failed to serialize");
-        let restored = SharedThread::from_bytes(&bytes).expect("Failed to deserialize");
+        let bytes = original.to_bytes().expect("t('failed') to serialize");
+        let restored = SharedThread::from_bytes(&bytes).expect("t('failed') to deserialize");
 
         assert_eq!(restored.title, original.title);
         assert_eq!(restored.version, original.version);
@@ -528,7 +528,7 @@ mod tests {
             "updated_at": "2024-01-01T00:00:00Z"
         }"#;
 
-        let db_thread: DbThread = serde_json::from_str(json).expect("Failed to deserialize");
+        let db_thread: DbThread = serde_json::from_str(json).expect("t('failed') to deserialize");
 
         assert!(
             !db_thread.imported,

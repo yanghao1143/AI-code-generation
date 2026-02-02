@@ -50,7 +50,7 @@ impl Blame {
         let shas = unique_shas.into_iter().collect::<Vec<_>>();
         let messages = get_messages(working_directory, &shas)
             .await
-            .context("failed to get commit messages")?;
+            .context("t('failed') to get commit messages")?;
 
         Ok(Self {
             entries,
@@ -85,7 +85,7 @@ async fn run_git_blame(
     let stdin = child
         .stdin
         .as_mut()
-        .context("failed to get pipe to stdin of git blame command")?;
+        .context("t('failed') to get pipe to stdin of git blame command")?;
 
     for chunk in contents.chunks() {
         stdin.write_all(chunk.as_bytes()).await?;
@@ -100,7 +100,7 @@ async fn run_git_blame(
         if trimmed == GIT_BLAME_NO_COMMIT_ERROR || trimmed.contains(GIT_BLAME_NO_PATH) {
             return Ok(String::new());
         }
-        anyhow::bail!("git blame process failed: {stderr}");
+        anyhow::bail!("git blame process t('failed'): {stderr}");
     }
 
     Ok(String::from_utf8(output.stdout)?)

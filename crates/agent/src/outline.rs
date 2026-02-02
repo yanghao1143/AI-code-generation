@@ -181,7 +181,7 @@ mod tests {
         let buffer = project
             .update(cx, |project, cx| project.create_buffer(None, true, cx))
             .await
-            .expect("failed to create buffer");
+            .expect("t('failed') to create buffer");
 
         buffer.update(cx, |buffer, cx| buffer.set_text(content, cx));
 

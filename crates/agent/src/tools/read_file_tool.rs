@@ -125,7 +125,7 @@ impl AgentTool for ReadFileTool {
         };
         let Some(abs_path) = self.project.read(cx).absolute_path(&project_path, cx) else {
             return Task::ready(Err(anyhow!(
-                "Failed to convert {} to absolute path",
+                "t('failed') to convert {} to absolute path",
                 &input.path
             )));
         };

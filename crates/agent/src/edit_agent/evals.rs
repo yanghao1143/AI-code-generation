@@ -54,7 +54,7 @@ impl EvalOutputProcessor for EditAgentOutputProcessor {
     type Metadata = EditEvalMetadata;
 
     fn process(&mut self, output: &EvalOutput<Self::Metadata>) {
-        if matches!(output.outcome, OutcomeKind::Passed | OutcomeKind::Failed) {
+        if matches!(output.outcome, OutcomeKind::Passed | OutcomeKind::t('failed')) {
             self.cumulative_mismatched_tags += output.metadata.mismatched_tags;
             self.cumulative_tags += output.metadata.tags;
             self.eval_outputs.push(output.clone());
@@ -1349,7 +1349,7 @@ fn run_eval(eval: EvalInput) -> eval_utils::EvalOutput<EditEvalMetadata> {
         Ok(output) => eval_utils::EvalOutput {
             data: output.to_string(),
             outcome: if output.assertion.score < 80 {
-                eval_utils::OutcomeKind::Failed
+                eval_utils::OutcomeKind::t('failed')
             } else {
                 eval_utils::OutcomeKind::Passed
             },
