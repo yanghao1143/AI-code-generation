@@ -2432,3 +2432,14 @@ diagnostics-no-problems-in-workspace = 工作区中没有问题
 diagnostics-project-diagnostics = 项目诊断
 diagnostics-refresh = 刷新
 diagnostics-stop-update = 停止更新
+
+# File Finder / 文件查找器
+file-finder-placeholder = 搜索项目文件...
+file-finder-open = 打开
+file-finder-split = 拆分
+file-finder-split-up = 向上拆分
+file-finder-split-down = 向下拆分
+file-finder-split-left = 向左拆分
+file-finder-split-right = 向右拆分
+file-finder-filter-options = 过滤选项
+file-finder-include-ignored = 包含已忽略的文件

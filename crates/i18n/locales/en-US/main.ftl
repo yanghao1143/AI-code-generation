@@ -2482,3 +2482,14 @@ diagnostics-no-problems-in-workspace = No problems in workspace
 diagnostics-project-diagnostics = Project Diagnostics
 diagnostics-refresh = Refresh
 diagnostics-stop-update = Stop Update
+
+# File Finder
+file-finder-placeholder = Search project files...
+file-finder-open = Open
+file-finder-split = Split
+file-finder-split-up = Split Up
+file-finder-split-down = Split Down
+file-finder-split-left = Split Left
+file-finder-split-right = Split Right
+file-finder-filter-options = Filter Options
+file-finder-include-ignored = Include Ignored Files
