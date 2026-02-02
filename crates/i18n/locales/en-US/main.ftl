@@ -2104,6 +2104,17 @@ workspace-cannot-add-folders-to-others-project = You cannot add folders to someo
 workspace-path-does-not-exist = '{ $path }' does not exist
 
 # ============================================
+# Editor - Breakpoints
+# ============================================
+editor-enable-breakpoint = Enable breakpoint
+editor-set-breakpoint = Set breakpoint
+editor-unset-breakpoint = Unset breakpoint
+editor-no-executable-code = No executable code is associated with this line.
+editor-breakpoint-click-to-disable = { $alt }-click to disable,
+    right-click for more options.
+editor-breakpoint-right-click = Right-click for more options.
+
+# ============================================
 # Workspace - Notifications
 # ============================================
 notification-see-docs = See docs

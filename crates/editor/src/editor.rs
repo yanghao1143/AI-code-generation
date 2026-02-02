@@ -8821,22 +8821,20 @@ impl Editor {
             ..Default::default()
         };
         let primary_action_text = if breakpoint.is_disabled() {
-            "Enable breakpoint"
+            t("editor-enable-breakpoint")
         } else if is_phantom && !collides_with_existing {
-            "Set breakpoint"
+            t("editor-set-breakpoint")
         } else {
-            "Unset breakpoint"
+            t("editor-unset-breakpoint")
         };
         let focus_handle = self.focus_handle.clone();
 
         let meta = if is_rejected {
-            SharedString::from("No executable code is associated with this line.")
+            t("editor-no-executable-code")
         } else if collides_with_existing && !breakpoint.is_disabled() {
-            SharedString::from(format!(
-                "{alt_as_text}-click to disable,\nright-click for more options."
-            ))
+            t_args("editor-breakpoint-click-to-disable", &[("alt", alt_as_text.into())])
         } else {
-            SharedString::from("Right-click for more options.")
+            t("editor-breakpoint-right-click")
         };
         IconButton::new(("breakpoint_indicator", row.0 as usize), icon)
             .icon_size(IconSize::XSmall)

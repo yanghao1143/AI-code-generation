@@ -2568,6 +2568,17 @@ workspace-cannot-add-folders-to-others-project = 您无法向他人的项目添�
 workspace-path-does-not-exist = '{ $path }' 不存在
 
 # ============================================
+# 编辑器 - 断点
+# ============================================
+editor-enable-breakpoint = 启用断点
+editor-set-breakpoint = 设置断点
+editor-unset-breakpoint = 取消断点
+editor-no-executable-code = 此行没有关联的可执行代码。
+editor-breakpoint-click-to-disable = { $alt }-点击禁用，
+    右键点击查看更多选项。
+editor-breakpoint-right-click = 右键点击查看更多选项。
+
+# ============================================
 # 工作区 - 通知
 # ============================================
 notification-see-docs = 查看文档
