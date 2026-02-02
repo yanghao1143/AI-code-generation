@@ -1,6 +1,7 @@
 use crate::text_thread_editor::TextThreadEditor;
 use assistant_slash_command::SlashCommandWorkingSet;
 use gpui::{AnyElement, AnyView, DismissEvent, SharedString, Task, WeakEntity};
+use i18n::t;
 use picker::{Picker, PickerDelegate, PickerEditorPosition};
 use std::sync::Arc;
 use ui::{ListItem, ListItemSpacing, PopoverMenu, PopoverTrigger, Tooltip, prelude::*};
@@ -297,7 +298,7 @@ where
                                         .gap_1p5()
                                         .child(Icon::new(IconName::Plus).size(IconSize::XSmall))
                                         .child(
-                                            Label::new("create-your-command")
+                                            Label::new(t("slash-command-create-custom"))
                                                 .size(LabelSize::Small)
                                                 .buffer_font(cx),
                                         ),
@@ -309,7 +310,7 @@ where
                                 ),
                         )
                         .child(
-                            Label::new("Create your custom command")
+                            Label::new(t("slash-command-create-custom-description"))
                                 .size(LabelSize::Small)
                                 .color(Color::Muted),
                         )

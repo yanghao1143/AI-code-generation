@@ -2765,7 +2765,22 @@ edit-keymap-file = 编辑键映射文件
 create-keybinding = 创建键绑定
 edit-keystroke = 编辑按键
 edit-arguments = 编辑参数
-acp-message-not-found = 未找到消�
-acp-not-supported = 不支�
-acp-delete-session-not-supported = 不支� delete_session
-acp-delete-sessions-not-supported = 不支� delete_sessions
+acp-message-not-found = 未找到消息
+acp-not-supported = 不支持
+acp-delete-session-not-supported = 不支持 delete_session
+acp-delete-sessions-not-supported = 不支持 delete_sessions
+
+# Agent UI internationalization
+slash-command-create-custom = 创建你的命令
+slash-command-create-custom-description = 创建自定义命令
+unknown = 未知
+task-input-placeholder = 描述任务...
+task-input-start = 开始任务
+agent-view-panel = 查看面板
+llm-provider-supports-tools = 支持工具
+llm-provider-supports-images = 支持图片
+llm-provider-supports-parallel-tool-calls = 支持 parallel_tool_calls
+llm-provider-supports-prompt-cache-key = 支持 prompt_cache_key
+llm-provider-supports-chat-completions = 支持 /chat/completions
+agent-update-to-version = 更新到 v{$version}
+

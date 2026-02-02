@@ -10,6 +10,7 @@ use fuzzy::StringMatchCandidate;
 use gpui::{
     App, BackgroundExecutor, Context, DismissEvent, Entity, Subscription, Task, Window, prelude::*,
 };
+use i18n::t;
 use ordered_float::OrderedFloat;
 use picker::popover_menu::PickerPopoverMenu;
 use picker::{Picker, PickerDelegate};
@@ -337,7 +338,7 @@ impl ConfigOptionSelector {
 
     fn render_trigger_button(&self, _window: &mut Window, _cx: &mut Context<Self>) -> Button {
         let Some(option) = self.current_option() else {
-            return Button::new("config-option-trigger", "Unknown")
+            return Button::new("config-option-trigger", t("unknown"))
                 .label_size(LabelSize::Small)
                 .color(Color::Muted)
                 .disabled(true);

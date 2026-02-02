@@ -35,7 +35,7 @@ use gpui::{
     WindowHandle, div, ease_in_out, img, linear_color_stop, linear_gradient, list, point,
     pulsating_between,
 };
-use i18n::t;
+use i18n::{t, t_args};
 use language::Buffer;
 use language_model::LanguageModelRegistry;
 use markdown::{HeadingLevelStyles, Markdown, MarkdownElement, MarkdownStyle};
@@ -8055,7 +8055,7 @@ impl AcpThreadView {
                         .child(Label::new(t("agent-new-version-available")).size(LabelSize::Small)),
                 )
                 .child(
-                    Button::new("update-button", format!("Update to v{}", version))
+                    Button::new("update-button", t_args("agent-update-to-version", &[("version", version.into())]))
                         .label_size(LabelSize::Small)
                         .style(ButtonStyle::Tinted(TintColor::Accent))
                         .on_click(cx.listener(|this, _, window, cx| {

@@ -3,6 +3,7 @@ use gpui::{
     WindowBackgroundAppearance, WindowBounds, WindowDecorations, WindowKind, WindowOptions,
     linear_color_stop, linear_gradient, point,
 };
+use i18n::t;
 use release_channel::ReleaseChannel;
 use std::rc::Rc;
 use theme;
@@ -170,7 +171,7 @@ impl Render for AgentNotification {
                     .gap_1()
                     .items_center()
                     .child(
-                        Button::new("open", "View Panel")
+                        Button::new("open", t("agent-view-panel"))
                             .style(ButtonStyle::Tinted(ui::TintColor::Accent))
                             .full_width()
                             .on_click({

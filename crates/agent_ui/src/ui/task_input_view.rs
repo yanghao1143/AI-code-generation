@@ -2,6 +2,7 @@ use gpui::{
     App, Context, Entity, FocusHandle, Focusable, IntoElement, ParentElement, Render, Styled,
     Window,
 };
+use i18n::t;
 use ui::prelude::*;
 use ui::{Button, ButtonStyle};
 use editor::Editor;
@@ -19,7 +20,7 @@ impl TaskInputView {
     ) -> Self {
         let editor = cx.new(|cx| {
             let mut editor = Editor::multi_line(window, cx);
-            editor.set_placeholder_text("Describe the task...", window, cx);
+            editor.set_placeholder_text(t("task-input-placeholder"), window, cx);
             editor.set_soft_wrap_mode(SoftWrap::EditorWidth, cx);
             editor
         });
@@ -72,7 +73,7 @@ impl Render for TaskInputView {
                 h_flex()
                     .justify_end()
                     .child(
-                        Button::new("start-task", "Start Task")
+                        Button::new("start-task", t("task-input-start"))
                             .style(ButtonStyle::Filled)
                             .on_click(cx.listener(move |this, _, window, cx| {
                                 this.handle_submit(window, cx);
