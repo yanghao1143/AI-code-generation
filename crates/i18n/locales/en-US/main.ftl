@@ -2493,3 +2493,6 @@ file-finder-split-left = Split Left
 file-finder-split-right = Split Right
 file-finder-filter-options = Filter Options
 file-finder-include-ignored = Include Ignored Files
+
+# Go to Line
+go-to-line-current = Line { $line } of { $total }, Column { $col }

@@ -2443,3 +2443,6 @@ file-finder-split-left = 向左拆分
 file-finder-split-right = 向右拆分
 file-finder-filter-options = 过滤选项
 file-finder-include-ignored = 包含已忽略的文件
+
+# Go to Line / 跳转到行
+go-to-line-current = 第 { $line } 行，共 { $total } 行，第 { $col } 列
