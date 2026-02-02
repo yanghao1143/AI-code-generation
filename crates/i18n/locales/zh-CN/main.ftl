@@ -1090,6 +1090,42 @@ agent-filter-all = 全部
 agent-filter-installed = 已安装
 agent-filter-not-installed = 未安装
 
+# Agent Thread View / Agent 对话视图
+agent-restore-checkpoint-desc = 将项目中的所有文件恢复到此对话节点时的内容。
+agent-loading-added-context = 正在加载附加上下文…
+agent-editing-restart-thread = 编辑将从此点重新开始对话。
+agent-interrupted-edit = 编辑被中断
+agent-go-to-file = 跳转到文件
+agent-view-user-rules = 查看用户规则
+agent-view-project-rules = 查看项目规则
+agent-stop-generation = 停止生成
+agent-type-to-send = 输入以发送
+agent-send-message = 发送消息
+agent-open-thread-as-markdown = 以 Markdown 打开对话
+agent-scroll-to-recent-prompt = 滚动到最近的用户提示
+agent-scroll-to-top = 滚动到顶部
+agent-scroll-to-bottom = 滚动到底部
+agent-thanks-for-feedback = 感谢你的反馈！
+agent-sync-with-source-thread = 与源对话同步
+agent-share-thread = 分享对话
+agent-dismiss-warning = 忽略警告
+agent-retry-generation = 重试生成
+agent-copy-response = 复制此 Agent 回复
+agent-all-done = 全部完成
+agent-send-now = 立即发送
+agent-discard-interrupted-edit = 放弃中断的编辑
+agent-copy-command = 复制命令
+agent-stop-this-command = 停止此命令
+agent-next-in-queue = 队列中的下一个
+agent-in-queue = 在队列中
+agent-cancel-edit = 取消编辑
+agent-save-edit = 保存编辑
+agent-minimize-message-editor = 最小化消息编辑器
+agent-expand-message-editor = 展开消息编辑器
+agent-output-truncated = 输出已截断
+agent-disable-thinking-mode = 禁用思考模式
+agent-enable-thinking-mode = 启用思考模式
+
 # AI Plans / AI 计划
 ai-plan-free = 免费版
 ai-plan-pro = 专业版

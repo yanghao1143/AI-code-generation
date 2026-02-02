@@ -35,6 +35,7 @@ use gpui::{
     WindowHandle, div, ease_in_out, img, linear_color_stop, linear_gradient, list, point,
     pulsating_between,
 };
+use i18n::t;
 use language::Buffer;
 use language_model::LanguageModelRegistry;
 use markdown::{HeadingLevelStyles, Markdown, MarkdownElement, MarkdownStyle};
@@ -2643,14 +2644,14 @@ impl AcpThreadView {
                                 .gap_2()
                                 .child(Divider::horizontal())
                                 .child(
-                                    Button::new("restore-checkpoint", "Restore Checkpoint")
+                                    Button::new("restore-checkpoint", t("agent-restore-checkpoint"))
                                         .icon(IconName::Undo)
                                         .icon_size(IconSize::XSmall)
                                         .icon_position(IconPosition::Start)
                                         .label_size(LabelSize::XSmall)
                                         .icon_color(Color::Muted)
                                         .color(Color::Muted)
-                                        .tooltip(Tooltip::text("Restores all files in the project to the content they had at this point in the conversation."))
+                                        .tooltip(Tooltip::text(t("agent-restore-checkpoint-desc")))
                                         .on_click(cx.listener(move |this, _, _window, cx| {
                                             this.restore_checkpoint(&message_id, cx);
                                         }))
@@ -2712,7 +2713,7 @@ impl AcpThreadView {
                                                 if self.is_loading_contents {
                                                     div()
                                                         .id("loading-edited-message-content")
-                                                        .tooltip(Tooltip::text("Loading Added Context…"))
+                                                        .tooltip(Tooltip::text(t("agent-loading-added-context")))
                                                         .child(loading_contents_spinner(IconSize::XSmall))
                                                         .into_any_element()
                                                 } else {
@@ -2720,7 +2721,7 @@ impl AcpThreadView {
                                                         .icon_color(Color::Muted)
                                                         .icon_size(IconSize::XSmall)
                                                         .tooltip(Tooltip::text(
-                                                            "Editing will restart the thread from this point."
+                                                            t("agent-editing-restart-thread")
                                                         ))
                                                         .on_click(cx.listener({
                                                             let editor = editor.clone();
@@ -2746,7 +2747,7 @@ impl AcpThreadView {
                                                         move |_, _| {
                                                             v_flex()
                                                                 .gap_1()
-                                                                .child(Label::new("Unavailable Editing")).child(
+                                                                .child(Label::new(t("agent-unavailable-editing"))).child(
                                                                     div().max_w_64().child(
                                                                         Label::new(format!(
                                                                             "Editing previous messages is not available for {} yet.",
@@ -2952,7 +2953,7 @@ impl AcpThreadView {
                     let is_at_top = entity.read(cx).list_state.logical_scroll_top().item_ix == 0;
 
                     let copy_this_agent_response =
-                        ContextMenuEntry::new("Copy This Agent Response").handler({
+                        ContextMenuEntry::new(t("agent-copy-response")).handler({
                             let entity = entity.clone();
                             move |_, cx| {
                                 entity.update(cx, |this, cx| {
@@ -2969,7 +2970,7 @@ impl AcpThreadView {
                         });
 
                     let scroll_item = if is_at_top {
-                        ContextMenuEntry::new("Scroll to Bottom").handler({
+                        ContextMenuEntry::new(t("agent-scroll-to-bottom")).handler({
                             let entity = entity.clone();
                             move |_, cx| {
                                 entity.update(cx, |this, cx| {
@@ -2978,7 +2979,7 @@ impl AcpThreadView {
                             }
                         })
                     } else {
-                        ContextMenuEntry::new("Scroll to Top").handler({
+                        ContextMenuEntry::new(t("agent-scroll-to-top")).handler({
                             let entity = entity.clone();
                             move |_, cx| {
                                 entity.update(cx, |this, cx| {
@@ -2988,7 +2989,7 @@ impl AcpThreadView {
                         })
                     };
 
-                    let open_thread_as_markdown = ContextMenuEntry::new("Open Thread as Markdown")
+                    let open_thread_as_markdown = ContextMenuEntry::new(t("agent-open-thread-as-markdown"))
                         .handler({
                             let entity = entity.clone();
                             let workspace = workspace.clone();
@@ -3087,7 +3088,7 @@ impl AcpThreadView {
                                 div()
                                     .text_size(self.tool_name_font_size())
                                     .text_color(cx.theme().colors().text_muted)
-                                    .child("Thinking"),
+                                    .child(t("agent-thinking")),
                             ),
                     )
                     .child(
@@ -3423,7 +3424,7 @@ impl AcpThreadView {
                                                     div()
                                                         .id(entry_ix)
                                                         .tooltip(Tooltip::text(
-                                                            "Interrupted Edit",
+                                                            t("agent-interrupted-edit"),
                                                         ))
                                                         .child(
                                                             Icon::new(IconName::XCircle)
@@ -3452,7 +3453,7 @@ impl AcpThreadView {
                                                     )
                                                     .icon_size(IconSize::Small)
                                                     .tooltip(move |_, cx| Tooltip::with_meta(
-                                                        "Discard Interrupted Edit",
+                                                        t("agent-discard-interrupted-edit"),
                                                         None,
                                                         "You can discard this interrupted partial edit and restore the original file content.",
                                                         cx
@@ -3507,7 +3508,7 @@ impl AcpThreadView {
         let tool_icon = if is_file && has_failed && has_revealed_diff {
             div()
                 .id(entry_ix)
-                .tooltip(Tooltip::text("Interrupted Edit"))
+                .tooltip(Tooltip::text(t("agent-interrupted-edit")))
                 .child(DecoratedIcon::new(
                     file_icon,
                     Some(
@@ -3606,7 +3607,7 @@ impl AcpThreadView {
                             ..default_markdown_style(false, true, window, cx)
                         },
                     ))
-                    .tooltip(Tooltip::text("Go to File"))
+                    .tooltip(Tooltip::text(t("agent-go-to-file")))
                     .on_click(cx.listener(move |this, _, window, cx| {
                         this.open_tool_call_location(entry_ix, 0, window, cx);
                     }))
@@ -4017,7 +4018,7 @@ impl AcpThreadView {
                         }))
                         .when_some(location, |this, _loc| {
                             this.child(
-                                Button::new(("go-to-file", entry_ix), "Go to File")
+                                Button::new(("go-to-file", entry_ix), t("agent-go-to-file"))
                                     .label_size(LabelSize::Small)
                                     .on_click(cx.listener(move |this, _, window, cx| {
                                         this.open_tool_call_location(entry_ix, 0, window, cx);
@@ -4494,7 +4495,7 @@ impl AcpThreadView {
                             // layout shift when it changes from being a preview label
                             // to the actual path where the command will run in
                             h_flex().h_6().child(
-                                Label::new("Run Command")
+                                Label::new(t("agent-run-command"))
                                     .buffer_font(cx)
                                     .size(LabelSize::XSmall)
                                     .color(Color::Muted),
@@ -4513,7 +4514,7 @@ impl AcpThreadView {
                     .child(
                         div().absolute().top_1().right_1().child(
                             CopyButton::new("copy-command", command_source.to_string())
-                                .tooltip_label("Copy Command")
+                                .tooltip_label(t("agent-copy-command"))
                                 .visible_on_hover(command_group),
                         ),
                     ),
@@ -4621,7 +4622,7 @@ impl AcpThreadView {
                         .label_size(LabelSize::Small)
                         .tooltip(move |_window, cx| {
                             Tooltip::with_meta(
-                                "Stop This Command",
+                                t("agent-stop-this-command"),
                                 None,
                                 "Also possible by placing your cursor inside the terminal and using regular terminal bindings.",
                                 cx,
@@ -4661,7 +4662,7 @@ impl AcpThreadView {
                         )
                     }
                 } else {
-                    "Output was truncated".to_string()
+                    t("agent-output-truncated").to_string()
                 };
 
                 header.child(
@@ -4674,7 +4675,7 @@ impl AcpThreadView {
                                 .color(Color::Ignored),
                         )
                         .child(
-                            Label::new("Truncated")
+                            Label::new(t("agent-truncated"))
                                 .color(Color::Muted)
                                 .size(LabelSize::XSmall),
                         )
@@ -4856,7 +4857,7 @@ impl AcpThreadView {
                                     .truncate(),
                             )
                             .hover(|s| s.bg(cx.theme().colors().element_hover))
-                            .tooltip(Tooltip::text("View User Rules"))
+                            .tooltip(Tooltip::text(t("agent-view-user-rules")))
                             .on_click(move |_event, window, cx| {
                                 window.dispatch_action(
                                     Box::new(OpenRulesLibrary {
@@ -4885,7 +4886,7 @@ impl AcpThreadView {
                                     .color(Color::Muted),
                             )
                             .hover(|s| s.bg(cx.theme().colors().element_hover))
-                            .tooltip(Tooltip::text("View Project Rules"))
+                            .tooltip(Tooltip::text(t("agent-view-project-rules")))
                             .on_click(cx.listener(Self::handle_open_rules)),
                     )
                 })
@@ -4958,7 +4959,7 @@ impl AcpThreadView {
                             self.render_empty_state_section_header(
                                 "Recent",
                                 Some(
-                                    Button::new("view-history", "View All")
+                                    Button::new("view-history", t("agent-view-all"))
                                         .style(ButtonStyle::Subtle)
                                         .label_size(LabelSize::Small)
                                         .key_binding(
@@ -5106,7 +5107,7 @@ impl AcpThreadView {
                     .map(|this| {
                         if show_fallback_description {
                             this.child(
-                                Label::new("Choose one of the following authentication options:")
+                                Label::new(t("agent-choose-auth-option"))
                                     .size(LabelSize::Small)
                                     .color(Color::Muted),
                             )
@@ -5320,7 +5321,7 @@ impl AcpThreadView {
                 .gap_1()
                 .truncate()
                 .child(
-                    Label::new("Current:")
+                    Label::new(t("agent-current"))
                         .size(LabelSize::Small)
                         .color(Color::Muted),
                 )
@@ -5357,7 +5358,7 @@ impl AcpThreadView {
                 })
         } else {
             let status_label = if stats.pending == 0 {
-                "All Done".to_string()
+                t("agent-all-done").to_string()
             } else if stats.completed == 0 {
                 format!("{} Tasks", plan.entries.len())
             } else {
@@ -5369,7 +5370,7 @@ impl AcpThreadView {
                 .gap_1()
                 .justify_between()
                 .child(
-                    Label::new("Plan")
+                    Label::new(t("agent-plan"))
                         .size(LabelSize::Small)
                         .color(Color::Muted),
                 )
@@ -5513,7 +5514,7 @@ impl AcpThreadView {
                             };
 
                             this.child(
-                                Label::new("Edits")
+                                Label::new(t("agent-edits"))
                                     .size(LabelSize::Small)
                                     .color(Color::Muted),
                             )
@@ -5555,7 +5556,7 @@ impl AcpThreadView {
                                     let focus_handle = focus_handle.clone();
                                     move |_window, cx| {
                                         Tooltip::for_action_in(
-                                            "Review Changes",
+                                            t("agent-review-changes"),
                                             &OpenAgentDiff,
                                             &focus_handle,
                                             cx,
@@ -5568,7 +5569,7 @@ impl AcpThreadView {
                         )
                         .child(Divider::vertical().color(DividerColor::Border))
                         .child(
-                            Button::new("reject-all-changes", "Reject All")
+                            Button::new("reject-all-changes", t("agent-reject-all"))
                                 .label_size(LabelSize::Small)
                                 .disabled(pending_edits)
                                 .when(pending_edits, |this| {
@@ -5587,7 +5588,7 @@ impl AcpThreadView {
                                 })),
                         )
                         .child(
-                            Button::new("keep-all-changes", "Keep All")
+                            Button::new("keep-all-changes", t("agent-keep-all"))
                                 .label_size(LabelSize::Small)
                                 .disabled(pending_edits)
                                 .when(pending_edits, |this| {
@@ -5605,7 +5606,7 @@ impl AcpThreadView {
             })
             .when(!use_keep_reject_buttons, |this| {
                 this.child(
-                    Button::new("review-changes", "Review Changes")
+                    Button::new("review-changes", t("agent-review-changes"))
                         .label_size(LabelSize::Small)
                         .key_binding(
                             KeyBinding::for_action_in(
@@ -5879,7 +5880,7 @@ impl AcpThreadView {
                                             this.hover(|s| s.bg(cx.theme().colors().element_hover))
                                                 .tooltip(move |_, cx| {
                                                     Tooltip::with_meta(
-                                                        "Go to File",
+                                                        t("agent-go-to-file"),
                                                         None,
                                                         full_path.clone(),
                                                         cx,
@@ -5936,7 +5937,7 @@ impl AcpThreadView {
                     })),
             )
             .child(
-                Button::new("clear_queue", "Clear All")
+                Button::new("clear_queue", t("agent-clear-all"))
                     .label_size(LabelSize::Small)
                     .key_binding(KeyBinding::for_action(&ClearMessageQueue, cx))
                     .on_click(cx.listener(|this, _, _, cx| {
@@ -5969,9 +5970,9 @@ impl AcpThreadView {
                     .map(|(index, editor)| {
                         let is_next = index == 0;
                         let (icon_color, tooltip_text) = if is_next {
-                            (Color::Accent, "Next in Queue")
+                            (Color::Accent, t("agent-next-in-queue"))
                         } else {
-                            (Color::Muted, "In Queue")
+                            (Color::Muted, t("agent-in-queue"))
                         };
 
                         let editor_focused = editor.focus_handle(cx).is_focused(_window);
@@ -6010,7 +6011,7 @@ impl AcpThreadView {
                                                 let focus_handle = editor.focus_handle(cx);
                                                 move |_window, cx| {
                                                     Tooltip::for_action_in(
-                                                        "Cancel Edit",
+                                                        t("agent-cancel-edit"),
                                                         &editor::actions::Cancel,
                                                         &focus_handle,
                                                         cx,
@@ -6032,7 +6033,7 @@ impl AcpThreadView {
                                                 let focus_handle = editor.focus_handle(cx);
                                                 move |_window, cx| {
                                                     Tooltip::for_action_in(
-                                                        "Save Edit",
+                                                        t("agent-save-edit"),
                                                         &Chat,
                                                         &focus_handle,
                                                         cx,
@@ -6047,7 +6048,7 @@ impl AcpThreadView {
                                             }),
                                     )
                                     .child(
-                                        Button::new(("send_now_focused", index), "Send Now")
+                                        Button::new(("send_now_focused", index), t("agent-send-now"))
                                             .label_size(LabelSize::Small)
                                             .style(ButtonStyle::Outlined)
                                             .key_binding(
@@ -6120,7 +6121,7 @@ impl AcpThreadView {
                                             })),
                                     )
                                     .child(
-                                        Button::new(("send_now", index), "Send Now")
+                                        Button::new(("send_now", index), t("agent-send-now"))
                                             .label_size(LabelSize::Small)
                                             .when(is_next && message_editor.is_empty(cx), |this| {
                                                 let action: Box<dyn gpui::Action> =
@@ -6158,9 +6159,9 @@ impl AcpThreadView {
         let focus_handle = self.message_editor.focus_handle(cx);
         let editor_bg_color = cx.theme().colors().editor_background;
         let (expand_icon, expand_tooltip) = if self.editor_expanded {
-            (IconName::Minimize, "Minimize Message Editor")
+            (IconName::Minimize, t("agent-minimize-message-editor"))
         } else {
-            (IconName::Maximize, "Expand Message Editor")
+            (IconName::Maximize, t("agent-expand-message-editor"))
         };
 
         let backdrop = div()
@@ -6579,9 +6580,9 @@ impl AcpThreadView {
         let thinking = thread.thinking_enabled();
 
         let tooltip_label = if thinking {
-            "Disable Thinking Mode".to_string()
+            t("agent-disable-thinking-mode").to_string()
         } else {
-            "Enable Thinking Mode".to_string()
+            t("agent-enable-thinking-mode").to_string()
         };
 
         Some(
@@ -6761,7 +6762,7 @@ impl AcpThreadView {
             div()
                 .id("loading-message-content")
                 .px_1()
-                .tooltip(Tooltip::text("Loading Added Context…"))
+                .tooltip(Tooltip::text(t("agent-loading-added-context")))
                 .child(loading_contents_spinner(IconSize::default()))
                 .into_any_element()
         } else if is_generating && is_editor_empty {
@@ -6769,7 +6770,7 @@ impl AcpThreadView {
                 .icon_color(Color::Error)
                 .style(ButtonStyle::Tinted(TintColor::Error))
                 .tooltip(move |_window, cx| {
-                    Tooltip::for_action("Stop Generation", &editor::actions::Cancel, cx)
+                    Tooltip::for_action(t("agent-stop-generation"), &editor::actions::Cancel, cx)
                 })
                 .on_click(cx.listener(|this, _event, _, cx| this.cancel_generation(cx)))
                 .into_any_element()
@@ -6785,7 +6786,7 @@ impl AcpThreadView {
                 })
                 .tooltip(move |_window, cx| {
                     if is_editor_empty && !is_generating {
-                        Tooltip::for_action("Type to Send", &Chat, cx)
+                        Tooltip::for_action(t("agent-type-to-send"), &Chat, cx)
                     } else if is_generating {
                         let focus_handle = focus_handle.clone();
 
@@ -6796,7 +6797,7 @@ impl AcpThreadView {
                                     h_flex()
                                         .gap_2()
                                         .justify_between()
-                                        .child(Label::new("Queue and Send"))
+                                        .child(Label::new(t("agent-queue-and-send")))
                                         .child(KeyBinding::for_action_in(&Chat, &focus_handle, cx)),
                                 )
                                 .child(
@@ -6806,7 +6807,7 @@ impl AcpThreadView {
                                         .justify_between()
                                         .border_t_1()
                                         .border_color(cx.theme().colors().border_variant)
-                                        .child(Label::new("Send Immediately"))
+                                        .child(Label::new(t("agent-send-immediately")))
                                         .child(KeyBinding::for_action_in(
                                             &SendImmediately,
                                             &focus_handle,
@@ -6816,7 +6817,7 @@ impl AcpThreadView {
                                 .into_any_element()
                         })(_window, cx)
                     } else {
-                        Tooltip::for_action("Send Message", &Chat, cx)
+                        Tooltip::for_action(t("agent-send-message"), &Chat, cx)
                     }
                 })
                 .on_click(cx.listener(|this, _, window, cx| {
@@ -7412,7 +7413,7 @@ impl AcpThreadView {
                     )
                     .child(
                         div().min_w(rems(8.)).child(
-                            LoadingLabel::new("Waiting Confirmation")
+                            LoadingLabel::new(t("agent-waiting-confirmation"))
                                 .size(LabelSize::Small)
                                 .color(Color::Muted),
                         ),
@@ -7461,7 +7462,7 @@ impl AcpThreadView {
             .shape(ui::IconButtonShape::Square)
             .icon_size(IconSize::Small)
             .icon_color(Color::Ignored)
-            .tooltip(Tooltip::text("Open Thread as Markdown"))
+            .tooltip(Tooltip::text(t("agent-open-thread-as-markdown")))
             .on_click(cx.listener(move |this, _, window, cx| {
                 if let Some(workspace) = this.workspace.upgrade() {
                     this.open_thread_as_markdown(workspace, window, cx)
@@ -7474,7 +7475,7 @@ impl AcpThreadView {
                 .shape(ui::IconButtonShape::Square)
                 .icon_size(IconSize::Small)
                 .icon_color(Color::Ignored)
-                .tooltip(Tooltip::text("Scroll To Most Recent User Prompt"))
+                .tooltip(Tooltip::text(t("agent-scroll-to-recent-prompt")))
                 .on_click(cx.listener(move |this, _, _, cx| {
                     this.scroll_to_most_recent_user_prompt(cx);
                 }));
@@ -7483,7 +7484,7 @@ impl AcpThreadView {
             .shape(ui::IconButtonShape::Square)
             .icon_size(IconSize::Small)
             .icon_color(Color::Ignored)
-            .tooltip(Tooltip::text("Scroll To Top"))
+            .tooltip(Tooltip::text(t("agent-scroll-to-top")))
             .on_click(cx.listener(move |this, _, _, cx| {
                 this.scroll_to_top(cx);
             }));
@@ -7562,7 +7563,7 @@ impl AcpThreadView {
                         })
                         .tooltip(move |window, cx| match feedback {
                             Some(ThreadFeedback::Positive) => {
-                                Tooltip::text("Thanks for your feedback!")(window, cx)
+                                Tooltip::text(t("agent-thanks-for-feedback"))(window, cx)
                             }
                             _ => Tooltip::with_meta("Helpful Response", None, tooltip_meta(), cx),
                         })
@@ -7608,7 +7609,7 @@ impl AcpThreadView {
                 .shape(ui::IconButtonShape::Square)
                 .icon_size(IconSize::Small)
                 .icon_color(Color::Ignored)
-                .tooltip(Tooltip::text("Sync with source thread"))
+                .tooltip(Tooltip::text(t("agent-sync-with-source-thread")))
                 .on_click(cx.listener(move |this, _, window, cx| {
                     this.sync_thread(window, cx);
                 }));
@@ -7621,7 +7622,7 @@ impl AcpThreadView {
                 .shape(ui::IconButtonShape::Square)
                 .icon_size(IconSize::Small)
                 .icon_color(Color::Ignored)
-                .tooltip(Tooltip::text("Share Thread"))
+                .tooltip(Tooltip::text(t("agent-share-thread")))
                 .on_click(cx.listener(move |this, _, window, cx| {
                     this.share_thread(window, cx);
                 }));
@@ -7733,7 +7734,7 @@ impl AcpThreadView {
                 .description(description)
                 .actions_slot(
                     h_flex().gap_0p5().child(
-                        Button::new("start-new-thread", "Start New Thread")
+                        Button::new("start-new-thread", t("agent-start-new-thread"))
                             .label_size(LabelSize::Small)
                             .on_click(cx.listener(|this, _, window, cx| {
                                 let Some(thread) = this.thread() else {
@@ -7841,7 +7842,7 @@ impl AcpThreadView {
             .title("Codex on Windows")
             .description("For best performance, run Codex in Windows Subsystem for Linux (WSL2)")
             .actions_slot(
-                Button::new("open-wsl-modal", "Open in WSL")
+                Button::new("open-wsl-modal", t("agent-open-in-wsl"))
                     .icon_size(IconSize::Small)
                     .icon_color(Color::Muted)
                     .on_click(cx.listener({
@@ -7859,7 +7860,7 @@ impl AcpThreadView {
                 IconButton::new("dismiss", IconName::Close)
                     .icon_size(IconSize::Small)
                     .icon_color(Color::Muted)
-                    .tooltip(Tooltip::text("Dismiss Warning"))
+                    .tooltip(Tooltip::text(t("agent-dismiss-warning")))
                     .on_click(cx.listener({
                         move |this, _, _, cx| {
                             this.show_codex_windows_warning = false;
@@ -7912,7 +7913,7 @@ impl AcpThreadView {
                             IconButton::new("dismiss-command-errors", IconName::Close)
                                 .icon_size(IconSize::Small)
                                 .icon_color(Color::Muted)
-                                .tooltip(Tooltip::text("Dismiss"))
+                                .tooltip(Tooltip::text(t("dismiss")))
                                 .on_click(cx.listener(|this, _, _, cx| {
                                     this.clear_command_load_errors(cx);
                                 })),
@@ -8053,7 +8054,7 @@ impl AcpThreadView {
                                 .color(Color::Accent)
                                 .size(IconSize::Small),
                         )
-                        .child(Label::new("New version available").size(LabelSize::Small)),
+                        .child(Label::new(t("agent-new-version-available")).size(LabelSize::Small)),
                 )
                 .child(
                     Button::new("update-button", format!("Update to v{}", version))
@@ -8149,7 +8150,7 @@ impl AcpThreadView {
                         this.child(
                             IconButton::new("retry", IconName::RotateCw)
                                 .icon_size(IconSize::Small)
-                                .tooltip(Tooltip::text("Retry Generation"))
+                                .tooltip(Tooltip::text(t("agent-retry-generation")))
                                 .on_click(cx.listener(|this, _, _window, cx| {
                                     this.retry_generation(cx);
                                 })),
@@ -8206,7 +8207,7 @@ impl AcpThreadView {
     fn dismiss_error_button(&self, cx: &mut Context<Self>) -> impl IntoElement {
         IconButton::new("dismiss", IconName::Close)
             .icon_size(IconSize::Small)
-            .tooltip(Tooltip::text("Dismiss"))
+            .tooltip(Tooltip::text(t("dismiss")))
             .on_click(cx.listener({
                 move |this, _, _, cx| {
                     this.clear_thread_error(cx);
@@ -8216,7 +8217,7 @@ impl AcpThreadView {
     }
 
     fn authenticate_button(&self, cx: &mut Context<Self>) -> impl IntoElement {
-        Button::new("authenticate", "Authenticate")
+        Button::new("authenticate", t("agent-authenticate"))
             .label_size(LabelSize::Small)
             .style(ButtonStyle::Filled)
             .on_click(cx.listener({
@@ -8263,7 +8264,7 @@ impl AcpThreadView {
     }
 
     fn upgrade_button(&self, cx: &mut Context<Self>) -> impl IntoElement {
-        Button::new("upgrade", "Upgrade")
+        Button::new("upgrade", t("agent-upgrade"))
             .label_size(LabelSize::Small)
             .style(ButtonStyle::Tinted(ui::TintColor::Accent))
             .on_click(cx.listener({

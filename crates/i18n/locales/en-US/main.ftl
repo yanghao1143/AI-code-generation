@@ -811,6 +811,42 @@ agent-filter-all = All
 agent-filter-installed = Installed
 agent-filter-not-installed = Not Installed
 
+# Agent Thread View
+agent-restore-checkpoint-desc = Restores all files in the project to the content they had at this point in the conversation.
+agent-loading-added-context = Loading Added Context…
+agent-editing-restart-thread = Editing will restart the thread from this point.
+agent-interrupted-edit = Interrupted Edit
+agent-go-to-file = Go to File
+agent-view-user-rules = View User Rules
+agent-view-project-rules = View Project Rules
+agent-stop-generation = Stop Generation
+agent-type-to-send = Type to Send
+agent-send-message = Send Message
+agent-open-thread-as-markdown = Open Thread as Markdown
+agent-scroll-to-recent-prompt = Scroll To Most Recent User Prompt
+agent-scroll-to-top = Scroll To Top
+agent-scroll-to-bottom = Scroll to Bottom
+agent-thanks-for-feedback = Thanks for your feedback!
+agent-sync-with-source-thread = Sync with source thread
+agent-share-thread = Share Thread
+agent-dismiss-warning = Dismiss Warning
+agent-retry-generation = Retry Generation
+agent-copy-response = Copy This Agent Response
+agent-all-done = All Done
+agent-send-now = Send Now
+agent-discard-interrupted-edit = Discard Interrupted Edit
+agent-copy-command = Copy Command
+agent-stop-this-command = Stop This Command
+agent-next-in-queue = Next in Queue
+agent-in-queue = In Queue
+agent-cancel-edit = Cancel Edit
+agent-save-edit = Save Edit
+agent-minimize-message-editor = Minimize Message Editor
+agent-expand-message-editor = Expand Message Editor
+agent-output-truncated = Output was truncated
+agent-disable-thinking-mode = Disable Thinking Mode
+agent-enable-thinking-mode = Enable Thinking Mode
+
 # AI Plans
 ai-plan-free = Free
 ai-plan-pro = Pro
