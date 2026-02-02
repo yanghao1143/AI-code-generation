@@ -96,8 +96,8 @@ diagnose_agent() {
         echo "context_low"; return
     fi
     
-    # 8. 循环检测
-    if echo "$last_10" | grep -qE "loop was detected|infinite loop|repetitive tool calls" 2>/dev/null; then
+    # 8. 循环检测 (扩大检测范围到 last_30)
+    if echo "$last_30" | grep -qE "loop was detected|infinite loop|repetitive tool calls|potential loop" 2>/dev/null; then
         echo "loop_detected"; return
     fi
     
@@ -220,13 +220,18 @@ repair_agent() {
             echo "context_reset"
             ;;
         loop_detected)
-            # 循环检测，发 Enter 确认，清除输入，派新任务
-            tmux -S "$SOCKET" send-keys -t "$agent" Enter
-            sleep 2
+            # 循环检测，先清除输入，再发 Escape 取消，最后派新任务
+            # 注意：不要先发 Enter，会把堆积的输入发出去
+            tmux -S "$SOCKET" send-keys -t "$agent" Escape
+            sleep 0.5
+            # 清除输入框
             for i in {1..50}; do
                 tmux -S "$SOCKET" send-keys -t "$agent" BSpace
             done
             sleep 0.3
+            # 再发一次 Escape 确保退出循环提示
+            tmux -S "$SOCKET" send-keys -t "$agent" Escape
+            sleep 0.5
             dispatch_task "$agent"
             echo "loop_broken"
             ;;
@@ -270,10 +275,44 @@ repair_agent() {
             dispatch_task "$agent"
             echo "dispatched"
             ;;
-        working|unknown)
-            # 重置重试计数
+        working)
+            # 正在工作，重置重试计数
             redis-cli HSET "$REDIS_PREFIX:retry:$agent" "count" 0 2>/dev/null
             echo "no_action"
+            ;;
+        unknown)
+            # 未知状态，尝试诊断
+            local output=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p 2>/dev/null | tail -30)
+            
+            # 检查是否有输入框堆积
+            if echo "$output" | grep -qE "^│ > .+[^│]|^❯ .+|^› .+" 2>/dev/null; then
+                # 有堆积输入，清除后派活
+                tmux -S "$SOCKET" send-keys -t "$agent" Escape
+                sleep 0.3
+                for i in {1..30}; do
+                    tmux -S "$SOCKET" send-keys -t "$agent" BSpace
+                done
+                sleep 0.3
+                dispatch_task "$agent"
+                echo "cleared_unknown"
+            elif echo "$output" | grep -qE "params must have|Something went wrong" 2>/dev/null; then
+                # 工具错误，发 Escape 取消
+                tmux -S "$SOCKET" send-keys -t "$agent" Escape
+                sleep 1
+                dispatch_task "$agent"
+                echo "error_recovered"
+            else
+                # 真的不知道，增加 unknown 计数
+                local unknown_count=$(redis-cli HINCRBY "$REDIS_PREFIX:unknown:$agent" "count" 1 2>/dev/null)
+                if [[ "$unknown_count" -gt 5 ]]; then
+                    # 连续 5 次 unknown，重启
+                    restart_agent "$agent"
+                    redis-cli HSET "$REDIS_PREFIX:unknown:$agent" "count" 0 2>/dev/null
+                    echo "restarted_unknown"
+                else
+                    echo "no_action"
+                fi
+            fi
             ;;
     esac
 }
@@ -443,11 +482,19 @@ run_check() {
         
         local diagnosis=$(diagnose_agent "$agent")
         
-        if [[ "$diagnosis" != "working" && "$diagnosis" != "unknown" ]]; then
+        if [[ "$diagnosis" != "working" ]]; then
             local result=$(repair_agent "$agent" "$diagnosis")
             if [[ "$result" != "no_action" ]]; then
                 issues+=("$agent:$diagnosis→$result")
+                # 自动学习：记录成功的修复
+                if [[ "$result" != *"failed"* && "$result" != *"unknown"* ]]; then
+                    redis-cli HINCRBY "$REDIS_PREFIX:learn:$diagnosis" "success" 1 2>/dev/null
+                fi
             fi
+        else
+            # 正在工作，重置计数器
+            redis-cli HSET "$REDIS_PREFIX:retry:$agent" "count" 0 2>/dev/null
+            redis-cli HSET "$REDIS_PREFIX:unknown:$agent" "count" 0 2>/dev/null
         fi
     done
     
