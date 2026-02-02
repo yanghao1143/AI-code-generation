@@ -57,3 +57,5 @@
 
 **学习**: 派发任务后要确认任务真正开始执行，不能只看输入框有内容
 - `08:30:38` **test_problem** @ test-agent → test_solution
+- `08:40:06` **needs_confirm** @ claude-agent → auto_confirm_claude
+- `08:42:12` **needs_confirm** @ claude-agent → auto_confirm_claude

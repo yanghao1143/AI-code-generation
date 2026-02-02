@@ -17,12 +17,33 @@ get_idle_agents() {
     local idle_agents=()
     for agent in claude-agent gemini-agent codex-agent; do
         local output=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p 2>/dev/null | tail -20)
+        local last_lines=$(echo "$output" | tail -5)
         
         # 检查是否空闲 (有输入提示符，没有处理中标志)
-        if echo "$output" | tail -5 | grep -qE "(^> $|^› |Type your message)" 2>/dev/null; then
-            if ! echo "$output" | grep -qE "(⠋|⠙|⠹|⠸|Thinking|Working|esc to interrupt|esc to cancel)" 2>/dev/null; then
-                idle_agents+=("$agent")
-            fi
+        local is_idle=false
+        
+        # Claude: 空的 > 提示符或 ──── 分隔线
+        if echo "$last_lines" | grep -qE "^>\s*$|^────.*────$" 2>/dev/null; then
+            is_idle=true
+        fi
+        
+        # Gemini: Type your message
+        if echo "$last_lines" | grep -qE "Type your message" 2>/dev/null; then
+            is_idle=true
+        fi
+        
+        # Codex: 空的 › 提示符或 context left
+        if echo "$last_lines" | grep -qE "^›\s*$|context left.*shortcuts" 2>/dev/null; then
+            is_idle=true
+        fi
+        
+        # 排除正在处理中的情况
+        if echo "$output" | grep -qE "(⠋|⠙|⠹|⠸|Thinking|Working|esc to interrupt|esc to cancel)" 2>/dev/null; then
+            is_idle=false
+        fi
+        
+        if [[ "$is_idle" == "true" ]]; then
+            idle_agents+=("$agent")
         fi
     done
     echo "${idle_agents[@]}"

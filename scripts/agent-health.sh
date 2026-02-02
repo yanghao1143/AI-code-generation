@@ -105,6 +105,12 @@ is_processing() {
 is_waiting_confirm() {
     local output="$1"
     local last_lines=$(echo "$output" | tail -15)
+    local very_last=$(echo "$output" | tail -5)
+    
+    # 如果最后几行显示空闲输入提示，说明不在等待确认
+    if echo "$very_last" | grep -qE "^>\s*$|^────.*────$|Type your message|context left|^›\s*$" 2>/dev/null; then
+        return 1
+    fi
     
     # 真正需要用户确认的情况
     
@@ -128,28 +134,17 @@ is_waiting_confirm() {
         return 0
     fi
     
-    # 4. 通用权限确认
-    if echo "$last_lines" | grep -qE "permission|Permission|Deny" 2>/dev/null; then
-        return 0
-    fi
-    
-    # 5. 危险操作确认
-    if echo "$last_lines" | grep -qE "Are you sure|Confirm|confirm\?" 2>/dev/null; then
-        return 0
-    fi
-    
-    # 6. 选择菜单 - 检查是否是活跃的选择界面
-    if echo "$last_lines" | grep -qE "Esc to cancel" 2>/dev/null; then
-        # 但如果已经显示了输入提示，说明已经过了确认阶段
-        if echo "$last_lines" | tail -3 | grep -qE "^>\s*$|Type your message" 2>/dev/null; then
-            return 1
-        fi
-        return 0
-    fi
-    
-    # 7. Y/N 确认
+    # 4. 危险操作确认 (明确的 Y/N 提示)
     if echo "$last_lines" | grep -qE "\[Y/n\]|\[y/N\]|yes/no" 2>/dev/null; then
         return 0
+    fi
+    
+    # 5. 选择菜单 - 只有在没有输入提示时才算等待确认
+    if echo "$last_lines" | grep -qE "Esc to cancel.*Tab to amend" 2>/dev/null; then
+        # 这是 Claude 的选择菜单，但需要确认不是已完成状态
+        if ! echo "$very_last" | grep -qE "bypass permissions|shift\+tab to cycle" 2>/dev/null; then
+            return 0
+        fi
     fi
     
     return 1
@@ -178,6 +173,43 @@ is_idle() {
             # Codex 的输入提示: › 或 context left
             if echo "$output" | tail -5 | grep -qE "^›|context left" 2>/dev/null; then
                 return 0
+            fi
+            ;;
+    esac
+    
+    return 1
+}
+
+# 检测是否有未发送的输入 (输入框有内容但没执行)
+has_pending_input() {
+    local output="$1"
+    local cli_type="$2"
+    local last_lines=$(echo "$output" | tail -10)
+    
+    case "$cli_type" in
+        gemini)
+            # Gemini: 检查输入框是否有内容 (> 后面有文字，但没有 spinner)
+            if echo "$last_lines" | grep -qE "^│ > .+[^│]" 2>/dev/null; then
+                # 确认没有在处理中
+                if ! echo "$last_lines" | grep -qE "(⠋|⠙|⠹|⠸|⠼|⠴|⠦|⠧|⠇|⠏|esc to cancel)" 2>/dev/null; then
+                    return 0
+                fi
+            fi
+            ;;
+        claude)
+            # Claude: 检查 > 后面有多行内容但没有 thinking/working
+            if echo "$last_lines" | grep -qE "^> .+" 2>/dev/null; then
+                if ! echo "$last_lines" | grep -qE "(Thinking|thinking|Working|·.*tokens)" 2>/dev/null; then
+                    return 0
+                fi
+            fi
+            ;;
+        codex)
+            # Codex: 检查 › 后面有内容但没有处理中标志
+            if echo "$last_lines" | grep -qE "^› .+" 2>/dev/null; then
+                if ! echo "$last_lines" | grep -qE "(Searching|Investigating|esc to interrupt)" 2>/dev/null; then
+                    return 0
+                fi
             fi
             ;;
     esac
@@ -227,15 +259,19 @@ check_agent() {
         elif is_waiting_confirm "$output_tail"; then
             status="needs_confirm"
             health="blocked"
-        # 2.3 检查是否空闲
+        # 2.3 检查是否有未发送的输入 (输入框有内容但没按 Enter)
+        elif has_pending_input "$output_tail" "$cli_type"; then
+            status="pending_input"
+            health="blocked"
+        # 2.4 检查是否空闲
         elif is_idle "$output_tail" "$cli_type"; then
             status="idle"
             health="healthy"
-        # 2.4 检查是否有错误
+        # 2.5 检查是否有错误
         elif echo "$output_tail" | grep -qE "(panic|PANIC|fatal|FATAL|Error:|ERROR:)" 2>/dev/null; then
             status="error"
             health="unhealthy"
-        # 2.5 检查是否超时 (长时间无活动)
+        # 2.6 检查是否超时 (长时间无活动)
         elif [[ $idle_time -gt $DEADLOCK_THRESHOLD ]]; then
             status="timeout"
             health="warning"
@@ -335,6 +371,10 @@ recover_agent() {
                     tmux -S "$SOCKET" send-keys -t "$agent" "2" Enter
                     ;;
             esac
+            ;;
+        pending_input)
+            echo "  → 发送 Enter 提交未发送的输入"
+            tmux -S "$SOCKET" send-keys -t "$agent" Enter
             ;;
         timeout)
             echo "  → 发送 Ctrl+C 中断超时任务"
@@ -525,40 +565,3 @@ case "$action" in
         echo "  status  - 简洁状态输出"
         ;;
 esac
-
-# 检测是否有未发送的输入 (输入框有内容但没执行)
-has_pending_input() {
-    local output="$1"
-    local cli_type="$2"
-    local last_lines=$(echo "$output" | tail -10)
-    
-    case "$cli_type" in
-        gemini)
-            # Gemini: 检查输入框是否有内容 (> 后面有文字，但没有 spinner)
-            if echo "$last_lines" | grep -qE "^│ > .+[^│]" 2>/dev/null; then
-                # 确认没有在处理中
-                if ! echo "$last_lines" | grep -qE "(⠋|⠙|⠹|⠸|⠼|⠴|⠦|⠧|⠇|⠏|esc to cancel)" 2>/dev/null; then
-                    return 0
-                fi
-            fi
-            ;;
-        claude)
-            # Claude: 检查 > 后面有多行内容但没有 thinking/working
-            if echo "$last_lines" | grep -qE "^> .+" 2>/dev/null; then
-                if ! echo "$last_lines" | grep -qE "(Thinking|thinking|Working|·.*tokens)" 2>/dev/null; then
-                    return 0
-                fi
-            fi
-            ;;
-        codex)
-            # Codex: 检查 › 后面有内容但没有处理中标志
-            if echo "$last_lines" | grep -qE "^› .+" 2>/dev/null; then
-                if ! echo "$last_lines" | grep -qE "(Searching|Investigating|esc to interrupt)" 2>/dev/null; then
-                    return 0
-                fi
-            fi
-            ;;
-    esac
-    
-    return 1
-}
