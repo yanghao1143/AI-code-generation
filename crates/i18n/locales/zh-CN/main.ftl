@@ -2921,3 +2921,25 @@ inline-assist-transform = 转换
 inline-assist-keybinding-to-chat = { $keybinding } 打开对话
 inline-assist-placeholder = { $action }… ({ $keybinding_hint } ― ↓↑ 浏览历史 — @ 包含上下文)
 
+
+# Activity Indicator / 活动指示器
+activity-indicator-ls-status = { $server_name }: { $status }
+activity-indicator-ls-percentage =  ({ $percentage }%)
+activity-indicator-ls-more =  (还有 { $count } 个)
+activity-indicator-debug = 调试中 ({ $adapter })
+activity-indicator-downloading = 正在下载 { $list }
+activity-indicator-checking-updates = 正在检查 { $list } 的更新
+activity-indicator-failed-to-run = 运行失败: { $list }
+activity-indicator-formatting-failed = 格式化失败: { $failure }
+activity-indicator-ls-prefix = { $server_name }:
+activity-indicator-ls-warning-prefix = { $server_name } (警告):
+activity-indicator-ls-error-prefix = { $server_name } (错误):
+activity-indicator-checking-zed-updates = 正在检查 Zed 更新…
+activity-indicator-downloading-zed-update = 正在下载 Zed 更新…
+activity-indicator-installing-zed-update = 正在安装 Zed 更新…
+activity-indicator-click-to-restart = 点击重启并更新
+activity-indicator-failed-update = 自动更新失败
+activity-indicator-installing-extension = 正在安装扩展: { $extension_id }
+activity-indicator-updating-extension = 正在更新扩展: { $extension_id }
+activity-indicator-removing-extension = 正在移除扩展: { $extension_id }
+activity-indicator-version = 版本: { $version }

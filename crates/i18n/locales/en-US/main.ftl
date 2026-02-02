@@ -2472,3 +2472,24 @@ inline-assist-placeholder = { $action }… ({ $keybinding_hint } ― ↓↑ for 
  a g e n t - s t a t u s - p a u s e d   =   P a u s e d 
   
  
+# Activity Indicator
+activity-indicator-ls-status = { $server_name }: { $status }
+activity-indicator-ls-percentage =  ({ $percentage }%)
+activity-indicator-ls-more =  (+{ $count } more)
+activity-indicator-debug = Debugging ({ $adapter })
+activity-indicator-downloading = Downloading { $list }
+activity-indicator-checking-updates = Checking for updates to { $list }
+activity-indicator-failed-to-run = Failed to run { $list }
+activity-indicator-formatting-failed = Formatting failed: { $failure }
+activity-indicator-ls-prefix = { $server_name }:
+activity-indicator-ls-warning-prefix = { $server_name } (warning):
+activity-indicator-ls-error-prefix = { $server_name } (error):
+activity-indicator-checking-zed-updates = Checking for Zed updates…
+activity-indicator-downloading-zed-update = Downloading Zed update…
+activity-indicator-installing-zed-update = Installing Zed update…
+activity-indicator-click-to-restart = Click to restart and update
+activity-indicator-failed-update = Auto update failed
+activity-indicator-installing-extension = Installing extension: { $extension_id }
+activity-indicator-updating-extension = Updating extension: { $extension_id }
+activity-indicator-removing-extension = Removing extension: { $extension_id }
+activity-indicator-version = Version: { $version }
