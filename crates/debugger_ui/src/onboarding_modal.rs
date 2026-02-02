@@ -1,6 +1,7 @@
 use gpui::{
     ClickEvent, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, MouseDownEvent, Render,
 };
+use i18n::t;
 use ui::{TintColor, Vector, VectorName, prelude::*};
 use workspace::{ModalView, Workspace};
 
@@ -124,7 +125,7 @@ impl Render for DebuggerOnboardingModal {
                     .w_full()
                     .gap_1()
                     .child(
-                        Label::new("Introducing")
+                        Label::new(t("debugger-introducing"))
                             .size(LabelSize::Small)
                             .color(Color::Muted),
                     )
@@ -139,13 +140,13 @@ impl Render for DebuggerOnboardingModal {
                 )),
             ));
 
-        let open_panel_button = Button::new("open-panel", "Get Started with the Debugger")
+        let open_panel_button = Button::new("open-panel", t("debugger-get-started"))
             .icon_size(IconSize::Indicator)
             .style(ButtonStyle::Tinted(TintColor::Accent))
             .full_width()
             .on_click(cx.listener(Self::open_panel));
 
-        let blog_post_button = Button::new("view-blog", "Check out the Blog Post")
+        let blog_post_button = Button::new("view-blog", t("debugger-check-blog"))
             .icon(IconName::ArrowUpRight)
             .icon_size(IconSize::Indicator)
             .icon_color(Color::Muted)

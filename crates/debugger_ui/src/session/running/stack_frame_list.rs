@@ -10,6 +10,7 @@ use gpui::{
     Action, AnyElement, Entity, EventEmitter, FocusHandle, Focusable, FontWeight, ListState,
     Subscription, Task, WeakEntity, list,
 };
+use i18n::t;
 use util::{
     debug_panic,
     paths::{PathStyle, is_absolute},
@@ -624,7 +625,7 @@ impl StackFrameList {
                                     }
                                 }))
                                 .tooltip(move |window, cx| {
-                                    Tooltip::text("Restart Stack Frame")(window, cx)
+                                    Tooltip::text(t("debugger-restart-frame"))(window, cx)
                                 }),
                             ),
                     )

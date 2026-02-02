@@ -1427,6 +1427,27 @@ debugger-docs = Debugger Docs
 debugger-breakpoints = Breakpoints
 debugger-no-breakpoints = No Breakpoints Set
 debugger-evaluate = Evaluate
+debugger-open-documentation = Open Documentation
+debugger-open-logs = Open Debug Adapter Logs
+debugger-close-panel = Close Panel
+debugger-pause = Pause Program
+debugger-continue = Continue Program
+debugger-step-over = Step Over
+debugger-step-in = Step In
+debugger-step-out = Step Out
+debugger-restart = Restart Program
+debugger-stop = Stop Debugging
+debugger-detach = Detach Debugger
+debugger-restart-frame = Restart Stack Frame
+debugger-tab = Debugger
+debugger-stack-frames = Stack Frames
+debugger-stack-frame-viewer = Stack Frame Viewer
+debugger-remove-watch = Remove Watch
+debugger-attach-session = Attach New Session Setup
+debugger-find-task = Find a debug task, or debug a command
+debugger-rerun-session = Rerun Session
+debugger-terminate-thread = Terminate Thread
+debugger-terminate-all-threads = Terminate All Threads
 
 # Common form labels
 name = Name

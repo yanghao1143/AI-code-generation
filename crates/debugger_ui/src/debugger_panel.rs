@@ -21,6 +21,7 @@ use gpui::{
     EntityId, EventEmitter, FocusHandle, Focusable, MouseButton, MouseDownEvent, Point,
     Subscription, Task, WeakEntity, anchored, deferred,
 };
+use i18n::t;
 
 use itertools::Itertools as _;
 use language::Buffer;
@@ -640,14 +641,14 @@ impl DebugPanel {
                 .on_click(|_, window, cx| {
                     window.dispatch_action(zed_actions::OpenProjectDebugTasks.boxed_clone(), cx);
                 })
-                .tooltip(Tooltip::text("Edit debug.json"))
+                .tooltip(Tooltip::text(t("debugger-edit-debug-json")))
         };
 
         let documentation_button = || {
             IconButton::new("debug-open-documentation", IconName::CircleHelp)
                 .icon_size(IconSize::Small)
                 .on_click(move |_, _, cx| cx.open_url("https://zed.dev/docs/debugger"))
-                .tooltip(Tooltip::text("Open Documentation"))
+                .tooltip(Tooltip::text(t("debugger-open-documentation")))
         };
 
         let logs_button = || {
@@ -656,7 +657,7 @@ impl DebugPanel {
                 .on_click(move |_, window, cx| {
                     window.dispatch_action(debugger_tools::OpenDebugAdapterLogs.boxed_clone(), cx)
                 })
-                .tooltip(Tooltip::text("Open Debug Adapter Logs"))
+                .tooltip(Tooltip::text(t("debugger-open-logs")))
         };
 
         let close_bottom_panel_button = {
@@ -666,7 +667,7 @@ impl DebugPanel {
                     .on_click(move |_, window, cx| {
                         window.dispatch_action(workspace::ToggleBottomDock.boxed_clone(), cx)
                     })
-                    .tooltip(Tooltip::text("Close Panel")),
+                    .tooltip(Tooltip::text(t("debugger-close-panel"))),
             )
         };
 
@@ -715,7 +716,7 @@ impl DebugPanel {
                                                     let focus_handle = focus_handle.clone();
                                                     move |_window, cx| {
                                                         Tooltip::for_action_in(
-                                                            "Pause Program",
+                                                            t("debugger-pause"),
                                                             &Pause,
                                                             &focus_handle,
                                                             cx,
@@ -739,7 +740,7 @@ impl DebugPanel {
                                                     let focus_handle = focus_handle.clone();
                                                     move |_window, cx| {
                                                         Tooltip::for_action_in(
-                                                            "Continue Program",
+                                                            t("debugger-continue"),
                                                             &Continue,
                                                             &focus_handle,
                                                             cx,
@@ -763,7 +764,7 @@ impl DebugPanel {
                                                 let focus_handle = focus_handle.clone();
                                                 move |_window, cx| {
                                                     Tooltip::for_action_in(
-                                                        "Step Over",
+                                                        t("debugger-step-over"),
                                                         &StepOver,
                                                         &focus_handle,
                                                         cx,
@@ -785,7 +786,7 @@ impl DebugPanel {
                                                 let focus_handle = focus_handle.clone();
                                                 move |_window, cx| {
                                                     Tooltip::for_action_in(
-                                                        "Step In",
+                                                        t("debugger-step-in"),
                                                         &StepInto,
                                                         &focus_handle,
                                                         cx,
@@ -807,7 +808,7 @@ impl DebugPanel {
                                                 let focus_handle = focus_handle.clone();
                                                 move |_window, cx| {
                                                     Tooltip::for_action_in(
-                                                        "Step Out",
+                                                        t("debugger-step-out"),
                                                         &StepOut,
                                                         &focus_handle,
                                                         cx,
@@ -829,7 +830,7 @@ impl DebugPanel {
                                                 let focus_handle = focus_handle.clone();
                                                 move |_window, cx| {
                                                     Tooltip::for_action_in(
-                                                        "Rerun Session",
+                                                        t("debugger-rerun-session"),
                                                         &RerunSession,
                                                         &focus_handle,
                                                         cx,
@@ -867,9 +868,9 @@ impl DebugPanel {
                                                     .supports_terminate_threads_request
                                                     .unwrap_or_default()
                                                 {
-                                                    "Terminate Thread"
+                                                    t("debugger-terminate-thread")
                                                 } else {
-                                                    "Terminate All Threads"
+                                                    t("debugger-terminate-all-threads")
                                                 };
                                                 move |_window, cx| {
                                                     Tooltip::for_action_in(
@@ -902,11 +903,11 @@ impl DebugPanel {
                                                 let focus_handle = focus_handle.clone();
                                                 move |_window, cx| {
                                                     Tooltip::for_action_in(
-                                                        "Detach",
-                                                        &Detach,
-                                                        &focus_handle,
-                                                        cx,
-                                                    )
+                                                    t("debugger-detach"),
+                                                    &Detach,
+                                                    &focus_handle,
+                                                    cx,
+                                                )
                                                 }
                                             }),
                                         )
@@ -1819,7 +1820,7 @@ impl Render for DebugPanel {
                         .justify_center()
                         .gap_2()
                         .child(
-                            Button::new("spawn-new-session-empty-state", "New Session")
+                            Button::new("spawn-new-session-empty-state", t("debugger-new-session"))
                                 .icon(IconName::Plus)
                                 .icon_size(IconSize::Small)
                                 .icon_color(Color::Muted)
@@ -1829,7 +1830,7 @@ impl Render for DebugPanel {
                                 }),
                         )
                         .child(
-                            Button::new("edit-debug-settings", "Edit debug.json")
+                            Button::new("edit-debug-settings", t("debugger-edit-debug-json"))
                                 .icon(IconName::Code)
                                 .icon_size(IconSize::Small)
                                 .icon_color(Color::Muted)
@@ -1842,7 +1843,7 @@ impl Render for DebugPanel {
                                 }),
                         )
                         .child(
-                            Button::new("open-debugger-docs", "Debugger Docs")
+                            Button::new("open-debugger-docs", t("debugger-docs"))
                                 .icon(IconName::Book)
                                 .icon_size(IconSize::Small)
                                 .icon_color(Color::Muted)
@@ -1897,7 +1898,7 @@ impl Render for DebugPanel {
                                 .justify_between()
                                 .border_b_1()
                                 .border_color(cx.theme().colors().border_variant)
-                                .child(Label::new("Breakpoints").size(LabelSize::Small))
+                                .child(Label::new(t("debugger-breakpoints")).size(LabelSize::Small))
                                 .child(
                                     h_flex().visible_on_hover("base-breakpoint-list").child(
                                         self.breakpoint_list.read(cx).render_control_strip(),
@@ -1910,7 +1911,7 @@ impl Render for DebugPanel {
                         .when(!has_breakpoints, |this| {
                             this.child(
                                 v_flex().size_full().items_center().justify_center().child(
-                                    Label::new("No Breakpoints Set")
+                                    Label::new(t("debugger-no-breakpoints"))
                                         .size(LabelSize::Small)
                                         .color(Color::Muted),
                                 ),

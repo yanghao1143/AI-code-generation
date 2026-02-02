@@ -13,6 +13,7 @@ use gpui::{
     App, AppContext, Entity, EventEmitter, Focusable, IntoElement, Render, SharedString,
     Subscription, Task, WeakEntity, Window,
 };
+use i18n::t;
 use language::{BufferSnapshot, Capability, Point, Selection, SelectionGoal, TreeSitterOptions};
 use project::{Project, ProjectPath};
 use ui::{ActiveTheme as _, Context, ParentElement as _, Styled as _, div};
@@ -345,11 +346,11 @@ impl Item for StackTraceView {
     }
 
     fn tab_tooltip_text(&self, _: &App) -> Option<SharedString> {
-        Some("Stack Frame Viewer".into())
+        Some(t("debugger-stack-frame-viewer").into())
     }
 
     fn tab_content_text(&self, _detail: usize, _: &App) -> SharedString {
-        "Stack Frames".into()
+        t("debugger-stack-frames").into()
     }
 
     fn for_each_project_item(

@@ -11,6 +11,7 @@ use gpui::{
     FocusHandle, Focusable, Hsla, MouseDownEvent, Point, Subscription, TextStyleRefinement,
     UniformListScrollHandle, WeakEntity, actions, anchored, deferred, uniform_list,
 };
+use i18n::t;
 use itertools::Itertools;
 use menu::{SelectFirst, SelectLast, SelectNext, SelectPrevious};
 use project::debugger::{
@@ -1338,7 +1339,7 @@ impl VariableList {
                         }
                     })
                     .tooltip(move |_window, cx| {
-                        Tooltip::for_action_in("Remove Watch", &RemoveWatch, &focus_handle, cx)
+                        Tooltip::for_action_in(t("debugger-remove-watch"), &RemoveWatch, &focus_handle, cx)
                     })
                     .icon_size(ui::IconSize::Indicator),
                 ),
