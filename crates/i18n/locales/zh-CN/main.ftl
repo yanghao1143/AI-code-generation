@@ -2715,3 +2715,4 @@ pin = 固定
 unpin = 取消固定
 favorite = 收藏
 unfavorite = 取消收藏
+acp-server-exited = 服务器已退出，状态码：{$status}

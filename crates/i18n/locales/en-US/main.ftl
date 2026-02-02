@@ -2252,3 +2252,4 @@ pin = Pin
 unpin = Unpin
 favorite = Favorite
 unfavorite = Unfavorite
+acp-server-exited = Server exited with status {$status}
