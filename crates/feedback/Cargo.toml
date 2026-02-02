@@ -16,6 +16,7 @@ test-support = []
 
 [dependencies]
 gpui.workspace = true
+i18n.workspace = true
 system_specs.workspace = true
 urlencoding.workspace = true
 util.workspace = true

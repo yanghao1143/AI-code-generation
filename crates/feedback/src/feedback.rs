@@ -60,7 +60,7 @@ pub fn init(cx: &mut App) {
                         PromptLevel::Info,
                         &t("feedback-copied-to-clipboard"),
                         Some(&specs),
-                        &[&t("ok")],
+                        &[t("ok").as_str()],
                     )
                     .await
                 })
