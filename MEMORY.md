@@ -519,3 +519,39 @@ RULES: [约束/验收标准]
 5. ✅ 移除 tool_error 中的 "Error:" 匹配（太宽泛）
 
 **当前状态**: 三个 agent 全部正常工作
+
+### 2026-02-02 13:13 - 🚀 进化 v3.2：仪表盘 + 优先级队列 + 循环修复
+
+**新增功能**:
+
+1. **实时监控仪表盘** (`scripts/dashboard.sh`)
+   - 实时显示 agent 状态、context 使用率
+   - 系统统计 (派发任务数、队列长度、恢复次数)
+   - 最近事件日志
+   - 支持 watch 模式持续刷新
+
+2. **智能任务优先级队列** (`scripts/priority-queue.sh`)
+   - 任务类型优先级: critical > bug > compile > test > feature > i18n > refactor > cleanup > docs
+   - Agent 专长匹配: 自动分配任务给最合适的 agent
+   - 任务状态追踪: pending → in_progress → completed
+   - Redis 持久化存储
+
+3. **Gemini 循环修复优化**
+   - 问题: 循环检测消息会阻塞输入，直接发任务无效
+   - 解决: 先 Enter 确认循环消息 → 清除堆积输入 → 派新任务
+   - 使用 50 次 BSpace 清除输入框 (Gemini 不响应 Ctrl+U)
+
+**使用方法**:
+```bash
+# 仪表盘
+./scripts/dashboard.sh once    # 单次显示
+./scripts/dashboard.sh watch   # 持续监控
+
+# 优先级队列
+./scripts/priority-queue.sh add "修复编译错误" compile codex-agent
+./scripts/priority-queue.sh add "国际化 terminal 模块" i18n any
+./scripts/priority-queue.sh list pending
+./scripts/priority-queue.sh stats
+```
+
+**当前状态**: 三个 agent 全部正常工作
