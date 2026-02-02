@@ -715,9 +715,23 @@ tasks-search = 搜索任务...
 # Outline Panel / 大纲面板
 # ============================================
 outline-searching = 搜索中:
-outline-toggle-with = 切换面板方式
+outline-toggle-with = 使用 { $keystroke } 切换面板
 outline-clear-filter = 清除筛选
 outline-no-outline = 无可用大纲
+outline-no-matches = 未找到匹配项
+outline-panel-reveal-finder = 在访达中显示
+outline-panel-reveal-explorer = 在文件资源管理器中显示
+outline-panel-reveal-file-manager = 在文件管理器中显示
+outline-panel-open-terminal = 在终端中打开
+outline-panel-unfold-directory = 展开目录
+outline-panel-fold-directory = 折叠目录
+outline-panel-copy-path = 复制路径
+outline-panel-copy-relative-path = 复制相对路径
+outline-panel-search-placeholder = 搜索...
+outline-unknown-buffer = 未知缓冲区
+outline-lines = 第 { $start } - { $end } 行
+outline-panel-unpin = 取消固定大纲
+outline-panel-pin = 固定活动大纲
 
 # ============================================
 # Notifications / 通知
@@ -2585,6 +2599,12 @@ terminal-task-finished-with-exit-code = 结束，退出代码：{ $code }
 terminal-task-terminated-by-signal = 被信号终止：{ $signal }
 terminal-task-finished = 已结束
 terminal-command-label = 命令
+terminal-task-label = 任务 `{ $label }` { $status }
+terminal-error-non-utf8-path = <非 UTF-8 路径> { $path }
+terminal-error-none-specified = <未指定>
+terminal-error-system-defined-shell = <系统默认 Shell>
+terminal-error-details = 工作目录：{ $directory } Shell 命令：`{ $command }`，IO 错误：{ $error }
+terminal-failed-create-event-loop = 无法创建事件循环
 
 # 其他通用 UI 键
 submit = 提交

@@ -655,9 +655,23 @@ tasks-search = Search tasks...
 # Outline Panel
 # ============================================
 outline-searching = Searching:
-outline-toggle-with = Toggle Panel With
+outline-toggle-with = Toggle Panel With { $keystroke }
 outline-clear-filter = Clear Filter
 outline-no-outline = No outline available
+outline-no-matches = No matches found
+outline-panel-reveal-finder = Reveal in Finder
+outline-panel-reveal-explorer = Reveal in Explorer
+outline-panel-reveal-file-manager = Reveal in File Manager
+outline-panel-open-terminal = Open in Terminal
+outline-panel-unfold-directory = Unfold Directory
+outline-panel-fold-directory = Fold Directory
+outline-panel-copy-path = Copy Path
+outline-panel-copy-relative-path = Copy Relative Path
+outline-panel-search-placeholder = Search...
+outline-unknown-buffer = Unknown buffer
+outline-lines = Lines { $start } - { $end }
+outline-panel-unpin = Unpin Outline
+outline-panel-pin = Pin Active Outline
 
 # ============================================
 # Notifications
@@ -2121,6 +2135,12 @@ terminal-task-finished-with-exit-code = finished with exit code: { $code }
 terminal-task-terminated-by-signal = terminated by signal: { $signal }
 terminal-task-finished = finished
 terminal-command-label = Command
+terminal-task-label = Task `{ $label }` { $status }
+terminal-error-non-utf8-path = <non-utf8 path> { $path }
+terminal-error-none-specified = <none specified>
+terminal-error-system-defined-shell = <system defined shell>
+terminal-error-details = Working directory: { $directory } Shell command: `{ $command }`, IOError: { $error }
+terminal-failed-create-event-loop = failed to create event loop
 got-it = Got it
 
 # Additional common UI keys

@@ -294,27 +294,35 @@ impl TerminalError {
                 match path
                     .into_os_string()
                     .into_string()
-                    .map_err(|os_str| format!("<non-utf8 path> {}", os_str.to_string_lossy()))
+                    .map_err(|os_str| {
+                        let path = os_str.to_string_lossy();
+                        t_args(
+                            "terminal-error-non-utf8-path",
+                            &HashMap::from_iter([("path", path.as_ref())]),
+                        )
+                    })
                 {
                     Ok(s) => s,
                     Err(s) => s,
                 }
             })
-            .unwrap_or_else(|| "<none specified>".to_string())
+            .unwrap_or_else(|| t("terminal-error-none-specified"))
     }
 
     pub fn fmt_shell(&self) -> String {
+        let default_shell = t("terminal-error-system-defined-shell");
+        let program = self.program.as_deref().unwrap_or(default_shell.as_str());
         if let Some(title_override) = &self.title_override {
             format!(
                 "{} {} ({})",
-                self.program.as_deref().unwrap_or("<system defined shell>"),
+                program,
                 self.args.as_ref().into_iter().flatten().format(" "),
                 title_override
             )
         } else {
             format!(
                 "{} {}",
-                self.program.as_deref().unwrap_or("<system defined shell>"),
+                program,
                 self.args.as_ref().into_iter().flatten().format(" ")
             )
         }
@@ -326,11 +334,13 @@ impl Display for TerminalError {
         let dir_string: String = self.fmt_directory();
         let shell = self.fmt_shell();
 
-        write!(
-            f,
-            "Working directory: {} Shell command: `{}`, IOError: {}",
-            dir_string, shell, self.source
-        )
+        let error = self.source.to_string();
+        let args = HashMap::from_iter([
+            ("directory", dir_string.as_str()),
+            ("command", shell.as_str()),
+            ("error", error.as_str()),
+        ]);
+        write!(f, "{}", t_args("terminal-error-details", &args))
     }
 }
 
@@ -595,7 +605,7 @@ impl TerminalBuilder {
                 pty_options.drain_on_exit,
                 false,
             )
-            .context("failed to create event loop")?;
+            .context(t("terminal-failed-create-event-loop"))?;
 
             let pty_tx = event_loop.channel();
             let _io_thread = event_loop.spawn(); // DANGER
@@ -2314,7 +2324,11 @@ fn task_summary(task: &TaskState, exit_status: Option<ExitStatus>) -> (bool, Str
         .full_label
         .replace("\r\n", "\r")
         .replace('\n', "\r");
-    let task_label = |suffix: &str| format!("{TASK_DELIMITER}Task `{escaped_full_label}` {suffix}");
+    let task_label = |status: &str| {
+        let args =
+            HashMap::from_iter([("label", escaped_full_label.as_str()), ("status", status)]);
+        format!("{TASK_DELIMITER}{}", t_args("terminal-task-label", &args))
+    };
     let (success, task_line) = match exit_status {
         Some(status) => {
             let code = status.code();
