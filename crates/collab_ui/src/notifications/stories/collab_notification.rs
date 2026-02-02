@@ -35,7 +35,7 @@ impl Render for CollabNotificationStory {
                     window_container(400., 72.).child(
                         CollabNotification::new(
                             "https://avatars.githubusercontent.com/u/1714999?v=4",
-                            Button::new("open", "Open"),
+                            Button::new("open", t("open")),
                             Button::new("dismiss", t("dismiss")),
                         )
                         .child(Label::new("iamnbutler"))

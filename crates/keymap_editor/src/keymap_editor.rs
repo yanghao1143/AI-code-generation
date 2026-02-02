@@ -2933,7 +2933,7 @@ impl Render for KeybindingEditorModal {
                                                         .color(Color::Muted),
                                                 )
                                                 .child(
-                                                    Button::new("show_matching", "View")
+                                                    Button::new("show_matching", t("view"))
                                                         .label_size(LabelSize::Small)
                                                         .icon(IconName::ArrowUpRight)
                                                         .icon_color(Color::Muted)

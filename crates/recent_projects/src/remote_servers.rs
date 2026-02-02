@@ -1699,7 +1699,7 @@ impl RemoteServerProjects {
                                             .start_slot(
                                                 Icon::new(IconName::ArrowLeft).color(Color::Muted),
                                             )
-                                            .child(Label::new("Go Back"))
+                                            .child(Label::new(t("go-back")))
                                             .end_slot(
                                                 KeyBinding::for_action_in(
                                                     &menu::Cancel,
@@ -1857,7 +1857,7 @@ impl RemoteServerProjects {
                                         .start_slot(
                                             Icon::new(IconName::ArrowLeft).color(Color::Muted),
                                         )
-                                        .child(Label::new("Go Back"))
+                                        .child(Label::new(t("go-back")))
                                         .end_slot(
                                             KeyBinding::for_action_in(
                                                 &menu::Cancel,
@@ -2067,7 +2067,7 @@ impl RemoteServerProjects {
                                         .start_slot(
                                             Icon::new(IconName::ArrowLeft).color(Color::Muted),
                                         )
-                                        .child(Label::new("Go Back"))
+                                        .child(Label::new(t("go-back")))
                                         .on_click(cx.listener(|this, _, window, cx| {
                                             this.mode =
                                                 Mode::default_mode(&this.ssh_config_servers, cx);

@@ -1062,7 +1062,7 @@ impl TextThreadEditor {
 
                         let (label, spinner, note) = match message.role {
                             Role::User => (
-                                Label::new("You").color(Color::Default).into_any_element(),
+                                Label::new(t("you")).color(Color::Default).into_any_element(),
                                 None,
                                 None,
                             ),

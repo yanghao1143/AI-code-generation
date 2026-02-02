@@ -728,7 +728,7 @@ impl DevContainerModal {
                                     this.accept_message(DevContainerMessage::GoBack, window, cx);
                                     cx.notify();
                                 }))
-                                .child(Label::new("Go Back")),
+                                .child(Label::new(t("go-back"))),
                         ),
                 )
                 .into_any_element(),
@@ -806,7 +806,7 @@ impl DevContainerModal {
                                     );
                                     cx.notify();
                                 }))
-                                .child(Label::new("Overwrite")),
+                                .child(Label::new(t("overwrite"))),
                         ),
                 )
                 .child(
@@ -881,7 +881,7 @@ impl DevContainerModal {
                                     this.accept_message(DevContainerMessage::GoBack, window, cx);
                                     cx.notify();
                                 }))
-                                .child(Label::new("Go Back")),
+                                .child(Label::new(t("go-back"))),
                         ),
                 )
                 .into_any_element(),
@@ -933,7 +933,7 @@ impl DevContainerModal {
                                     this.accept_message(DevContainerMessage::GoBack, window, cx);
                                     cx.notify();
                                 }))
-                                .child(Label::new("Go Back")),
+                                .child(Label::new(t("go-back"))),
                         ),
                 )
                 .into_any_element(),

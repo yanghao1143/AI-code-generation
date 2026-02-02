@@ -16929,6 +16929,7 @@ dependencies = [
  "collections",
  "futures 0.3.31",
  "gpui",
+ "i18n",
  "itertools 0.14.0",
  "libc",
  "log",

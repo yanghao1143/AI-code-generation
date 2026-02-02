@@ -935,7 +935,7 @@ impl Render for ManageProfilesModal {
                             .size(IconSize::Small)
                             .color(Color::Muted),
                     )
-                    .child(Label::new("Go Back"))
+                    .child(Label::new(t("go-back")))
                     .end_slot(
                         div().child(
                             KeyBinding::for_action_in(&menu::Cancel, &self.focus_handle, cx)
