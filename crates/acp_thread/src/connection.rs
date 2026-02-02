@@ -265,11 +265,11 @@ pub trait AgentSessionList {
     }
 
     fn delete_session(&self, _session_id: &acp::SessionId, _cx: &mut App) -> Task<Result<()>> {
-        Task::ready(Err(anyhow::anyhow!("delete_session not supported")))
+        Task::ready(Err(anyhow::anyhow!(t("acp-delete-session-not-supported"))))
     }
 
     fn delete_sessions(&self, _cx: &mut App) -> Task<Result<()>> {
-        Task::ready(Err(anyhow::anyhow!("delete_sessions not supported")))
+        Task::ready(Err(anyhow::anyhow!(t("acp-delete-sessions-not-supported"))))
     }
 
     fn watch(&self, _cx: &mut App) -> Option<smol::channel::Receiver<SessionListUpdate>> {

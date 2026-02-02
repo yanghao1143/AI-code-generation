@@ -2066,7 +2066,7 @@ impl AcpThread {
         cx: &mut Context<Self>,
     ) -> Task<Result<()>> {
         let Some((_, message)) = self.user_message_mut(&id) else {
-            return Task::ready(Err(anyhow!("message not found")));
+            return Task::ready(Err(anyhow!(t("acp-message-not-found"))));
         };
 
         let checkpoint = message
@@ -2097,7 +2097,7 @@ impl AcpThread {
     /// Unlike `restore_checkpoint`, this method does not restore from git.
     pub fn rewind(&mut self, id: UserMessageId, cx: &mut Context<Self>) -> Task<Result<()>> {
         let Some(truncate) = self.connection.truncate(&self.session_id, cx) else {
-            return Task::ready(Err(anyhow!("not supported")));
+            return Task::ready(Err(anyhow!(t("acp-not-supported"))));
         };
 
         let telemetry = ActionLogTelemetry::from(&*self);

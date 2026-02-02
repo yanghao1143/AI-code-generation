@@ -2302,3 +2302,21 @@ edit-keymap-file = Edit Keymap File
 create-keybinding = Create Keybinding
 edit-keystroke = Edit Keystroke
 edit-arguments = Edit Arguments
+acp-message-not-found = Message not found
+acp-not-supported = Not supported
+acp-delete-session-not-supported = delete_session not supported
+acp-delete-sessions-not-supported = delete_sessions not supported
+
+# Agent UI internationalization
+slash-command-create-custom = Create Your Command
+slash-command-create-custom-description = Create your custom command
+unknown = Unknown
+task-input-placeholder = Describe the task...
+task-input-start = Start Task
+agent-view-panel = View Panel
+llm-provider-supports-tools = Supports tools
+llm-provider-supports-images = Supports images
+llm-provider-supports-parallel-tool-calls = Supports parallel_tool_calls
+llm-provider-supports-prompt-cache-key = Supports prompt_cache_key
+llm-provider-supports-chat-completions = Supports /chat/completions
+agent-update-to-version = Update to v{$version}

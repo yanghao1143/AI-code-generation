@@ -2765,3 +2765,7 @@ edit-keymap-file = 编辑键映射文件
 create-keybinding = 创建键绑定
 edit-keystroke = 编辑按键
 edit-arguments = 编辑参数
+acp-message-not-found = 未找到消�
+acp-not-supported = 不支�
+acp-delete-session-not-supported = 不支� delete_session
+acp-delete-sessions-not-supported = 不支� delete_sessions
