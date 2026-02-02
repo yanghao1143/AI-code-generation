@@ -2254,11 +2254,12 @@ impl AcpThread {
             let start_position = Point::new(line, 0);
 
             if start_position > max_point {
-                return Err(acp::Error::invalid_params().data(format!(
-                    t("acp-read-beyond-file-end"),
-                    max_point.row + 1,
-                    max_point.column
-                )));
+                return Err(acp::Error::invalid_params().data(
+                    t_args("acp-read-beyond-file-end", &[
+                        ("line", (max_point.row + 1).to_string().into()),
+                        ("col", max_point.column.to_string().into())
+                    ]).to_string()
+                ));
             }
 
             let start = snapshot.anchor_before(start_position);

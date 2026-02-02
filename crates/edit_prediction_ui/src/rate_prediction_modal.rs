@@ -6,6 +6,7 @@ use gpui::{
     App, BorderStyle, DismissEvent, EdgesRefinement, Entity, EventEmitter, FocusHandle, Focusable,
     Length, StyleRefinement, TextStyleRefinement, Window, actions, prelude::*,
 };
+use i18n::t;
 use language::{LanguageRegistry, Point, language_settings};
 use markdown::{Markdown, MarkdownStyle};
 use settings::Settings as _;
@@ -662,7 +663,7 @@ impl RatePredictionsModal {
                                             .size(IconSize::Small)
                                             .color(Color::Success),
                                     )
-                                    .child(Label::new("Rated completion.").color(Color::Muted)),
+                                    .child(Label::new(t("rated-completion")).color(Color::Muted)),
                             )
                         } else if active_prediction.prediction.edits.is_empty() {
                             Some(
@@ -672,7 +673,7 @@ impl RatePredictionsModal {
                                             .size(IconSize::Small)
                                             .color(Color::Warning),
                                     )
-                                    .child(Label::new("No edits produced.").color(Color::Muted)),
+                                    .child(Label::new(t("no-edits-produced")).color(Color::Muted)),
                             )
                         } else {
                             Some(label_container)
@@ -681,7 +682,7 @@ impl RatePredictionsModal {
                             h_flex()
                                 .gap_1()
                                 .child(
-                                    Button::new("bad", "Bad Prediction")
+                                    Button::new("bad", t("bad-prediction"))
                                         .icon(IconName::ThumbsDown)
                                         .icon_size(IconSize::Small)
                                         .icon_position(IconPosition::Start)
@@ -707,7 +708,7 @@ impl RatePredictionsModal {
                                         })),
                                 )
                                 .child(
-                                    Button::new("good", "Good Prediction")
+                                    Button::new("good", t("good-prediction"))
                                         .icon(IconName::ThumbsUp)
                                         .icon_size(IconSize::Small)
                                         .icon_position(IconPosition::Start)
@@ -848,7 +849,7 @@ impl Render for RatePredictionsModal {
                             .border_color(border_color)
                             .child(Icon::new(IconName::ZedPredict).size(IconSize::Small))
                             .child(
-                                Label::new("From most recent to oldest")
+                                Label::new(t("from-most-recent-to-oldest"))
                                     .color(Color::Muted)
                                     .size(LabelSize::Small),
                             ),

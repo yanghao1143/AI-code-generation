@@ -2,6 +2,7 @@ use gpui::AppContext;
 use gpui::Entity;
 use gpui::Task;
 use http_client::anyhow;
+use i18n::t;
 use picker::Picker;
 use picker::PickerDelegate;
 use settings::RegisterSetting;
@@ -582,7 +583,7 @@ impl DevContainerModal {
                                     );
                                     cx.notify();
                                 }))
-                                .child(Label::new("Search for Dev Container Templates")),
+                                .child(Label::new(t("search-dev-container-templates"))),
                         ),
                 )
                 .into_any_element(),
@@ -859,7 +860,7 @@ impl DevContainerModal {
                                     .color(Color::Muted)
                                     .with_rotate_animation(2),
                             )
-                            .child(Label::new("Querying template registry...")),
+                            .child(Label::new(t("querying-template-registry"))),
                     ),
                 )
                 .child(ListSeparator)
@@ -911,7 +912,7 @@ impl DevContainerModal {
                                     .color(Color::Muted)
                                     .with_rotate_animation(2),
                             )
-                            .child(Label::new("Querying features...")),
+                            .child(Label::new(t("querying-features"))),
                     ),
                 )
                 .child(ListSeparator)
