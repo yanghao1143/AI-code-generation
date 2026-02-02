@@ -2694,3 +2694,23 @@ lm-bedrock-enter-keys = Enter either access keys OR a Bedrock API Key below (not
 lm-bedrock-static-credentials = Static Credentials
 lm-bedrock-static-credentials-desc = This method uses your AWS access key ID and secret access key, or a Bedrock API Key.
 lm-bedrock-using-api-key = Using an API key
+
+# Edit Prediction UI
+edit-prediction-disabled-for-language = Edit predictions cannot be toggled for this buffer because they are disabled for { $language }
+edit-prediction-all-files = All Files
+edit-prediction-display-modes = Display Modes
+edit-prediction-eager = Eager
+edit-prediction-eager-desc = Display predictions inline when there are no language server completions available.
+edit-prediction-subtle = Subtle
+edit-prediction-subtle-desc = Display predictions inline only when holding a modifier key (alt by default).
+edit-prediction-privacy = Privacy
+edit-prediction-training-data = Training Data Collection
+edit-prediction-open-source-sharing = Project identified as open source, and you're sharing data.
+edit-prediction-open-source-not-sharing = Project identified as open source, but you're not sharing data.
+edit-prediction-not-open-source-no-data = Project not identified as open source. No data captured.
+edit-prediction-not-open-source-off = Project not identified as open source, and setting turned off.
+edit-prediction-data-collection-desc = Help us improve our open dataset model by sharing data from open source repositories. Zed must detect a license file in your repo for this setting to take effect. Files with sensitive data and secrets are excluded by default.
+edit-prediction-no-data-captured = No data captured.
+edit-prediction-configure-excluded = Configure Excluded Files
+edit-prediction-excluded-files-desc = Open your settings to add sensitive paths for which Zed will never predict edits.
+edit-prediction-view-docs = View Docs

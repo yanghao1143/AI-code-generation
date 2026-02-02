@@ -2707,3 +2707,23 @@ lm-bedrock-enter-keys = 在下方输入访问密钥或 Bedrock API 密钥（不�
 lm-bedrock-static-credentials = 静态凭证
 lm-bedrock-static-credentials-desc = 此方法使用您的 AWS 访问密钥 ID 和秘密访问密钥，或 Bedrock API 密钥。
 lm-bedrock-using-api-key = 使用 API 密钥
+
+# Edit Prediction UI / 编辑预测 UI
+edit-prediction-disabled-for-language = 由于 { $language } 已禁用编辑预测，因此无法切换此缓冲区的编辑预测
+edit-prediction-all-files = 所有文件
+edit-prediction-display-modes = 显示模式
+edit-prediction-eager = 积极模式
+edit-prediction-eager-desc = 在没有语言服务器补全时内联显示预测。
+edit-prediction-subtle = 低调模式
+edit-prediction-subtle-desc = 仅在按住修饰键（默认为 alt）时内联显示预测。
+edit-prediction-privacy = 隐私
+edit-prediction-training-data = 训练数据收集
+edit-prediction-open-source-sharing = 项目已识别为开源，您正在共享数据。
+edit-prediction-open-source-not-sharing = 项目已识别为开源，但您未共享数据。
+edit-prediction-not-open-source-no-data = 项目未识别为开源。未捕获数据。
+edit-prediction-not-open-source-off = 项目未识别为开源，且设置已关闭。
+edit-prediction-data-collection-desc = 通过共享开源仓库的数据来帮助我们改进开放数据集模型。Zed 必须检测到仓库中的许可证文件，此设置才能生效。包含敏感数据和密钥的文件默认被排除。
+edit-prediction-no-data-captured = 未捕获数据。
+edit-prediction-configure-excluded = 配置排除文件
+edit-prediction-excluded-files-desc = 打开设置以添加 Zed 永远不会预测编辑的敏感路径。
+edit-prediction-view-docs = 查看文档

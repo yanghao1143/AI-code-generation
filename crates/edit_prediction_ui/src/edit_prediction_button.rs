@@ -1,7 +1,7 @@
 use anyhow::Result;
 use client::{Client, UserStore, zed_urls};
 use cloud_llm_client::UsageLimit;
-use i18n::t;
+use i18n::{t, t_args};
 use codestral::CodestralEditPredictionDelegate;
 use copilot::Status;
 use edit_prediction::{
@@ -732,7 +732,7 @@ impl EditPredictionButton {
                         entry
                             .disabled(true)
                             .documentation_aside(DocumentationSide::Left, move |_cx| {
-                                Label::new(format!("Edit predictions cannot be toggled for this buffer because they are disabled for {}", language.name()))
+                                Label::new(t_args("edit-prediction-disabled-for-language", &[("language", language.name().into())]))
                                     .into_any_element()
                             })
                     );
@@ -758,7 +758,7 @@ impl EditPredictionButton {
         let settings = AllLanguageSettings::get_global(cx);
 
         let globally_enabled = settings.show_edit_predictions(None, cx);
-        let entry = ContextMenuEntry::new("All Files")
+        let entry = ContextMenuEntry::new(t("edit-prediction-all-files"))
             .toggleable(IconPosition::Start, globally_enabled)
             .action(workspace::ToggleEditPrediction.boxed_clone())
             .handler(|window, cx| {
@@ -773,12 +773,12 @@ impl EditPredictionButton {
 
         menu = menu
                 .separator()
-                .header("Display Modes")
+                .header(t("edit-prediction-display-modes"))
                 .item(
-                    ContextMenuEntry::new("Eager")
+                    ContextMenuEntry::new(t("edit-prediction-eager"))
                         .toggleable(IconPosition::Start, eager_mode)
                         .documentation_aside(DocumentationSide::Left, move |_| {
-                            Label::new("Display predictions inline when there are no language server completions available.").into_any_element()
+                            Label::new(t("edit-prediction-eager-desc")).into_any_element()
                         })
                         .handler({
                             let fs = fs.clone();
@@ -788,10 +788,10 @@ impl EditPredictionButton {
                         }),
                 )
                 .item(
-                    ContextMenuEntry::new("Subtle")
+                    ContextMenuEntry::new(t("edit-prediction-subtle"))
                         .toggleable(IconPosition::Start, subtle_mode)
                         .documentation_aside(DocumentationSide::Left, move |_| {
-                            Label::new("Display predictions inline only when holding a modifier key (alt by default).").into_any_element()
+                            Label::new(t("edit-prediction-subtle-desc")).into_any_element()
                         })
                         .handler({
                             let fs = fs.clone();
@@ -801,7 +801,7 @@ impl EditPredictionButton {
                         }),
                 );
 
-        menu = menu.separator().header("Privacy");
+        menu = menu.separator().header(t("edit-prediction-privacy"));
 
         if matches!(
             provider,
@@ -825,7 +825,7 @@ impl EditPredictionButton {
                     };
 
                     menu = menu.item(
-                        ContextMenuEntry::new("Training Data Collection")
+                        ContextMenuEntry::new(t("edit-prediction-training-data"))
                             .toggleable(IconPosition::Start, data_collection.is_enabled())
                             .icon(icon_name)
                             .icon_color(icon_color)
@@ -833,25 +833,25 @@ impl EditPredictionButton {
                             .documentation_aside(DocumentationSide::Left, move |cx| {
                                 let (msg, label_color, icon_name, icon_color) = match (is_open_source, is_collecting) {
                                     (true, true) => (
-                                        "Project identified as open source, and you're sharing data.",
+                                        t("edit-prediction-open-source-sharing"),
                                         Color::Default,
                                         IconName::Check,
                                         Color::Success,
                                     ),
                                     (true, false) => (
-                                        "Project identified as open source, but you're not sharing data.",
+                                        t("edit-prediction-open-source-not-sharing"),
                                         Color::Muted,
                                         IconName::Close,
                                         Color::Muted,
                                     ),
                                     (false, true) => (
-                                        "Project not identified as open source. No data captured.",
+                                        t("edit-prediction-not-open-source-no-data"),
                                         Color::Muted,
                                         IconName::Close,
                                         Color::Muted,
                                     ),
                                     (false, false) => (
-                                        "Project not identified as open source, and setting turned off.",
+                                        t("edit-prediction-not-open-source-off"),
                                         Color::Muted,
                                         IconName::Close,
                                         Color::Muted,
@@ -860,11 +860,7 @@ impl EditPredictionButton {
                                 v_flex()
                                     .gap_2()
                                     .child(
-                                        Label::new(indoc!{
-                                            "Help us improve our open dataset model by sharing data from open source repositories. \
-                                            Zed must detect a license file in your repo for this setting to take effect. \
-                                            Files with sensitive data and secrets are excluded by default."
-                                        })
+                                        Label::new(t("edit-prediction-data-collection-desc"))
                                     )
                                     .child(
                                         h_flex()
@@ -899,7 +895,7 @@ impl EditPredictionButton {
 
                     if is_collecting && !is_open_source {
                         menu = menu.item(
-                            ContextMenuEntry::new("No data captured.")
+                            ContextMenuEntry::new(t("edit-prediction-no-data-captured"))
                                 .disabled(true)
                                 .icon(IconName::Close)
                                 .icon_color(Color::Error)
@@ -911,12 +907,11 @@ impl EditPredictionButton {
         }
 
         menu = menu.item(
-            ContextMenuEntry::new("Configure Excluded Files")
+            ContextMenuEntry::new(t("edit-prediction-configure-excluded"))
                 .icon(IconName::LockOutlined)
                 .icon_color(Color::Muted)
                 .documentation_aside(DocumentationSide::Left, |_| {
-                    Label::new(indoc!{"
-                        Open your settings to add sensitive paths for which Zed will never predict edits."}).into_any_element()
+                    Label::new(t("edit-prediction-excluded-files-desc")).into_any_element()
                 })
                 .handler(move |window, cx| {
                     if let Some(workspace) = window.root().flatten() {
@@ -932,7 +927,7 @@ impl EditPredictionButton {
                     }
                 }),
         ).item(
-            ContextMenuEntry::new("View Docs")
+            ContextMenuEntry::new(t("edit-prediction-view-docs"))
                 .icon(IconName::FileGeneric)
                 .icon_color(Color::Muted)
                 .handler(move |_, cx| {
