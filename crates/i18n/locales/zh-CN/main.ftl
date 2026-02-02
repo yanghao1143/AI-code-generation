@@ -2636,3 +2636,16 @@ lm-google-reset-hint = 要重置 API 密钥，请确保 { $env_var1 } 和 { $env
 lm-deepseek-api-key-intro = 要在 Zed 中使用 DeepSeek，您需要一个 API 密钥：
 lm-deepseek-get-key = 从以下位置获取您的 API 密钥
 lm-deepseek-console = DeepSeek 控制台
+
+# Language Models - Ollama / 语言模型 - Ollama
+lm-ollama-intro = 使用 Ollama 在本地运行大语言模型，或连接到 Ollama 服务器。可以访问 Llama、Mistral、Gemma 和数百种其他模型。
+lm-ollama-local-usage = 要使用本地 Ollama：
+lm-ollama-download-install = 从以下地址下载并安装 Ollama
+lm-ollama-start-download = 启动 Ollama 并下载模型：
+lm-ollama-click-connect = 点击下方的"连接"开始在 Zed 中使用 Ollama
+lm-ollama-server-connect = 或者，您可以通过指定 URL 和 API 密钥（可能不需要）连接到 Ollama 服务器：
+lm-reset-api-url = 重置 API 地址
+lm-download-ollama = 下载 Ollama
+lm-view-all-models = 查看所有模型
+lm-connected = 已连接
+lm-refresh-models = 刷新模型

@@ -2623,3 +2623,16 @@ lm-google-reset-hint = To reset your API key, make sure { $env_var1 } and { $env
 lm-deepseek-api-key-intro = To use DeepSeek in Zed, you need an API key:
 lm-deepseek-get-key = Get your API key from the
 lm-deepseek-console = DeepSeek console
+
+# Language Models - Ollama
+lm-ollama-intro = Run LLMs locally on your machine with Ollama, or connect to an Ollama server. Can provide access to Llama, Mistral, Gemma, and hundreds of other models.
+lm-ollama-local-usage = To use local Ollama:
+lm-ollama-download-install = Download and install Ollama from
+lm-ollama-start-download = Start Ollama and download a model:
+lm-ollama-click-connect = Click 'Connect' below to start using Ollama in Zed
+lm-ollama-server-connect = Alternatively, you can connect to an Ollama server by specifying its URL and API key (may not be required):
+lm-reset-api-url = Reset API URL
+lm-download-ollama = Download Ollama
+lm-view-all-models = View All Models
+lm-connected = Connected
+lm-refresh-models = Refresh Models

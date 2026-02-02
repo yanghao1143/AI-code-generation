@@ -4,6 +4,7 @@ use futures::{FutureExt, StreamExt, future::BoxFuture, stream::BoxStream};
 use futures::{Stream, TryFutureExt, stream};
 use gpui::{AnyView, App, AsyncApp, Context, CursorStyle, Entity, Task};
 use http_client::HttpClient;
+use i18n::{t, t_args};
 use language_model::{
     ApiKeyState, AuthenticateError, EnvVar, IconOrSvg, LanguageModel, LanguageModelCompletionError,
     LanguageModelCompletionEvent, LanguageModelId, LanguageModelName, LanguageModelProvider,
@@ -715,40 +716,32 @@ impl ConfigurationView {
     fn render_instructions(cx: &mut Context<Self>) -> Div {
         v_flex()
             .gap_2()
-            .child(Label::new(
-                "Run LLMs locally on your machine with Ollama, or connect to an Ollama server. \
-                Can provide access to Llama, Mistral, Gemma, and hundreds of other models.",
-            ))
-            .child(Label::new("To use local Ollama:"))
+            .child(Label::new(t("lm-ollama-intro")))
+            .child(Label::new(t("lm-ollama-local-usage")))
             .child(
                 List::new()
                     .child(
                         ListBulletItem::new("")
-                            .child(Label::new("Download and install Ollama from"))
+                            .child(Label::new(t("lm-ollama-download-install")))
                             .child(ButtonLink::new("ollama.com", "https://ollama.com/download")),
                     )
                     .child(
                         ListBulletItem::new("")
-                            .child(Label::new("Start Ollama and download a model:"))
+                            .child(Label::new(t("lm-ollama-start-download")))
                             .child(Label::new("ollama run gpt-oss:20b").inline_code(cx)),
                     )
-                    .child(ListBulletItem::new(
-                        "Click 'Connect' below to start using Ollama in Zed",
-                    )),
+                    .child(ListBulletItem::new(t("lm-ollama-click-connect"))),
             )
-            .child(Label::new(
-                "Alternatively, you can connect to an Ollama server by specifying its \
-                URL and API key (may not be required):",
-            ))
+            .child(Label::new(t("lm-ollama-server-connect")))
     }
 
     fn render_api_key_editor(&self, cx: &Context<Self>) -> impl IntoElement {
         let state = self.state.read(cx);
         let env_var_set = state.api_key_state.is_from_env_var();
         let configured_card_label = if env_var_set {
-            format!("API key set in {API_KEY_ENV_VAR_NAME} environment variable.")
+            t_args("lm-api-key-env-var", &[("env_var", API_KEY_ENV_VAR_NAME.into())]).to_string()
         } else {
-            "API key configured".to_string()
+            t("lm-api-key-configured").to_string()
         };
 
         if !state.api_key_state.has_key() {
@@ -756,9 +749,7 @@ impl ConfigurationView {
               .on_action(cx.listener(Self::save_api_key))
               .child(self.api_key_editor.clone())
               .child(
-                  Label::new(
-                      format!("You can also set the {API_KEY_ENV_VAR_NAME} environment variable and restart Zed.")
-                  )
+                  Label::new(t_args("lm-env-var-hint", &[("env_var", API_KEY_ENV_VAR_NAME.into())]))
                   .size(LabelSize::Small)
                   .color(Color::Muted),
               )
@@ -768,7 +759,7 @@ impl ConfigurationView {
                 .disabled(env_var_set)
                 .on_click(cx.listener(|this, _, window, cx| this.reset_api_key(window, cx)))
                 .when(env_var_set, |this| {
-                    this.tooltip_label(format!("To reset your API key, unset the {API_KEY_ENV_VAR_NAME} environment variable."))
+                    this.tooltip_label(t_args("lm-reset-api-key-hint", &[("env_var", API_KEY_ENV_VAR_NAME.into())]))
                 })
                 .into_any_element()
         }
@@ -793,7 +784,7 @@ impl ConfigurationView {
                         .child(v_flex().gap_1().child(Label::new(api_url))),
                 )
                 .child(
-                    Button::new("reset-api-url", "Reset API URL")
+                    Button::new("reset-api-url", t("lm-reset-api-url"))
                         .label_size(LabelSize::Small)
                         .icon(IconName::Undo)
                         .icon_size(IconSize::Small)
@@ -846,7 +837,7 @@ impl Render for ConfigurationView {
                                     )
                                 } else {
                                     this.child(
-                                        Button::new("download_ollama_button", "Download Ollama")
+                                        Button::new("download_ollama_button", t("lm-download-ollama"))
                                             .style(ButtonStyle::Subtle)
                                             .icon(IconName::ArrowUpRight)
                                             .icon_size(IconSize::XSmall)
@@ -859,7 +850,7 @@ impl Render for ConfigurationView {
                                 }
                             })
                             .child(
-                                Button::new("view-models", "View All Models")
+                                Button::new("view-models", t("lm-view-all-models"))
                                     .style(ButtonStyle::Subtle)
                                     .icon(IconName::ArrowUpRight)
                                     .icon_size(IconSize::XSmall)
@@ -877,12 +868,12 @@ impl Render for ConfigurationView {
                                         h_flex()
                                             .gap_2()
                                             .child(Icon::new(IconName::Check).color(Color::Success))
-                                            .child(Label::new("Connected"))
+                                            .child(Label::new(t("lm-connected")))
                                             .into_any_element(),
                                     )
                                     .child(
                                         IconButton::new("refresh-models", IconName::RotateCcw)
-                                            .tooltip(Tooltip::text("Refresh Models"))
+                                            .tooltip(Tooltip::text(t("lm-refresh-models")))
                                             .on_click(cx.listener(|this, _, window, cx| {
                                                 this.state.update(cx, |state, _| {
                                                     state.fetched_models.clear();
