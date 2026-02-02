@@ -2416,9 +2416,9 @@ impl SettingsWindow {
                 .visible_navbar_entries()
                 .any(|(_, entry)| entry.focus_handle.is_focused(window))
         {
-            "Focus Content"
+            t("settings-focus-content")
         } else {
-            "Focus Navbar"
+            t("settings-focus-navbar")
         };
 
         let mut key_context = KeyContext::new_with_defaults();

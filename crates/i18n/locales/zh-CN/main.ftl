@@ -2784,3 +2784,18 @@ llm-provider-supports-prompt-cache-key = 支持 prompt_cache_key
 llm-provider-supports-chat-completions = 支持 /chat/completions
 agent-update-to-version = 更新到 v{$version}
 
+# Settings UI internationalization
+settings-reset-key = 重置密钥
+settings-reset-api-key-env-var-tooltip = 要重置您的 API 密钥，请取消设置 {$env_var} 环境变量。
+settings-set-env-var-restart = 或设置 {$env_var} 环境变量并重启 Zed。
+settings-api-url = API URL
+settings-codestral-api-url-description = 用于 Codestral 的 API URL。
+settings-max-tokens = 最大令牌数
+settings-max-tokens-description = 生成的最大令牌数。
+settings-model = 模型
+settings-codestral-model-description = 要使用的 Codestral 模型 ID。
+settings-github-copilot = GitHub Copilot
+settings-focus-content = 聚焦内容
+settings-focus-navbar = 聚焦导航栏
+
+

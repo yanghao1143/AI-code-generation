@@ -172,15 +172,12 @@ fn render_api_key_provider(
     let container = if has_key {
         base_container.child(header).child(
             ConfiguredApiCard::new(configured_card_label)
-                .button_label("Reset Key")
+                .button_label(t("settings-reset-key"))
                 .button_tab_index(0)
                 .disabled(is_from_env_var)
                 .when_some(env_var_name, |this, env_var_name| {
                     this.when(is_from_env_var, |this| {
-                        this.tooltip_label(format!(
-                            "To reset your API key, unset the {} environment variable.",
-                            env_var_name
-                        ))
+                        this.tooltip_label(t_args("settings-reset-api-key-env-var-tooltip", &[("env_var", env_var_name.into())]))
                     })
                 })
                 .on_click(move |_, _, cx| {
@@ -201,10 +198,7 @@ fn render_api_key_provider(
                         .child(description)
                         .when_some(env_var_name, |this, env_var_name| {
                             this.child({
-                                let label = format!(
-                                    "Or set the {} env var and restart Zed.",
-                                    env_var_name.as_ref()
-                                );
+                                let label = t_args("settings-set-env-var-restart", &[("env_var", env_var_name.as_ref().into())]);
                                 Label::new(label).size(LabelSize::Small).color(Color::Muted)
                             })
                         }),
@@ -235,8 +229,8 @@ fn render_api_key_provider(
 fn codestral_settings() -> Box<[SettingsPageItem]> {
     Box::new([
         SettingsPageItem::SettingItem(SettingItem {
-            title: Cow::Borrowed("API URL"),
-            description: Cow::Borrowed("The API URL to use for Codestral."),
+            title: Cow::Owned(t("settings-api-url").to_string()),
+            description: Cow::Owned(t("settings-codestral-api-url-description").to_string()),
             field: Box::new(SettingField {
                 pick: |settings| {
                     settings
@@ -268,8 +262,8 @@ fn codestral_settings() -> Box<[SettingsPageItem]> {
             files: USER,
         }),
         SettingsPageItem::SettingItem(SettingItem {
-            title: Cow::Borrowed("Max Tokens"),
-            description: Cow::Borrowed("The maximum number of tokens to generate."),
+            title: Cow::Owned(t("settings-max-tokens").to_string()),
+            description: Cow::Owned(t("settings-max-tokens-description").to_string()),
             field: Box::new(SettingField {
                 pick: |settings| {
                     settings
@@ -298,8 +292,8 @@ fn codestral_settings() -> Box<[SettingsPageItem]> {
             files: USER,
         }),
         SettingsPageItem::SettingItem(SettingItem {
-            title: Cow::Borrowed("Model"),
-            description: Cow::Borrowed("The Codestral model id to use."),
+            title: Cow::Owned(t("settings-model").to_string()),
+            description: Cow::Owned(t("settings-codestral-model-description").to_string()),
             field: Box::new(SettingField {
                 pick: |settings| {
                     settings
@@ -359,7 +353,7 @@ fn render_github_copilot_provider(
             .min_w_0()
             .gap_1p5()
             .child(
-                SettingsSectionHeader::new("GitHub Copilot")
+                SettingsSectionHeader::new(t("settings-github-copilot"))
                     .icon(IconName::Copilot)
                     .no_padding(true),
             )

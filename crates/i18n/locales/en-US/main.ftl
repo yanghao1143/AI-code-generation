@@ -2320,3 +2320,17 @@ llm-provider-supports-parallel-tool-calls = Supports parallel_tool_calls
 llm-provider-supports-prompt-cache-key = Supports prompt_cache_key
 llm-provider-supports-chat-completions = Supports /chat/completions
 agent-update-to-version = Update to v{$version}
+
+# Settings UI internationalization
+settings-reset-key = Reset Key
+settings-reset-api-key-env-var-tooltip = To reset your API key, unset the {$env_var} environment variable.
+settings-set-env-var-restart = Or set the {$env_var} env var and restart Zed.
+settings-api-url = API URL
+settings-codestral-api-url-description = The API URL to use for Codestral.
+settings-max-tokens = Max Tokens
+settings-max-tokens-description = The maximum number of tokens to generate.
+settings-model = Model
+settings-codestral-model-description = The Codestral model id to use.
+settings-github-copilot = GitHub Copilot
+settings-focus-content = Focus Content
+settings-focus-navbar = Focus Navbar
