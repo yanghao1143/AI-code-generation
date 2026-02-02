@@ -2513,3 +2513,19 @@ auto-update-couldnt-load-release-notes = 无法加载发布说明
 auto-update-view-in-browser = 在浏览器中查看
 auto-update-updated-to-version = 已更新至 { $app_name } { $version }
 auto-update-view-release-notes = 查看发布说明
+
+# Inspector UI / 检查器 UI
+inspector-start-pick-mode = 启动检查器选择模式
+inspector-gpui-inspector = GPUI 检查器
+inspector-element-id = 元素 ID
+inspector-disambiguates-elements = 区分来自同一源位置的元素
+inspector-instance-id = 实例 { $id }
+inspector-click-to-open = 点击使用 Zed CLI 打开
+inspector-global-element-id = 最近带有 ID 的祖先元素的 GlobalElementId
+inspector-rust-style = Rust 样式
+inspector-json-style = JSON 样式
+inspector-reset-style = 重置样式
+inspector-bounds = 边界: ⌜{ $origin } - { $bottom_right }⌟
+inspector-size = 尺寸: { $size }
+inspector-content-size = 内容尺寸: { $size }
+inspector-content-size-tooltip = 元素子元素的尺寸

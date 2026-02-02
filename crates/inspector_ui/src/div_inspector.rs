@@ -8,6 +8,7 @@ use gpui::{
     AsyncWindowContext, DivInspectorState, Entity, InspectorElementId, IntoElement,
     StyleRefinement, Task, Window, inspector_reflection::FunctionReflection, styled_reflection,
 };
+use i18n::{t, t_args};
 use language::language_settings::SoftWrap;
 use language::{
     Anchor, Buffer, BufferSnapshot, CodeLabel, Diagnostic, DiagnosticEntry, DiagnosticSet,
@@ -540,10 +541,10 @@ impl Render for DivInspector {
                             .child(
                                 h_flex()
                                     .justify_between()
-                                    .child(Label::new("Rust Style").size(LabelSize::Large))
+                                    .child(Label::new(t("inspector-rust-style")).size(LabelSize::Large))
                                     .child(
                                         IconButton::new("reset-style", IconName::Eraser)
-                                            .tooltip(Tooltip::text("Reset style"))
+                                            .tooltip(Tooltip::text(t("inspector-reset-style")))
                                             .on_click(cx.listener(|this, _, _window, cx| {
                                                 this.reset_style(cx);
                                             })),
@@ -554,7 +555,7 @@ impl Render for DivInspector {
                     .child(
                         v_flex()
                             .gap_2()
-                            .child(Label::new("JSON Style").size(LabelSize::Large))
+                            .child(Label::new(t("inspector-json-style")).size(LabelSize::Large))
                             .child(div().h_128().child(json_style_editor.clone()))
                             .when_some(self.json_style_error.as_ref(), |this, last_error| {
                                 this.child(
@@ -576,21 +577,20 @@ fn render_layout_state(inspector_state: &DivInspectorState, cx: &App) -> Div {
         .child(
             div()
                 .text_ui(cx)
-                .child(format!(
-                    "Bounds: ⌜{} - {}⌟",
-                    inspector_state.bounds.origin,
-                    inspector_state.bounds.bottom_right()
-                ))
-                .child(format!("Size: {}", inspector_state.bounds.size)),
+                .child(t_args("inspector-bounds", &[
+                    ("origin", inspector_state.bounds.origin.to_string().into()),
+                    ("bottom_right", inspector_state.bounds.bottom_right().to_string().into()),
+                ]))
+                .child(t_args("inspector-size", &[("size", inspector_state.bounds.size.to_string().into())])),
         )
         .child(
             div()
                 .id("content-size")
                 .text_ui(cx)
-                .tooltip(Tooltip::text("Size of the element's children"))
+                .tooltip(Tooltip::text(t("inspector-content-size-tooltip")))
                 .child(
                     if inspector_state.content_size != inspector_state.bounds.size {
-                        format!("Content size: {}", inspector_state.content_size)
+                        t_args("inspector-content-size", &[("size", inspector_state.content_size.to_string().into())]).to_string()
                     } else {
                         "".to_string()
                     },

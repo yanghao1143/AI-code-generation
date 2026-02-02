@@ -2502,3 +2502,19 @@ auto-update-couldnt-load-release-notes = Couldn't load release notes
 auto-update-view-in-browser = View in Browser
 auto-update-updated-to-version = Updated to { $app_name } { $version }
 auto-update-view-release-notes = View Release Notes
+
+# Inspector UI
+inspector-start-pick-mode = Start inspector pick mode
+inspector-gpui-inspector = GPUI Inspector
+inspector-element-id = Element ID
+inspector-disambiguates-elements = Disambiguates elements from the same source location
+inspector-instance-id = Instance { $id }
+inspector-click-to-open = Click to open by running Zed CLI
+inspector-global-element-id = GlobalElementId of the nearest ancestor with an ID
+inspector-rust-style = Rust Style
+inspector-json-style = JSON Style
+inspector-reset-style = Reset style
+inspector-bounds = Bounds: ⌜{ $origin } - { $bottom_right }⌟
+inspector-size = Size: { $size }
+inspector-content-size = Content size: { $size }
+inspector-content-size-tooltip = Size of the element's children
