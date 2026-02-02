@@ -2560,6 +2560,14 @@ pane-user-viewing-external-window = { $user } 正在查看 Zed 外部的窗口
 shared-screen-tab = { $user } 的屏幕
 
 # ============================================
+# 工作区 - 历史与错误
+# ============================================
+new-window = 新建窗口
+workspace-cannot-drop-files-remote = 无法将文件拖放到远程项目
+workspace-cannot-add-folders-to-others-project = 您无法向他人的项目添加文件夹
+workspace-path-does-not-exist = '{ $path }' 不存在
+
+# ============================================
 # 工作区 - 通知
 # ============================================
 notification-see-docs = 查看文档

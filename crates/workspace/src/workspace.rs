@@ -133,7 +133,7 @@ pub use workspace_settings::{
     WorkspaceSettings,
 };
 use zed_actions::{Spawn, feedback::FileBugReport};
-use i18n::t;
+use i18n::{t, t_args};
 
 use crate::{
     item::ItemBufferKind,
@@ -3112,7 +3112,7 @@ impl Workspace {
         let project = self.project.read(cx);
         if project.is_via_collab() {
             self.show_error(
-                &anyhow!("You cannot add folders to someone else's project"),
+                &anyhow!(t("workspace-cannot-add-folders-to-others-project")),
                 cx,
             );
             return;
@@ -8628,7 +8628,7 @@ async fn open_remote_project_inner(
         for error in project_path_errors {
             if error.error_code() == proto::ErrorCode::DevServerProjectPathDoesNotExist {
                 if let Some(path) = error.error_tag("path") {
-                    workspace.show_error(&anyhow!("'{path}' does not exist"), cx)
+                    workspace.show_error(&anyhow!(t_args("workspace-path-does-not-exist", &[("path", path.into())])), cx)
                 }
             } else {
                 workspace.show_error(&error, cx)

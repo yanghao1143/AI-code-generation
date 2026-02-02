@@ -2096,6 +2096,14 @@ pane-user-viewing-external-window = { $user } is viewing a window outside of Zed
 shared-screen-tab = { $user }'s screen
 
 # ============================================
+# Workspace - History & Errors
+# ============================================
+new-window = New Window
+workspace-cannot-drop-files-remote = Cannot drop files on a remote project
+workspace-cannot-add-folders-to-others-project = You cannot add folders to someone else's project
+workspace-path-does-not-exist = '{ $path }' does not exist
+
+# ============================================
 # Workspace - Notifications
 # ============================================
 notification-see-docs = See docs
