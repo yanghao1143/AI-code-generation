@@ -28,17 +28,22 @@ diagnose_agent() {
         echo "api_failure"; return
     fi
     
-    # 2. 等待用户确认 (各种格式)
+    # 2. 正在工作 (优先检测) - 有进度指示
+    if echo "$last_20" | grep -qE "esc to interrupt|esc to cancel|Thinking|Working|Searching|Reading|Writing|Shenaniganing|Buffering|Rickrolling|Flowing|Running cargo|Checking|Transfiguring|Exploring" 2>/dev/null; then
+        echo "working"; return
+    fi
+    
+    # 3. 等待用户确认 (各种格式)
     if echo "$last_20" | grep -qE "Allow execution of|Allow once|Yes, I accept|Do you want to proceed|\[y/N\]|\(y/n\)|Waiting for user confirmation" 2>/dev/null; then
         echo "needs_confirm"; return
     fi
     
-    # 3. 工具/请求错误
-    if echo "$last_20" | grep -qE "Request cancelled|params must have|Error:|Something went wrong" 2>/dev/null; then
+    # 4. 工具/请求错误
+    if echo "$last_20" | grep -qE "Request cancelled|params must have|Something went wrong" 2>/dev/null; then
         echo "tool_error"; return
     fi
     
-    # 4. Context 低 (<30%)
+    # 5. Context 低 (<30%)
     # 支持多种格式: "59% context left", "Context left until auto-compact: 8%"
     local ctx=""
     # Codex/Gemini 格式
@@ -51,17 +56,12 @@ diagnose_agent() {
         echo "context_low"; return
     fi
     
-    # 5. 循环检测
+    # 7. 循环检测
     if echo "$last_20" | grep -qE "loop was detected|infinite loop" 2>/dev/null; then
         echo "loop_detected"; return
     fi
     
-    # 6. 正在工作 (有进度指示) - 检查更多行
-    if echo "$last_20" | grep -qE "esc to interrupt|esc to cancel|Thinking|Working|Searching|Reading|Writing|Shenaniganing|Buffering|Rickrolling|Flowing|Running cargo|Checking" 2>/dev/null; then
-        echo "working"; return
-    fi
-    
-    # 7. Claude 特有: 有输入但未发送 (❯ 后面有内容但没在工作)
+    # 8. Claude 特有: 有输入但未发送 (❯ 后面有内容但没在工作)
     if echo "$last_5" | grep -qE "^❯ .+" 2>/dev/null; then
         if ! echo "$last_5" | grep -qE "esc to interrupt|bypass permissions" 2>/dev/null; then
             echo "pending_input"; return
