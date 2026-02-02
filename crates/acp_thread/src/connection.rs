@@ -311,7 +311,7 @@ impl AuthRequired {
 }
 
 impl Error for AuthRequired {}
-impl fmt::Display for AuthRequiredError {
+impl fmt::Display for AuthRequired {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", t("acp-auth-required"))
     }

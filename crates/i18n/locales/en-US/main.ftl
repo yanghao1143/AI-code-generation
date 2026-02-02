@@ -2334,3 +2334,29 @@ settings-codestral-model-description = The Codestral model id to use.
 settings-github-copilot = GitHub Copilot
 settings-focus-content = Focus Content
 settings-focus-navbar = Focus Navbar
+
+# ACP Thread
+acp-version-not-supported = { $command } version { $current_version } is not supported. Please update to at least { $minimum_version }.
+acp-failed-to-install = Failed to install: { $msg }
+acp-server-exited = Server exited with status: { $status }
+acp-use-either-send-update = Use either send_update or set_next_prompt_updates, not both
+acp-duplicate-subagent-update = Attempted to push duplicate subagent thread update
+acp-terminal-not-found = Terminal not found: { $id }
+acp-auth-required = Authorization required to perform this action.
+acp-user-checkpoint = User (Checkpoint)
+acp-user = User
+acp-assistant = Assistant
+acp-tool-call = Tool Call
+acp-tool-call-completed = Tool Call Completed
+acp-delete-session-not-supported = Agent does not support deleting sessions
+acp-delete-sessions-not-supported = Agent does not support deleting sessions
+acp-loading-sessions-not-supported = Agent does not support loading sessions
+acp-resuming-sessions-not-supported = Agent does not support resuming sessions
+tool-status-pending = Pending
+tool-status-waiting = Waiting
+tool-status-in-progress = In Progress
+tool-status-completed = Completed
+tool-status-failed = Failed
+tool-status-rejected = Rejected
+tool-status-canceled = Canceled
+

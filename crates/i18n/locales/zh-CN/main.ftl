@@ -2798,4 +2798,30 @@ settings-github-copilot = GitHub Copilot
 settings-focus-content = 聚焦内容
 settings-focus-navbar = 聚焦导航栏
 
+# ACP Thread
+acp-version-not-supported = { $command } 版本 { $current_version } 不受支持。请更新至至少 { $minimum_version }。
+acp-failed-to-install = 安装失败: { $msg }
+acp-server-exited = 服务器退出，状态码: { $status }
+acp-use-either-send-update = 请使用 send_update 或 set_next_prompt_updates，不能同时使用
+acp-duplicate-subagent-update = 尝试推送重复的子代理线程更新
+acp-terminal-not-found = 未找到终端: { $id }
+acp-auth-required = 执行此操作需要授权。
+acp-user-checkpoint = 用户 (检查点)
+acp-user = 用户
+acp-assistant = 助手
+acp-tool-call = 工具调用
+acp-tool-call-completed = 工具调用已完成
+acp-delete-session-not-supported = 代理不支持删除会话
+acp-delete-sessions-not-supported = 代理不支持删除会话
+acp-loading-sessions-not-supported = 代理不支持加载会话
+acp-resuming-sessions-not-supported = 代理不支持恢复会话
+tool-status-pending = 待处理
+tool-status-waiting = 等待中
+tool-status-in-progress = 进行中
+tool-status-completed = 已完成
+tool-status-failed = 失败
+tool-status-rejected = 已拒绝
+tool-status-canceled = 已取消
+
+
 
