@@ -6,6 +6,7 @@ use assistant_slash_command::{
 use collections::HashMap;
 use context_server::{ContextServerId, types::Prompt};
 use gpui::{App, Entity, Task, WeakEntity, Window};
+use i18n::t_args;
 use language::{BufferSnapshot, CodeLabel, LspAdapterDelegate};
 use project::context_server_store::ContextServerStore;
 use std::sync::Arc;
@@ -50,14 +51,28 @@ impl SlashCommand for ContextServerSlashCommand {
     fn description(&self) -> String {
         match &self.prompt.description {
             Some(desc) => desc.clone(),
-            None => format!("Run '{}' from {}", self.prompt.name, self.server_id),
+            None => t_args(
+                "slash-command-run-prompt-from-server",
+                &[
+                    ("prompt", self.prompt.name.clone().into()),
+                    ("server", self.server_id.to_string().into()),
+                ],
+            )
+            .to_string(),
         }
     }
 
     fn menu_text(&self) -> String {
         match &self.prompt.description {
             Some(desc) => desc.clone(),
-            None => format!("Run '{}' from {}", self.prompt.name, self.server_id),
+            None => t_args(
+                "slash-command-run-prompt-from-server",
+                &[
+                    ("prompt", self.prompt.name.clone().into()),
+                    ("server", self.server_id.to_string().into()),
+                ],
+            )
+            .to_string(),
         }
     }
 
@@ -182,9 +197,13 @@ impl SlashCommand for ContextServerSlashCommand {
                         range: 0..(prompt.len()),
                         icon: IconName::ZedAssistant,
                         label: SharedString::from(
-                            response
-                                .description
-                                .unwrap_or(format!("Result from {}", prompt_name)),
+                            response.description.unwrap_or_else(|| {
+                                t_args(
+                                    "slash-command-result-from-prompt",
+                                    &[("prompt", prompt_name.into())],
+                                )
+                                .to_string()
+                            }),
                         ),
                         metadata: None,
                     }],

@@ -1861,3 +1861,11 @@ key = Key
 value = Value
 command = Command
 arguments = Arguments
+
+# ============================================
+# Slash Commands (Context Server)
+# ============================================
+slash-command-run-prompt-from-server = Run '{ $prompt }' from { $server }
+slash-command-result-from-prompt = Result from { $prompt }
+slash-command-streaming-example-description = An example slash command that showcases streaming.
+slash-command-section-number = Section { $n }

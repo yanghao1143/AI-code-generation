@@ -1753,7 +1753,7 @@ impl AgentPanel {
                 let summary = text_thread_editor.read(cx).text_thread().read(cx).summary();
 
                 match summary {
-                    TextThreadSummary::Pending => Label::new(TextThreadSummary::DEFAULT)
+                    TextThreadSummary::Pending => Label::new(t("agent-new-thread"))
                         .color(Color::Muted)
                         .truncate()
                         .into_any_element(),

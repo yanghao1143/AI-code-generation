@@ -10,6 +10,7 @@ use assistant_slash_command::{
 use feature_flags::FeatureFlag;
 use futures::channel::mpsc;
 use gpui::{Task, WeakEntity};
+use i18n::{t, t_args};
 use language::{BufferSnapshot, LspAdapterDelegate};
 use smol::stream::StreamExt;
 use ui::prelude::*;
@@ -29,7 +30,7 @@ impl SlashCommand for StreamingExampleSlashCommand {
     }
 
     fn description(&self) -> String {
-        "An example slash command that showcases streaming.".into()
+        t("slash-command-streaming-example-description").to_string()
     }
 
     fn menu_text(&self) -> String {
@@ -66,7 +67,7 @@ impl SlashCommand for StreamingExampleSlashCommand {
         cx.background_spawn(async move {
             events_tx.unbounded_send(Ok(SlashCommandEvent::StartSection {
                 icon: IconName::FileRust,
-                label: "Section 1".into(),
+                label: t_args("slash-command-section-number", &[("n", 1.into())]).into(),
                 metadata: None,
             }))?;
             events_tx.unbounded_send(Ok(SlashCommandEvent::Content(
@@ -81,7 +82,7 @@ impl SlashCommand for StreamingExampleSlashCommand {
 
             events_tx.unbounded_send(Ok(SlashCommandEvent::StartSection {
                 icon: IconName::FileRust,
-                label: "Section 2".into(),
+                label: t_args("slash-command-section-number", &[("n", 2.into())]).into(),
                 metadata: None,
             }))?;
             events_tx.unbounded_send(Ok(SlashCommandEvent::Content(
@@ -97,7 +98,7 @@ impl SlashCommand for StreamingExampleSlashCommand {
 
                 events_tx.unbounded_send(Ok(SlashCommandEvent::StartSection {
                     icon: IconName::StarFilled,
-                    label: format!("Section {n}").into(),
+                    label: t_args("slash-command-section-number", &[("n", n.into())]).into(),
                     metadata: None,
                 }))?;
                 events_tx.unbounded_send(Ok(SlashCommandEvent::Content(

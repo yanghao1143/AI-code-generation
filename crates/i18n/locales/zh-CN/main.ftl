@@ -2388,3 +2388,11 @@ repl-menu-tooltip = REPL 菜单
 # Multi Model Dispatch
 multi-model-dispatch-panel = 智能调度
 intelligent-dispatch = 智能调度
+
+# ============================================
+# 斜杠命令（上下文服务器）
+# ============================================
+slash-command-run-prompt-from-server = 从 { $server } 运行 '{ $prompt }'
+slash-command-result-from-prompt = { $prompt } 的结果
+slash-command-streaming-example-description = 展示流式输出的示例斜杠命令。
+slash-command-section-number = 第 { $n } 节
