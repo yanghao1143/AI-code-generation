@@ -2,6 +2,7 @@
 # agent-health.sh - Agent 健康检查与自动恢复 v2.0
 # 优化: 更智能的状态检测，任务超时检测，减少误判
 
+WORKSPACE="/home/jinyang/.openclaw/workspace"
 SOCKET="/tmp/openclaw-agents.sock"
 AGENTS=("claude-agent" "gemini-agent" "codex-agent")
 DEADLOCK_THRESHOLD=600   # 10分钟无活动视为死锁 (从5分钟增加)
@@ -365,6 +366,17 @@ recover_agent() {
     redis-cli HINCRBY "openclaw:agent:recovery" "${agent}_count" 1 > /dev/null 2>&1
     redis-cli HSET "openclaw:agent:recovery" "${agent}_last" "$(date -Iseconds)" > /dev/null 2>&1
     redis-cli HSET "openclaw:agent:recovery" "${agent}_reason" "$status" > /dev/null 2>&1
+    
+    # 即时学习：记录问题和解决方案
+    local solution_desc=""
+    case "$status" in
+        needs_confirm) solution_desc="auto_confirm_$cli_type" ;;
+        timeout) solution_desc="ctrl_c_interrupt" ;;
+        no_cli) solution_desc="restart_cli" ;;
+        error) solution_desc="restart_cli" ;;
+        *) solution_desc="unknown_fix" ;;
+    esac
+    "$WORKSPACE/scripts/learn.sh" "$status" "$agent" "$solution_desc" "true" 2>/dev/null
 }
 
 action="${1:-check}"
