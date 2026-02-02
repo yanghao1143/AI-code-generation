@@ -1159,8 +1159,8 @@ impl Display for LoadError {
                     ])
                 )
             }
-            LoadError::FailedToInstall(msg) => write!(f, t_args("acp-failed-to-install", &[("msg", msg.as_str().into())]).to_string()),
-            LoadError::Exited { status } => write!(f, t_args("acp-server-exited", &[("status", status.to_string().into())]).to_string()),
+            LoadError::FailedToInstall(msg) => write!(f, "{}", t_args("acp-failed-to-install", &[("msg", msg.as_str().into())])),
+            LoadError::Exited { status } => write!(f, "{}", t_args("acp-server-exited", &[("status", status.to_string().into())])),
             LoadError::Other(msg) => write!(f, "{msg}"),
         }
     }
