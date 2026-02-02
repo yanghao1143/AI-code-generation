@@ -12,7 +12,7 @@ REDIS_PREFIX="openclaw:evo"
 AGENTS=("claude-agent" "gemini-agent" "codex-agent")
 
 declare -A AGENT_CONFIG=(
-    ["claude-agent:cmd"]='ANTHROPIC_AUTH_TOKEN="sk-KwfZ1MFGt3K28O1Osjdd6WpN5fRJde3fUVzGIlUSIL50AYZf" ANTHROPIC_BASE_URL="https://vip.chiddns.com" claude --dangerously-skip-permissions'
+    ["claude-agent:cmd"]='ANTHROPIC_API_KEY="sk-MgjQOD5s4xdnBfueHBgAiCxrtvgfN0xU1J24SyRIl1JUMUu2" ANTHROPIC_BASE_URL="https://claude.chiddns.com" claude --dangerously-skip-permissions'
     ["claude-agent:workdir"]="/mnt/d/ai软件/zed"
     ["gemini-agent:cmd"]="gemini"
     ["gemini-agent:workdir"]="/mnt/d/ai软件/zed"
