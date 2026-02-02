@@ -3,7 +3,8 @@ use crate::notifications::collab_notification::CollabNotification;
 use call::{ActiveCall, IncomingCall};
 use futures::StreamExt;
 use gpui::{App, WindowHandle, prelude::*};
-use i18n::t;
+use i18n::{t, t_args};
+use std::collections::HashMap;
 
 use std::sync::{Arc, Weak};
 use ui::{Button, Label, prelude::*};
@@ -119,10 +120,11 @@ impl Render for IncomingCallNotification {
                     move |_, _, cx| state.respond(false, cx)
                 }),
             )
-            .child(v_flex().overflow_hidden().child(Label::new(format!(
-                "{} is sharing a project in Chi Code",
-                self.state.call.calling_user.github_login
-            )))),
+            .child(v_flex().overflow_hidden().child(Label::new({
+                let mut args = HashMap::default();
+                args.insert("user", self.state.call.calling_user.github_login.as_ref());
+                t_args("collab-user-is-sharing-project", &args)
+            }))),
         )
     }
 }

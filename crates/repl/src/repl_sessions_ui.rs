@@ -3,6 +3,7 @@ use gpui::{
     AnyElement, App, Entity, EventEmitter, FocusHandle, Focusable, Subscription, actions,
     prelude::*,
 };
+use i18n::t;
 use project::ProjectItem as _;
 use ui::{ButtonLike, ElevationIndex, KeyBinding, prelude::*};
 use util::ResultExt as _;
@@ -180,7 +181,7 @@ impl Item for ReplSessionsPage {
     type Event = ItemEvent;
 
     fn tab_content_text(&self, _detail: usize, _cx: &App) -> SharedString {
-        "REPL Sessions".into()
+        t("repl-sessions-title").into()
     }
 
     fn telemetry_event_text(&self) -> Option<&'static str> {
@@ -214,9 +215,9 @@ impl Render for ReplSessionsPage {
         // install kernels. It can be assumed they don't have a running kernel if we have no
         // specifications.
         if kernel_specifications.is_empty() {
-            let instructions = "To start interactively running code in your editor, you need to install and configure Jupyter kernels.";
+            let instructions = t("repl-no-kernels-instructions");
 
-            return ReplSessionsContainer::new("No Jupyter Kernels Available")
+            return ReplSessionsContainer::new(t("repl-no-kernels-available"))
                 .child(Label::new(instructions))
                 .child(
                     h_flex().w_full().p_4().justify_center().gap_2().child(
@@ -224,7 +225,7 @@ impl Render for ReplSessionsPage {
                             .style(ButtonStyle::Filled)
                             .size(ButtonSize::Large)
                             .layer(ElevationIndex::ModalSurface)
-                            .child(Label::new("Install Kernels"))
+                            .child(Label::new(t("repl-install-kernels")))
                             .on_click(move |_, _, cx| {
                                 cx.open_url(
                                     "https://zed.dev/docs/repl#language-specific-instructions",
@@ -236,16 +237,16 @@ impl Render for ReplSessionsPage {
 
         // When there are no sessions, show the command to run code in an editor
         if sessions.is_empty() {
-            let instructions = "To run code in a Jupyter kernel, select some code and use the 'repl::Run' command.";
+            let instructions = t("repl-no-sessions-instructions");
 
-            return ReplSessionsContainer::new("No Jupyter Kernel Sessions").child(
+            return ReplSessionsContainer::new(t("repl-no-sessions")).child(
                 v_flex()
                     .child(Label::new(instructions))
                     .child(KeyBinding::for_action(&Run, cx)),
             );
         }
 
-        ReplSessionsContainer::new("Jupyter Kernel Sessions").children(sessions)
+        ReplSessionsContainer::new(t("repl-kernel-sessions")).children(sessions)
     }
 }
 

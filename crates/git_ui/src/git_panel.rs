@@ -3915,7 +3915,7 @@ impl GitPanel {
                             .with_rotate_animation(2),
                     )
                     .child(
-                        Label::new("Generating Commit…")
+                        Label::new(t("git-generating-commit"))
                             .size(LabelSize::Small)
                             .color(Color::Muted),
                     )
@@ -4419,7 +4419,7 @@ impl GitPanel {
                     .overflow_hidden()
                     .max_w(relative(0.85))
                     .child(
-                        Label::new("This will update your most recent commit.")
+                        Label::new(t("git-amend-warning"))
                             .size(LabelSize::Small)
                             .truncate(),
                     ),

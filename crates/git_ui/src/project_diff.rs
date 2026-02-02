@@ -1039,19 +1039,19 @@ impl Render for ProjectDiff {
                         .child(
                             h_flex()
                                 .justify_around()
-                                .child(Label::new("No uncommitted changes")),
+                                .child(Label::new(t("git-no-changes"))),
                         )
                         .map(|el| match remote_button {
                             Some(button) => el.child(h_flex().justify_around().child(button)),
                             None => el.child(
                                 h_flex()
                                     .justify_around()
-                                    .child(Label::new("Remote up to date")),
+                                    .child(Label::new(t("git-remote-up-to-date"))),
                             ),
                         })
                         .child(
                             h_flex().justify_around().mt_1().child(
-                                Button::new("project-diff-close-button", "Close")
+                                Button::new("project-diff-close-button", t("close"))
                                     // .style(ButtonStyle::Transparent)
                                     .key_binding(KeyBinding::for_action_in(
                                         &CloseActiveItem::default(),
@@ -1321,9 +1321,9 @@ impl Render for ProjectDiffToolbar {
                 h_group_sm()
                     .when(button_states.selection, |el| {
                         el.child(
-                            Button::new("stage", "Toggle Staged")
+                            Button::new("stage", t("git-toggle-staged"))
                                 .tooltip(Tooltip::for_action_title_in(
-                                    "Toggle Staged",
+                                    t("git-toggle-staged").as_ref(),
                                     &ToggleStaged,
                                     &focus_handle,
                                 ))
@@ -1335,9 +1335,9 @@ impl Render for ProjectDiffToolbar {
                     })
                     .when(!button_states.selection, |el| {
                         el.child(
-                            Button::new("stage", "Stage")
+                            Button::new("stage", t("git-stage"))
                                 .tooltip(Tooltip::for_action_title_in(
-                                    "Stage and go to next hunk",
+                                    t("git-stage-and-next").as_ref(),
                                     &StageAndNext,
                                     &focus_handle,
                                 ))
@@ -1351,9 +1351,9 @@ impl Render for ProjectDiffToolbar {
                                 })),
                         )
                         .child(
-                            Button::new("unstage", "Unstage")
+                            Button::new("unstage", t("git-unstage"))
                                 .tooltip(Tooltip::for_action_title_in(
-                                    "Unstage and go to next hunk",
+                                    t("git-unstage-and-next").as_ref(),
                                     &UnstageAndNext,
                                     &focus_handle,
                                 ))
@@ -1406,9 +1406,9 @@ impl Render for ProjectDiffToolbar {
                         button_states.unstage_all && !button_states.stage_all,
                         |el| {
                             el.child(
-                                Button::new("unstage-all", "Unstage All")
+                                Button::new("unstage-all", t("git-unstage-all"))
                                     .tooltip(Tooltip::for_action_title_in(
-                                        "Unstage all changes",
+                                        t("git-unstage-all-changes").as_ref(),
                                         &UnstageAll,
                                         &focus_handle,
                                     ))
@@ -1425,10 +1425,10 @@ impl Render for ProjectDiffToolbar {
                                 // todo make it so that changing to say "Unstaged"
                                 // doesn't change the position.
                                 div().child(
-                                    Button::new("stage-all", "Stage All")
+                                    Button::new("stage-all", t("git-stage-all"))
                                         .disabled(!button_states.stage_all)
                                         .tooltip(Tooltip::for_action_title_in(
-                                            "Stage all changes",
+                                            t("git-stage-all-changes").as_ref(),
                                             &StageAll,
                                             &focus_handle,
                                         ))
@@ -1443,13 +1443,13 @@ impl Render for ProjectDiffToolbar {
                         Button::new(
                             "toggle-split",
                             if button_states.is_split {
-                                "Stacked View"
+                                t("git-stacked-view")
                             } else {
-                                "Split View"
+                                t("git-split-view")
                             },
                         )
                         .tooltip(Tooltip::for_action_title_in(
-                            "Toggle Split View",
+                            t("git-toggle-split-view").as_ref(),
                             &ToggleSplitDiff,
                             &focus_handle,
                         ))
@@ -1458,9 +1458,9 @@ impl Render for ProjectDiffToolbar {
                         })),
                     )
                     .child(
-                        Button::new("commit", "Commit")
+                        Button::new("commit", t("git-commit"))
                             .tooltip(Tooltip::for_action_title_in(
-                                "Commit",
+                                t("git-commit").as_ref(),
                                 &Commit,
                                 &focus_handle,
                             ))
@@ -1485,12 +1485,12 @@ impl Render for ProjectDiffToolbar {
 fn render_send_review_to_agent_button(review_count: usize, focus_handle: &FocusHandle) -> Button {
     Button::new(
         "send-review",
-        format!("Send Review to Agent ({})", review_count),
+        t_args("git-send-review-to-agent", &[("count", review_count.into())]),
     )
     .icon(IconName::ZedAssistant)
     .icon_position(IconPosition::Start)
     .tooltip(Tooltip::for_action_title_in(
-        "Send all review comments to the Agent panel",
+        t("git-send-review-tooltip").as_ref(),
         &SendReviewToAgent,
         focus_handle,
     ))
@@ -1640,12 +1640,12 @@ impl RenderOnce for ProjectDiffEmptyState {
                 .map(|this| {
                     if ahead_of_remote {
                         let ahead_count = change_count(branch).0;
-                        let ahead_string = format!("{} Commits Ahead", ahead_count);
+                        let ahead_string = t_args("git-commits-ahead", &[("count", ahead_count.into())]);
                         this.child(
                             v_flex()
                                 .child(Headline::new(ahead_string).size(HeadlineSize::Small))
                                 .child(
-                                    Label::new(format!("Push your changes to {}", branch.name()))
+                                    Label::new(t_args("git-push-changes", &[("branch", branch.name().into())]))
                                         .color(Color::Muted),
                                 ),
                         )
@@ -1657,9 +1657,9 @@ impl RenderOnce for ProjectDiffEmptyState {
                     } else if branch_not_on_remote {
                         this.child(
                             v_flex()
-                                .child(Headline::new("Publish Branch").size(HeadlineSize::Small))
+                                .child(Headline::new(t("git-publish-branch")).size(HeadlineSize::Small))
                                 .child(
-                                    Label::new(format!("Create {} on remote", branch.name()))
+                                    Label::new(t_args("git-create-branch-remote", &[("branch", branch.name().into())]))
                                         .color(Color::Muted),
                                 ),
                         )
@@ -1667,7 +1667,7 @@ impl RenderOnce for ProjectDiffEmptyState {
                             div().child(render_publish_button(self.focus_handle, "publish".into())),
                         )
                     } else {
-                        this.child(Label::new("Remote status unknown").color(Color::Muted))
+                        this.child(Label::new(t("git-remote-status-unknown")).color(Color::Muted))
                     }
                 })
         };
@@ -1678,12 +1678,12 @@ impl RenderOnce for ProjectDiffEmptyState {
                 .when(self.no_repo, |this| {
                     // TODO: add git init
                     this.text_center()
-                        .child(Label::new("No Repository").color(Color::Muted))
+                        .child(Label::new(t("git-no-repository")).color(Color::Muted))
                 })
                 .map(|this| {
                     if not_ahead_or_behind && self.current_branch.is_some() {
                         this.text_center()
-                            .child(Label::new("No Changes").color(Color::Muted))
+                            .child(Label::new(t("git-no-changes")).color(Color::Muted))
                     } else {
                         this.when_some(self.current_branch.as_ref(), |this, branch| {
                             this.child(has_branch_container(branch))

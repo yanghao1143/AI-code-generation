@@ -35,7 +35,9 @@
 
 use editor::{Editor, MultiBuffer};
 use gpui::{AnyElement, ClipboardItem, Entity, EventEmitter, Render, WeakEntity};
+use i18n::{t, t_args};
 use language::Buffer;
+use std::collections::HashMap;
 use runtimelib::{ExecutionState, JupyterMessageContent, MimeBundle, MimeType};
 use ui::{CommonAnimationExt, CopyButton, IconButton, Tooltip, prelude::*};
 
@@ -183,7 +185,7 @@ impl Output {
                     el.child(
                         IconButton::new(ElementId::Name("copy-output".into()), IconName::Copy)
                             .style(ButtonStyle::Transparent)
-                            .tooltip(Tooltip::text("Copy Output"))
+                            .tooltip(Tooltip::text(t("repl-copy-output")))
                             .on_click(move |_, window, cx| {
                                 let clipboard_content = v.clipboard_content(window, cx);
 
@@ -201,7 +203,7 @@ impl Output {
                             IconName::FileTextOutlined,
                         )
                         .style(ButtonStyle::Transparent)
-                        .tooltip(Tooltip::text("Open in Buffer"))
+                        .tooltip(Tooltip::text(t("repl-open-in-buffer")))
                         .on_click({
                             let workspace = workspace.clone();
                             move |_, window, cx| {
@@ -215,7 +217,7 @@ impl Output {
                                             let mut multi_buffer =
                                                 MultiBuffer::singleton(buffer.clone(), cx);
 
-                                            multi_buffer.set_title("REPL Output".to_string(), cx);
+                                            multi_buffer.set_title(t("repl-output-title"), cx);
                                             multi_buffer
                                         });
 
@@ -284,7 +286,7 @@ impl Output {
                             let full_error = format!("{}: {}\n{}", ename, evalue, traceback_text);
 
                             CopyButton::new("copy-full-error", full_error)
-                                .tooltip_label("Copy Full Error")
+                                .tooltip_label(t("repl-copy-full-error"))
                         })
                         .child(
                             IconButton::new(
@@ -292,7 +294,7 @@ impl Output {
                                 IconName::FileTextOutlined,
                             )
                             .style(ButtonStyle::Transparent)
-                            .tooltip(Tooltip::text("Open Full Error in Buffer"))
+                            .tooltip(Tooltip::text(t("repl-open-full-error-in-buffer")))
                             .on_click({
                                 let ename = err.ename.clone();
                                 let evalue = err.evalue.clone();
@@ -314,7 +316,7 @@ impl Output {
                                                 let mut multi_buffer =
                                                     MultiBuffer::singleton(buffer.clone(), cx);
                                                 multi_buffer
-                                                    .set_title("Full Error".to_string(), cx);
+                                                    .set_title(t("repl-full-error-title"), cx);
                                                 multi_buffer
                                             });
                                             Editor::for_multibuffer(multibuffer, None, window, cx)
@@ -611,7 +613,7 @@ impl ExecutionView {
 impl Render for ExecutionView {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let status = match &self.status {
-            ExecutionStatus::ConnectingToKernel => Label::new("Connecting to kernel...")
+            ExecutionStatus::ConnectingToKernel => Label::new(t("repl-connecting-to-kernel"))
                 .color(Color::Muted)
                 .into_any_element(),
             ExecutionStatus::Executing => h_flex()
@@ -622,29 +624,33 @@ impl Render for ExecutionView {
                         .color(Color::Muted)
                         .with_rotate_animation(3),
                 )
-                .child(Label::new("Executing...").color(Color::Muted))
+                .child(Label::new(t("repl-executing")).color(Color::Muted))
                 .into_any_element(),
             ExecutionStatus::Finished => Icon::new(IconName::Check)
                 .size(IconSize::Small)
                 .into_any_element(),
-            ExecutionStatus::Unknown => Label::new("Unknown status")
+            ExecutionStatus::Unknown => Label::new(t("repl-unknown-status"))
                 .color(Color::Muted)
                 .into_any_element(),
-            ExecutionStatus::ShuttingDown => Label::new("Kernel shutting down...")
+            ExecutionStatus::ShuttingDown => Label::new(t("repl-kernel-shutting-down"))
                 .color(Color::Muted)
                 .into_any_element(),
-            ExecutionStatus::Restarting => Label::new("Kernel restarting...")
+            ExecutionStatus::Restarting => Label::new(t("repl-kernel-restarting"))
                 .color(Color::Muted)
                 .into_any_element(),
-            ExecutionStatus::Shutdown => Label::new("Kernel shutdown")
+            ExecutionStatus::Shutdown => Label::new(t("repl-kernel-shutdown"))
                 .color(Color::Muted)
                 .into_any_element(),
-            ExecutionStatus::Queued => Label::new("Queued...")
+            ExecutionStatus::Queued => Label::new(t("repl-queued"))
                 .color(Color::Muted)
                 .into_any_element(),
-            ExecutionStatus::KernelErrored(error) => Label::new(format!("Kernel error: {}", error))
-                .color(Color::Error)
-                .into_any_element(),
+            ExecutionStatus::KernelErrored(error) => {
+                let mut args = HashMap::new();
+                args.insert("error", error.as_str());
+                Label::new(t_args("repl-kernel-error", &args))
+                    .color(Color::Error)
+                    .into_any_element()
+            }
         };
 
         if self.outputs.is_empty() {

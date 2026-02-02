@@ -2119,7 +2119,9 @@ impl ProjectPanel {
             let file_name = entry.path.file_name()?.to_string();
 
             let answer = if !action.skip_prompt {
-                let prompt = format!("{} {}?", t("project-discard-changes-to"), file_name);
+                let mut args = HashMap::default();
+                args.insert("name", file_name.as_str());
+                let prompt = t_args("project-discard-changes-question", &args);
                 let restore_label = t("project-restore");
                 let cancel_label = t("cancel");
                 Some(window.prompt(
@@ -2149,7 +2151,11 @@ impl ProjectPanel {
                 if let Err(e) = task.await {
                     panel
                         .update(cx, |panel, cx| {
-                            let message = format!("{} {}: {}", t("project-failed-to-restore"), file_name, e);
+                            let mut args = HashMap::default();
+                            args.insert("name", file_name.as_str());
+                            let error_str = e.to_string();
+                            args.insert("error", error_str.as_str());
+                            let message = t_args("project-failed-to-restore-error", &args);
                             let toast = StatusToast::new(message, cx, |this, _| {
                                 this.icon(ToastIcon::new(IconName::XCircle).color(Color::Error))
                                     .dismiss_button(true)
@@ -2231,11 +2237,15 @@ impl ProjectPanel {
                             "".to_string()
                         };
 
-                        format!("{operation} {path}?{unsaved_warning}")
+                        let mut args = HashMap::default();
+                        args.insert("operation", operation.as_str());
+                        args.insert("name", path.as_str());
+                        args.insert("unsaved_warning", unsaved_warning.as_str());
+                        t_args("project-delete-item-prompt", &args)
                     }
                     _ => {
                         const CUTOFF_POINT: usize = 10;
-                        let names = if file_paths.len() > CUTOFF_POINT {
+                        let mut names = if file_paths.len() > CUTOFF_POINT {
                             let truncated_path_counts = file_paths.len() - CUTOFF_POINT;
                             let mut paths = file_paths
                                 .iter()
@@ -2246,7 +2256,10 @@ impl ProjectPanel {
                             if truncated_path_counts == 1 {
                                 paths.push(format!(".. {}", t("project-one-file-not-shown")));
                             } else {
-                                paths.push(format!(".. {} {}", truncated_path_counts, t("project-files-not-shown")));
+                                let mut args = HashMap::default();
+                                let count_str = truncated_path_counts.to_string();
+                                args.insert("count", count_str.as_str());
+                                paths.push(t_args("project-more-files-not-shown", &args));
                             }
                             paths
                         } else {
@@ -2257,18 +2270,20 @@ impl ProjectPanel {
                         } else if dirty_buffers == 1 {
                             format!("\n\n{}", t("project-one-unsaved-changes-lost"))
                         } else {
-                            format!(
-                                "\n\n{} {}", dirty_buffers, t("project-many-unsaved-changes-lost")
-                            )
+                            let mut args = HashMap::default();
+                            let count_str = dirty_buffers.to_string();
+                            args.insert("count", count_str.as_str());
+                            t_args("project-many-unsaved-changes-warning", &args)
                         };
 
-                        format!(
-                            "{} {} {}?\n{}{unsaved_warning}",
-                            t("project-do-you-want-to"),
-                            operation.to_lowercase(),
-                            file_paths.len(),
-                            names.join("\n")
-                        )
+                        let mut args = HashMap::default();
+                        args.insert("operation", operation.as_str());
+                        let count_str = file_paths.len().to_string();
+                        args.insert("count", count_str.as_str());
+                        let names_str = names.join("\n");
+                        args.insert("names", names_str.as_str());
+                        args.insert("unsaved_warning", unsaved_warning.as_str());
+                        t_args("project-delete-multiple-items-prompt", &args)
                     }
                 };
                 Some(window.prompt(

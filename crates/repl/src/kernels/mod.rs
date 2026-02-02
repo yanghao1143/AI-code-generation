@@ -16,6 +16,7 @@ pub use remote_kernels::*;
 
 use anyhow::Result;
 use gpui::Context;
+use i18n::t;
 use jupyter_protocol::JupyterKernelspec;
 use runtimelib::{ExecutionState, JupyterMessage, KernelInfoReply};
 use ui::{Icon, IconName, SharedString};
@@ -46,9 +47,9 @@ impl KernelSpecification {
 
     pub fn type_name(&self) -> SharedString {
         match self {
-            Self::Jupyter(_) => "Jupyter".into(),
-            Self::PythonEnv(_) => "Python Environment".into(),
-            Self::Remote(_) => "Remote".into(),
+            Self::Jupyter(_) => t("repl-type-jupyter").into(),
+            Self::PythonEnv(_) => t("repl-type-python-env").into(),
+            Self::Remote(_) => t("repl-type-remote").into(),
         }
     }
 
@@ -187,19 +188,23 @@ impl KernelStatus {
     pub fn is_connected(&self) -> bool {
         matches!(self, KernelStatus::Idle | KernelStatus::Busy)
     }
+
+    pub fn label(&self) -> SharedString {
+        match self {
+            KernelStatus::Idle => t("repl-kernel-status-idle").into(),
+            KernelStatus::Busy => t("repl-kernel-status-busy").into(),
+            KernelStatus::Starting => t("repl-kernel-status-starting").into(),
+            KernelStatus::Error => t("repl-kernel-status-error").into(),
+            KernelStatus::ShuttingDown => t("repl-kernel-status-shutting-down").into(),
+            KernelStatus::Shutdown => t("repl-kernel-status-shutdown").into(),
+            KernelStatus::Restarting => t("repl-kernel-status-restarting").into(),
+        }
+    }
 }
 
 impl ToString for KernelStatus {
     fn to_string(&self) -> String {
-        match self {
-            KernelStatus::Idle => "Idle".to_string(),
-            KernelStatus::Busy => "Busy".to_string(),
-            KernelStatus::Starting => "Starting".to_string(),
-            KernelStatus::Error => "Error".to_string(),
-            KernelStatus::ShuttingDown => "Shutting Down".to_string(),
-            KernelStatus::Shutdown => "Shutdown".to_string(),
-            KernelStatus::Restarting => "Restarting".to_string(),
-        }
+        self.label().to_string()
     }
 }
 

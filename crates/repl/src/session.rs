@@ -19,6 +19,7 @@ use editor::{
     },
     scroll::Autoscroll,
 };
+use i18n::t;
 use project::InlayId;
 
 /// Marker types
@@ -770,18 +771,18 @@ impl Render for Session {
                     .as_ref()
                     .map(|info| info.language_info.name.clone()),
                 Some(
-                    Button::new("interrupt", "Interrupt")
+                    Button::new("interrupt", t("repl-interrupt-kernel"))
                         .style(ButtonStyle::Subtle)
                         .on_click(cx.listener(move |session, _, _, cx| {
                             session.interrupt(cx);
                         })),
                 ),
             ),
-            Kernel::StartingKernel(_) => (Some("Starting".into()), None),
-            Kernel::ErroredLaunch(err) => (Some(format!("Error: {err}")), None),
-            Kernel::ShuttingDown => (Some("Shutting Down".into()), None),
-            Kernel::Shutdown => (Some("Shutdown".into()), None),
-            Kernel::Restarting => (Some("Restarting".into()), None),
+            Kernel::StartingKernel(_) => (Some(t("repl-kernel-status-starting").to_string()), None),
+            Kernel::ErroredLaunch(err) => (Some(format!("{}: {err}", t("repl-kernel-status-error"))), None),
+            Kernel::ShuttingDown => (Some(t("repl-kernel-status-shutting-down").to_string()), None),
+            Kernel::Shutdown => (Some(t("repl-kernel-status-shutdown").to_string()), None),
+            Kernel::Restarting => (Some(t("repl-kernel-status-restarting").to_string()), None),
         };
 
         KernelListItem::new(self.kernel_specification.clone())
@@ -806,7 +807,7 @@ impl Render for Session {
             .child(Label::new(self.kernel_specification.name()))
             .children(status_text.map(|status_text| Label::new(format!("({status_text})"))))
             .button(
-                Button::new("shutdown", "Shutdown")
+                Button::new("shutdown", t("repl-kernel-status-shutdown"))
                     .style(ButtonStyle::Subtle)
                     .disabled(self.kernel.is_shutting_down())
                     .on_click(cx.listener(move |session, _, window, cx| {

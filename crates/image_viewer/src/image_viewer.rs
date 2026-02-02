@@ -777,7 +777,9 @@ impl Render for ImageViewToolbarControls {
             .child(
                 IconButton::new("zoom-out", IconName::Dash)
                     .icon_size(IconSize::Small)
-                    .tooltip(|_window, cx| Tooltip::for_action("Zoom Out", &ZoomOut, cx))
+                    .tooltip(|_window, cx| {
+                        Tooltip::for_action(t("image-viewer-zoom-out"), &ZoomOut, cx)
+                    })
                     .on_click({
                         let image_view = image_view.downgrade();
                         move |_, window, cx| {
@@ -792,7 +794,9 @@ impl Render for ImageViewToolbarControls {
             .child(
                 Button::new("zoom-level", zoom_percentage)
                     .label_size(LabelSize::Small)
-                    .tooltip(|_window, cx| Tooltip::for_action("Reset Zoom", &ResetZoom, cx))
+                    .tooltip(|_window, cx| {
+                        Tooltip::for_action(t("image-viewer-reset-zoom"), &ResetZoom, cx)
+                    })
                     .on_click({
                         let image_view = image_view.downgrade();
                         move |_, window, cx| {
@@ -807,7 +811,9 @@ impl Render for ImageViewToolbarControls {
             .child(
                 IconButton::new("zoom-in", IconName::Plus)
                     .icon_size(IconSize::Small)
-                    .tooltip(|_window, cx| Tooltip::for_action("Zoom In", &ZoomIn, cx))
+                    .tooltip(|_window, cx| {
+                        Tooltip::for_action(t("image-viewer-zoom-in"), &ZoomIn, cx)
+                    })
                     .on_click({
                         let image_view = image_view.downgrade();
                         move |_, window, cx| {
@@ -822,7 +828,9 @@ impl Render for ImageViewToolbarControls {
             .child(
                 IconButton::new("fit-to-view", IconName::Maximize)
                     .icon_size(IconSize::Small)
-                    .tooltip(|_window, cx| Tooltip::for_action("Fit to View", &FitToView, cx))
+                    .tooltip(|_window, cx| {
+                        Tooltip::for_action(t("image-viewer-fit-to-view"), &FitToView, cx)
+                    })
                     .on_click({
                         let image_view = image_view.downgrade();
                         move |_, window, cx| {

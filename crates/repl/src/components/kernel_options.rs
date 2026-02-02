@@ -6,6 +6,7 @@ use gpui::AnyView;
 use gpui::DismissEvent;
 
 use gpui::FontWeight;
+use i18n::t;
 use picker::Picker;
 use picker::PickerDelegate;
 use project::WorktreeId;
@@ -101,7 +102,7 @@ impl PickerDelegate for KernelPickerDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Select a kernel...".into()
+        t("repl-select-kernel-placeholder").into()
     }
 
     fn update_matches(
@@ -150,15 +151,15 @@ impl PickerDelegate for KernelPickerDelegate {
         let icon = kernelspec.icon(cx);
 
         let (name, kernel_type, path_or_url) = match kernelspec {
-            KernelSpecification::Jupyter(_) => (kernelspec.name(), "Jupyter", None),
+            KernelSpecification::Jupyter(_) => (kernelspec.name(), t("repl-type-jupyter"), None),
             KernelSpecification::PythonEnv(_) => (
                 kernelspec.name(),
-                "Python Env",
+                t("repl-type-python-env"),
                 Some(truncate_path(&kernelspec.path(), 42)),
             ),
             KernelSpecification::Remote(_) => (
                 kernelspec.name(),
-                "Remote",
+                t("repl-type-remote"),
                 Some(truncate_path(&kernelspec.path(), 42)),
             ),
         };
@@ -234,7 +235,7 @@ impl PickerDelegate for KernelPickerDelegate {
                 .p_1()
                 .gap_4()
                 .child(
-                    Button::new("kernel-docs", "Kernel Docs")
+                    Button::new("kernel-docs", t("repl-kernel-docs"))
                         .icon(IconName::ArrowUpRight)
                         .icon_size(IconSize::Small)
                         .icon_color(Color::Muted)

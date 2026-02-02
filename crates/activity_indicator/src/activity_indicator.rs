@@ -6,6 +6,7 @@ use gpui::{
     App, Context, CursorStyle, Entity, EventEmitter, InteractiveElement as _, ParentElement as _,
     Render, SharedString, StatefulInteractiveElement, Styled, Window, actions,
 };
+use i18n::{t, t_args};
 use language::{
     BinaryStatus, LanguageRegistry, LanguageServerId, LanguageServerName,
     LanguageServerStatusUpdate, ServerHealth,
@@ -17,7 +18,7 @@ use project::{
 use smallvec::SmallVec;
 use std::{
     cmp::Reverse,
-    collections::HashSet,
+    collections::{HashMap, HashSet},
     fmt::Write,
     sync::Arc,
     time::{Duration, Instant},
@@ -240,8 +241,12 @@ impl ActivityIndicator {
                 cx.spawn_in(window, async move |workspace, cx| {
                     let buffer = create_buffer.await?;
                     buffer.update(cx, |buffer, cx| {
+                        let mut args = HashMap::default();
+                        let server_name = server_name.to_string();
+                        args.insert("server_name", server_name.as_str());
+                        args.insert("status", status.as_ref());
                         buffer.edit(
-                            [(0..0, format!("Language server {server_name}:\n\n{status}"))],
+                            [(0..0, t_args("activity-indicator-ls-status", &args))],
                             None,
                             cx,
                         );
@@ -384,7 +389,10 @@ impl ActivityIndicator {
                 let mut message = progress.title.clone().unwrap_or(progress_token.to_string());
 
                 if let Some(percentage) = progress.percentage {
-                    write!(&mut message, " ({}%)", percentage).unwrap();
+                    let mut args = HashMap::default();
+                    let percentage = percentage.to_string();
+                    args.insert("percentage", percentage.as_str());
+                    message.push_str(&t_args("activity-indicator-ls-percentage", &args));
                 }
 
                 if let Some(progress_message) = progress.message.as_ref() {
@@ -394,7 +402,10 @@ impl ActivityIndicator {
 
                 let additional_work_count = pending_work.count();
                 if additional_work_count > 0 {
-                    write!(&mut message, " + {} more", additional_work_count).unwrap();
+                    let mut args = HashMap::default();
+                    let count = additional_work_count.to_string();
+                    args.insert("count", count.as_str());
+                    message.push_str(&t_args("activity-indicator-ls-more", &args));
                 }
 
                 return Some(Content {
@@ -426,7 +437,12 @@ impl ActivityIndicator {
                         .with_rotate_animation(2)
                         .into_any_element(),
                 ),
-                message: format!("Debug: {}", session.read(cx).adapter()),
+                message: {
+                    let mut args = HashMap::default();
+                    let adapter = session.read(cx).adapter().to_string();
+                    args.insert("adapter", adapter.as_str());
+                    t_args("activity-indicator-debug", &args)
+                },
                 tooltip_message: session.read(cx).label().map(|label| label.to_string()),
                 on_click: None,
             });
@@ -522,9 +538,9 @@ impl ActivityIndicator {
                         .size(IconSize::Small)
                         .into_any_element(),
                 ),
-                message: format!(
-                    "Downloading {}...",
-                    downloading.iter().map(|name| name.as_ref()).fold(
+                message: {
+                    let mut args = HashMap::default();
+                    let list = downloading.iter().map(|name| name.as_ref()).fold(
                         String::new(),
                         |mut acc, s| {
                             if !acc.is_empty() {
@@ -532,9 +548,11 @@ impl ActivityIndicator {
                             }
                             acc.push_str(s);
                             acc
-                        }
-                    )
-                ),
+                        },
+                    );
+                    args.insert("list", list.as_str());
+                    t_args("activity-indicator-downloading", &args)
+                },
                 on_click: Some(Arc::new(move |this, window, cx| {
                     this.statuses
                         .retain(|status| !downloading.contains(&status.name));
@@ -551,9 +569,9 @@ impl ActivityIndicator {
                         .size(IconSize::Small)
                         .into_any_element(),
                 ),
-                message: format!(
-                    "Checking for updates to {}...",
-                    checking_for_update.iter().map(|name| name.as_ref()).fold(
+                message: {
+                    let mut args = HashMap::default();
+                    let list = checking_for_update.iter().map(|name| name.as_ref()).fold(
                         String::new(),
                         |mut acc, s| {
                             if !acc.is_empty() {
@@ -561,9 +579,11 @@ impl ActivityIndicator {
                             }
                             acc.push_str(s);
                             acc
-                        }
-                    ),
-                ),
+                        },
+                    );
+                    args.insert("list", list.as_str());
+                    t_args("activity-indicator-checking-updates", &args)
+                },
                 on_click: Some(Arc::new(move |this, window, cx| {
                     this.statuses
                         .retain(|status| !checking_for_update.contains(&status.name));
@@ -580,19 +600,22 @@ impl ActivityIndicator {
                         .size(IconSize::Small)
                         .into_any_element(),
                 ),
-                message: format!(
-                    "Failed to run {}. Click to show error.",
-                    failed
-                        .iter()
-                        .map(|name| name.as_ref())
-                        .fold(String::new(), |mut acc, s| {
-                            if !acc.is_empty() {
-                                acc.push_str(", ");
-                            }
-                            acc.push_str(s);
-                            acc
-                        }),
-                ),
+                message: {
+                    let mut args = HashMap::default();
+                    let list =
+                        failed
+                            .iter()
+                            .map(|name| name.as_ref())
+                            .fold(String::new(), |mut acc, s| {
+                                if !acc.is_empty() {
+                                    acc.push_str(", ");
+                                }
+                                acc.push_str(s);
+                                acc
+                            });
+                    args.insert("list", list.as_str());
+                    t_args("activity-indicator-failed-to-run", &args)
+                },
                 on_click: Some(Arc::new(|this, window, cx| {
                     this.show_error_message(&ShowErrorMessage, window, cx)
                 })),
@@ -608,7 +631,11 @@ impl ActivityIndicator {
                         .size(IconSize::Small)
                         .into_any_element(),
                 ),
-                message: format!("Formatting failed: {failure}. Click to see logs."),
+                message: {
+                    let mut args = HashMap::default();
+                    args.insert("failure", failure);
+                    t_args("activity-indicator-formatting-failed", &args)
+                },
                 on_click: Some(Arc::new(|indicator, window, cx| {
                     indicator.project.update(cx, |project, cx| {
                         project.reset_last_formatting_failure(cx);
@@ -622,9 +649,24 @@ impl ActivityIndicator {
         // Show any health messages for the language servers
         if let Some((server_name, health, message)) = health_messages.pop() {
             let health_str = match health {
-                ServerHealth::Ok => format!("({server_name}) "),
-                ServerHealth::Warning => format!("({server_name}) Warning: "),
-                ServerHealth::Error => format!("({server_name}) Error: "),
+                ServerHealth::Ok => {
+                    let mut args = HashMap::default();
+                    let server_name = server_name.to_string();
+                    args.insert("server_name", server_name.as_str());
+                    t_args("activity-indicator-ls-prefix", &args)
+                }
+                ServerHealth::Warning => {
+                    let mut args = HashMap::default();
+                    let server_name = server_name.to_string();
+                    args.insert("server_name", server_name.as_str());
+                    t_args("activity-indicator-ls-warning-prefix", &args)
+                }
+                ServerHealth::Error => {
+                    let mut args = HashMap::default();
+                    let server_name = server_name.to_string();
+                    args.insert("server_name", server_name.as_str());
+                    t_args("activity-indicator-ls-error-prefix", &args)
+                }
             };
             let single_line_message = message
                 .lines()
@@ -680,7 +722,7 @@ impl ActivityIndicator {
                             .with_rotate_animation(3)
                             .into_any_element(),
                     ),
-                    message: "Checking for Zed updates…".to_string(),
+                    message: t("activity-indicator-checking-zed-updates"),
                     on_click: Some(Arc::new(|this, window, cx| {
                         this.dismiss_message(&DismissMessage, window, cx)
                     })),
@@ -692,7 +734,7 @@ impl ActivityIndicator {
                             .size(IconSize::Small)
                             .into_any_element(),
                     ),
-                    message: "Downloading Zed update…".to_string(),
+                    message: t("activity-indicator-downloading-zed-update"),
                     on_click: Some(Arc::new(|this, window, cx| {
                         this.dismiss_message(&DismissMessage, window, cx)
                     })),
@@ -705,7 +747,7 @@ impl ActivityIndicator {
                             .with_rotate_animation(3)
                             .into_any_element(),
                     ),
-                    message: "Installing Zed update…".to_string(),
+                    message: t("activity-indicator-installing-zed-update"),
                     on_click: Some(Arc::new(|this, window, cx| {
                         this.dismiss_message(&DismissMessage, window, cx)
                     })),
@@ -713,7 +755,7 @@ impl ActivityIndicator {
                 }),
                 AutoUpdateStatus::Updated { version } => Some(Content {
                     icon: None,
-                    message: "Click to restart and update Zed".to_string(),
+                    message: t("activity-indicator-click-to-restart"),
                     on_click: Some(Arc::new(move |_, _, cx| workspace::reload(cx))),
                     tooltip_message: Some(Self::version_tooltip_message(version)),
                 }),
@@ -723,7 +765,7 @@ impl ActivityIndicator {
                             .size(IconSize::Small)
                             .into_any_element(),
                     ),
-                    message: "Failed to update Zed".to_string(),
+                    message: t("activity-indicator-failed-update"),
                     on_click: Some(Arc::new(|this, window, cx| {
                         window.dispatch_action(Box::new(workspace::OpenLog), cx);
                         this.dismiss_message(&DismissMessage, window, cx);
@@ -738,19 +780,22 @@ impl ActivityIndicator {
                     && let Some((extension_id, operation)) =
                         extension_store.outstanding_operations().iter().next()
                 {
+                    let mut args = HashMap::default();
+                    args.insert("extension_id", extension_id.as_ref());
+
                     let (message, icon, rotate) = match operation {
                         ExtensionOperation::Install => (
-                            format!("Installing {extension_id} extension…"),
+                            t_args("activity-indicator-installing-extension", &args),
                             IconName::LoadCircle,
                             true,
                         ),
                         ExtensionOperation::Upgrade => (
-                            format!("Updating {extension_id} extension…"),
+                            t_args("activity-indicator-updating-extension", &args),
                             IconName::Download,
                             false,
                         ),
                         ExtensionOperation::Remove => (
-                            format!("Removing {extension_id} extension…"),
+                            t_args("activity-indicator-removing-extension", &args),
                             IconName::LoadCircle,
                             true,
                         ),
@@ -777,14 +822,15 @@ impl ActivityIndicator {
     }
 
     fn version_tooltip_message(version: &VersionCheckType) -> String {
-        format!("Version: {}", {
-            match version {
-                auto_update::VersionCheckType::Sha(sha) => format!("{}…", sha.short()),
-                auto_update::VersionCheckType::Semantic(semantic_version) => {
-                    semantic_version.to_string()
-                }
+        let mut args = HashMap::default();
+        let version_str = match version {
+            auto_update::VersionCheckType::Sha(sha) => format!("{}…", sha.short()),
+            auto_update::VersionCheckType::Semantic(semantic_version) => {
+                semantic_version.to_string()
             }
-        })
+        };
+        args.insert("version", version_str.as_str());
+        t_args("activity-indicator-version", &args)
     }
 
     fn toggle_language_server_work_context_menu(

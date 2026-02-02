@@ -2,6 +2,7 @@ use gpui::{
     ClickEvent, DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, MouseDownEvent, Render,
     svg,
 };
+use i18n::t;
 use ui::{TintColor, prelude::*};
 use workspace::{ModalView, Workspace};
 
@@ -103,7 +104,7 @@ impl Render for GitOnboardingModal {
                     .w_full()
                     .gap_1()
                     .child(
-                        Label::new("Introducing")
+                        Label::new(t("introducing"))
                             .size(LabelSize::Small)
                             .color(Color::Muted),
                     )
@@ -118,13 +119,13 @@ impl Render for GitOnboardingModal {
                 )),
             ));
 
-        let open_panel_button = Button::new("open-panel", "Get Started with the Git Panel")
+        let open_panel_button = Button::new("open-panel", t("git-get-started-panel"))
             .icon_size(IconSize::Indicator)
             .style(ButtonStyle::Tinted(TintColor::Accent))
             .full_width()
             .on_click(cx.listener(Self::open_panel));
 
-        let blog_post_button = Button::new("view-blog", "Check out the Blog Post")
+        let blog_post_button = Button::new("view-blog", t("git-check-blog"))
             .icon(IconName::ArrowUpRight)
             .icon_size(IconSize::Indicator)
             .icon_color(Color::Muted)

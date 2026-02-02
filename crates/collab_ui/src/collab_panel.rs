@@ -122,7 +122,7 @@ pub fn init(cx: &mut App) {
             if let Some(room) = ActiveCall::global(cx).read(cx).room() {
                 let romo_id_fut = room.read(cx).room_id();
                 cx.spawn(async move |workspace, cx| {
-                    let room_id = romo_id_fut.await.context("Failed to get livekit room")?;
+                    let room_id = romo_id_fut.await.context(t("collab-failed-to-get-livekit-room"))?;
                     workspace.update(cx, |workspace, cx| {
                         cx.write_to_clipboard(ClipboardItem::new_string(room_id));
                                                     workspace.show_toast(
@@ -1042,7 +1042,7 @@ impl CollabPanel {
                         let app_state = workspace.app_state().clone();
                         workspace::join_in_room_project(project_id, host_user_id, app_state, cx)
                             .detach_and_prompt_err(
-                                t("collab-failed-join-project"),
+                                &t("collab-failed-to-join-project"),
                                 window,
                                 cx,
                                 |_, _, _| None,
@@ -1181,7 +1181,7 @@ impl CollabPanel {
                                 })
                             })
                             .detach_and_prompt_err(
-                                "Failed to grant mic access",
+                                &t("collab-failed-to-grant-mic-access"),
                                 window,
                                 cx,
                                 |_, _, _| None,
@@ -1207,9 +1207,9 @@ impl CollabPanel {
                                     )
                                 })
                             })
-                            .detach_and_prompt_err("Failed to grant write access", window, cx, |e, _, _| {
+                            .detach_and_prompt_err(&t("collab-failed-to-grant-write-access"), window, cx, |e, _, _| {
                                 match e.error_code() {
-                                    ErrorCode::NeedsCla => Some("This user has not yet signed the CLA at https://zed.dev/cla.".into()),
+                                    ErrorCode::NeedsCla => Some(t("collab-user-needs-cla").to_string()),
                                     _ => None,
                                 }
                             })
@@ -1240,7 +1240,7 @@ impl CollabPanel {
                                 })
                             })
                             .detach_and_prompt_err(
-                                "Failed to revoke access",
+                                &t("collab-failed-to-revoke-access"),
                                 window,
                                 cx,
                                 |_, _, _| None,
@@ -1694,14 +1694,14 @@ impl CollabPanel {
                             })
                         })
                         .detach_and_prompt_err(
-                            "Failed to create channel",
+                            &t("collab-failed-to-create-channel"),
                             window,
                             cx,
                             |_, _, _| None,
                         );
                     } else {
                         create.detach_and_prompt_err(
-                            "Failed to create channel",
+                            &t("collab-failed-to-create-channel"),
                             window,
                             cx,
                             |_, _, _| None,
@@ -1804,7 +1804,7 @@ impl CollabPanel {
     fn leave_call(window: &mut Window, cx: &mut App) {
         ActiveCall::global(cx)
             .update(cx, |call, cx| call.hang_up(cx))
-            .detach_and_prompt_err("Failed to hang up", window, cx, |_, _, _| None);
+            .detach_and_prompt_err(&t("collab-failed-to-hang-up"), window, cx, |_, _, _| None);
     }
 
     fn toggle_contact_finder(&mut self, window: &mut Window, cx: &mut Context<Self>) {
@@ -1928,12 +1928,12 @@ impl CollabPanel {
             .update(cx, |channel_store, cx| {
                 channel_store.set_channel_visibility(channel_id, visibility, cx)
             })
-            .detach_and_prompt_err("Failed to set channel visibility", window, cx, |e, _, _| match e.error_code() {
+            .detach_and_prompt_err(&t("collab-failed-to-set-visibility"), window, cx, |e, _, _| match e.error_code() {
                 ErrorCode::BadPublicNesting =>
                     if e.error_tag("direction") == Some("parent") {
-                        Some("To make a channel public, its parent channel must be public.".to_string())
+                        Some(t("collab-bad-public-nesting-parent").to_string())
                     } else {
-                        Some("To make a channel private, all of its subchannels must be private.".to_string())
+                        Some(t("collab-bad-public-nesting-children").to_string())
                     },
                 _ => None
             });
@@ -1981,16 +1981,16 @@ impl CollabPanel {
             .update(cx, |channel_store, cx| {
                 channel_store.move_channel(channel_id, to, cx)
             })
-            .detach_and_prompt_err("Failed to move channel", window, cx, |e, _, _| {
+            .detach_and_prompt_err(&t("collab-failed-to-move-channel"), window, cx, |e, _, _| {
                 match e.error_code() {
                     ErrorCode::BadPublicNesting => {
-                        Some("Public channels must have public parents".into())
+                        Some(t("collab-public-channel-parent-error").into())
                     }
                     ErrorCode::CircularNesting => {
-                        Some("You cannot move a channel into itself".into())
+                        Some(t("collab-circular-nesting-error").into())
                     }
                     ErrorCode::WrongMoveTarget => {
-                        Some("You cannot move a channel into a different root channel".into())
+                        Some(t("collab-wrong-move-target-error").into())
                     }
                     _ => None,
                 }

@@ -401,7 +401,7 @@ impl ChannelView {
 
     fn get_channel(&self, cx: &App) -> (SharedString, Option<SharedString>) {
         if let Some(channel) = self.channel(cx) {
-            let status = match (
+            let status: Option<SharedString> = match (
                 self.channel_buffer.read(cx).buffer().read(cx).read_only(),
                 self.channel_buffer.read(cx).is_connected(),
             ) {

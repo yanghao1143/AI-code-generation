@@ -8,6 +8,7 @@ use gpui::{
     App, Context, Entity, InteractiveElement as _, ParentElement as _, Subscription, Task,
     WeakEntity,
 };
+use i18n::{t, t_args};
 use language::{Anchor, Buffer, BufferId};
 use project::{ConflictRegion, ConflictSet, ConflictSetUpdate, ProjectItem as _};
 use std::{ops::Range, sync::Arc};
@@ -375,7 +376,7 @@ fn render_conflict_buttons(
         .gap_1()
         .bg(cx.theme().colors().editor_background)
         .child(
-            Button::new("head", format!("Use {}", conflict.ours_branch_name))
+            Button::new("head", t_args("git-use-branch", &[("branch", conflict.ours_branch_name.clone().into())]))
                 .label_size(LabelSize::Small)
                 .on_click({
                     let editor = editor.clone();
@@ -395,7 +396,7 @@ fn render_conflict_buttons(
                 }),
         )
         .child(
-            Button::new("origin", format!("Use {}", conflict.theirs_branch_name))
+            Button::new("origin", t_args("git-use-branch", &[("branch", conflict.theirs_branch_name.clone().into())]))
                 .label_size(LabelSize::Small)
                 .on_click({
                     let editor = editor.clone();
@@ -415,7 +416,7 @@ fn render_conflict_buttons(
                 }),
         )
         .child(
-            Button::new("both", "Use Both")
+            Button::new("both", t("git-use-both"))
                 .label_size(LabelSize::Small)
                 .on_click({
                     let conflict = conflict.clone();

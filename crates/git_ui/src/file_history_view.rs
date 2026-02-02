@@ -7,6 +7,7 @@ use gpui::{
     IntoElement, Render, ScrollStrategy, Task, UniformListScrollHandle, WeakEntity, Window,
     actions, uniform_list,
 };
+use i18n::t;
 use project::{
     Project, ProjectPath,
     git_store::{GitStore, Repository},
@@ -488,7 +489,7 @@ impl Render for FileHistoryView {
                             )
                             .when(self.has_more, |this| {
                                 this.child(Divider::vertical()).child(
-                                    Button::new("load-more", "Load More")
+                                    Button::new("load-more", t("load-more"))
                                         .disabled(self.loading_more)
                                         .label_size(LabelSize::Small)
                                         .icon(IconName::ArrowCircle)

@@ -4,6 +4,7 @@ use anyhow::anyhow;
 use command_palette_hooks::CommandPaletteFilter;
 use commit_modal::CommitModal;
 use editor::{Editor, actions::DiffClipboardWithSelectionData};
+use i18n::t;
 use project::ProjectPath;
 use ui::{
     Headline, HeadlineSize, Icon, IconName, IconSize, IntoElement, ParentElement, Render, Styled,
@@ -866,12 +867,12 @@ impl Render for GitCloneModal {
                     .rounded_b_sm()
                     .bg(cx.theme().colors().editor_background)
                     .child(
-                        Label::new("Clone a repository from GitHub or other sources.")
+                        Label::new(t("git-clone-description"))
                             .color(Color::Muted)
                             .size(LabelSize::Small),
                     )
                     .child(
-                        Button::new("learn-more", "Learn More")
+                        Button::new("learn-more", t("learn-more"))
                             .label_size(LabelSize::Small)
                             .icon(IconName::ArrowUpRight)
                             .icon_size(IconSize::XSmall)

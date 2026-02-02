@@ -1,5 +1,5 @@
 use gpui::{Context, IntoElement, ParentElement, Render, StatefulInteractiveElement, Styled, Window};
-use gpui::util::FluentBuilder as _;
+use ui::FluentBuilder as _;
 use ui::prelude::*;
 use ui::{Icon, IconName, Label};
 
