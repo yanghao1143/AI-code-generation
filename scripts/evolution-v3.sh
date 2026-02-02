@@ -62,8 +62,9 @@ diagnose_agent() {
     fi
     
     # 8. Claude 特有: 有输入但未发送 (❯ 后面有内容但没在工作)
-    if echo "$last_5" | grep -qE "^❯ .+" 2>/dev/null; then
-        if ! echo "$last_5" | grep -qE "esc to interrupt|bypass permissions" 2>/dev/null; then
+    # 注意: 输入行可能有前导空格，且不能在工作状态
+    if echo "$last_5" | grep -qE "❯ .+" 2>/dev/null; then
+        if ! echo "$last_20" | grep -qE "esc to interrupt|bypass permissions|Thinking|Working" 2>/dev/null; then
             echo "pending_input"; return
         fi
     fi
