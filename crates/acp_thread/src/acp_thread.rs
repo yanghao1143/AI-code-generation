@@ -1906,7 +1906,7 @@ impl AcpThread {
             let old_checkpoint = git_store
                 .update(cx, |git, cx| git.checkpoint(cx))
                 .await
-                .context("failed to get old checkpoint")
+                .context(t("acp-failed-get-old-checkpoint"))
                 .log_err();
             this.update(cx, |this, cx| {
                 if let Some((_ix, message)) = this.last_user_message() {
@@ -1932,7 +1932,7 @@ impl AcpThread {
                     .retry(&this.session_id, cx)
                     .map(|retry| retry.run(cx))
             })?
-            .context("retrying a session is not supported")?
+            .context(t("acp-retry-session-not-supported"))?
             .await
         })
     }
@@ -2152,7 +2152,7 @@ impl AcpThread {
         cx.spawn(async move |this, cx| {
             let Some(new_checkpoint) = new_checkpoint
                 .await
-                .context("failed to get new checkpoint")
+                .context(t("acp-failed-get-new-checkpoint"))
                 .log_err()
             else {
                 return Ok(());
@@ -2296,7 +2296,7 @@ impl AcpThread {
             let load = project.update(cx, |project, cx| {
                 let path = project
                     .project_path_for_absolute_path(&path, cx)
-                    .context("invalid path")?;
+                    .context(t("acp-invalid-path"))?;
                 anyhow::Ok(project.open_buffer(path, cx))
             });
             let buffer = load?.await?;
@@ -2473,7 +2473,10 @@ impl AcpThread {
     ) -> Result<()> {
         self.terminals
             .get(&terminal_id)
-            .context("Terminal not found")?
+            .context(t_args(
+                "acp-terminal-not-found",
+                &[("id", terminal_id.to_string().into())],
+            ))?
             .update(cx, |terminal, cx| {
                 terminal.kill(cx);
             });
@@ -2488,7 +2491,10 @@ impl AcpThread {
     ) -> Result<()> {
         self.terminals
             .remove(&terminal_id)
-            .context("Terminal not found")?
+            .context(t_args(
+                "acp-terminal-not-found",
+                &[("id", terminal_id.to_string().into())],
+            ))?
             .update(cx, |terminal, cx| {
                 terminal.kill(cx);
             });
@@ -2499,7 +2505,10 @@ impl AcpThread {
     pub fn terminal(&self, terminal_id: acp::TerminalId) -> Result<Entity<Terminal>> {
         self.terminals
             .get(&terminal_id)
-            .context("Terminal not found")
+            .context(t_args(
+                "acp-terminal-not-found",
+                &[("id", terminal_id.to_string().into())],
+            ))
             .cloned()
     }
 
@@ -4033,7 +4042,7 @@ mod tests {
                     match content_block {
                         ContentBlock::Markdown { markdown } => {
                             let markdown_text = markdown.read(cx).source();
-                            assert!(markdown_text.contains("Tool call not found"));
+                            assert!(markdown_text.contains(&i18n::t("tool-call-not-found")));
                         }
                         ContentBlock::Empty => panic!("Expected markdown content, got empty"),
                         ContentBlock::ResourceLink { .. } => {
