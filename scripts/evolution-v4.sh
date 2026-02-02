@@ -225,14 +225,22 @@ repair_agent() {
             fi
             ;;
         pending_input)
-            # 检查是否有多行堆积的输入
-            local input_lines=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p 2>/dev/null | tail -10 | grep -c "^❯ \|继续之前的任务")
+            # 检查是否有多行堆积的输入 (Claude 用 ❯, Gemini 用 │ >)
+            local input_lines=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p 2>/dev/null | tail -10 | grep -c "^❯ \|继续之前的任务\|^│ > ")
             if [[ $input_lines -gt 2 ]]; then
                 # 多行堆积，先清理
                 tmux -S "$SOCKET" send-keys -t "$agent" C-c
                 sleep 0.3
-                tmux -S "$SOCKET" send-keys -t "$agent" C-u
-                sleep 0.3
+                # Gemini 不响应 C-u，用多个 BSpace
+                if [[ "$agent" == "gemini-agent" ]]; then
+                    for i in {1..50}; do
+                        tmux -S "$SOCKET" send-keys -t "$agent" BSpace
+                    done
+                    sleep 0.3
+                else
+                    tmux -S "$SOCKET" send-keys -t "$agent" C-u
+                    sleep 0.3
+                fi
                 dispatch_task "$agent"
                 echo "cleared_and_dispatched"
             else
