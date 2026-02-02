@@ -11254,7 +11254,7 @@ mod tests {
             cx.has_pending_prompt(),
             "Dirty multi buffer should prompt a save dialog"
         );
-        cx.simulate_prompt_answer("Save");
+        cx.simulate_prompt_answer(t("save"));
         cx.background_executor.run_until_parked();
         close_multi_buffer_task
             .await

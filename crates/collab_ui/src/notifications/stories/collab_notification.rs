@@ -36,7 +36,7 @@ impl Render for CollabNotificationStory {
                         CollabNotification::new(
                             "https://avatars.githubusercontent.com/u/1714999?v=4",
                             Button::new("open", "Open"),
-                            Button::new("dismiss", "Dismiss"),
+                            Button::new("dismiss", t("dismiss")),
                         )
                         .child(Label::new("iamnbutler"))
                         .child(Label::new("is sharing a project in Chi Code:"))

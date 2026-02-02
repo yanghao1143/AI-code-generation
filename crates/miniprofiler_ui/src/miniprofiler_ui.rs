@@ -277,7 +277,7 @@ impl Render for ProfilerWindow {
                                 )),
                             )
                             .child(
-                                Button::new("export-data", "Save")
+                                Button::new("export-data", t("save"))
                                     .style(ButtonStyle::Filled)
                                     .on_click(cx.listener(|this, _, _window, cx| {
                                         let Some(workspace) = this.workspace else {

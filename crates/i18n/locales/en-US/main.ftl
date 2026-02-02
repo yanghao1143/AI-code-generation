@@ -745,6 +745,8 @@ editor-assign-keybinding = Assign Keybinding
 editor-see-docs = See Docs
 editor-open-file = Open File
 editor-copy-diagnostic = Copy Diagnostic
+editor-previous-signature = Previous Signature
+editor-next-signature = Next Signature
 
 # Feedback
 feedback-copied-to-clipboard = Copied into clipboard
@@ -1166,6 +1168,7 @@ settings-reset-to-default = Reset to Default
 settings-copy-link = Copy Link
 settings-view-other-projects = View Other Projects
 settings-configure = Configure
+provider-dashboard = { $title } dashboard
 
 # Settings File Types
 settings-file-user = User
@@ -2108,3 +2111,14 @@ profile-configure-builtin-tools = Configure Built-in Tools
 profile-configure-mcp-tools = Configure MCP Tools
 profile-delete = Delete Profile
 profile-go-back = Go Back
+
+# ============================================
+# Terminal
+# ============================================
+terminal-title = Terminal
+terminal-task-finished-successfully = finished successfully
+terminal-task-finished-with-exit-code = finished with exit code: { $code }
+terminal-task-terminated-by-signal = terminated by signal: { $signal }
+terminal-task-finished = finished
+terminal-command-label = Command
+got-it = Got it

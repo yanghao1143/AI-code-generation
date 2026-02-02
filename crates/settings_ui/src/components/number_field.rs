@@ -16,6 +16,7 @@ use settings::{
     MinimumContrast,
 };
 use ui::prelude::*;
+use i18n::t;
 use zed_actions::editor::{MoveDown, MoveUp};
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
@@ -467,7 +468,10 @@ impl<T: NumberFieldType> RenderOnce for NumberField<T> {
                     IconButton::new("reset", IconName::RotateCcw)
                         .icon_size(IconSize::Small)
                         .when_some(self.tab_index, |this, _| this.tab_index(0isize))
-                        .on_click(on_reset),
+                        .on_click(on_reset)
+                        .tooltip(move |_window, cx| {
+                            Tooltip::text(t("settings-reset-to-default"))
+                        }),
                 )
             })
             .child({

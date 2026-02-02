@@ -226,12 +226,12 @@ impl Component for Callout {
     }
 
     fn preview(_window: &mut Window, _cx: &mut App) -> Option<AnyElement> {
-        let single_action = || Button::new("got-it", "Got it").label_size(LabelSize::Small);
+        let single_action = || Button::new("got-it", t("got-it")).label_size(LabelSize::Small);
         let multiple_actions = || {
             h_flex()
                 .gap_0p5()
                 .child(Button::new("update", "Backup & Update").label_size(LabelSize::Small))
-                .child(Button::new("dismiss", "Dismiss").label_size(LabelSize::Small))
+                .child(Button::new("dismiss", t("dismiss")).label_size(LabelSize::Small))
         };
 
         let basic_examples = vec![

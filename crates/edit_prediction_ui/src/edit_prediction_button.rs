@@ -1247,7 +1247,7 @@ impl EditPredictionButton {
                         .detach();
                 })
                 .link(
-                    "Learn More",
+                    t("learn-more"),
                     OpenBrowser {
                         url: zed_urls::edit_prediction_docs(cx),
                     }

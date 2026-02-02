@@ -2423,7 +2423,7 @@ impl GitPanel {
         }?;
 
         let action_text = if git_status_entry.status.is_deleted() {
-            Some("Delete")
+            Some(t("delete"))
         } else if git_status_entry.status.is_created() {
             Some("Create")
         } else if git_status_entry.status.is_modified() {

@@ -858,7 +858,7 @@ impl RulesLibrary {
                     metadata.title.unwrap_or("Untitled".into())
                 ),
                 None,
-                &["Delete", "Cancel"],
+                &[t("delete"), "Cancel"],
                 cx,
             );
 

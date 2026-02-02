@@ -786,6 +786,8 @@ editor-assign-keybinding = 分配快捷键
 editor-see-docs = 查看文档
 editor-open-file = 打开文件
 editor-copy-diagnostic = 复制诊断信息
+editor-previous-signature = 上一个签名
+editor-next-signature = 下一个签名
 
 # Feedback / 反馈
 feedback-copied-to-clipboard = 已复制到剪贴板
@@ -1375,6 +1377,7 @@ settings-reset-to-default = 重置为默认值
 settings-copy-link = 复制链接
 settings-view-other-projects = 查看其他项目
 settings-configure = 配置
+provider-dashboard = { $title } 控制台
 
 # Settings File Types / 设置文件类型
 settings-file-user = 用户
@@ -2572,3 +2575,13 @@ profile-configure-builtin-tools = 配置内置工具
 profile-configure-mcp-tools = 配置 MCP 工具
 profile-delete = 删除配置
 profile-go-back = 返回
+
+# ============================================
+# Terminal / 终端
+# ============================================
+terminal-title = 终端
+terminal-task-finished-successfully = 成功完成
+terminal-task-finished-with-exit-code = 结束，退出代码：{ $code }
+terminal-task-terminated-by-signal = 被信号终止：{ $signal }
+terminal-task-finished = 已结束
+terminal-command-label = 命令

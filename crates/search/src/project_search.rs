@@ -2093,7 +2093,7 @@ impl Render for ProjectSearchBar {
                     .active_match_index
                     .is_none()
                     .then_some(ActionButtonState::Disabled),
-                "Select Previous Match",
+                t("search-select-prev"),
                 &SelectPreviousMatch,
                 query_focus.clone(),
             ))
@@ -2104,7 +2104,7 @@ impl Render for ProjectSearchBar {
                     .active_match_index
                     .is_none()
                     .then_some(ActionButtonState::Disabled),
-                "Select Next Match",
+                t("search-select-next"),
                 &SelectNextMatch,
                 query_focus.clone(),
             ))
@@ -2121,9 +2121,7 @@ impl Render for ProjectSearchBar {
                         },
                     ))
                     .when(limit_reached, |el| {
-                        el.tooltip(Tooltip::text(
-                            "Search limits reached.\nTry narrowing your search.",
-                        ))
+                        el.tooltip(Tooltip::text(t("search-limits-reached")))
                     }),
             );
 
@@ -2134,7 +2132,7 @@ impl Render for ProjectSearchBar {
                 IconButton::new("project-search-filter-button", IconName::Filter)
                     .shape(IconButtonShape::Square)
                     .tooltip(|_window, cx| {
-                        Tooltip::for_action("Toggle Filters", &ToggleFilters, cx)
+                        Tooltip::for_action(t("search-toggle-filters"), &ToggleFilters, cx)
                     })
                     .on_click(cx.listener(|this, _, window, cx| {
                         this.toggle_filters(window, cx);
@@ -2149,7 +2147,7 @@ impl Render for ProjectSearchBar {
                         let focus_handle = focus_handle.clone();
                         move |_window, cx| {
                             Tooltip::for_action_in(
-                                "Toggle Filters",
+                                t("search-toggle-filters"),
                                 &ToggleFilters,
                                 &focus_handle,
                                 cx,
@@ -2164,7 +2162,7 @@ impl Render for ProjectSearchBar {
                     .as_ref()
                     .map(|search| search.read(cx).replace_enabled)
                     .and_then(|enabled| enabled.then_some(ActionButtonState::Toggled)),
-                "Toggle Replace",
+                t("search-toggle-replace"),
                 &ToggleReplace,
                 focus_handle.clone(),
             ))
@@ -2173,9 +2171,9 @@ impl Render for ProjectSearchBar {
         let is_collapsed = search.results_collapsed;
 
         let (icon, tooltip_label) = if is_collapsed {
-            (IconName::ChevronUpDown, "Expand All Search Results")
+            (IconName::ChevronUpDown, t("search-expand-all"))
         } else {
-            (IconName::ChevronDownUp, "Collapse All Search Results")
+            (IconName::ChevronDownUp, t("search-collapse-all"))
         };
 
         let expand_button = IconButton::new("project-search-collapse-expand", icon)
@@ -2217,7 +2215,7 @@ impl Render for ProjectSearchBar {
                     "project-search-replace-button",
                     IconName::ReplaceNext,
                     Default::default(),
-                    "Replace Next Match",
+                    t("search-replace-next"),
                     &ReplaceNext,
                     focus_handle.clone(),
                 ))
@@ -2225,7 +2223,7 @@ impl Render for ProjectSearchBar {
                     "project-search-replace-button",
                     IconName::ReplaceAll,
                     Default::default(),
-                    "Replace All Matches",
+                    t("search-replace-all"),
                     &ReplaceAll,
                     focus_handle,
                 ));
@@ -2262,7 +2260,7 @@ impl Render for ProjectSearchBar {
                     IconButton::new("project-search-opened-only", IconName::FolderSearch)
                         .shape(IconButtonShape::Square)
                         .toggle_state(self.is_opened_only_enabled(cx))
-                        .tooltip(Tooltip::text("Only Search Open Files"))
+                        .tooltip(Tooltip::text(t("search-only-open-files")))
                         .on_click(cx.listener(|this, _, window, cx| {
                             this.toggle_opened_only(window, cx);
                         })),

@@ -164,7 +164,7 @@ impl EditorBlock {
                         .icon_color(Color::Muted)
                         .size(ButtonSize::Compact)
                         .shape(IconButtonShape::Square)
-                        .tooltip(Tooltip::text("Close output area"))
+                        .tooltip(Tooltip::text(t("repl-close-output-area")))
                         .on_click(move |_, window, cx| {
                             if let BlockId::Custom(block_id) = block_id {
                                 (on_close)(block_id, window, cx)

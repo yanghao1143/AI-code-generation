@@ -7,6 +7,7 @@ use crate::{
     scroll::ScrollAmount,
 };
 use anyhow::Context as _;
+use i18n::t;
 use gpui::{
     AnyElement, AsyncWindowContext, Context, Entity, Focusable as _, FontWeight, Hsla,
     InteractiveElement, IntoElement, MouseButton, ParentElement, Pixels, ScrollHandle, Size,
@@ -1027,7 +1028,7 @@ impl DiagnosticPopover {
                     )
                     .child(div().absolute().top_1().right_1().child({
                         let message = self.local_diagnostic.diagnostic.message.clone();
-                        CopyButton::new("copy-diagnostic", message).tooltip_label("Copy Diagnostic")
+                        CopyButton::new("copy-diagnostic", message).tooltip_label(t("editor-copy-diagnostic"))
                     }))
                     .custom_scrollbars(
                         Scrollbars::for_settings::<EditorSettings>()

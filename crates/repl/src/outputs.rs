@@ -376,14 +376,19 @@ impl Output {
                     content: cx.new(|_| view),
                     display_id,
                 },
-                Err(error) => Output::Message(format!("Failed to load image: {}", error)),
+                Err(error) => {
+                    let error_message = error.to_string();
+                    let mut args = HashMap::new();
+                    args.insert("error", error_message.as_str());
+                    Output::Message(t_args("repl-failed-to-load-image", &args))
+                }
             },
             Some(MimeType::DataTable(data)) => Output::Table {
                 content: cx.new(|cx| TableView::new(data, window, cx)),
                 display_id,
             },
             // Any other media types are not supported
-            _ => Output::Message("Unsupported media type".to_string()),
+            _ => Output::Message(t("repl-unsupported-media-type")),
         }
     }
 }

@@ -827,7 +827,7 @@ impl DevContainerModal {
                                     this.dismiss(&menu::Cancel, window, cx);
                                     cx.notify();
                                 }))
-                                .child(Label::new("Cancel")),
+                                .child(Label::new(t("cancel"))),
                         ),
                 )
                 .into_any_element(),

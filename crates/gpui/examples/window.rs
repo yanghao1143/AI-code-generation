@@ -78,7 +78,7 @@ impl Render for SubWindow {
                             .unwrap();
                         }))
                     })
-                    .child(button("Close", |window, _| {
+                    .child(button(t("close"), |window, _| {
                         window.remove_window();
                     })),
             )

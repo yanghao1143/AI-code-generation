@@ -349,7 +349,7 @@ impl Render for PaintingViewer {
                                 cx,
                                 move |this, _| this.dashed = !dashed,
                             ))
-                            .child(button("Clear", cx, |this, cx| this.clear(cx))),
+                            .child(button(t("clear"), cx, |this, cx| this.clear(cx))),
                     ),
             )
             .child(

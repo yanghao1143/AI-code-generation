@@ -3134,7 +3134,7 @@ async fn test_send_retry_finishes_tool_calls_on_error(cx: &mut TestAppContext) {
         ]
     );
 
-    fake_model.send_last_completion_stream_text_chunk("Done");
+    fake_model.send_last_completion_stream_text_chunk(t("done"));
     fake_model.end_last_completion_stream();
     cx.run_until_parked();
     events.collect::<Vec<_>>().await;
@@ -3142,7 +3142,7 @@ async fn test_send_retry_finishes_tool_calls_on_error(cx: &mut TestAppContext) {
         assert_eq!(
             thread.last_message(),
             Some(Message::Agent(AgentMessage {
-                content: vec![AgentMessageContent::Text("Done".into())],
+                content: vec![AgentMessageContent::Text(t("done").into())],
                 tool_results: IndexMap::default(),
                 reasoning_details: None,
             }))

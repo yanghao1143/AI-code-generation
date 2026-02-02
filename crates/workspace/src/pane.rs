@@ -2227,7 +2227,7 @@ impl Pane {
                         PromptLevel::Warning,
                         DELETED_MESSAGE,
                         None,
-                        &["Save", "Close", "Cancel"],
+                        &[t("save"), t("close"), "Cancel"],
                         cx,
                     )
                 })?;
@@ -2303,7 +2303,7 @@ impl Pane {
                                 PromptLevel::Warning,
                                 &prompt,
                                 None,
-                                &["Save", "Don't Save", "Cancel"],
+                                &[t("save"), "Don't Save", "Cancel"],
                                 cx,
                             ))
                         } else {

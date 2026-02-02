@@ -55,7 +55,7 @@ impl Render for BasedPyrightBanner {
                             h_flex()
                                 .gap_0p5()
                                 .child(
-                                    Button::new("learn-more", "Learn More")
+                                    Button::new("learn-more", t("learn-more"))
                                         .icon(IconName::ArrowUpRight)
                                         .label_size(LabelSize::Small)
                                         .icon_size(IconSize::XSmall)

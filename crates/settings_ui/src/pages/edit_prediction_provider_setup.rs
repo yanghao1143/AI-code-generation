@@ -7,7 +7,7 @@ use edit_prediction::{
 };
 use feature_flags::FeatureFlagAppExt as _;
 use gpui::{Entity, ScrollHandle, prelude::*};
-use i18n::t;
+use i18n::{t, t_args};
 use language_models::provider::mistral::{CODESTRAL_API_URL, codestral_api_key};
 use project::Project;
 use ui::{ButtonLink, ConfiguredApiCard, prelude::*};
@@ -143,7 +143,7 @@ fn render_api_key_provider(
     let header = SettingsSectionHeader::new(title)
         .icon(icon)
         .no_padding(true);
-    let button_link_label = format!("{} dashboard", title);
+    let button_link_label = t_args("provider-dashboard", &std::collections::HashMap::from_iter([("title", title)]));
     let description = h_flex()
         .min_w_0()
         .gap_0p5()

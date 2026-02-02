@@ -179,7 +179,7 @@ impl Render for AgentNotification {
                                 })
                             }),
                     )
-                    .child(Button::new("dismiss", "Dismiss").full_width().on_click({
+                    .child(Button::new("dismiss", t("dismiss")).full_width().on_click({
                         cx.listener(move |_, _event, _, cx| {
                             cx.emit(AgentNotificationEvent::Dismissed);
                         })

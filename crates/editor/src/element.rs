@@ -52,6 +52,7 @@ use gpui::{
     linear_gradient, outline, pattern_slash, point, px, quad, relative, rgba, size,
     solid_background, transparent_black,
 };
+use i18n::t;
 use itertools::Itertools;
 use language::{IndentGuideSettings, language_settings::ShowWhitespaceSetting};
 use markdown::Markdown;
@@ -4299,7 +4300,7 @@ impl EditorElement {
                                                 )
                                                 .tooltip(move |_, cx| {
                                                     Tooltip::with_meta(
-                                                        "Open File",
+                                                        t("editor-open-file"),
                                                         None,
                                                         full_path.clone(),
                                                         cx,
@@ -4354,7 +4355,7 @@ impl EditorElement {
                                 can_open_excerpts && is_selected && relative_path.is_some(),
                                 |el| {
                                     el.child(
-                                        Button::new("open-file-button", "Open File")
+                                        Button::new("open-file-button", t("editor-open-file"))
                                             .style(ButtonStyle::OutlinedGhost)
                                             .key_binding(KeyBinding::for_action_in(
                                                 &OpenExcerpts,
@@ -8247,7 +8248,7 @@ pub fn render_breadcrumb_text(
                                     h_flex()
                                         .gap_1()
                                         .justify_between()
-                                        .child(Label::new("Show Symbol Outline"))
+                                        .child(Label::new(t("editor-show-symbol-outline")))
                                         .child(ui::KeyBinding::for_action_in(
                                             &zed_actions::outline::ToggleOutline,
                                             &focus_handle,
@@ -8262,7 +8263,7 @@ pub fn render_breadcrumb_text(
                                             .pt_1()
                                             .border_t_1()
                                             .border_color(cx.theme().colors().border_variant)
-                                            .child(Label::new("Right-Click to Copy Path")),
+                                            .child(Label::new(t("editor-right-click-to-copy-path"))),
                                     )
                                 })
                                 .into_any_element()

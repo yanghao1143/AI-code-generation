@@ -95,7 +95,7 @@ static TRANSFORM_ARRAY: LazyLock<HashMap<(&str, &str), &str>> = LazyLock::new(||
         ),
         // vim push
         (("vim::PushOperator", "Change"), "vim::PushChange"),
-        (("vim::PushOperator", "Delete"), "vim::PushDelete"),
+        (("vim::PushOperator", t("delete")), "vim::PushDelete"),
         (("vim::PushOperator", "Yank"), "vim::PushYank"),
         (("vim::PushOperator", "Replace"), "vim::PushReplace"),
         (

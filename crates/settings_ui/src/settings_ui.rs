@@ -3030,6 +3030,7 @@ impl SettingsWindow {
                             IconButton::new("back-btn", IconName::ArrowLeft)
                                 .icon_size(IconSize::Small)
                                 .shape(IconButtonShape::Square)
+                                .tooltip(Tooltip::text(t("profile-go-back")))
                                 .on_click(cx.listener(|this, _, window, cx| {
                                     this.pop_sub_page(window, cx);
                                 })),

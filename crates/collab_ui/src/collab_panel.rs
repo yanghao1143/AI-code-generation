@@ -2445,7 +2445,7 @@ impl CollabPanel {
                         this.pr_2p5().child(
                             IconButton::new("clear_filter", IconName::Close)
                                 .shape(IconButtonShape::Square)
-                                .tooltip(Tooltip::text("Clear Filter"))
+                                .tooltip(Tooltip::text(t("clear-filter")))
                                 .on_click(cx.listener(|this, _, window, cx| {
                                     this.reset_filter_editor_text(window, cx);
                                     cx.notify();
@@ -2606,7 +2606,7 @@ impl CollabPanel {
                     .justify_between()
                     .child(render_participant_name_and_handle(&contact.user))
                     .when(calling, |el| {
-                        el.child(Label::new("Calling").color(Color::Muted))
+                        el.child(Label::new(t("collab-calling")).color(Color::Muted))
                     })
                     .when(!calling, |el| {
                         el.child(
@@ -2956,7 +2956,7 @@ impl CollabPanel {
                                 .on_click(cx.listener(move |this, _, window, cx| {
                                     this.open_channel_notes(channel_id, window, cx)
                                 }))
-                                .tooltip(Tooltip::text("Open channel notes")),
+                                .tooltip(Tooltip::text(t("collab-open-channel-notes"))),
                         )
                         .visible_on_hover(""),
                 ),

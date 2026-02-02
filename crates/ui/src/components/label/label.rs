@@ -19,7 +19,7 @@ use gpui::StyleRefinement;
 /// ```
 /// use ui::prelude::*;
 ///
-/// let my_label = Label::new("Delete").color(Color::Error);
+/// let my_label = Label::new(t("delete")).color(Color::Error);
 /// ```
 ///
 /// **A label with a strikethrough**, for example labeling something that has been deleted:

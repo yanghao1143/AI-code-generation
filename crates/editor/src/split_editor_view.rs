@@ -1,5 +1,6 @@
 use std::{cmp, collections::HashMap, path, path::Path};
 
+use i18n::t;
 use collections::HashSet;
 use file_icons::FileIcons;
 use git::status::FileStatus;
@@ -850,7 +851,7 @@ impl SplitBufferHeadersElement {
                                 can_open_excerpts && is_selected && relative_path.is_some(),
                                 |el| {
                                     el.child(
-                                        Button::new("open-file-button", "Open File")
+                                        Button::new("open-file-button", t("editor-open-file"))
                                             .style(ButtonStyle::OutlinedGhost)
                                             .key_binding(KeyBinding::for_action_in(
                                                 &OpenExcerpts,

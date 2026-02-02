@@ -1944,7 +1944,7 @@ impl RemoteServerProjects {
                                         .size(LabelSize::Small),
                                     )
                                     .child(
-                                        Button::new("learn-more", "Learn More")
+                                        Button::new("learn-more", t("learn-more"))
                                             .label_size(LabelSize::Small)
                                             .icon(IconName::ArrowUpRight)
                                             .icon_size(IconSize::XSmall)

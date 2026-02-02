@@ -26,6 +26,7 @@ use alacritty_terminal::{
     },
 };
 use anyhow::{Context as _, Result, bail};
+use i18n::{t, t_args};
 use log::trace;
 
 use futures::{
@@ -2153,8 +2154,8 @@ impl Terminal {
                             };
                             format!("{process_file} — {process_name}")
                         })
-                        .unwrap_or_else(|| "Terminal".to_string()),
-                    TerminalType::DisplayOnly => "Terminal".to_string(),
+                        .unwrap_or_else(|| t("terminal-title")),
+                    TerminalType::DisplayOnly => t("terminal-title"),
                 }),
         }
     }
@@ -2323,26 +2324,35 @@ fn task_summary(task: &TaskState, exit_status: Option<ExitStatus>) -> (bool, Str
             let signal: Option<i32> = None;
 
             match (code, signal) {
-                (Some(0), _) => (true, task_label("finished successfully")),
+                (Some(0), _) => (true, task_label(&t("terminal-task-finished-successfully"))),
                 (Some(code), _) => (
                     false,
-                    task_label(&format!("finished with exit code: {code}")),
+                    task_label(&t_args(
+                        "terminal-task-finished-with-exit-code",
+                        &std::collections::HashMap::from_iter([("code", code.to_string())]),
+                    )),
                 ),
                 (None, Some(signal)) => (
                     false,
-                    task_label(&format!("terminated by signal: {signal}")),
+                    task_label(&t_args(
+                        "terminal-task-terminated-by-signal",
+                        &std::collections::HashMap::from_iter([("signal", signal.to_string())]),
+                    )),
                 ),
-                (None, None) => (false, task_label("finished")),
+                (None, None) => (false, task_label(&t("terminal-task-finished"))),
             }
         }
-        None => (false, task_label("finished")),
+        None => (false, task_label(&t("terminal-task-finished"))),
     };
     let escaped_command_label = task
         .spawned_task
         .command_label
         .replace("\r\n", "\r")
         .replace('\n', "\r");
-    let command_line = format!("{TASK_DELIMITER}Command: {escaped_command_label}");
+    let command_line = format!(
+        "{TASK_DELIMITER}{}: {escaped_command_label}",
+        t("terminal-command-label")
+    );
     (success, task_line, command_line)
 }
 

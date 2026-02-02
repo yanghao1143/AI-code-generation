@@ -8,6 +8,7 @@ use gpui::{
     App, Entity, EventEmitter, Focusable, Hsla, InteractiveElement, RetainAllImageCache,
     StatefulInteractiveElement, Task, TextStyleRefinement, image_cache, prelude::*,
 };
+use i18n::t;
 use language::{Buffer, Language, LanguageRegistry};
 use markdown_preview::{markdown_parser::parse_markdown, markdown_renderer::render_markdown_block};
 use nbformat::v4::{CellId, CellMetadata, CellType};
@@ -603,7 +604,7 @@ impl Render for MarkdownCell {
                                 .p_3()
                                 .italic()
                                 .text_color(cx.theme().colors().text_muted)
-                                .child("Click to edit markdown...")
+                                .child(t("repl-click-to-edit-markdown"))
                                 .cursor_pointer()
                                 .on_click(cx.listener(move |this, _event, window, cx| {
                                     this.editing = true;
@@ -1201,7 +1202,7 @@ impl Render for CodeCell {
                                                                 .text_color(
                                                                     cx.theme().colors().text_muted,
                                                                 )
-                                                                .child("Running..."),
+                                                                .child(t("repl-running")),
                                                         )
                                                         .into_any_element()
                                                 } else if let Some(duration_text) =

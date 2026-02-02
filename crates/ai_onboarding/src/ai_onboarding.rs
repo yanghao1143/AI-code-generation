@@ -96,7 +96,7 @@ impl ZedAiOnboarding {
                 .child(
                     IconButton::new("dismiss_onboarding", IconName::Close)
                         .icon_size(IconSize::Small)
-                        .tooltip(Tooltip::text("Dismiss"))
+                        .tooltip(Tooltip::text(t("dismiss")))
                         .on_click(move |_, window, cx| {
                             telemetry::event!("Banner Dismissed", source = "AI Onboarding",);
                             callback(window, cx)
