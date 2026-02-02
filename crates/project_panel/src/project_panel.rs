@@ -871,16 +871,17 @@ impl ProjectPanel {
                                     true,
                                     window, cx,
                                 )
-                                .detach_and_prompt_err("Failed to open file", window, cx, move |e, _, _| {
+                                .detach_and_prompt_err(t("project-failed-to-open"), window, cx, move |e, _, _| {
                                     match e.error_code() {
                                         ErrorCode::Disconnected => if is_via_ssh {
-                                            Some("Disconnected from SSH host".to_string())
+                                            Some(t("project-disconnected-from-ssh").to_string())
                                         } else {
-                                            Some("Disconnected from remote project".to_string())
+                                            Some(t("project-disconnected-from-remote").to_string())
                                         },
                                         ErrorCode::UnsharedItem => Some(format!(
-                                            "{} is not shared by the host. This could be because it has been marked as `private`",
-                                            file_path.display(path_style)
+                                            "{} {}",
+                                            file_path.display(path_style),
+                                            t("project-is-not-shared")
                                         )),
                                         // See note in worktree.rs where this error originates. Returning Some in this case prevents
                                         // the error popup from saying "Try Again", which is a red herring in this case
@@ -1638,7 +1639,7 @@ impl ProjectPanel {
         if !filename.is_empty() {
             if filename.is_empty() {
                 edit_state.validation_state =
-                    ValidationState::Error("File or directory name cannot be empty.".to_string());
+                    ValidationState::Error(t("project-filename-cannot-be-empty").to_string());
                 cx.notify();
                 return;
             }
@@ -1646,7 +1647,7 @@ impl ProjectPanel {
             let trimmed_filename = filename.trim();
             if trimmed_filename != filename {
                 edit_state.validation_state = ValidationState::Warning(
-                    "File or directory name contains leading or trailing whitespace.".to_string(),
+                    t("project-filename-whitespace-warning").to_string(),
                 );
                 cx.notify();
                 return;
@@ -1655,7 +1656,7 @@ impl ProjectPanel {
 
             let Ok(filename) = RelPath::unix(trimmed_filename) else {
                 edit_state.validation_state = ValidationState::Warning(
-                    "File or directory name contains leading or trailing whitespace.".to_string(),
+                    t("project-filename-whitespace-warning").to_string(),
                 );
                 cx.notify();
                 return;
@@ -1687,8 +1688,10 @@ impl ProjectPanel {
                 };
                 if already_exists {
                     edit_state.validation_state = ValidationState::Error(format!(
-                        "File or directory '{}' already exists at location. Please choose a different name.",
-                        filename.as_unix_str()
+                        "{} '{}' {}",
+                        t("project-file-or-directory"),
+                        filename.as_unix_str(),
+                        t("project-already-exists")
                     ));
                     cx.notify();
                     return;
@@ -1828,12 +1831,11 @@ impl ProjectPanel {
                                     cx.emit(project::Event::Toast {
                                         notification_id: "excluded-directory".into(),
                                         message: format!(
-                                            concat!(
-                                                "Created an excluded directory at {:?}.\n",
-                                                "Alter `file_scan_exclusions` in the settings ",
-                                                "to show it in the panel"
-                                            ),
-                                            abs_path
+                                            "{} {:?}.\n{} {}",
+                                            t("project-created-excluded-directory"),
+                                            abs_path,
+                                            t("project-alter-file-scan-exclusions"),
+                                            t("project-to-show-it-in-panel")
                                         ),
                                     })
                                 });
@@ -2117,8 +2119,8 @@ impl ProjectPanel {
             let file_name = entry.path.file_name()?.to_string();
 
             let answer = if !action.skip_prompt {
-                let prompt = format!("Discard changes to {}?", file_name);
-                Some(window.prompt(PromptLevel::Info, &prompt, None, &["Restore", "Cancel"], cx))
+                let prompt = format!("{} {}?", t("project-discard-changes-to"), file_name);
+                Some(window.prompt(PromptLevel::Info, &prompt, None, &[t("project-restore"), t("cancel")], cx))
             } else {
                 None
             };
@@ -2139,7 +2141,7 @@ impl ProjectPanel {
                 if let Err(e) = task.await {
                     panel
                         .update(cx, |panel, cx| {
-                            let message = format!("Failed to restore {}: {}", file_name, e);
+                            let message = format!("{} {}: {}", t("project-failed-to-restore"), file_name, e);
                             let toast = StatusToast::new(message, cx, |this, _| {
                                 this.icon(ToastIcon::new(IconName::XCircle).color(Color::Error))
                                     .dismiss_button(true)
@@ -2211,13 +2213,14 @@ impl ProjectPanel {
                 return None;
             }
             let answer = if !skip_prompt {
-                let operation = if trash { "Trash" } else { "Delete" };
+                let operation = if trash { t("project-trash") } else { t("project-delete") };
+                let cancel = t("cancel");
                 let prompt = match file_paths.first() {
                     Some((_, path)) if file_paths.len() == 1 => {
                         let unsaved_warning = if dirty_buffers > 0 {
-                            "\n\nIt has unsaved changes, which will be lost."
+                            format!("\n\n{}", t("project-unsaved-changes-lost"))
                         } else {
-                            ""
+                            "".to_string()
                         };
 
                         format!("{operation} {path}?{unsaved_warning}")
@@ -2233,9 +2236,9 @@ impl ProjectPanel {
                                 .collect::<Vec<_>>();
                             paths.truncate(CUTOFF_POINT);
                             if truncated_path_counts == 1 {
-                                paths.push(".. 1 file not shown".into());
+                                paths.push(format!(".. {}", t("project-one-file-not-shown")));
                             } else {
-                                paths.push(format!(".. {} files not shown", truncated_path_counts));
+                                paths.push(format!(".. {} {}", truncated_path_counts, t("project-files-not-shown")));
                             }
                             paths
                         } else {
@@ -2244,22 +2247,23 @@ impl ProjectPanel {
                         let unsaved_warning = if dirty_buffers == 0 {
                             String::new()
                         } else if dirty_buffers == 1 {
-                            "\n\n1 of these has unsaved changes, which will be lost.".to_string()
+                            format!("\n\n{}", t("project-one-unsaved-changes-lost"))
                         } else {
                             format!(
-                                "\n\n{dirty_buffers} of these have unsaved changes, which will be lost."
+                                "\n\n{} {}", dirty_buffers, t("project-many-unsaved-changes-lost")
                             )
                         };
 
                         format!(
-                            "Do you want to {} the following {} files?\n{}{unsaved_warning}",
+                            "{} {} {}?\n{}{unsaved_warning}",
+                            t("project-do-you-want-to"),
                             operation.to_lowercase(),
                             file_paths.len(),
                             names.join("\n")
                         )
                     }
                 };
-                Some(window.prompt(PromptLevel::Info, &prompt, None, &[operation, "Cancel"], cx))
+                Some(window.prompt(PromptLevel::Info, &prompt, None, &[&operation, &cancel], cx))
             } else {
                 None
             };
@@ -3881,12 +3885,12 @@ impl ProjectPanel {
             async move {
                 for (filename, original_path) in &paths_to_replace {
                     let prompt_message = format!(
-                        concat!(
-                            "A file or folder with name {} ",
-                            "already exists in the destination folder. ",
-                            "Do you want to replace it?"
-                        ),
-                        filename
+                        "{} {} {} {} {}",
+                        t("project-file-or-folder"),
+                        filename,
+                        t("project-already-exists-in-destination"),
+                        t("project-do-you-want-to-replace-it"),
+                        t("project-replace")
                     );
                     let answer = cx
                         .update(|window, cx| {
@@ -3894,7 +3898,7 @@ impl ProjectPanel {
                                 PromptLevel::Info,
                                 &prompt_message,
                                 None,
-                                &["Replace", "Cancel"],
+                                &[t("project-replace").as_str(), t("cancel").as_str()],
                                 cx,
                             )
                         })?
@@ -5198,7 +5202,7 @@ impl ProjectPanel {
                                 .id("symlink_icon")
                                 .pr_3()
                                 .tooltip(move |_window, cx| {
-                                    Tooltip::with_meta(path.to_string(), None, "Symbolic Link", cx)
+                                    Tooltip::with_meta(path.to_string(), None, t("project-symbolic-link"), cx)
                                 })
                                 .child(
                                     Icon::new(IconName::ArrowUpRight)
@@ -6535,7 +6539,7 @@ impl Render for DraggedProjectEntryView {
                     .bg(cx.theme().colors().background)
                     .map(|this| {
                         if self.selections.len() > 1 && self.selections.contains(&self.selection) {
-                            this.child(Label::new(format!("{} entries", self.selections.len())))
+                            this.child(Label::new(format!("{} {}", self.selections.len(), t("entries"))))
                         } else {
                             this.child(if let Some(icon) = &self.icon {
                                 div().child(Icon::from_path(icon.clone()))
@@ -6595,7 +6599,7 @@ impl Panel for ProjectPanel {
     }
 
     fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<&'static str> {
-        Some("Project Panel")
+        Some(t("panel-project"))
     }
 
     fn toggle_action(&self) -> Box<dyn Action> {

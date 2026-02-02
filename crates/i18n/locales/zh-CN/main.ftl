@@ -1387,6 +1387,17 @@ title-bar-user-muted = { $user } 已静音
 title-bar-stop-screen-share = 停止共享屏幕
 title-bar-share-screen = 共享屏幕
 title-bar-unknown-screen = 未知屏幕
+title-bar-dev-container = 开发容器
+title-bar-mock-remote = 模拟远程项目
+title-bar-connecting-to = 正在连接: { $host }
+title-bar-connected-to = 已连接: { $host }
+title-bar-heartbeat-missed = 连接到 { $host } 的尝试失败，正在重试...
+title-bar-reconnecting-to = 与 { $host } 的连接已断开，正在重新连接...
+title-bar-disconnected-from = 已与 { $host } 断开连接
+title-bar-user-sharing-project = { $user } 正在共享此项目。点击以跟随。
+title-bar-introducing = 介绍：
+title-bar-reuses-window = { $key } 复用此窗口
+title-bar-opens-new-window = { $key } 新开窗口
 
 # 安全模态框
 security-unrecognized-project = 未识别的项目
@@ -1499,3 +1510,34 @@ dock-position-right = 右侧栏
 # Events
 panel-button-clicked = 面板按钮点击
 ssh-project-opened = SSH 项目已打开
+
+# Project Panel
+panel-project = 项目面板
+project-symbolic-link = 符号链接
+project-dragged-entries = { $count } 个条目
+project-file-or-folder = 文件或文件夹
+project-already-exists-in-destination = 在目标文件夹中已存在。
+project-do-you-want-to-replace-it = 您想要替换它吗？
+project-replace = 替换
+project-filename-cannot-be-empty = 文件或目录名称不能为空。
+project-filename-whitespace-warning = 文件或目录名称包含前导或尾随空格。
+project-file-or-directory = 文件或目录
+project-already-exists = 已经在该位置存在。请选择不同的名称。
+project-discard-changes-to = 放弃对
+project-restore = 恢复
+project-failed-to-restore = 恢复失败
+project-trash = 移至回收站
+project-delete = 删除
+project-unsaved-changes-lost = 它有未保存的更改，将会丢失。
+project-one-file-not-shown = 1 个文件未显示
+project-files-not-shown = 个文件未显示
+project-one-unsaved-changes-lost = 其中 1 个有未保存的更改，将会丢失。
+project-many-unsaved-changes-lost = 个有未保存的更改，将会丢失。
+project-do-you-want-to = 您想要
+project-created-excluded-directory = 在
+project-alter-file-scan-exclusions = 修改设置中的 `file_scan_exclusions`
+project-to-show-it-in-panel = 以在面板中显示它
+project-disconnected-from-ssh = 已从 SSH 主机断开连接
+project-disconnected-from-remote = 已从远程项目断开连接
+project-is-not-shared = 未由主机共享。这可能是因为它被标记为 `private`
+project-failed-to-open = 打开文件失败
