@@ -2537,3 +2537,14 @@ syntax-tree-try-assigning-language = 尝试指定语言或切换到其他缓冲�
 syntax-tree-not-attached = 未附加到编辑器
 syntax-tree-focus-editor = 聚焦编辑器以显示新的语法树视图
 syntax-tree-update-view = 更新视图到 '{ $name }'
+
+# Language Tools - Key Context View / 语言工具 - 键盘上下文视图
+key-context-last-keystroke = 上次按键
+key-context-waiting-input = 等待更多输入: { $keys }
+key-context-typed = 已输入: { $keys }
+key-context-match = (匹配)
+key-context-low-precedence = (低优先级)
+key-context-no-match = (不匹配)
+key-context-key-equivalents = 按键等效
+key-context-key-equivalents-description = 使用某些字符定义的快捷键已被重新映射，以便无需按住 option 键即可输入快捷键。
+key-context-key-mapping = cmd-{ $key } => cmd-{ $equivalent }

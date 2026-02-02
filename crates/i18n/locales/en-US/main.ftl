@@ -2526,3 +2526,14 @@ syntax-tree-try-assigning-language = Try assigning a language or switching to a 
 syntax-tree-not-attached = Not attached to an editor
 syntax-tree-focus-editor = Focus an editor to show a new tree view
 syntax-tree-update-view = Update view to '{ $name }'
+
+# Language Tools - Key Context View
+key-context-last-keystroke = Last Keystroke
+key-context-waiting-input = Waiting for more input: { $keys }
+key-context-typed = Typed: { $keys }
+key-context-match = (match)
+key-context-low-precedence = (low precedence)
+key-context-no-match = (no match)
+key-context-key-equivalents = Key Equivalents
+key-context-key-equivalents-description = Shortcuts defined using some characters have been remapped so that shortcuts can be typed without holding option.
+key-context-key-mapping = cmd-{ $key } => cmd-{ $equivalent }

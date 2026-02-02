@@ -3,7 +3,7 @@ use gpui::{
     KeyBindingContextPredicate, KeyContext, Keystroke, MouseButton, Render, Subscription, Task,
     actions,
 };
-use i18n::t;
+use i18n::{t, t_args};
 use itertools::Itertools;
 use serde_json::json;
 use ui::{Button, ButtonStyle};
@@ -147,7 +147,7 @@ impl Item for KeyContextView {
     fn to_item_events(_: &Self::Event, _: impl FnMut(workspace::item::ItemEvent)) {}
 
     fn tab_content_text(&self, _detail: usize, _cx: &App) -> SharedString {
-        "Keyboard Context".into()
+        t("keyboard-context").into()
     }
 
     fn telemetry_event_text(&self) -> Option<&'static str> {
@@ -253,26 +253,25 @@ impl Render for KeyContextView {
                     Label::new(format!("{} {}", primary, secondary)).ml(px(12. * (i + 1) as f32))
                 })
             })
-            .child(Label::new("Last Keystroke").mt_4().size(LabelSize::Large))
+            .child(Label::new(t("key-context-last-keystroke")).mt_4().size(LabelSize::Large))
             .when_some(self.pending_keystrokes.as_ref(), |el, keystrokes| {
                 el.child(
-                    Label::new(format!(
-                        "Waiting for more input: {}",
-                        keystrokes.iter().map(|k| k.unparse()).join(" ")
-                    ))
+                    Label::new(t_args("key-context-waiting-input", &[
+                        ("keys", keystrokes.iter().map(|k| k.unparse()).join(" ").into())
+                    ]))
                     .ml(px(12.)),
                 )
             })
             .when_some(self.last_keystrokes.as_ref(), |el, keystrokes| {
-                el.child(Label::new(format!("Typed: {}", keystrokes)).ml_4())
+                el.child(Label::new(t_args("key-context-typed", &[("keys", keystrokes.clone().into())])).ml_4())
                     .children(
                         self.last_possibilities
                             .iter()
                             .map(|(name, predicate, state)| {
                                 let (text, color) = match state {
-                                    Some(true) => ("(match)", ui::Color::Success),
-                                    Some(false) => ("(low precedence)", ui::Color::Hint),
-                                    None => ("(no match)", ui::Color::Error),
+                                    Some(true) => (t("key-context-match"), ui::Color::Success),
+                                    Some(false) => (t("key-context-low-precedence"), ui::Color::Hint),
+                                    None => (t("key-context-no-match"), ui::Color::Error),
                                 };
                                 h_flex()
                                     .gap_2()
@@ -284,14 +283,17 @@ impl Render for KeyContextView {
                     )
             })
             .when_some(key_equivalents, |el, key_equivalents| {
-                el.child(Label::new("Key Equivalents").mt_4().size(LabelSize::Large))
-                    .child(Label::new("Shortcuts defined using some characters have been remapped so that shortcuts can be typed without holding option."))
+                el.child(Label::new(t("key-context-key-equivalents")).mt_4().size(LabelSize::Large))
+                    .child(Label::new(t("key-context-key-equivalents-description")))
                     .children(
                         key_equivalents
                             .iter()
                             .sorted()
                             .map(|(key, equivalent)| {
-                                Label::new(format!("cmd-{} => cmd-{}", key, equivalent)).ml_8()
+                                Label::new(t_args("key-context-key-mapping", &[
+                                    ("key", (*key).into()),
+                                    ("equivalent", (*equivalent).into())
+                                ])).ml_8()
                             }),
                     )
             })
