@@ -204,7 +204,6 @@ use ui::{
     IconName, IconSize, Indicator, Key, Tooltip, h_flex, prelude::*, scrollbars::ScrollbarAutoHide,
 };
 use ui_input::ErasedEditor;
-use i18n::t;
 use util::{RangeExt, ResultExt, TryFutureExt, maybe, post_inc};
 use workspace::{
     CollaboratorId, Item as WorkspaceItem, ItemId, ItemNavHistory, NavigationEntry, OpenInTerminal,
@@ -10124,7 +10123,7 @@ impl Editor {
                         .gap_2()
                         .flex_1()
                         .child(Icon::new(IconName::ZedPredict))
-                        .child(Label::new(i18n::t_args("editor-jump-to", &[("file_name", file_name.into())]))),
+                        .child(Label::new(i18n::t_args("editor-jump-to", &std::collections::HashMap::from_iter([("file_name", file_name.as_ref())])))),
                 )
             }
             EditPrediction::Edit {
