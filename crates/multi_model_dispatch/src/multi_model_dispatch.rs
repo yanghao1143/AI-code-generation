@@ -3,6 +3,7 @@ use gpui::{
     IntoElement, ParentElement, Pixels, Render, Styled, WeakEntity, Window, actions,
     div, Task, AsyncApp
 };
+use i18n::t;
 use ui::prelude::*;
 use ui::{Divider, DividerColor};
 use workspace::{
@@ -141,7 +142,7 @@ impl MultiModelDispatchPanel {
             .p_2()
             .border_b_1()
             .border_color(cx.theme().colors().border)
-            .child(Label::new("Intelligent Dispatch").weight(gpui::FontWeight::BOLD))
+            .child(Label::new(t("intelligent-dispatch")).weight(gpui::FontWeight::BOLD))
             .child(
                 IconButton::new("settings", IconName::Settings)
                     .style(ButtonStyle::Subtle)
@@ -160,7 +161,7 @@ impl MultiModelDispatchPanel {
                 h_flex()
                     .justify_end()
                     .child(
-                        Button::new("dispatch-btn", "Dispatch")
+                        Button::new("dispatch-btn", t("multi-model-dispatch"))
                             .style(ButtonStyle::Filled)
                             .on_click(cx.listener(|this, _, _, cx| {
                                 this.start_dispatch(cx);

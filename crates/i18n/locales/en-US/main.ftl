@@ -1869,3 +1869,37 @@ slash-command-run-prompt-from-server = Run '{ $prompt }' from { $server }
 slash-command-result-from-prompt = Result from { $prompt }
 slash-command-streaming-example-description = An example slash command that showcases streaming.
 slash-command-section-number = Section { $n }
+
+# ============================================
+# ACP Tools
+# ============================================
+acp-copy-all-messages = Copy All Messages
+acp-clear-messages = Clear Messages
+
+# ============================================
+# Git Graph
+# ============================================
+git-graph-changed-files = { $count } Changed Files
+git-graph-graph = Graph
+git-graph-description = Description
+git-graph-date = Date
+git-graph-author = Author
+git-graph-commit = Commit
+
+# ============================================
+# Toolchain Selector
+# ============================================
+toolchain-select-path = Select Toolchain Path
+toolchain-scope = Scope
+toolchain-select = Select
+
+# ============================================
+# Multi Model Dispatch
+# ============================================
+multi-model-dispatch = Dispatch
+
+# ============================================
+# Component Preview
+# ============================================
+component-preview-all = All Components
+component-preview-launch-toast = Launch Toast

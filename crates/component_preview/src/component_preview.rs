@@ -8,6 +8,7 @@ use gpui::{
     App, Entity, EventEmitter, FocusHandle, Focusable, Task, WeakEntity, Window, list, prelude::*,
 };
 use gpui::{ListState, ScrollHandle, ScrollStrategy, UniformListScrollHandle};
+use i18n::t;
 use language::LanguageRegistry;
 use notifications::status_toast::{StatusToast, ToastIcon};
 use persistence::COMPONENT_PREVIEW_DB;
@@ -407,7 +408,7 @@ impl ComponentPreview {
                 let selected = self.active_page == PreviewPage::AllComponents;
 
                 ListItem::new(ix)
-                    .child(Label::new("All Components"))
+                    .child(Label::new(t("component-preview-all")))
                     .selectable(true)
                     .toggle_state(selected)
                     .inset(true)
@@ -640,7 +641,7 @@ impl Render for ComponentPreview {
                             .border_t_1()
                             .border_color(cx.theme().colors().border)
                             .child(
-                                Button::new("toast-test", "Launch Toast")
+                                Button::new("toast-test", t("component-preview-launch-toast"))
                                     .full_width()
                                     .on_click(cx.listener({
                                         move |this, _, _window, cx| {

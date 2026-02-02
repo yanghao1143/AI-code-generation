@@ -11,6 +11,7 @@ use gpui::{
     PathBuilder, Pixels, Point, Render, ScrollWheelEvent, SharedString, Styled, Subscription, Task,
     WeakEntity, Window, actions, anchored, deferred, point, px,
 };
+use i18n::{t, t_args};
 use project::{
     Project,
     git_store::{CommitDataState, GitStoreEvent, Repository, RepositoryEvent},
@@ -1149,7 +1150,7 @@ impl GitGraph {
                         v_flex()
                             .gap_2()
                             .child(
-                                Label::new(format!("{} Changed Files", changed_files_count))
+                                Label::new(t_args("git-graph-changed-files", &[("count", changed_files_count.into())]))
                                     .size(LabelSize::Small)
                                     .color(Color::Muted),
                             )
@@ -1513,7 +1514,7 @@ impl Render for GitGraph {
                                 .p_2()
                                 .border_b_1()
                                 .border_color(cx.theme().colors().border)
-                                .child(Label::new("Graph").color(Color::Muted)),
+                                .child(Label::new(t("git-graph-graph")).color(Color::Muted)),
                         )
                         .child(
                             div()
@@ -1533,12 +1534,12 @@ impl Render for GitGraph {
                             .interactable(&self.table_interaction_state)
                             .hide_row_borders()
                             .header(vec![
-                                Label::new("Description")
+                                Label::new(t("git-graph-description"))
                                     .color(Color::Muted)
                                     .into_any_element(),
-                                Label::new("Date").color(Color::Muted).into_any_element(),
-                                Label::new("Author").color(Color::Muted).into_any_element(),
-                                Label::new("Commit").color(Color::Muted).into_any_element(),
+                                Label::new(t("git-graph-date")).color(Color::Muted).into_any_element(),
+                                Label::new(t("git-graph-author")).color(Color::Muted).into_any_element(),
+                                Label::new(t("git-graph-commit")).color(Color::Muted).into_any_element(),
                             ])
                             .column_widths(
                                 [

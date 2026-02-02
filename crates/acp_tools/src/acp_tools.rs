@@ -12,6 +12,7 @@ use gpui::{
     App, Empty, Entity, EventEmitter, FocusHandle, Focusable, Global, ListAlignment, ListState,
     StyleRefinement, Subscription, Task, TextStyleRefinement, Window, actions, list, prelude::*,
 };
+use i18n::t;
 use language::LanguageRegistry;
 use markdown::{CodeBlockRenderer, Markdown, MarkdownElement, MarkdownStyle};
 use project::Project;
@@ -572,13 +573,13 @@ impl Render for AcpToolsToolbarItemView {
                     .unwrap_or_default();
 
                 CopyButton::new("copy-all-messages", message)
-                    .tooltip_label("Copy All Messages")
+                    .tooltip_label(t("acp-copy-all-messages"))
                     .disabled(!has_messages)
             })
             .child(
                 IconButton::new("clear_messages", IconName::Trash)
                     .icon_size(IconSize::Small)
-                    .tooltip(Tooltip::text("Clear Messages"))
+                    .tooltip(Tooltip::text(t("acp-clear-messages")))
                     .disabled(!has_messages)
                     .on_click(cx.listener(move |_this, _, _window, cx| {
                         acp_tools.update(cx, |acp_tools, cx| {

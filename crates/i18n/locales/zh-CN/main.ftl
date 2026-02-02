@@ -2396,3 +2396,37 @@ slash-command-run-prompt-from-server = 从 { $server } 运行 '{ $prompt }'
 slash-command-result-from-prompt = { $prompt } 的结果
 slash-command-streaming-example-description = 展示流式输出的示例斜杠命令。
 slash-command-section-number = 第 { $n } 节
+
+# ============================================
+# ACP 工具
+# ============================================
+acp-copy-all-messages = 复制所有消息
+acp-clear-messages = 清除消息
+
+# ============================================
+# Git 图表
+# ============================================
+git-graph-changed-files = { $count } 个已更改文件
+git-graph-graph = 图表
+git-graph-description = 描述
+git-graph-date = 日期
+git-graph-author = 作者
+git-graph-commit = 提交
+
+# ============================================
+# 工具链选择器
+# ============================================
+toolchain-select-path = 选择工具链路径
+toolchain-scope = 作用域
+toolchain-select = 选择
+
+# ============================================
+# 多模型调度
+# ============================================
+multi-model-dispatch = 调度
+
+# ============================================
+# 组件预览
+# ============================================
+component-preview-all = 所有组件
+component-preview-launch-toast = 启动提示

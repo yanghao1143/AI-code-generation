@@ -11,6 +11,7 @@ use gpui::{
     Focusable, Modifiers, ModifiersChangedEvent, MouseButton, MouseUpEvent, ParentElement, Point,
     Render, Styled, Task, WeakEntity, Window, actions, rems,
 };
+use i18n::t;
 use picker::{Picker, PickerDelegate};
 use project::Project;
 use schemars::JsonSchema;
@@ -732,7 +733,7 @@ impl PickerDelegate for TabSwitcherDelegate {
                 IconButton::new("close_tab", IconName::Close)
                     .icon_size(IconSize::Small)
                     .icon_color(indicator_color)
-                    .tooltip(Tooltip::for_action_title("Close", &CloseSelectedItem))
+                    .tooltip(Tooltip::for_action_title(t("close"), &CloseSelectedItem))
                     .on_click(cx.listener(move |picker, _, window, cx| {
                         cx.stop_propagation();
                         picker.delegate.close_item_at(ix, window, cx);
