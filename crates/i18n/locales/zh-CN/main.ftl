@@ -2446,3 +2446,64 @@ file-finder-include-ignored = 包含已忽略的文件
 
 # Go to Line / 跳转到行
 go-to-line-current = 第 { $line } 行，共 { $total } 行，第 { $col } 列
+
+# ============================================
+# ACP Thread / ACP 线程
+# ============================================
+acp-copy-all-messages = 复制所有消息
+acp-clear-messages = 清除消息
+acp-terminal-not-found = 未找到终端: { $id }
+acp-failed-to-install = 安装失败: { $msg }
+acp-tool-call-completed = Agent 工具调用完成
+acp-loading-sessions-not-supported = Agent 不支持加载会话
+acp-resuming-sessions-not-supported = Agent 不支持恢复会话
+acp-auth-required = 需要授权才能执行此操作
+acp-failed-get-old-checkpoint = 获取旧检查点失败
+acp-failed-get-new-checkpoint = 获取新检查点失败
+acp-retry-session-not-supported = 不支持重试会话
+acp-invalid-path = 无效路径
+acp-parse-line-range-start = 解析行范围起始位置
+acp-parse-line-range-end = 解析行范围结束位置
+acp-line-numbers-should-be-1-based = 行号应从1开始
+acp-missing-thread-name = 缺少线程名称
+acp-missing-rule-name = 缺少规则名称
+acp-missing-fragment-untitled-buffer-selection = 缺少未命名缓冲区选择的片段
+acp-missing-path-for-symbol = 缺少符号路径
+acp-missing-path-for-file = 缺少文件路径
+acp-missing-path-for-directory = 缺少目录路径
+acp-missing-fragment-for-selection = 缺少选择的片段
+acp-missing-path-for-selection = 缺少选择的路径
+acp-invalid-query-parameter = 无效的查询参数
+acp-invalid-zed-url = 无效的 Zed URL: { $input }
+acp-unrecognized-scheme = 无法识别的协议: { $scheme }
+acp-too-many-query-pairs = 查询参数过多
+acp-server-exited = 服务器退出，状态码: { $status }
+acp-duplicate-subagent-update = 重复的子代理线程更新
+acp-use-either-send-update = 只能使用 send_update 或 set_next_prompt_updates，不能同时使用
+acp-read-beyond-file-end = 尝试读取超出文件末尾的内容，行 { $line }:{ $col }
+acp-version-not-supported = { $command } 版本 { $current_version } 不受支持，请更新至 { $minimum_version } 或更高版本
+acp-user = 用户
+acp-assistant = 助手
+acp-user-checkpoint = 用户 (检查点)
+acp-tool-call = 工具调用
+acp-message-not-found = 消息未找到
+acp-not-supported = 不支持
+acp-delete-session-not-supported = Agent 不支持删除会话
+acp-delete-sessions-not-supported = Agent 不支持删除会话
+acp-invalid-auth-method = 无效的认证方法
+
+# Tool Status / 工具状态
+tool-status-pending = 等待中
+tool-status-waiting = 等待确认
+tool-status-in-progress = 进行中
+tool-status-completed = 已完成
+tool-status-failed = 失败
+tool-status-rejected = 已拒绝
+tool-status-canceled = 已取消
+tool-call-not-found = 未找到工具调用
+
+# Common / 通用
+image = 图片
+diagnostics = 诊断
+untitled = 未命名
+diff = 差异
