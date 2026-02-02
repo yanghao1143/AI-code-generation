@@ -2251,7 +2251,7 @@ impl AcpThread {
 
             if start_position > max_point {
                 return Err(acp::Error::invalid_params().data(format!(
-                    "Attempting to read beyond the end of the file, line {}:{}",
+                    t("acp-read-beyond-file-end"),
                     max_point.row + 1,
                     max_point.column
                 )));

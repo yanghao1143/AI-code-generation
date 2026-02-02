@@ -2255,3 +2255,4 @@ unfavorite = Unfavorite
 acp-server-exited = Server exited with status {$status}
 acp-duplicate-subagent-update = Duplicate SubagentThread update for the same AcpThread entity
 acp-use-either-send-update = Use either send_update or set_next_prompt_updates
+acp-read-beyond-file-end = Attempting to read beyond the end of the file
