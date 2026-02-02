@@ -2714,3 +2714,8 @@ edit-prediction-no-data-captured = No data captured.
 edit-prediction-configure-excluded = Configure Excluded Files
 edit-prediction-excluded-files-desc = Open your settings to add sensitive paths for which Zed will never predict edits.
 edit-prediction-view-docs = View Docs
+
+# Quick Action Bar
+quick-action-edit-prediction-excluded = Edit Predictions are excluded from this file.
+quick-action-inline-diagnostics-disabled = Inline diagnostics are not available until regular diagnostics are enabled.
+ellipsis = ��

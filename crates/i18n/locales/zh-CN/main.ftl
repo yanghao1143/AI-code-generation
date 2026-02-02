@@ -2727,3 +2727,8 @@ edit-prediction-no-data-captured = 未捕获数据。
 edit-prediction-configure-excluded = 配置排除文件
 edit-prediction-excluded-files-desc = 打开设置以添加 Zed 永远不会预测编辑的敏感路径。
 edit-prediction-view-docs = 查看文档
+
+# Quick Action Bar / 快捷操作栏
+quick-action-edit-prediction-excluded = 此文件已排除编辑预测。
+quick-action-inline-diagnostics-disabled = 在启用常规诊断之前，内联诊断不可用。
+ellipsis = ��
