@@ -2678,3 +2678,32 @@ lm-zed-agent-openrouter = Zed 的 OpenRouter 代理
 lm-create-api-key-by-visiting = 访问以下链接创建 API 密钥
 lm-openrouter-console = OpenRouter 控制台
 lm-openrouter-ensure-credits = 确保您的 OpenRouter 账户有余额
+
+# Language Models - OpenAI Compatible / 语言模型 - OpenAI 兼容
+lm-openai-compatible-api-key-intro = 要使用 Zed 的 OpenAI 兼容提供商代理，您需要添加 API 密钥。
+lm-reset-api-key = 重置 API 密钥
+
+# Language Models - Zed Cloud / 语言模型 - Zed 云服务
+lm-cloud-manage-subscription = 管理订阅
+lm-cloud-start-trial = 开始 14 天免费 Pro 试用
+lm-cloud-upgrade-to-pro = 升级到 Pro
+lm-cloud-sign-in-intro = 登录以使用 Zed 的完整代理体验和托管模型。
+lm-cloud-sign-in = 登录使用 Zed AI
+
+# Language Models - Bedrock / 语言模型 - Bedrock
+lm-bedrock-intro = 要在 Zed 中使用 Bedrock 代理，您可以通过设置文件设置自定义身份验证策略或使用静态凭证。
+lm-bedrock-aws-requirements = 但首先，要访问 AWS 上的模型，您需要：
+lm-bedrock-grant-permissions = 根据以下文档授予您将使用的策略的权限：
+lm-bedrock-prerequisites = 前提条件
+lm-bedrock-select-models = 选择您想要访问的模型：
+lm-bedrock-model-catalog = Bedrock 模型目录
+lm-bedrock-create-iam-user = 对于访问密钥：在 AWS 控制台中创建具有编程访问权限的 IAM 用户
+lm-bedrock-iam-console = IAM 控制台
+lm-bedrock-generate-api-key = 对于 Bedrock API 密钥：从以下位置生成 API 密钥
+lm-bedrock-console = Bedrock 控制台
+lm-bedrock-attach-permissions = 将必要的 Bedrock 权限附加到
+lm-bedrock-this-user = 此用户
+lm-bedrock-enter-keys = 在下方输入访问密钥或 Bedrock API 密钥（不要同时输入两者）
+lm-bedrock-static-credentials = 静态凭证
+lm-bedrock-static-credentials-desc = 此方法使用您的 AWS 访问密钥 ID 和秘密访问密钥，或 Bedrock API 密钥。
+lm-bedrock-using-api-key = 使用 API 密钥

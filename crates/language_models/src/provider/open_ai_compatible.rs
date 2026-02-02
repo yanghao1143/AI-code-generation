@@ -3,6 +3,7 @@ use convert_case::{Case, Casing};
 use futures::{FutureExt, StreamExt, future::BoxFuture};
 use gpui::{AnyView, App, AsyncApp, Context, Entity, SharedString, Task, Window};
 use http_client::HttpClient;
+use i18n::{t, t_args};
 use language_model::{
     ApiKeyState, AuthenticateError, EnvVar, IconOrSvg, LanguageModel, LanguageModelCompletionError,
     LanguageModelCompletionEvent, LanguageModelId, LanguageModelName, LanguageModelProvider,
@@ -493,16 +494,14 @@ impl Render for ConfigurationView {
         let api_key_section = if self.should_render_editor(cx) {
             v_flex()
                 .on_action(cx.listener(Self::save_api_key))
-                .child(Label::new("To use Zed's agent with an OpenAI-compatible provider, you need to add an API key."))
+                .child(Label::new(t("lm-openai-compatible-api-key-intro")))
                 .child(
                     div()
                         .pt(DynamicSpacing::Base04.rems(cx))
                         .child(self.api_key_editor.clone())
                 )
                 .child(
-                    Label::new(
-                        format!("You can also set the {env_var_name} environment variable and restart Zed."),
-                    )
+                    Label::new(t_args("lm-env-var-hint", &[("env_var", env_var_name.into())]))
                     .size(LabelSize::Small).color(Color::Muted),
                 )
                 .into_any()
@@ -528,9 +527,9 @@ impl Render for ConfigurationView {
                                 .text_ellipsis()
                                 .child(Label::new(
                                     if env_var_set {
-                                        format!("API key set in {env_var_name} environment variable")
+                                        t_args("lm-api-key-env-var", &[("env_var", env_var_name.into())]).to_string()
                                     } else {
-                                        format!("API key configured for {}", &state.settings.api_url)
+                                        t_args("lm-api-key-configured-for", &[("url", state.settings.api_url.clone().into())]).to_string()
                                     }
                                 ))
                         ),
@@ -539,14 +538,14 @@ impl Render for ConfigurationView {
                     h_flex()
                         .flex_shrink_0()
                         .child(
-                            Button::new("reset-api-key", "Reset API Key")
+                            Button::new("reset-api-key", t("lm-reset-api-key"))
                                 .label_size(LabelSize::Small)
                                 .icon(IconName::Undo)
                                 .icon_size(IconSize::Small)
                                 .icon_position(IconPosition::Start)
                                 .layer(ElevationIndex::ModalSurface)
                                 .when(env_var_set, |this| {
-                                    this.tooltip(Tooltip::text(format!("To reset your API key, unset the {env_var_name} environment variable.")))
+                                    this.tooltip(Tooltip::text(t_args("lm-reset-api-key-hint", &[("env_var", env_var_name.into())])))
                                 })
                                 .on_click(cx.listener(|this, _, window, cx| this.reset_api_key(window, cx))),
                         ),
@@ -555,7 +554,7 @@ impl Render for ConfigurationView {
         };
 
         if self.load_credentials_task.is_some() {
-            div().child(Label::new("Loading credentials…")).into_any()
+            div().child(Label::new(t("lm-loading-credentials"))).into_any()
         } else {
             v_flex().size_full().child(api_key_section).into_any()
         }

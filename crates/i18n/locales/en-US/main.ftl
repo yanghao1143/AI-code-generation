@@ -2665,3 +2665,32 @@ lm-zed-agent-openrouter = Zed's agent with OpenRouter
 lm-create-api-key-by-visiting = Create an API key by visiting
 lm-openrouter-console = OpenRouter's console
 lm-openrouter-ensure-credits = Ensure your OpenRouter account has credits
+
+# Language Models - OpenAI Compatible
+lm-openai-compatible-api-key-intro = To use Zed's agent with an OpenAI-compatible provider, you need to add an API key.
+lm-reset-api-key = Reset API Key
+
+# Language Models - Zed Cloud
+lm-cloud-manage-subscription = Manage Subscription
+lm-cloud-start-trial = Start 14-day Free Pro Trial
+lm-cloud-upgrade-to-pro = Upgrade to Pro
+lm-cloud-sign-in-intro = Sign in to have access to Zed's complete agentic experience with hosted models.
+lm-cloud-sign-in = Sign In to use Zed AI
+
+# Language Models - Bedrock
+lm-bedrock-intro = To use Zed's agent with Bedrock, you can set a custom authentication strategy through your settings file or use static credentials.
+lm-bedrock-aws-requirements = But first, to access models on AWS, you need to:
+lm-bedrock-grant-permissions = Grant permissions to the strategy you'll use according to the:
+lm-bedrock-prerequisites = Prerequisites
+lm-bedrock-select-models = Select the models you would like access to:
+lm-bedrock-model-catalog = Bedrock Model Catalog
+lm-bedrock-create-iam-user = For access keys: Create an IAM user in the AWS console with programmatic access
+lm-bedrock-iam-console = IAM Console
+lm-bedrock-generate-api-key = For Bedrock API Keys: Generate an API key from the
+lm-bedrock-console = Bedrock Console
+lm-bedrock-attach-permissions = Attach the necessary Bedrock permissions to
+lm-bedrock-this-user = this user
+lm-bedrock-enter-keys = Enter either access keys OR a Bedrock API Key below (not both)
+lm-bedrock-static-credentials = Static Credentials
+lm-bedrock-static-credentials-desc = This method uses your AWS access key ID and secret access key, or a Bedrock API Key.
+lm-bedrock-using-api-key = Using an API key

@@ -28,6 +28,7 @@ use gpui::{
 };
 use gpui_tokio::Tokio;
 use http_client::HttpClient;
+use i18n::t;
 use language_model::{
     AuthenticateError, EnvVar, IconOrSvg, LanguageModel, LanguageModelCacheConfiguration,
     LanguageModelCompletionError, LanguageModelCompletionEvent, LanguageModelId, LanguageModelName,
@@ -1315,7 +1316,7 @@ impl Render for ConfigurationView {
             .and_then(|s| s.authentication_method.clone());
 
         if self.load_credentials_task.is_some() {
-            return div().child(Label::new("Loading credentials...")).into_any();
+            return div().child(Label::new(t("lm-loading-credentials"))).into_any();
         }
 
         let configured_label = match &auth {
@@ -1385,25 +1386,23 @@ impl Render for ConfigurationView {
             .on_action(cx.listener(Self::on_tab))
             .on_action(cx.listener(Self::on_tab_prev))
             .on_action(cx.listener(ConfigurationView::save_credentials))
-            .child(Label::new("To use Zed's agent with Bedrock, you can set a custom authentication strategy through your settings file or use static credentials."))
-            .child(Label::new("But first, to access models on AWS, you need to:").mt_1())
+            .child(Label::new(t("lm-bedrock-intro")))
+            .child(Label::new(t("lm-bedrock-aws-requirements")).mt_1())
             .child(
                 List::new()
                     .child(
                         ListBulletItem::new("")
-                            .child(Label::new(
-                                "Grant permissions to the strategy you'll use according to the:",
-                            ))
+                            .child(Label::new(t("lm-bedrock-grant-permissions")))
                             .child(ButtonLink::new(
-                                "Prerequisites",
+                                t("lm-bedrock-prerequisites"),
                                 "https://docs.aws.amazon.com/bedrock/latest/userguide/inference-prereq.html",
                             )),
                     )
                     .child(
                         ListBulletItem::new("")
-                            .child(Label::new("Select the models you would like access to:"))
+                            .child(Label::new(t("lm-bedrock-select-models")))
                             .child(ButtonLink::new(
-                                "Bedrock Model Catalog",
+                                t("lm-bedrock-model-catalog"),
                                 "https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/modelaccess",
                             )),
                     ),
@@ -1425,42 +1424,36 @@ impl ConfigurationView {
         let list_item = List::new()
             .child(
                 ListBulletItem::new("")
-                    .child(Label::new(
-                        "For access keys: Create an IAM user in the AWS console with programmatic access",
-                    ))
+                    .child(Label::new(t("lm-bedrock-create-iam-user")))
                     .child(ButtonLink::new(
-                        "IAM Console",
+                        t("lm-bedrock-iam-console"),
                         "https://us-east-1.console.aws.amazon.com/iam/home?region=us-east-1#/users",
                     )),
             )
             .child(
                 ListBulletItem::new("")
-                    .child(Label::new("For Bedrock API Keys: Generate an API key from the"))
+                    .child(Label::new(t("lm-bedrock-generate-api-key")))
                     .child(ButtonLink::new(
-                        "Bedrock Console",
+                        t("lm-bedrock-console"),
                         "https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys-use.html",
                     )),
             )
             .child(
                 ListBulletItem::new("")
-                    .child(Label::new("Attach the necessary Bedrock permissions to"))
+                    .child(Label::new(t("lm-bedrock-attach-permissions")))
                     .child(ButtonLink::new(
-                        "this user",
+                        t("lm-bedrock-this-user"),
                         "https://docs.aws.amazon.com/bedrock/latest/userguide/inference-prereq.html",
                     )),
             )
-            .child(ListBulletItem::new(
-                "Enter either access keys OR a Bedrock API Key below (not both)",
-            ));
+            .child(ListBulletItem::new(t("lm-bedrock-enter-keys")));
 
         v_flex()
             .my_2()
             .tab_group()
             .gap_1p5()
-            .child(section_header("Static Credentials".into()))
-            .child(Label::new(
-                "This method uses your AWS access key ID and secret access key, or a Bedrock API Key.",
-            ))
+            .child(section_header(t("lm-bedrock-static-credentials").into()))
+            .child(Label::new(t("lm-bedrock-static-credentials-desc")))
             .child(list_item)
             .child(self.access_key_id_editor.clone())
             .child(self.secret_access_key_editor.clone())
@@ -1488,7 +1481,7 @@ impl ConfigurationView {
                 .mt_1()
                 .mb_2p5(),
             )
-            .child(section_header("Using the an API key".into()))
+            .child(section_header(t("lm-bedrock-using-api-key").into()))
             .child(self.bearer_token_editor.clone())
             .child(
                 Label::new(format!(

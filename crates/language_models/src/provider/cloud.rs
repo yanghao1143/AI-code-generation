@@ -16,6 +16,7 @@ use google_ai::GoogleModelMode;
 use gpui::{AnyElement, AnyView, App, AsyncApp, Context, Entity, Subscription, Task};
 use http_client::http::{HeaderMap, HeaderValue};
 use http_client::{AsyncBody, HttpClient, HttpRequestExt, Method, Response, StatusCode};
+use i18n::t;
 use language_model::{
     AuthenticateError, IconOrSvg, LanguageModel, LanguageModelCacheConfiguration,
     LanguageModelCompletionError, LanguageModelCompletionEvent, LanguageModelId, LanguageModelName,
@@ -1010,19 +1011,19 @@ impl RenderOnce for ZedAiConfiguration {
         };
 
         let manage_subscription_buttons = if is_pro {
-            Button::new("manage_settings", "Manage Subscription")
+            Button::new("manage_settings", t("lm-cloud-manage-subscription"))
                 .full_width()
                 .style(ButtonStyle::Tinted(TintColor::Accent))
                 .on_click(|_, _, cx| cx.open_url(&zed_urls::account_url(cx)))
                 .into_any_element()
         } else if self.plan.is_none() || self.eligible_for_trial {
-            Button::new("start_trial", "Start 14-day Free Pro Trial")
+            Button::new("start_trial", t("lm-cloud-start-trial"))
                 .full_width()
                 .style(ui::ButtonStyle::Tinted(ui::TintColor::Accent))
                 .on_click(|_, _, cx| cx.open_url(&zed_urls::start_trial_url(cx)))
                 .into_any_element()
         } else {
-            Button::new("upgrade", "Upgrade to Pro")
+            Button::new("upgrade", t("lm-cloud-upgrade-to-pro"))
                 .full_width()
                 .style(ui::ButtonStyle::Tinted(ui::TintColor::Accent))
                 .on_click(|_, _, cx| cx.open_url(&zed_urls::upgrade_to_zed_pro_url(cx)))
@@ -1032,9 +1033,9 @@ impl RenderOnce for ZedAiConfiguration {
         if !self.is_connected {
             return v_flex()
                 .gap_2()
-                .child(Label::new("Sign in to have access to Zed's complete agentic experience with hosted models."))
+                .child(Label::new(t("lm-cloud-sign-in-intro")))
                 .child(
-                    Button::new("sign_in", "Sign In to use Zed AI")
+                    Button::new("sign_in", t("lm-cloud-sign-in"))
                         .icon_color(Color::Muted)
                         .icon(IconName::Github)
                         .icon_size(IconSize::Small)
@@ -1050,7 +1051,7 @@ impl RenderOnce for ZedAiConfiguration {
         v_flex().gap_2().w_full().map(|this| {
             if self.account_too_young {
                 this.child(YoungAccountBanner).child(
-                    Button::new("upgrade", "Upgrade to Pro")
+                    Button::new("upgrade", t("lm-cloud-upgrade-to-pro"))
                         .style(ui::ButtonStyle::Tinted(ui::TintColor::Accent))
                         .full_width()
                         .on_click(|_, _, cx| cx.open_url(&zed_urls::upgrade_to_zed_pro_url(cx))),
