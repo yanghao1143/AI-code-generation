@@ -488,7 +488,7 @@ git-no-repository = No Repository
 git-toggle-staged = Toggle Staged
 git-push-changes = Push your changes to { $branch }
 git-create-branch-remote = Create { $branch } on remote
-git-generating-commit = Generating Commitâ€?
+git-generating-commit = Generating Commitï¿½?
 git-amend-warning = This will update your most recent commit.
 git-clone-description = Clone a repository from GitHub or other sources.
 git-get-started-panel = Get Started with the Git Panel
@@ -513,10 +513,10 @@ git-switch-repository = Switch Active Repository
 git-select-repo-destination = Select as Repository Destination
 git-project-diff = Project Diff
 git-uncommitted-changes = Uncommitted Changes
-git-select-worktree = Select worktreeâ€?
+git-select-worktree = Select worktreeï¿½?
 git-no-worktrees = No worktrees found
 git-select-worktree-dir = Select directory for new worktree
-git-select-stash = Select a stashâ€?
+git-select-stash = Select a stashï¿½?
 git-no-stashes = No stashes found
 git-fetch-up-to-date = Fetch: Already up to date
 git-sync-remotes = Synchronized with remotes
@@ -531,7 +531,7 @@ git-stash-apply = Apply
 git-failed-drop-stash = Failed to drop stash
 git-failed-pop-stash = Failed to pop stash
 git-failed-apply-stash = Failed to apply stash
-git-create-worktree = Create Worktree: "{ $branch }"â€?
+git-create-worktree = Create Worktree: "{ $branch }"ï¿½?
 git-based-off = based off { $branch }
 git-based-off-current = based off the current branch
 git-create-from-branch = Create from: { $branch }
@@ -903,7 +903,7 @@ agent-canceled = Canceled
 agent-send = Send
 agent-subscribe = Subscribe
 agent-error-interacting-llm = Error interacting with language model
-agent-thinking = Thinkingâ€?
+agent-thinking = Thinkingï¿½?
 agent-thought-process = Thought Process
 
 # Agent Profile Selector
@@ -949,7 +949,7 @@ agent-logs = Logs
 
 # Agent Profile Selector
 agent-tools-unsupported-desc = This model does not support tools.
-agent-search-profiles = Search profilesâ€?
+agent-search-profiles = Search profilesï¿½?
 agent-no-profiles = No profiles.
 agent-no-profiles-match = No profiles match your search.
 agent-profile-write-desc = Get help to write anything.
@@ -979,7 +979,7 @@ agent-filter-not-installed = Not Installed
 
 # Agent Thread View
 agent-restore-checkpoint-desc = Restores all files in the project to the content they had at this point in the conversation.
-agent-loading-added-context = Loading Added Contextâ€?
+agent-loading-added-context = Loading Added Contextï¿½?
 agent-editing-restart-thread = Editing will restart the thread from this point.
 agent-interrupted-edit = Interrupted Edit
 agent-go-to-file = Go to File
@@ -1080,11 +1080,11 @@ agent-reject = Reject
 agent-next-hunk = Next Hunk
 agent-previous-hunk = Previous Hunk
 agent-review-all-files = Review All Files
-agent-generating-changes = Generating Changesâ€?
+agent-generating-changes = Generating Changesï¿½?
 
 # Agent Panel
 agent-panel-title = Agent Panel
-agent-new-thread-menu = New Threadâ€?
+agent-new-thread-menu = New Threadï¿½?
 agent-new-from-summary = New From Summary
 agent-zed-agent = Zed Agent
 agent-text-thread = Text Thread
@@ -1158,8 +1158,8 @@ ai-young-account-warning = To prevent abuse of our service, GitHub accounts crea
 # Settings
 # ============================================
 settings-title = Settings
-settings-window-title = Chi Code â€?Settings
-settings-search-placeholder = Search settingsâ€?
+settings-window-title = Chi Code ï¿½?Settings
+settings-search-placeholder = Search settingsï¿½?
 settings-no-results = No Results
 settings-no-match = No settings match "{query}"
 
@@ -1943,7 +1943,7 @@ title-bar-remove-folder = Remove Folder
 title-bar-remove-recent = Remove from Recent Projects
 title-bar-open-folders = Open Folders
 title-bar-recent-projects = Recent Projects
-title-bar-view-more = View Moreâ€?
+title-bar-view-more = View Moreï¿½?
 title-bar-add-folder = Add Folder to Workspace
 title-bar-remote-project = Remote Project
 title-bar-click-to-follow = Click to Follow
@@ -1956,8 +1956,8 @@ title-bar-updating = Updating...
 title-bar-update-to-collab = Please update Chi Code to Collaborate
 title-bar-settings = Settings
 title-bar-keymap = Keymap
-title-bar-themes = Themesâ€?
-title-bar-icon-themes = Icon Themesâ€?
+title-bar-themes = Themesï¿½?
+title-bar-icon-themes = Icon Themesï¿½?
 title-bar-extensions = Extensions
 title-bar-sign-out = Sign Out
 title-bar-close-banner = Close Announcement Banner
@@ -2452,15 +2452,15 @@ plan-free = Free
 plan-pro-trial = Pro Trial
 plan-pro = Pro
 agent-select-command = Select a command...
-agent-select-model-ellipsis = Select a modelâ€?
+agent-select-model-ellipsis = Select a modelï¿½?
 agent-profile-name = Profile name
-agent-search-builtin-tools = Search built-in toolsâ€?
-agent-search-mcp-tools = Search MCP toolsâ€?
-inline-assist-add-prompt = Add a promptâ€?
+agent-search-builtin-tools = Search built-in toolsï¿½?
+agent-search-mcp-tools = Search MCP toolsï¿½?
+inline-assist-add-prompt = Add a promptï¿½?
 inline-assist-generate = Generate
 inline-assist-transform = Transform
 inline-assist-keybinding-to-chat = { $keybinding } to chat
-inline-assist-placeholder = { $action }â€?({ $keybinding_hint } â€?â†“â†‘ for history â€?@ to include context)
+inline-assist-placeholder = { $action }ï¿½?({ $keybinding_hint } ï¿½?â†“â†‘ for history ï¿½?@ to include context)
 
 
 agent-starting-task = Starting task: { $task }
@@ -2496,3 +2496,9 @@ file-finder-include-ignored = Include Ignored Files
 
 # Go to Line
 go-to-line-current = Line { $line } of { $total }, Column { $col }
+
+# Auto Update UI
+auto-update-couldnt-load-release-notes = Couldn't load release notes
+auto-update-view-in-browser = View in Browser
+auto-update-updated-to-version = Updated to { $app_name } { $version }
+auto-update-view-release-notes = View Release Notes

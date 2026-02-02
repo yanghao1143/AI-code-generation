@@ -1,6 +1,7 @@
 use auto_update::{AutoUpdater, release_notes_url};
 use editor::{Editor, MultiBuffer};
 use gpui::{App, Context, DismissEvent, Entity, Window, actions, prelude::*};
+use i18n::{t, t_args};
 use markdown_preview::markdown_preview_view::{MarkdownPreviewMode, MarkdownPreviewView};
 use release_channel::{AppVersion, ReleaseChannel};
 use serde::Deserialize;
@@ -51,9 +52,9 @@ fn notify_release_notes_failed_to_show(
         |cx| {
             cx.new(move |cx| {
                 let url = release_notes_url(cx);
-                let mut prompt = ErrorMessagePrompt::new("Couldn't load release notes", cx);
+                let mut prompt = ErrorMessagePrompt::new(t("auto-update-couldnt-load-release-notes"), cx);
                 if let Some(url) = url {
-                    prompt = prompt.with_link_button("View in Browser".to_string(), url);
+                    prompt = prompt.with_link_button(t("auto-update-view-in-browser").to_string(), url);
                 }
                 prompt
             })
@@ -188,10 +189,13 @@ pub fn notify_if_app_was_updated(cx: &mut App) {
                         let workspace_handle = cx.entity().downgrade();
                         cx.new(|cx| {
                             MessageNotification::new(
-                                format!("Updated to {app_name} {}", version),
+                                t_args("auto-update-updated-to-version", &[
+                                    ("app_name", app_name.into()),
+                                    ("version", version.to_string().into()),
+                                ]),
                                 cx,
                             )
-                            .primary_message("View Release Notes")
+                            .primary_message(t("auto-update-view-release-notes"))
                             .primary_on_click(move |window, cx| {
                                 if let Some(workspace) = workspace_handle.upgrade() {
                                     workspace.update(cx, |workspace, cx| {
