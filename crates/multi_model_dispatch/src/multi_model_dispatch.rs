@@ -256,8 +256,8 @@ impl Panel for MultiModelDispatchPanel {
         Some(IconName::Server) 
     }
 
-    fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<&'static str> {
-        Some("Intelligent Dispatch")
+    fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<SharedString> {
+        Some("Intelligent Dispatch".into())
     }
 
     fn toggle_action(&self) -> Box<dyn gpui::Action> {
