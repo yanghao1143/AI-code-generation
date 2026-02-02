@@ -1,4 +1,5 @@
 use editor::EditorSettings;
+use i18n::t;
 use settings::Settings as _;
 use ui::{ButtonCommon, Clickable, Context, Render, Tooltip, Window, prelude::*};
 use workspace::{ItemHandle, StatusItemView};
@@ -25,7 +26,7 @@ impl Render for SearchButton {
             IconButton::new("project-search-indicator", SEARCH_ICON)
                 .icon_size(IconSize::Small)
                 .tooltip(|_window, cx| {
-                    Tooltip::for_action("Project Search", &workspace::DeploySearch::default(), cx)
+                    Tooltip::for_action(t("search-project-search"), &workspace::DeploySearch::default(), cx)
                 })
                 .on_click(cx.listener(|_this, _, window, cx| {
                     window.dispatch_action(Box::new(workspace::DeploySearch::default()), cx);

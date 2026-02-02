@@ -423,6 +423,19 @@ git-view-mr = View Merge Request
 git-changes-since = Changes since { $base_ref }
 
 # ============================================
+# Search
+# ============================================
+search-match-whole-words = Match Whole Words
+search-match-case = Match Case Sensitivity
+search-include-ignored = Also search files ignored by configuration
+search-use-regex = Use Regular Expressions
+search-one-match-per-line = One Match Per Line
+search-backwards = Search Backwards
+search-no-more-matches = No more matches
+search-find-in-results = Find in Results
+search-project-search = Project Search
+
+# ============================================
 # Collaboration
 # ============================================
 collab-sign-in = Sign in
