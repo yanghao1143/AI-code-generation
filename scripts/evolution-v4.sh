@@ -61,6 +61,11 @@ diagnose_agent() {
         echo "api_failure"; return
     fi
     
+    # 2.5. 崩溃检测 (v8 错误、段错误等)
+    if echo "$last_30" | grep -qE "v8::Promise|SIGSEGV|Segmentation fault|SIGABRT|panic|fatal error" 2>/dev/null; then
+        echo "crashed"; return
+    fi
+    
     # 3. 环境问题 (新增) - 命令找不到
     if echo "$last_30" | grep -qE "command not found|No such file or directory|not recognized as" 2>/dev/null; then
         echo "env_error"; return
@@ -181,6 +186,15 @@ repair_agent() {
             sleep 2
             restart_agent "$agent"
             echo "restarted"
+            ;;
+        crashed)
+            # 崩溃，重启 CLI
+            echo -e "${RED}$agent 崩溃，正在重启...${NC}"
+            local cmd="${AGENT_CONFIG[${agent}:cmd]}"
+            tmux -S "$SOCKET" send-keys -t "$agent" "$cmd" Enter
+            sleep 3
+            dispatch_task "$agent"
+            echo "crash_recovered"
             ;;
         env_error)
             # 环境错误，尝试修复
