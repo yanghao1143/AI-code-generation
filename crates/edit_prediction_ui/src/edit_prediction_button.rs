@@ -1,6 +1,7 @@
 use anyhow::Result;
 use client::{Client, UserStore, zed_urls};
 use cloud_llm_client::UsageLimit;
+use i18n::t;
 use codestral::CodestralEditPredictionDelegate;
 use copilot::Status;
 use edit_prediction::{
@@ -222,7 +223,7 @@ impl Render for EditPredictionButton {
                                     let fs = fs.clone();
                                     let activate_url = activate_url.clone();
 
-                                    menu.entry("Sign In", None, move |_, cx| {
+                                    menu.entry(t("sign-in"), None, move |_, cx| {
                                         cx.open_url(activate_url.as_str())
                                     })
                                     .entry(
@@ -671,7 +672,7 @@ impl EditPredictionButton {
         let fs = self.fs.clone();
         let project = self.project.clone();
         ContextMenu::build(window, cx, |menu, _, _| {
-            menu.entry("Sign In to Copilot", None, move |window, cx| {
+            menu.entry(t("sign-in-to-copilot"), None, move |window, cx| {
                 if let Some(copilot) = EditPredictionStore::try_global(cx).and_then(|store| {
                     store.update(cx, |this, cx| {
                         this.start_copilot_for_project(&project.upgrade()?, cx)
@@ -680,12 +681,12 @@ impl EditPredictionButton {
                     copilot_ui::initiate_sign_in(copilot, window, cx);
                 }
             })
-            .entry("Disable Copilot", None, {
+            .entry(t("disable-copilot"), None, {
                 let fs = fs.clone();
                 move |_window, cx| hide_copilot(fs.clone(), cx)
             })
             .separator()
-            .entry("Use Zed AI", None, {
+            .entry(t("use-zed-ai"), None, {
                 let fs = fs.clone();
                 move |_window, cx| {
                     set_completion_provider(fs.clone(), cx, EditPredictionProvider::Zed)
@@ -1119,7 +1120,7 @@ impl EditPredictionButton {
                         move |_, cx| cx.open_url(&zed_urls::account_url(cx)),
                     )
                     .when(usage.over_limit(), |menu| -> ContextMenu {
-                        menu.entry("Subscribe to increase your limit", None, |_window, cx| {
+                        menu.entry(t("subscribe-to-increase-limit"), None, |_window, cx| {
                             cx.open_url(&zed_urls::account_url(cx))
                         })
                     })
@@ -1128,14 +1129,14 @@ impl EditPredictionButton {
                 menu = menu
                     .custom_entry(
                         |_window, _cx| {
-                            Label::new("Your GitHub account is less than 30 days old.")
+                            Label::new(t("github-account-too-young"))
                                 .size(LabelSize::Small)
                                 .color(Color::Warning)
                                 .into_any_element()
                         },
                         |_window, cx| cx.open_url(&zed_urls::account_url(cx)),
                     )
-                    .entry("Upgrade to Zed Pro or contact us.", None, |_window, cx| {
+                    .entry(t("upgrade-or-contact-us"), None, |_window, cx| {
                         cx.open_url(&zed_urls::account_url(cx))
                     })
                     .separator();
@@ -1143,7 +1144,7 @@ impl EditPredictionButton {
                 menu = menu
                     .custom_entry(
                         |_window, _cx| {
-                            Label::new("You have an outstanding invoice")
+                            Label::new(t("outstanding-invoice"))
                                 .size(LabelSize::Small)
                                 .color(Color::Warning)
                                 .into_any_element()
@@ -1226,7 +1227,7 @@ impl EditPredictionButton {
                         .max_w_64()
                         .h(rems_from_px(148.))
                         .child(render_zeta_tab_animation(cx))
-                        .child(Label::new("Edit Prediction"))
+                        .child(Label::new(t("edit-prediction")))
                         .child(
                             Label::new(description)
                                 .color(Color::Muted)
@@ -1235,7 +1236,7 @@ impl EditPredictionButton {
                         .into_any_element()
                 })
                 .separator()
-                .entry("Sign In & Start Using", None, |window, cx| {
+                .entry(t("sign-in-and-start-using"), None, |window, cx| {
                     let client = Client::global(cx);
                     window
                         .spawn(cx, async move |cx| {

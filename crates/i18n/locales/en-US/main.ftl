@@ -2263,3 +2263,41 @@ acp-user-checkpoint = User (checkpoint)
 acp-tool-call = Tool Call
 diff = Diff
 status = Status
+
+# Edit prediction UI
+github-account-too-young = Your GitHub account is less than 30 days old.
+outstanding-invoice = You have an outstanding invoice
+edit-prediction = Edit Prediction
+edit-prediction-description = You get 2,000 accepted suggestions at every keystroke for free, powered by Zeta, our open-source, open-data model
+upgrade-or-contact-us = Upgrade to Zed Pro or contact us.
+sign-in-and-start-using = Sign In & Start Using
+sign-in-to-copilot = Sign In to Copilot
+disable-copilot = Disable Copilot
+use-zed-ai = Use Zed AI
+subscribe-to-increase-limit = Subscribe to increase your limit
+rated-completion = Rated completion.
+no-edits-produced = No edits produced.
+from-most-recent-to-oldest = From most recent to oldest
+bad-prediction = Bad Prediction
+good-prediction = Good Prediction
+
+# Dev container
+search-dev-container-templates = Search for Dev Container Templates
+querying-template-registry = Querying template registry...
+querying-features = Querying features...
+
+# Language onboarding
+basedpyright-now-default = Basedpyright is now the only default language server for Python
+basedpyright-disabled-pyright = We have disabled PyRight and pylsp by default. They can be re-enabled in your settings.
+
+# Language tools
+keyboard-context = Keyboard Context
+keyboard-context-description = This view lets you determine the current context stack for creating custom key bindings in Zed. When a keyboard shortcut is triggered, it also shows all the possible contexts it could have triggered in, and which one matched.
+current-context-stack = Current Context Stack
+view-default-keymap = View Default Keymap
+edit-keymap-file = Edit Keymap File
+
+# Keymap editor
+create-keybinding = Create Keybinding
+edit-keystroke = Edit Keystroke
+edit-arguments = Edit Arguments

@@ -2726,3 +2726,41 @@ acp-user-checkpoint = 用户 (检查点)
 acp-tool-call = 工具调用
 diff = 瀹割喖绱
 status = 鐘舵€�
+
+# Edit prediction UI
+github-account-too-young = 您的 GitHub 账户创建时间少于 30 天。
+outstanding-invoice = 您有未付的账单
+edit-prediction = 编辑预测
+edit-prediction-description = 您可以免费获得每次按键 2,000 次接受建议，由 Zeta（我们的开源、开放数据模型）提供支持
+upgrade-or-contact-us = 升级到 Zed Pro 或联系我们。
+sign-in-and-start-using = 登录并开始使用
+sign-in-to-copilot = 登录 Copilot
+disable-copilot = 禁用 Copilot
+use-zed-ai = 使用 Zed AI
+subscribe-to-increase-limit = 订阅以提高您的限额
+rated-completion = 已评价补全。
+no-edits-produced = 未生成编辑。
+from-most-recent-to-oldest = 从最近到最早
+bad-prediction = 差评
+good-prediction = 好评
+
+# Dev container
+search-dev-container-templates = 搜索开发容器模板
+querying-template-registry = 正在查询模板注册表...
+querying-features = 正在查询功能...
+
+# Language onboarding
+basedpyright-now-default = Basedpyright 现在是 Python 的唯一默认语言服务器
+basedpyright-disabled-pyright = 我们已默认禁用 PyRight 和 pylsp。您可以在设置中重新启用它们。
+
+# Language tools
+keyboard-context = 键盘上下文
+keyboard-context-description = 此视图可让您确定当前上下文堆栈，以便在 Zed 中创建自定义键绑定。当触发键盘快捷键时，它还会显示所有可能触发的上下文以及匹配的上下文。
+current-context-stack = 当前上下文堆栈
+view-default-keymap = 查看默认键映射
+edit-keymap-file = 编辑键映射文件
+
+# Keymap editor
+create-keybinding = 创建键绑定
+edit-keystroke = 编辑按键
+edit-arguments = 编辑参数
