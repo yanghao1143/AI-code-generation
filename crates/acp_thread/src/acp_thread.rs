@@ -3162,7 +3162,13 @@ mod tests {
 
         assert_eq!(
             err.to_string(),
-            "Invalid params: \"Attempting to read beyond the end of the file, line 5:0\""
+            format!(
+                "Invalid params: \"{}\"",
+                t_args(
+                    "acp-read-beyond-file-end",
+                    &[("line", "5".into()), ("col", "0".into())],
+                )
+            )
         );
     }
 
@@ -3237,7 +3243,13 @@ mod tests {
 
         assert_eq!(
             err.to_string(),
-            "Invalid params: \"Attempting to read beyond the end of the file, line 1:0\""
+            format!(
+                "Invalid params: \"{}\"",
+                t_args(
+                    "acp-read-beyond-file-end",
+                    &[("line", "1".into()), ("col", "0".into())],
+                )
+            )
         );
     }
     #[gpui::test]
