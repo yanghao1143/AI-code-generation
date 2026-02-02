@@ -36,6 +36,7 @@ use sqlez::{
 use ui::{App, SharedString, px};
 use util::{ResultExt, maybe, rel_path::RelPath};
 use uuid::Uuid;
+use i18n::t;
 
 use crate::{
     WorkspaceId,

@@ -34,6 +34,7 @@ use std::{
 use theme::Theme;
 use ui::{Color, Icon, IntoElement, Label, LabelCommon};
 use util::ResultExt;
+use i18n::t;
 
 pub const LEADER_UPDATE_THROTTLE: Duration = Duration::from_millis(200);
 

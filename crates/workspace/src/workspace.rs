@@ -133,6 +133,7 @@ pub use workspace_settings::{
     WorkspaceSettings,
 };
 use zed_actions::{Spawn, feedback::FileBugReport};
+use i18n::t;
 
 use crate::{
     item::ItemBufferKind,
@@ -2638,9 +2639,9 @@ impl Workspace {
                     let answer = cx.update(|window, cx| {
                         window.prompt(
                             PromptLevel::Warning,
-                            "Do you want to leave the current call?",
+                            &t("workspace-leave-call-prompt"),
                             None,
-                            &["Close window and hang up", "Cancel"],
+                            &[t("workspace-close-window-hang-up").as_str(), t("workspace-cancel").as_str()],
                             cx,
                         )
                     })?;
@@ -2827,9 +2828,9 @@ impl Workspace {
                         );
                         window.prompt(
                             PromptLevel::Warning,
-                            "Do you want to save all changes in the following files?",
+                            &t("workspace-save-all-prompt"),
                             Some(&detail),
-                            &["Save all", "Discard all", "Cancel"],
+                            &[t("workspace-save-all").as_str(), t("workspace-discard-all").as_str(), t("workspace-cancel").as_str()],
                             cx,
                         )
                     })?;
@@ -3344,7 +3345,7 @@ impl Workspace {
 
         if let Some(panel) = self.dock_at_position(dock_side).read(cx).active_panel() {
             telemetry::event!(
-                "Panel Button Clicked",
+                t("panel-button-clicked"),
                 name = panel.persistent_name(),
                 toggle_state = !was_visible
             );
@@ -3511,7 +3512,7 @@ impl Workspace {
         });
 
         telemetry::event!(
-            "Panel Button Clicked",
+            t("panel-button-clicked"),
             name = T::persistent_name(),
             toggle_state = did_focus_panel
         );
@@ -6161,17 +6162,17 @@ impl Workspace {
             .on_action(cx.listener(|workspace, action: &Save, window, cx| {
                 workspace
                     .save_active_item(action.save_intent.unwrap_or(SaveIntent::Save), window, cx)
-                    .detach_and_prompt_err("Failed to save", window, cx, |_, _, _| None);
+                    .detach_and_prompt_err(&t("workspace-failed-to-save"), window, cx, |_, _, _| None);
             }))
             .on_action(cx.listener(|workspace, _: &SaveWithoutFormat, window, cx| {
                 workspace
                     .save_active_item(SaveIntent::SaveWithoutFormat, window, cx)
-                    .detach_and_prompt_err("Failed to save", window, cx, |_, _, _| None);
+                    .detach_and_prompt_err(&t("workspace-failed-to-save"), window, cx, |_, _, _| None);
             }))
             .on_action(cx.listener(|workspace, _: &SaveAs, window, cx| {
                 workspace
                     .save_active_item(SaveIntent::SaveAs, window, cx)
-                    .detach_and_prompt_err("Failed to save", window, cx, |_, _, _| None);
+                    .detach_and_prompt_err(&t("workspace-failed-to-save"), window, cx, |_, _, _| None);
             }))
             .on_action(
                 cx.listener(|workspace, _: &ActivatePreviousPane, window, cx| {
@@ -7034,8 +7035,8 @@ fn notify_if_database_failed(workspace: WindowHandle<Workspace>, cx: &mut AsyncA
                     cx,
                     |cx| {
                         cx.new(|cx| {
-                            MessageNotification::new("Failed to load the database file.", cx)
-                                .primary_message("File an Issue")
+                            MessageNotification::new(t("workspace-database-load-failure"), cx)
+                                .primary_message(t("workspace-file-an-issue"))
                                 .primary_icon(IconName::Plus)
                                 .primary_on_click(|window, cx| {
                                     window.dispatch_action(Box::new(FileBugReport), cx)
@@ -7924,9 +7925,9 @@ async fn join_channel_internal(
                 .update(cx, |_, window, cx| {
                     window.prompt(
                         PromptLevel::Warning,
-                        "Do you want to switch channels?",
-                        Some("Leaving this call will unshare your current project."),
-                        &["Yes, Join Channel", "Cancel"],
+                        &t("workspace-switch-channels-prompt"),
+                        Some(&t("workspace-leaving-call-unshare-project")),
+                        &[t("workspace-join-channel").as_str(), t("workspace-cancel").as_str()],
                         cx,
                     )
                 })?
@@ -8077,32 +8078,18 @@ pub fn join_channel(
                 active_window
                     .update(cx, |_, window, cx| {
                         let detail: SharedString = match err.error_code() {
-                            ErrorCode::SignedOut => "Please sign in to continue.".into(),
-                            ErrorCode::UpgradeRequired => concat!(
-                                "Your are running an unsupported version of Zed. ",
-                                "Please update to continue."
-                            )
-                            .into(),
-                            ErrorCode::NoSuchChannel => concat!(
-                                "No matching channel was found. ",
-                                "Please check the link and try again."
-                            )
-                            .into(),
-                            ErrorCode::Forbidden => concat!(
-                                "This channel is private, and you do not have access. ",
-                                "Please ask someone to add you and try again."
-                            )
-                            .into(),
-                            ErrorCode::Disconnected => {
-                                "Please check your internet connection and try again.".into()
-                            }
-                            _ => format!("{}\n\nPlease try again.", err).into(),
+                            ErrorCode::SignedOut => t("workspace-join-channel-signed-out").into(),
+                            ErrorCode::UpgradeRequired => t("workspace-join-channel-upgrade-required").into(),
+                            ErrorCode::NoSuchChannel => t("workspace-join-channel-no-such-channel").into(),
+                            ErrorCode::Forbidden => t("workspace-join-channel-forbidden").into(),
+                            ErrorCode::Disconnected => t("workspace-join-channel-disconnected").into(),
+                            _ => format!("{}\n\n{}", err, t("workspace-please-try-again")).into(),
                         };
                         window.prompt(
                             PromptLevel::Critical,
-                            "Failed to join channel",
+                            &t("workspace-failed-to-join-channel"),
                             Some(&detail),
-                            &["Ok"],
+                            &[t("workspace-ok").as_str()],
                             cx,
                         )
                     })?
@@ -8384,7 +8371,7 @@ pub fn open_paths(
                         let msg = format!("{display_path} is inside a WSL filesystem, some features may not work unless you open it with WSL remote");
                         cx.new(move |cx| {
                             MessageNotification::new(msg, cx)
-                                .primary_message("Open in WSL")
+                                .primary_message(t("workspace-open-in-wsl"))
                                 .primary_icon(IconName::FolderOpen)
                                 .primary_on_click(move |window, cx| {
                                     window.dispatch_action(Box::new(remote::OpenWslPath {
@@ -8616,7 +8603,7 @@ async fn open_remote_project_inner(
 
     cx.update_window(window.into(), |_, window, cx| {
         window.replace_root(cx, |window, cx| {
-            telemetry::event!("SSH Project Opened");
+            telemetry::event!(t("ssh-project-opened"));
 
             let mut workspace =
                 Workspace::new(Some(workspace_id), project, app_state.clone(), window, cx);
@@ -8781,9 +8768,9 @@ pub fn reload(cx: &mut App) {
             .update(cx, |_, window, cx| {
                 window.prompt(
                     PromptLevel::Info,
-                    "Are you sure you want to restart?",
+                    &t("workspace-restart-confirmation"),
                     None,
-                    &["Restart", "Cancel"],
+                    &[t("workspace-restart").as_str(), t("workspace-cancel").as_str()],
                     cx,
                 )
             })

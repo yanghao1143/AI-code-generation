@@ -15,6 +15,7 @@ use std::sync::Arc;
 use ui::{ContextMenu, Divider, DividerColor, IconButton, Tooltip, h_flex};
 use ui::{prelude::*, right_click_menu};
 use util::ResultExt as _;
+use i18n::t;
 
 pub(crate) const RESIZE_HANDLE_SIZE: Pixels = px(6.);
 
@@ -993,10 +994,14 @@ impl Render for PanelButtons {
 
                 let is_active_button = Some(i) == active_index && is_open;
                 let (action, tooltip) = if is_active_button {
-                    let action = dock.toggle_action();
+                    let action: Box<dyn Action> = dock.toggle_action();
 
-                    let tooltip: SharedString =
-                        format!("Close {} Dock", dock.position.label()).into();
+                    let tooltip: SharedString = match dock.position {
+                        DockPosition::Left => t("dock-close-left"),
+                        DockPosition::Bottom => t("dock-close-bottom"),
+                        DockPosition::Right => t("dock-close-right"),
+                    }
+                    .into();
 
                     (action, tooltip)
                 } else {
@@ -1023,7 +1028,11 @@ impl Render for PanelButtons {
                                     {
                                         let panel = panel.clone();
                                         menu = menu.entry(
-                                            format!("Dock {}", position.label()),
+                                            match position {
+                                                DockPosition::Left => t("dock-position-left"),
+                                                DockPosition::Bottom => t("dock-position-bottom"),
+                                                DockPosition::Right => t("dock-position-right"),
+                                            },
                                             None,
                                             move |window, cx| {
                                                 panel.set_position(position, window, cx);
@@ -1043,7 +1052,7 @@ impl Render for PanelButtons {
                                 .icon_size(IconSize::Small)
                                 .toggle_state(is_active_button)
                                 .on_click({
-                                    let action = action.boxed_clone();
+                                    let action: Box<dyn Action> = action.boxed_clone();
                                     move |_, window, cx| {
                                         window.focus(&focus_handle, cx);
                                         window.dispatch_action(action.boxed_clone(), cx)
