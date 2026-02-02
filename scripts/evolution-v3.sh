@@ -114,6 +114,7 @@ repair_agent() {
             tmux -S "$SOCKET" send-keys -t "$agent" "cd $workdir && $cmd" Enter
             sleep 5
             auto_confirm "$agent"
+            "$WORKSPACE/scripts/auto-learn.sh" failure "$agent" "api_failure" "connection_error" "auto_repair" 2>/dev/null
             echo "restarted"
             ;;
         needs_confirm)
@@ -127,6 +128,7 @@ repair_agent() {
             else
                 tmux -S "$SOCKET" send-keys -t "$agent" Enter
             fi
+            "$WORKSPACE/scripts/auto-learn.sh" success "$agent" "confirm" "auto_confirm" 2>/dev/null
             echo "confirmed"
             ;;
         tool_error)
@@ -134,6 +136,7 @@ repair_agent() {
             tmux -S "$SOCKET" send-keys -t "$agent" C-c
             sleep 0.5
             tmux -S "$SOCKET" send-keys -t "$agent" "上一个操作出错了，换个方法继续完成任务" Enter
+            "$WORKSPACE/scripts/auto-learn.sh" failure "$agent" "tool_error" "request_error" "auto_repair" 2>/dev/null
             echo "error_bypassed"
             ;;
         context_low)
@@ -148,6 +151,7 @@ repair_agent() {
             sleep 8
             auto_confirm "$agent"
             dispatch_task "$agent"
+            "$WORKSPACE/scripts/auto-learn.sh" success "$agent" "context_reset" "low_context" 2>/dev/null
             echo "context_reset"
             ;;
         loop_detected)
@@ -161,10 +165,12 @@ repair_agent() {
             done
             sleep 0.3
             dispatch_task "$agent"
+            "$WORKSPACE/scripts/auto-learn.sh" failure "$agent" "loop" "loop_detected" "auto_repair" 2>/dev/null
             echo "loop_broken_and_dispatched"
             ;;
         pending_input)
             tmux -S "$SOCKET" send-keys -t "$agent" Enter
+            "$WORKSPACE/scripts/auto-learn.sh" success "$agent" "pending_input" "sent_enter" 2>/dev/null
             echo "input_sent"
             ;;
         idle|idle_with_suggestion)
@@ -172,6 +178,7 @@ repair_agent() {
             tmux -S "$SOCKET" send-keys -t "$agent" C-u
             sleep 0.3
             dispatch_task "$agent"
+            "$WORKSPACE/scripts/auto-learn.sh" success "$agent" "dispatch" "idle_dispatch" 2>/dev/null
             echo "dispatched"
             ;;
         working|unknown)
