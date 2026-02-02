@@ -62,7 +62,8 @@ diagnose_agent() {
     fi
     
     # 2.5. 崩溃检测 (v8 错误、段错误等)
-    if echo "$last_30" | grep -qE "v8::Promise|SIGSEGV|Segmentation fault|SIGABRT|panic|fatal error" 2>/dev/null; then
+    # 注意：panic 要匹配完整的错误格式，避免误判
+    if echo "$last_30" | grep -qE "v8::Promise|SIGSEGV|Segmentation fault|SIGABRT|thread .* panicked|fatal error|FATAL ERROR" 2>/dev/null; then
         echo "crashed"; return
     fi
     
@@ -97,7 +98,17 @@ diagnose_agent() {
     fi
     
     # 8. 循环检测 (扩大检测范围到 last_30)
-    if echo "$last_30" | grep -qE "loop was detected|infinite loop|repetitive tool calls|potential loop" 2>/dev/null; then
+    # 但如果输入框有新任务，说明正在准备执行，不算循环
+    local has_pending_task=false
+    if echo "$last_5" | grep -qE "^│ > .+[^│]|^❯ .+|^› .+" 2>/dev/null; then
+        # 检查是否是有意义的任务（不是单个字符或数字）
+        local input_content=$(echo "$last_5" | grep -oE "^│ > .+|^❯ .+|^› .+" | head -1 | sed 's/^[│❯›] > //' | sed 's/^[❯›] //')
+        if [[ ${#input_content} -gt 10 ]]; then
+            has_pending_task=true
+        fi
+    fi
+    
+    if [[ "$has_pending_task" == "false" ]] && echo "$last_30" | grep -qE "loop was detected|infinite loop|repetitive tool calls|potential loop" 2>/dev/null; then
         echo "loop_detected"; return
     fi
     
@@ -392,26 +403,33 @@ auto_confirm() {
     for i in {1..15}; do
         sleep 1
         local output=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p | tail -20)
+        local last_5=$(echo "$output" | tail -5)
+        
+        # 先检查是否有循环检测消息，如果有就不要发送确认
+        if echo "$output" | grep -qE "loop was detected|potential loop" 2>/dev/null; then
+            # 有循环消息，不要发送 "1"，直接返回让 loop_detected 处理
+            return 1
+        fi
         
         # 检测各种确认界面并处理
-        if echo "$output" | grep -qE "Yes, I accept" 2>/dev/null; then
+        if echo "$last_5" | grep -qE "Yes, I accept" 2>/dev/null; then
             tmux -S "$SOCKET" send-keys -t "$agent" Down Enter
             confirmed=true
-        elif echo "$output" | grep -qE "● 1\. Allow once|Allow once|1\. Allow|Allow execution" 2>/dev/null; then
-            # Gemini 多选确认界面
+        elif echo "$last_5" | grep -qE "● 1\. Allow once|1\. Allow|Allow execution" 2>/dev/null; then
+            # Gemini 多选确认界面 - 必须在最后几行
             tmux -S "$SOCKET" send-keys -t "$agent" "1" Enter
             confirmed=true
-        elif echo "$output" | grep -qE "Waiting for user confirmation" 2>/dev/null; then
+        elif echo "$last_5" | grep -qE "Waiting for user confirmation" 2>/dev/null; then
             # Gemini 等待确认状态 - 发送 1 选择 Allow once
             tmux -S "$SOCKET" send-keys -t "$agent" "1" Enter
             confirmed=true
-        elif echo "$output" | grep -qE "Enter to confirm|Press Enter|Dark mode|Light mode|trust this" 2>/dev/null; then
+        elif echo "$last_5" | grep -qE "Enter to confirm|Press Enter|Dark mode|Light mode|trust this" 2>/dev/null; then
             tmux -S "$SOCKET" send-keys -t "$agent" Enter
             confirmed=true
-        elif echo "$output" | grep -qE "\[y/N\]|\(y/n\)" 2>/dev/null; then
+        elif echo "$last_5" | grep -qE "\[y/N\]|\(y/n\)" 2>/dev/null; then
             tmux -S "$SOCKET" send-keys -t "$agent" "y" Enter
             confirmed=true
-        elif echo "$output" | grep -qE "^❯\s*$|^›\s*$|context left|Type your message|esc to interrupt|esc to cancel" 2>/dev/null; then
+        elif echo "$last_5" | grep -qE "^❯\s*$|^›\s*$|context left|Type your message|esc to interrupt|esc to cancel" 2>/dev/null; then
             # 已经恢复正常，重置 retry 计数器
             redis-cli HSET "$REDIS_PREFIX:retry:$agent" "count" 0 2>/dev/null
             return 0
