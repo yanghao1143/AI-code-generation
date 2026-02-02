@@ -67,7 +67,7 @@ diagnose_agent() {
     fi
     
     # 4. 正在工作 - 有进度指示 (必须在最后几行)
-    if echo "$last_10" | grep -qE "esc to interrupt|esc to cancel|Thinking|Working|Searching|Reading|Writing|Shenaniganing|Buffering|Rickrolling|Flowing|Running cargo|Transfiguring|Exploring|Investigating|Analyzing|Processing|Clarifying|Mining|Baking|Navigating|Checking|Compiling|Building|Cogitated|Searching text" 2>/dev/null; then
+    if echo "$last_10" | grep -qE "esc to interrupt|esc to cancel|Thinking|Working|Searching|Reading|Writing|Shenaniganing|Buffering|Rickrolling|Flowing|Running cargo|Transfiguring|Exploring|Investigating|Analyzing|Processing|Clarifying|Mining|Baking|Navigating|Checking|Compiling|Building|Cogitated|Searching text|Mulling|Limiting" 2>/dev/null; then
         echo "working"; return
     fi
     
