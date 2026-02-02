@@ -32,7 +32,7 @@ diagnose_agent() {
     # 0. 先检测明确的空闲状态 (最高优先级)
     # 但要排除正在工作的情况
     local is_working=false
-    if echo "$last_10" | grep -qE "esc to cancel|esc to interrupt" 2>/dev/null; then
+    if echo "$last_10" | grep -qE "esc to cancel|esc to interrupt|esc to interr" 2>/dev/null; then
         is_working=true
     fi
     
@@ -73,7 +73,7 @@ diagnose_agent() {
     fi
     
     # 4. 正在工作 - 有进度指示 (必须在最后几行)
-    if echo "$last_10" | grep -qE "esc to interrupt|esc to cancel|Thinking|Working|Searching|Reading|Writing|Shenaniganing|Buffering|Rickrolling|Flowing|Running cargo|Transfiguring|Exploring|Investigating|Analyzing|Processing|Clarifying|Mining|Baking|Navigating|Checking|Compiling|Building|Cogitated|Searching text|Mulling|Limiting|Considering|Enumerating" 2>/dev/null; then
+    if echo "$last_10" | grep -qE "esc to interrupt|esc to interr|esc to cancel|Thinking|Working|Searching|Reading|Writing|Shenaniganing|Buffering|Rickrolling|Flowing|Running cargo|Transfiguring|Exploring|Investigating|Analyzing|Processing|Clarifying|Mining|Baking|Navigating|Checking|Compiling|Building|Cogitated|Searching text|Mulling|Limiting|Considering|Enumerating" 2>/dev/null; then
         echo "working"; return
     fi
     
@@ -115,7 +115,7 @@ diagnose_agent() {
     # 9. 编译错误 (新增)
     if echo "$last_30" | grep -qE "error\[E[0-9]+\]|cannot find|unresolved import|mismatched types" 2>/dev/null; then
         # 但如果正在工作中，不算错误
-        if ! echo "$last_10" | grep -qE "esc to interrupt|esc to cancel" 2>/dev/null; then
+        if ! echo "$last_10" | grep -qE "esc to interrupt|esc to interr|esc to cancel" 2>/dev/null; then
             echo "compile_error"; return
         fi
     fi
@@ -139,7 +139,8 @@ diagnose_agent() {
         if echo "$last_5" | grep -qE "Summarize recent|Write tests" 2>/dev/null; then
             echo "idle_with_suggestion"; return
         fi
-        if ! echo "$last_5" | grep -qE "esc to interrupt" 2>/dev/null; then
+        # 检查 last_10 是否有工作指示
+        if ! echo "$last_10" | grep -qE "esc to interrupt|esc to interr|esc to cancel" 2>/dev/null; then
             echo "pending_input"; return
         fi
     fi
@@ -429,7 +430,7 @@ auto_confirm() {
         elif echo "$last_5" | grep -qE "\[y/N\]|\(y/n\)" 2>/dev/null; then
             tmux -S "$SOCKET" send-keys -t "$agent" "y" Enter
             confirmed=true
-        elif echo "$last_5" | grep -qE "^❯\s*$|^›\s*$|context left|Type your message|esc to interrupt|esc to cancel" 2>/dev/null; then
+        elif echo "$last_5" | grep -qE "^❯\s*$|^›\s*$|context left|Type your message|esc to interrupt|esc to interr|esc to cancel" 2>/dev/null; then
             # 已经恢复正常，重置 retry 计数器
             redis-cli HSET "$REDIS_PREFIX:retry:$agent" "count" 0 2>/dev/null
             return 0
@@ -439,7 +440,7 @@ auto_confirm() {
         if [[ "$confirmed" == "true" ]]; then
             sleep 2
             local new_output=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p | tail -10)
-            if echo "$new_output" | grep -qE "^❯\s*$|^›\s*$|context left|Type your message|esc to interrupt|esc to cancel" 2>/dev/null; then
+            if echo "$new_output" | grep -qE "^❯\s*$|^›\s*$|context left|Type your message|esc to interrupt|esc to interr|esc to cancel" 2>/dev/null; then
                 # 恢复正常，重置 retry 计数器
                 redis-cli HSET "$REDIS_PREFIX:retry:$agent" "count" 0 2>/dev/null
                 return 0
