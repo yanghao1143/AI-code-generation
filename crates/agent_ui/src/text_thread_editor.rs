@@ -28,6 +28,7 @@ use gpui::{
     Styled, Subscription, Task, WeakEntity, actions, div, img, point, prelude::*,
     pulsating_between, size,
 };
+use i18n::t;
 use language::{
     BufferSnapshot, LspAdapterDelegate, ToOffset,
     language_settings::{SoftWrap, all_language_settings},
@@ -886,7 +887,7 @@ impl TextThreadEditor {
                     )
                     .with_metadata(CreaseMetadata {
                         icon_path: SharedString::from(IconName::Ai.path()),
-                        label: "Thinking Process".into(),
+                        label: t("agent-thought-process").to_string().into(),
                     }),
                 );
             }
@@ -1066,7 +1067,7 @@ impl TextThreadEditor {
                                 None,
                             ),
                             Role::Assistant => {
-                                let base_label = Label::new("Agent").color(Color::Info);
+                                let base_label = Label::new(t("agent-role-agent")).color(Color::Info);
                                 let mut spinner = None;
                                 let mut note = None;
                                 let animated_label = if llm_loading {
@@ -1095,7 +1096,7 @@ impl TextThreadEditor {
                                 (animated_label, spinner, note)
                             }
                             Role::System => (
-                                Label::new("System")
+                                Label::new(t("agent-role-system"))
                                     .color(Color::Warning)
                                     .into_any_element(),
                                 None,
@@ -1118,9 +1119,9 @@ impl TextThreadEditor {
                                     )
                                     .tooltip(|_window, cx| {
                                         Tooltip::with_meta(
-                                            "Toggle message role",
+                                            t("agent-toggle-message-role"),
                                             None,
-                                            "Available roles: You (User), Agent, System",
+                                            t("agent-available-roles"),
                                             cx,
                                         )
                                     })
@@ -1158,9 +1159,9 @@ impl TextThreadEditor {
                                             )
                                             .tooltip(|_window, cx| {
                                                 Tooltip::with_meta(
-                                                    "Context Cached",
+                                                    t("agent-context-cached"),
                                                     None,
-                                                    "Large messages cached to optimize performance",
+                                                    t("agent-context-cached-desc"),
                                                     cx,
                                                 )
                                             })
@@ -1180,7 +1181,7 @@ impl TextThreadEditor {
                             })
                             .children(match &message.status {
                                 MessageStatus::Error(error) => Some(
-                                    Button::new("show-error", "Error")
+                                    Button::new("show-error", t("agent-error"))
                                         .color(Color::Error)
                                         .selected_label_color(Color::Error)
                                         .selected_icon_color(Color::Error)
@@ -1188,7 +1189,7 @@ impl TextThreadEditor {
                                         .icon_color(Color::Error)
                                         .icon_size(IconSize::XSmall)
                                         .icon_position(IconPosition::Start)
-                                        .tooltip(Tooltip::text("View Details"))
+                                        .tooltip(Tooltip::text(t("agent-view-details")))
                                         .on_click({
                                             let text_thread = text_thread.clone();
                                             let error = error.clone();
@@ -1212,7 +1213,7 @@ impl TextThreadEditor {
                                                 .size(IconSize::XSmall),
                                         )
                                         .child(
-                                            Label::new("Canceled")
+                                            Label::new(t("agent-canceled"))
                                                 .size(LabelSize::Small)
                                                 .color(Color::Disabled),
                                         )
@@ -1366,17 +1367,15 @@ impl TextThreadEditor {
         cx.write_to_clipboard(ClipboardItem::new_string(text));
 
         struct CopyToClipboardToast;
+        let toast_text = if is_code_block {
+            t("agent-code-block-copied")
+        } else {
+            t("agent-selection-copied")
+        };
         workspace.show_toast(
             Toast::new(
                 NotificationId::unique::<CopyToClipboardToast>(),
-                format!(
-                    "{} copied to clipboard.",
-                    if is_code_block {
-                        "Code block"
-                    } else {
-                        "Selection"
-                    }
-                ),
+                toast_text,
             )
             .autohide(),
             cx,
@@ -2215,7 +2214,7 @@ impl TextThreadEditor {
                     Color::Error,
                     token_count,
                     max_token_count,
-                    Some("Token Limit Reached"),
+                    Some(t("agent-token-limit-reached")),
                 ),
                 TokenState::HasMoreTokens {
                     max_token_count,
@@ -2223,7 +2222,7 @@ impl TextThreadEditor {
                     over_warn_threshold,
                 } => {
                     let (color, tooltip) = if over_warn_threshold {
-                        (Color::Warning, Some("Token Limit is Close to Exhaustion"))
+                        (Color::Warning, Some(t("agent-token-limit-close")))
                     } else {
                         (Color::Muted, None)
                     };
@@ -2258,7 +2257,7 @@ impl TextThreadEditor {
         let (style, tooltip) = match token_state(&self.text_thread, cx) {
             Some(TokenState::NoTokensLeft { .. }) => (
                 ButtonStyle::Tinted(TintColor::Error),
-                Some(Tooltip::text("Token limit reached")(window, cx)),
+                Some(Tooltip::text(t("agent-token-limit-reached"))(window, cx)),
             ),
             Some(TokenState::HasMoreTokens {
                 over_warn_threshold,
@@ -2267,7 +2266,7 @@ impl TextThreadEditor {
                 let (style, tooltip) = if over_warn_threshold {
                     (
                         ButtonStyle::Tinted(TintColor::Warning),
-                        Some(Tooltip::text("Token limit is close to exhaustion")(
+                        Some(Tooltip::text(t("agent-token-limit-close"))(
                             window, cx,
                         )),
                     )
@@ -2279,7 +2278,7 @@ impl TextThreadEditor {
             None => (ButtonStyle::Filled, None),
         };
 
-        Button::new("send_button", "Send")
+        Button::new("send_button", t("agent-send"))
             .label_size(LabelSize::Small)
             .disabled(self.sending_disabled(cx))
             .style(style)
@@ -2324,7 +2323,7 @@ impl TextThreadEditor {
                 .selected_icon_color(Color::Accent)
                 .selected_style(ButtonStyle::Filled),
             move |_window, cx| {
-                Tooltip::with_meta("Add Context", None, "Type / to insert via keyboard", cx)
+                Tooltip::with_meta(t("agent-add-context"), None, t("agent-add-context-hint"), cx)
             },
         )
     }
@@ -2339,7 +2338,7 @@ impl TextThreadEditor {
             .map(|default| default.model);
         let model_name = match active_model {
             Some(model) => model.name().0,
-            None => SharedString::from("Select Model"),
+            None => SharedString::from(t("agent-select-model")),
         };
 
         let active_provider = LanguageModelRegistry::read_global(cx)
@@ -2429,8 +2428,6 @@ impl TextThreadEditor {
     }
 
     fn render_payment_required_error(&self, cx: &mut Context<Self>) -> AnyElement {
-        const ERROR_MESSAGE: &str = "Free tier exceeded. Subscribe and add payment to continue using Zed LLMs. You'll be billed at cost for tokens used.";
-
         v_flex()
             .gap_0p5()
             .child(
@@ -2438,27 +2435,27 @@ impl TextThreadEditor {
                     .gap_1p5()
                     .items_center()
                     .child(Icon::new(IconName::XCircle).color(Color::Error))
-                    .child(Label::new("Free Usage Exceeded").weight(FontWeight::MEDIUM)),
+                    .child(Label::new(t("agent-free-usage-exceeded")).weight(FontWeight::MEDIUM)),
             )
             .child(
                 div()
                     .id("error-message")
                     .max_h_24()
                     .overflow_y_scroll()
-                    .child(Label::new(ERROR_MESSAGE)),
+                    .child(Label::new(t("agent-free-tier-exceeded-message"))),
             )
             .child(
                 h_flex()
                     .justify_end()
                     .mt_1()
-                    .child(Button::new("subscribe", "Subscribe").on_click(cx.listener(
+                    .child(Button::new("subscribe", t("agent-subscribe")).on_click(cx.listener(
                         |this, _, _window, cx| {
                             this.last_error = None;
                             cx.open_url(&zed_urls::account_url(cx));
                             cx.notify();
                         },
                     )))
-                    .child(Button::new("dismiss", "Dismiss").on_click(cx.listener(
+                    .child(Button::new("dismiss", t("agent-dismiss")).on_click(cx.listener(
                         |this, _, _window, cx| {
                             this.last_error = None;
                             cx.notify();
@@ -2481,7 +2478,7 @@ impl TextThreadEditor {
                     .items_center()
                     .child(Icon::new(IconName::XCircle).color(Color::Error))
                     .child(
-                        Label::new("Error interacting with language model")
+                        Label::new(t("agent-error-interacting-llm"))
                             .weight(FontWeight::MEDIUM),
                     ),
             )
@@ -2496,7 +2493,7 @@ impl TextThreadEditor {
                 h_flex()
                     .justify_end()
                     .mt_1()
-                    .child(Button::new("dismiss", "Dismiss").on_click(cx.listener(
+                    .child(Button::new("dismiss", t("agent-dismiss")).on_click(cx.listener(
                         |this, _, _window, cx| {
                             this.last_error = None;
                             cx.notify();
@@ -2565,7 +2562,7 @@ fn render_thought_process_fold_icon_button(
                         .color(Color::Muted),
                 )
                 .child(
-                    Label::new("Thinking…").color(Color::Muted).with_animation(
+                    Label::new(t("agent-thinking")).color(Color::Muted).with_animation(
                         "pulsating-label",
                         Animation::new(Duration::from_secs(2))
                             .repeat()
@@ -2576,7 +2573,7 @@ fn render_thought_process_fold_icon_button(
             ThoughtProcessStatus::Completed => button
                 .style(ButtonStyle::Filled)
                 .child(Icon::new(IconName::ToolThink).size(IconSize::Small))
-                .child(Label::new("Thought Process").single_line()),
+                .child(Label::new(t("agent-thought-process")).single_line()),
         };
 
         button

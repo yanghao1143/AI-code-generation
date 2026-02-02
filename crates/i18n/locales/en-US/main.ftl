@@ -886,6 +886,36 @@ agent-previous-hunk = Previous Hunk
 agent-review-all-files = Review All Files
 agent-generating-changes = Generating Changes…
 
+# Agent Panel
+agent-panel-title = Agent Panel
+agent-new-thread-menu = New Thread…
+agent-new-from-summary = New From Summary
+agent-zed-agent = Zed Agent
+agent-text-thread = Text Thread
+agent-claude-code = Claude Code
+agent-codex-cli = Codex CLI
+agent-gemini-cli = Gemini CLI
+agent-add-more-agents = Add More Agents
+agent-selected-agent = Selected Agent
+agent-trust-workspace-description = To protect your system, third-party code—like MCP servers—won't run until you mark this workspace as safe.
+
+# Text Thread Editor
+agent-toggle-message-role = Toggle message role
+agent-available-roles = Available roles: You (User), Agent, System
+agent-context-cached = Context Cached
+agent-context-cached-desc = Large messages cached to optimize performance
+agent-view-details = View Details
+agent-code-block-copied = Code block copied to clipboard.
+agent-selection-copied = Selection copied to clipboard.
+agent-token-limit-reached = Token Limit Reached
+agent-token-limit-close = Token Limit is Close to Exhaustion
+agent-add-context = Add Context
+agent-add-context-hint = Type / to insert via keyboard
+agent-select-model = Select Model
+agent-free-usage-exceeded = Free Usage Exceeded
+agent-free-tier-exceeded-message = Free tier exceeded. Subscribe and add payment to continue using Zed LLMs. You'll be billed at cost for tokens used.
+agent-dismiss = Dismiss
+
 # AI Plans
 ai-plan-free = Free
 ai-plan-pro = Pro

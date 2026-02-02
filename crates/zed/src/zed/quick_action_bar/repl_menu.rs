@@ -1,10 +1,13 @@
 use gpui::ElementId;
 use gpui::{AnyElement, Entity};
+use i18n::{t, t_args};
 use picker::Picker;
+use std::collections::HashMap;
 use repl::{
     ExecutionState, JupyterSettings, Kernel, KernelSpecification, KernelStatus, Session,
     SessionSupport,
-    components::{KernelPickerDelegate, KernelSelector},
+    components::KernelPickerDelegate,
+    components::KernelSelector,
     worktree_id_for_editor,
 };
 use ui::{
@@ -96,10 +99,10 @@ impl QuickActionBar {
                             menu.custom_row(move |_window, _cx| {
                                 h_flex()
                                     .child(
-                                        Label::new(format!(
-                                            "kernel: {} ({})",
-                                            menu_state.kernel_name, menu_state.kernel_language
-                                        ))
+                                        Label::new(t_args("repl-menu-kernel", &std::collections::HashMap::from_iter([
+                                            ("name", menu_state.kernel_name.as_ref()),
+                                            ("type", menu_state.kernel_language.as_ref()),
+                                        ])))
                                         .size(LabelSize::Small)
                                         .color(Color::Muted),
                                     )
@@ -108,7 +111,7 @@ impl QuickActionBar {
                             .custom_row(move |_window, _cx| {
                                 h_flex()
                                     .child(
-                                        Label::new(status.clone().to_string())
+                                        Label::new(status.clone().label())
                                             .size(LabelSize::Small)
                                             .color(Color::Muted),
                                     )
@@ -119,7 +122,7 @@ impl QuickActionBar {
                             menu.custom_row(move |_window, _cx| {
                                 h_flex()
                                     .child(
-                                        Label::new(format!("{}...", status.to_string()))
+                                        Label::new(format!("{}...", status.label()))
                                             .size(LabelSize::Small)
                                             .color(Color::Muted),
                                     )
@@ -131,9 +134,9 @@ impl QuickActionBar {
                     .custom_entry(
                         move |_window, _cx| {
                             Label::new(if has_nonempty_selection {
-                                "Run Selection"
+                                t("repl-menu-run-selection")
                             } else {
-                                "Run Line"
+                                t("repl-menu-run-line")
                             })
                             .into_any_element()
                         },
@@ -146,7 +149,7 @@ impl QuickActionBar {
                     )
                     .custom_entry(
                         move |_window, _cx| {
-                            Label::new("Interrupt")
+                            Label::new(t("repl-menu-interrupt"))
                                 .size(LabelSize::Small)
                                 .color(Color::Error)
                                 .into_any_element()
@@ -160,7 +163,7 @@ impl QuickActionBar {
                     )
                     .custom_entry(
                         move |_window, _cx| {
-                            Label::new("Clear Outputs")
+                            Label::new(t("repl-menu-clear-outputs"))
                                 .size(LabelSize::Small)
                                 .color(Color::Muted)
                                 .into_any_element()
@@ -175,7 +178,7 @@ impl QuickActionBar {
                     .separator()
                     .custom_entry(
                         move |_window, _cx| {
-                            Label::new("Shut Down Kernel")
+                            Label::new(t("repl-menu-shutdown-kernel"))
                                 .size(LabelSize::Small)
                                 .color(Color::Error)
                                 .into_any_element()
@@ -189,7 +192,7 @@ impl QuickActionBar {
                     )
                     .custom_entry(
                         move |_window, _cx| {
-                            Label::new("Restart Kernel")
+                            Label::new(t("repl-menu-restart-kernel"))
                                 .size(LabelSize::Small)
                                 .color(Color::Error)
                                 .into_any_element()
@@ -201,7 +204,7 @@ impl QuickActionBar {
                         },
                     )
                     .separator()
-                    .action("View Sessions", Box::new(repl::Sessions))
+                    .action(t("repl-menu-view-sessions"), Box::new(repl::Sessions))
                     // TODO: Add shut down all kernels action
                     // .action("Shut Down all Kernels", Box::new(gpui::NoAction))
                 })
@@ -216,7 +219,7 @@ impl QuickActionBar {
                     )
                     .width(rems(1.))
                     .disabled(menu_state.popover_disabled),
-                Tooltip::text("REPL Menu"),
+                Tooltip::text(t("repl-menu-tooltip")),
             );
 
         let button = ButtonLike::new_rounded_left("toggle_repl_icon")
@@ -252,8 +255,11 @@ impl QuickActionBar {
         kernel_specification: KernelSpecification,
         cx: &mut Context<Self>,
     ) -> Option<AnyElement> {
-        let tooltip: SharedString =
-            SharedString::from(format!("Start REPL for {}", kernel_specification.name()));
+        let tooltip: SharedString = t_args(
+            "repl-menu-start-for",
+            &std::collections::HashMap::from_iter([("name", kernel_specification.name().as_ref())]),
+        )
+        .into();
 
         Some(
             h_flex()
@@ -321,7 +327,7 @@ impl QuickActionBar {
                                     Label::new(if let Some(name) = current_kernel_name {
                                         name
                                     } else {
-                                        SharedString::from("Select Kernel")
+                                        t("repl-menu-select-kernel").into()
                                     })
                                     .size(LabelSize::Small)
                                     .color(if current_kernelspec.is_some() {
@@ -338,14 +344,18 @@ impl QuickActionBar {
                                 .size(IconSize::XSmall),
                         ),
                 ),
-            Tooltip::text("Select Kernel"),
+            Tooltip::text(t("repl-menu-select-kernel")),
         )
         .with_handle(menu_handle)
         .into_any_element()
     }
 
     pub fn render_repl_setup(&self, language: &str, cx: &mut Context<Self>) -> Option<AnyElement> {
-        let tooltip: SharedString = SharedString::from(format!("Setup Chi Code REPL for {}", language));
+        let tooltip: SharedString = t_args(
+            "repl-menu-setup-for",
+            &std::collections::HashMap::from_iter([("name", language)]),
+        )
+        .into();
         Some(
             h_flex()
                 .gap(DynamicSpacing::Base06.rems(cx))
@@ -374,7 +384,7 @@ fn session_state(session: Entity<Session>, cx: &mut App) -> ReplMenuState {
 
     let fill_fields = || {
         ReplMenuState {
-            tooltip: "Nothing running".into(),
+            tooltip: t("repl-menu-nothing-running").into(),
             icon: IconName::ReplNeutral,
             icon_color: Color::Default,
             icon_is_animating: false,
@@ -399,33 +409,78 @@ fn session_state(session: Entity<Session>, cx: &mut App) -> ReplMenuState {
             ..fill_fields()
         };
 
-    let starting = || transitional(format!("{} is starting", kernel_name).into(), true, true);
-    let restarting = || transitional(format!("Restarting {}", kernel_name).into(), true, true);
+    let starting = || {
+        transitional(
+            t_args(
+                "repl-menu-kernel-starting",
+                &std::collections::HashMap::from_iter([("name", kernel_name.as_ref())]),
+            )
+            .into(),
+            true,
+            true,
+        )
+    };
+    let restarting = || {
+        transitional(
+            t_args(
+                "repl-menu-kernel-restarting",
+                &std::collections::HashMap::from_iter([("name", kernel_name.as_ref())]),
+            )
+            .into(),
+            true,
+            true,
+        )
+    };
     let shutting_down = || {
         transitional(
-            format!("{} is shutting down", kernel_name).into(),
+            t_args(
+                "repl-menu-kernel-shutting-down",
+                &std::collections::HashMap::from_iter([("name", kernel_name.as_ref())]),
+            )
+            .into(),
             false,
             true,
         )
     };
     let auto_restarting = || {
         transitional(
-            format!("Auto-restarting {}", kernel_name).into(),
+            t_args(
+                "repl-menu-kernel-auto-restarting",
+                &std::collections::HashMap::from_iter([("name", kernel_name.as_ref())]),
+            )
+            .into(),
             true,
             true,
         )
     };
-    let unknown = || transitional(format!("{} state unknown", kernel_name).into(), false, true);
+    let unknown = || {
+        transitional(
+            t_args(
+                "repl-menu-kernel-state",
+                &std::collections::HashMap::from_iter([
+                    ("name", kernel_name.as_ref()),
+                    ("state", t("repl-unknown-status").as_str()),
+                ]),
+            )
+            .into(),
+            false,
+            true,
+        )
+    };
     let other = |state: &str| {
         transitional(
-            format!("{} state: {}", kernel_name, state).into(),
+            t_args(
+                "repl-menu-kernel-state",
+                &std::collections::HashMap::from_iter([("name", kernel_name.as_ref()), ("state", state)]),
+            )
+            .into(),
             false,
             true,
         )
     };
 
     let shutdown = || ReplMenuState {
-        tooltip: "Nothing running".into(),
+        tooltip: t("repl-menu-nothing-running").into(),
         icon: IconName::ReplNeutral,
         icon_color: Color::Default,
         icon_is_animating: false,
@@ -439,13 +494,27 @@ fn session_state(session: Entity<Session>, cx: &mut App) -> ReplMenuState {
         Kernel::Restarting => restarting(),
         Kernel::RunningKernel(kernel) => match &kernel.execution_state() {
             ExecutionState::Idle => ReplMenuState {
-                tooltip: format!("Run code on {} ({})", kernel_name, kernel_language).into(),
+                tooltip: t_args(
+                    "repl-menu-run-code-on",
+                    &std::collections::HashMap::from_iter([
+                        ("name", kernel_name.as_ref()),
+                        ("type", kernel_language.as_ref()),
+                    ]),
+                )
+                .into(),
                 indicator: Some(Indicator::dot().color(Color::Success)),
                 status: session.kernel.status(),
                 ..fill_fields()
             },
             ExecutionState::Busy => ReplMenuState {
-                tooltip: format!("Interrupt {} ({})", kernel_name, kernel_language).into(),
+                tooltip: t_args(
+                    "repl-menu-interrupt-kernel-on",
+                    &std::collections::HashMap::from_iter([
+                        ("name", kernel_name.as_ref()),
+                        ("type", kernel_language.as_ref()),
+                    ]),
+                )
+                .into(),
                 icon_is_animating: true,
                 popover_disabled: false,
                 indicator: None,
@@ -462,7 +531,14 @@ fn session_state(session: Entity<Session>, cx: &mut App) -> ReplMenuState {
         },
         Kernel::StartingKernel(_) => starting(),
         Kernel::ErroredLaunch(e) => ReplMenuState {
-            tooltip: format!("Error with kernel {}: {}", kernel_name, e).into(),
+            tooltip: t_args(
+                "repl-menu-kernel-error",
+                &std::collections::HashMap::from_iter([
+                    ("name", kernel_name.as_ref()),
+                    ("error", e.to_string().as_str()),
+                ]),
+            )
+            .into(),
             popover_disabled: false,
             indicator: Some(Indicator::dot().color(Color::Error)),
             status: session.kernel.status(),

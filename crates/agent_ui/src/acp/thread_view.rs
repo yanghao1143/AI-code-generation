@@ -2720,9 +2720,9 @@ impl AcpThreadView {
                                                     IconButton::new("regenerate", IconName::Return)
                                                         .icon_color(Color::Muted)
                                                         .icon_size(IconSize::XSmall)
-                                                        .tooltip(Tooltip::text(
-                                                            t("agent-editing-restart-thread")
-                                                        ))
+                                                        .tooltip(Tooltip::text(t(
+                                                            "agent-editing-restart-thread",
+                                                        )))
                                                         .on_click(cx.listener({
                                                             let editor = editor.clone();
                                                             move |this, _, window, cx| {
@@ -6210,7 +6210,7 @@ impl AcpThreadView {
                                     .tooltip({
                                         move |_window, cx| {
                                             Tooltip::for_action_in(
-                                                expand_tooltip,
+                                                expand_tooltip.clone(),
                                                 &ExpandMessageEditor,
                                                 &focus_handle,
                                                 cx,

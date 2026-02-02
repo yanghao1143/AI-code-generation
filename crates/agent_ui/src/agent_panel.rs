@@ -1668,7 +1668,7 @@ impl Panel for AgentPanel {
     }
 
     fn icon_tooltip(&self, _window: &Window, _cx: &App) -> Option<gpui::SharedString> {
-        Some("Agent Panel".into())
+        Some(t("agent-panel-title").into())
     }
 
     fn toggle_action(&self) -> Box<dyn Action> {
@@ -2025,7 +2025,7 @@ impl AgentPanel {
             }))
             .tooltip({
                 move |_window, cx| {
-                    Tooltip::for_action_in("Go Back", &workspace::GoBack, &focus_handle, cx)
+                    Tooltip::for_action_in(t("agent-go-back"), &workspace::GoBack, &focus_handle, cx)
                 }
             })
     }
@@ -2065,7 +2065,7 @@ impl AgentPanel {
                     let focus_handle = focus_handle.clone();
                     move |_window, cx| {
                         Tooltip::for_action_in(
-                            "New Thread…",
+                            t("agent-new-thread-menu"),
                             &ToggleNewThreadMenu,
                             &focus_handle,
                             cx,
@@ -2098,7 +2098,7 @@ impl AgentPanel {
                                 if !thread.is_empty() {
                                     let session_id = thread.id().clone();
                                     this.item(
-                                        ContextMenuEntry::new("New From Summary")
+                                        ContextMenuEntry::new(t("agent-new-from-summary"))
                                             .icon(IconName::ThreadFromSummary)
                                             .icon_color(Color::Muted)
                                             .handler(move |window, cx| {
@@ -2115,7 +2115,7 @@ impl AgentPanel {
                                 }
                             })
                             .item(
-                                ContextMenuEntry::new("Zed Agent")
+                                ContextMenuEntry::new(t("agent-zed-agent"))
                                     .when(
                                         is_agent_selected(AgentType::NativeAgent)
                                             | is_agent_selected(AgentType::TextThread),
@@ -2149,7 +2149,7 @@ impl AgentPanel {
                                     }),
                             )
                             .item(
-                                ContextMenuEntry::new("Text Thread")
+                                ContextMenuEntry::new(t("agent-text-thread"))
                                     .action(NewTextThread.boxed_clone())
                                     .icon(IconName::TextThread)
                                     .icon_color(Color::Muted)
@@ -2175,9 +2175,9 @@ impl AgentPanel {
                                     }),
                             )
                             .separator()
-                            .header("External Agents")
+                            .header(t("agent-external-agents"))
                             .item(
-                                ContextMenuEntry::new("Claude Code")
+                                ContextMenuEntry::new(t("agent-claude-code"))
                                     .when(is_agent_selected(AgentType::ClaudeCode), |this| {
                                         this.action(Box::new(NewExternalAgentThread {
                                             agent: None,
@@ -2208,7 +2208,7 @@ impl AgentPanel {
                                     }),
                             )
                             .item(
-                                ContextMenuEntry::new("Codex CLI")
+                                ContextMenuEntry::new(t("agent-codex-cli"))
                                     .when(is_agent_selected(AgentType::Codex), |this| {
                                         this.action(Box::new(NewExternalAgentThread {
                                             agent: None,
@@ -2239,7 +2239,7 @@ impl AgentPanel {
                                     }),
                             )
                             .item(
-                                ContextMenuEntry::new("Gemini CLI")
+                                ContextMenuEntry::new(t("agent-gemini-cli"))
                                     .when(is_agent_selected(AgentType::Gemini), |this| {
                                         this.action(Box::new(NewExternalAgentThread {
                                             agent: None,
@@ -2340,7 +2340,7 @@ impl AgentPanel {
                             })
                             .separator()
                             .item(
-                                ContextMenuEntry::new("Add More Agents")
+                                ContextMenuEntry::new(t("agent-add-more-agents"))
                                     .icon(IconName::Plus)
                                     .icon_color(Color::Muted)
                                     .handler({
@@ -2375,7 +2375,7 @@ impl AgentPanel {
                 })
             })
             .tooltip(move |_, cx| {
-                Tooltip::with_meta(selected_agent_label.clone(), None, "Selected Agent", cx)
+                Tooltip::with_meta(selected_agent_label.clone(), None, t("agent-selected-agent"), cx)
             });
 
         let selected_agent = if is_thread_loading {
@@ -2764,7 +2764,7 @@ impl AgentPanel {
             return None;
         }
 
-        let description = "To protect your system, third-party code—like MCP servers—won't run until you mark this workspace as safe.";
+        let description = t("agent-trust-workspace-description");
 
         Some(
             Callout::new()

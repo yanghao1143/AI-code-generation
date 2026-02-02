@@ -2245,7 +2245,8 @@ impl ProjectPanel {
                     }
                     _ => {
                         const CUTOFF_POINT: usize = 10;
-                        let mut names = if file_paths.len() > CUTOFF_POINT {
+                                                    let names = if file_paths.len() > CUTOFF_POINT {
+                        
                             let truncated_path_counts = file_paths.len() - CUTOFF_POINT;
                             let mut paths = file_paths
                                 .iter()

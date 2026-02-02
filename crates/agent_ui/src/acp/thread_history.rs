@@ -84,7 +84,8 @@ impl AcpThreadHistory {
     ) -> Self {
         let search_editor = cx.new(|cx| {
             let mut editor = Editor::single_line(window, cx);
-            editor.set_placeholder_text(t("agent-search-threads"), window, cx);
+            let placeholder = t("agent-search-threads");
+            editor.set_placeholder_text(placeholder.as_str(), window, cx);
             editor
         });
 

@@ -1504,7 +1504,7 @@ impl CodeActionsItem {
         match self {
             Self::CodeAction { action, .. } => action.lsp_action.title().replace("\n", ""),
             Self::Task(_, task) => task.resolved_label.replace("\n", ""),
-            Self::DebugScenario(scenario) => t_args("debug-prefix", &[("label", scenario.label.to_string().as_str())].into_iter().collect()),
+            Self::DebugScenario(scenario) => t_args("debug-prefix", &std::collections::HashMap::from_iter([("label", scenario.label.as_ref())])),
         }
     }
 }
