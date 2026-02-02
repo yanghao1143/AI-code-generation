@@ -2722,4 +2722,10 @@ quick-action-inline-diagnostics-disabled = Inline diagnostics are not available 
 # Open URL Modal
 open-url-paste-hint = Paste a URL to open.
 open-url-invalid-url = Invalid URL: { $error }
+
+# Migration Banner
+migrate-file-type-keymap = keymap
+migrate-file-type-settings = settings
+migrate-deprecated-settings = Your { $fileType } file uses deprecated settings which can be automatically updated. A backup will be saved to `{ $backupFileName }`
+migrate-backup-and-update = Backup and Update
 ellipsis = ��

@@ -1,6 +1,7 @@
 use anyhow::{Context as _, Result};
 use editor::Editor;
 use fs::Fs;
+use i18n::{t, t_args};
 use migrator::{migrate_keymap, migrate_settings};
 use settings::{KeymapFile, Settings, SettingsStore};
 use util::ResultExt;
@@ -93,7 +94,7 @@ impl MigrationBanner {
     fn show(&mut self, cx: &mut Context<Self>) {
         let (file_type, backup_file_name) = match self.migration_type {
             Some(MigrationType::Keymap) => (
-                "keymap",
+                t("migrate-file-type-keymap"),
                 paths::keymap_backup_file()
                     .file_name()
                     .unwrap_or_default()
@@ -101,7 +102,7 @@ impl MigrationBanner {
                     .into_owned(),
             ),
             Some(MigrationType::Settings) => (
-                "settings",
+                t("migrate-file-type-settings"),
                 paths::settings_backup_file()
                     .file_name()
                     .unwrap_or_default()
@@ -111,10 +112,9 @@ impl MigrationBanner {
             None => return,
         };
 
-        let migration_text = format!(
-            "Your {} file uses deprecated settings which can be \
-            automatically updated. A backup will be saved to `{}`",
-            file_type, backup_file_name
+        let migration_text = t_args(
+            "migrate-deprecated-settings",
+            &[("fileType", file_type), ("backupFileName", backup_file_name)],
         );
 
         self.markdown = Some(cx.new(|cx| Markdown::new(migration_text.into(), None, None, cx)));
@@ -235,7 +235,7 @@ impl Render for MigrationBanner {
                     ),
             )
             .child(
-                Button::new("backup-and-migrate", "Backup and Update").on_click(
+                Button::new("backup-and-migrate", t("migrate-backup-and-update")).on_click(
                     move |_, window, cx| {
                         let fs = <dyn Fs>::global(cx);
                         match migration_type {

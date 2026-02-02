@@ -2735,4 +2735,10 @@ quick-action-inline-diagnostics-disabled = 在启用常规诊断之前，内联�
 # Open URL Modal / 打开 URL 对话框
 open-url-paste-hint = 粘贴要打开的 URL。
 open-url-invalid-url = 无效的 URL：{ $error }
+
+# Migration Banner / 迁移横幅
+migrate-file-type-keymap = 键盘映射
+migrate-file-type-settings = 设置
+migrate-deprecated-settings = 您的{ $fileType }文件使用了已弃用的设置，可以自动更新。备份将保存到 `{ $backupFileName }`
+migrate-backup-and-update = 备份并更新
 ellipsis = ��
