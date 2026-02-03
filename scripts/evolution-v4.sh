@@ -5,20 +5,204 @@
 # 2. 环境问题自动修复
 # 3. 更智能的任务分配
 # 4. 自动学习和适应
+# 5. 自动 WSL/Windows 路径转换
 
 WORKSPACE="/home/jinyang/.openclaw/workspace"
 SOCKET="/tmp/openclaw-agents.sock"
 REDIS_PREFIX="openclaw:evo"
 AGENTS=("claude-agent" "gemini-agent" "codex-agent")
 
-declare -A AGENT_CONFIG=(
-    ["claude-agent:cmd"]='ANTHROPIC_API_KEY="sk-MgjQOD5s4xdnBfueHBgAiCxrtvgfN0xU1J24SyRIl1JUMUu2" ANTHROPIC_BASE_URL="https://claude.chiddns.com" claude --dangerously-skip-permissions'
-    ["claude-agent:workdir"]="/mnt/d/ai软件/zed"
-    ["gemini-agent:cmd"]="gemini"
-    ["gemini-agent:workdir"]="/mnt/d/ai软件/zed"
-    ["codex-agent:cmd"]="/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command 'cd D:\\ai软件\\zed; codex'"
-    ["codex-agent:workdir"]="/mnt/d/ai软件/zed"
-)
+# ============ 环境检测 v4 ============
+
+# 检测是否在 WSL 环境中
+is_wsl() {
+    [[ -f /proc/version ]] && grep -qiE "(microsoft|wsl)" /proc/version 2>/dev/null
+}
+
+# 检测 WSL 版本 (1 或 2)
+get_wsl_version() {
+    if [[ -f /proc/version ]]; then
+        if grep -qiE "microsoft.*WSL2|WSL2" /proc/version 2>/dev/null; then
+            echo "2"
+        elif grep -qiE "microsoft|wsl" /proc/version 2>/dev/null; then
+            echo "1"
+        else
+            echo "0"
+        fi
+    else
+        echo "0"
+    fi
+}
+
+# 将 Linux/WSL 路径转换为 Windows 路径
+# /mnt/c/Users/... -> C:\Users\...
+# /mnt/d/ai软件/zed -> D:\ai软件\zed
+linux_to_windows_path() {
+    local linux_path="$1"
+    local win_path=""
+
+    # 检查是否是 /mnt/X/... 格式
+    if [[ "$linux_path" =~ ^/mnt/([a-zA-Z])(/.*)?$ ]]; then
+        local drive="${BASH_REMATCH[1]^^}"  # 转大写
+        local rest="${BASH_REMATCH[2]}"
+        # 将 / 替换为 \
+        rest="${rest//\//\\}"
+        win_path="${drive}:${rest}"
+    # 检查是否已经是 Windows 路径格式
+    elif [[ "$linux_path" =~ ^[A-Za-z]:\\ ]]; then
+        win_path="$linux_path"
+    # 其他情况尝试使用 wslpath (如果可用)
+    elif command -v wslpath &>/dev/null; then
+        win_path=$(wslpath -w "$linux_path" 2>/dev/null)
+    else
+        # 无法转换，返回原路径
+        win_path="$linux_path"
+    fi
+
+    echo "$win_path"
+}
+
+# 将 Windows 路径转换为 Linux/WSL 路径
+# C:\Users\... -> /mnt/c/Users/...
+# D:\ai软件\zed -> /mnt/d/ai软件/zed
+windows_to_linux_path() {
+    local win_path="$1"
+    local linux_path=""
+
+    # 检查是否是 X:\... 或 X:/... 格式
+    if [[ "$win_path" =~ ^([A-Za-z]):[/\\](.*)$ ]]; then
+        local drive="${BASH_REMATCH[1],,}"  # 转小写
+        local rest="${BASH_REMATCH[2]}"
+        # 将 \ 替换为 /
+        rest="${rest//\\//}"
+        linux_path="/mnt/${drive}/${rest}"
+    # 检查是否已经是 Linux 路径格式
+    elif [[ "$win_path" =~ ^/ ]]; then
+        linux_path="$win_path"
+    # 其他情况尝试使用 wslpath (如果可用)
+    elif command -v wslpath &>/dev/null; then
+        linux_path=$(wslpath -u "$win_path" 2>/dev/null)
+    else
+        # 无法转换，返回原路径
+        linux_path="$win_path"
+    fi
+
+    echo "$linux_path"
+}
+
+# 为 PowerShell 转义路径 (双反斜杠)
+escape_for_powershell() {
+    local path="$1"
+    # 将单反斜杠替换为双反斜杠
+    echo "${path//\\/\\\\}"
+}
+
+# 转换文本中的所有 Linux 路径为 Windows 路径
+# 用于在发送任务给 Codex 时自动转换路径
+convert_paths_in_text() {
+    local text="$1"
+    local result="$text"
+
+    # 匹配 /mnt/X/... 格式的路径 (贪婪匹配到空格或引号)
+    # 使用 sed 替换所有匹配的路径
+    while [[ "$result" =~ (/mnt/[a-zA-Z](/[^[:space:]\"\']*)) ]]; do
+        local linux_path="${BASH_REMATCH[1]}"
+        local win_path=$(linux_to_windows_path "$linux_path")
+        # 替换时需要转义特殊字符
+        result="${result//$linux_path/$win_path}"
+    done
+
+    # 处理 crates/xxx 相对路径 - 转换为完整 Windows 路径
+    # 例如: crates/terminal -> D:\ai软件\zed\crates\terminal
+    local base_win=$(linux_to_windows_path "/mnt/d/ai软件/zed")
+
+    # 使用更可靠的方法：用 sed 替换所有 crates/xxx 模式
+    # 但要避免替换已经转换过的路径 (不含 \crates\)
+    local temp_result=""
+    local IFS=' '
+    for word in $result; do
+        if [[ "$word" =~ ^crates/([a-zA-Z_0-9]+)(.*)$ ]]; then
+            local module="${BASH_REMATCH[1]}"
+            local suffix="${BASH_REMATCH[2]}"
+            # 构建 Windows 路径
+            temp_result+="${base_win}\\crates\\${module}${suffix} "
+        else
+            temp_result+="${word} "
+        fi
+    done
+    # 去掉末尾空格
+    result="${temp_result% }"
+
+    echo "$result"
+}
+
+# 获取适合当前环境的工作目录
+get_workdir() {
+    local agent="$1"
+    local base_path="/mnt/d/ai软件/zed"
+
+    case "$agent" in
+        codex-agent)
+            # Codex 通过 PowerShell 运行，需要 Windows 路径
+            linux_to_windows_path "$base_path"
+            ;;
+        *)
+            # 其他 agent 使用 Linux 路径
+            echo "$base_path"
+            ;;
+    esac
+}
+
+# 构建 Codex 启动命令
+build_codex_cmd() {
+    local workdir="$1"
+    local win_workdir=$(linux_to_windows_path "$workdir")
+    local escaped_workdir=$(escape_for_powershell "$win_workdir")
+
+    # 检测 PowerShell 路径
+    local ps_path="/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
+    if [[ ! -x "$ps_path" ]]; then
+        # 尝试 pwsh (PowerShell Core)
+        ps_path=$(command -v pwsh.exe 2>/dev/null || echo "/mnt/c/Program Files/PowerShell/7/pwsh.exe")
+    fi
+
+    echo "$ps_path -Command 'cd ${escaped_workdir}; codex'"
+}
+
+# 动态初始化 Agent 配置
+init_agent_config() {
+    local base_workdir="/mnt/d/ai软件/zed"
+
+    # Claude agent
+    AGENT_CONFIG["claude-agent:cmd"]='ANTHROPIC_API_KEY="sk-MgjQOD5s4xdnBfueHBgAiCxrtvgfN0xU1J24SyRIl1JUMUu2" ANTHROPIC_BASE_URL="https://claude.chiddns.com" claude --dangerously-skip-permissions'
+    AGENT_CONFIG["claude-agent:workdir"]="$base_workdir"
+
+    # Gemini agent
+    AGENT_CONFIG["gemini-agent:cmd"]="gemini"
+    AGENT_CONFIG["gemini-agent:workdir"]="$base_workdir"
+
+    # Codex agent - 动态构建命令
+    if is_wsl; then
+        AGENT_CONFIG["codex-agent:cmd"]=$(build_codex_cmd "$base_workdir")
+        # Codex workdir 仍然用 Linux 路径 (tmux 需要)
+        AGENT_CONFIG["codex-agent:workdir"]="$base_workdir"
+    else
+        # 非 WSL 环境，直接使用 codex
+        AGENT_CONFIG["codex-agent:cmd"]="codex"
+        AGENT_CONFIG["codex-agent:workdir"]="$base_workdir"
+    fi
+
+    # 日志输出当前配置
+    if [[ "${DEBUG:-}" == "1" ]]; then
+        echo "[DEBUG] WSL detected: $(is_wsl && echo 'yes' || echo 'no')"
+        echo "[DEBUG] WSL version: $(get_wsl_version)"
+        echo "[DEBUG] Codex cmd: ${AGENT_CONFIG[codex-agent:cmd]}"
+    fi
+}
+
+# 声明关联数组并初始化
+declare -A AGENT_CONFIG
+init_agent_config
 
 # ============ 精准诊断 v4 ============
 diagnose_agent() {
@@ -363,7 +547,32 @@ repair_agent() {
 fix_env_error() {
     local agent="$1"
     local output=$(tmux -S "$SOCKET" capture-pane -t "$agent" -p 2>/dev/null)
-    
+
+    # 检测具体的环境错误类型
+    if echo "$output" | grep -qE "cannot find path|路径不存在|The system cannot find the path" 2>/dev/null; then
+        # 路径错误 - 可能是 Windows/Linux 路径混淆
+        echo "检测到路径错误，尝试修复 $agent 配置..."
+
+        # 重新初始化配置 (会重新计算路径)
+        init_agent_config
+
+        # 发送正确的 cd 命令
+        if [[ "$agent" == "codex-agent" ]] && is_wsl; then
+            local win_path=$(get_workdir "$agent")
+            local escaped_path=$(escape_for_powershell "$win_path")
+            tmux -S "$SOCKET" send-keys -t "$agent" "cd '$escaped_path'" Enter
+            sleep 1
+        fi
+    elif echo "$output" | grep -qE "codex.*not found|command not found.*codex" 2>/dev/null; then
+        # Codex 命令找不到 - 可能需要完整路径
+        echo "检测到 codex 命令找不到，尝试使用完整路径..."
+        if is_wsl; then
+            # 尝试通过 PowerShell 查找 codex
+            tmux -S "$SOCKET" send-keys -t "$agent" 'Get-Command codex -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source' Enter
+            sleep 2
+        fi
+    fi
+
     # env_error 通常是 bash 层面的问题，不是 CLI 内部问题
     # 最好的处理方式是重启会话
     echo "检测到环境错误，重启 $agent 会话..."
@@ -516,10 +725,19 @@ dispatch_task() {
     if [[ -n "$cached_progress" || -n "$cached_findings" ]]; then
         task="$task (上次进度: $cached_progress, 发现: ${cached_findings:0:100})"
     fi
-    
+
+    # 8. 为 Codex agent 转换路径 (WSL -> Windows)
+    local task_to_send="$task"
+    if [[ "$agent" == "codex-agent" ]] && is_wsl; then
+        task_to_send=$(convert_paths_in_text "$task")
+        if [[ "$task_to_send" != "$task" ]]; then
+            echo "[dispatch] 路径已转换为 Windows 格式"
+        fi
+    fi
+
     # 发送任务 (加延迟确保 Enter 生效)
-    echo "[dispatch] 发送任务给 $agent: ${task:0:50}..."
-    tmux -S "$SOCKET" send-keys -t "$agent" "$task"
+    echo "[dispatch] 发送任务给 $agent: ${task_to_send:0:50}..."
+    tmux -S "$SOCKET" send-keys -t "$agent" "$task_to_send"
     sleep 0.5
     tmux -S "$SOCKET" send-keys -t "$agent" Enter
     sleep 0.3
@@ -751,7 +969,7 @@ trends() {
 case "${1:-check}" in
     check) run_check quick ;;
     status) status ;;
-    repair) 
+    repair)
         d=$(diagnose_agent "$2")
         r=$(repair_agent "$2" "$d")
         echo "$2: $d → $r"
@@ -768,7 +986,35 @@ case "${1:-check}" in
     trends)
         trends
         ;;
-    *) echo "用法: $0 {check|status|repair <agent>|diagnose <agent>|learn <agent> <problem> <solution>|report|trends}" ;;
+    test-paths)
+        # 测试路径转换功能
+        echo "🔧 测试路径转换功能:"
+        echo ""
+        echo "WSL 检测: $(is_wsl && echo '是 WSL 环境' || echo '非 WSL 环境')"
+        echo "WSL 版本: $(get_wsl_version)"
+        echo ""
+        echo "路径转换测试:"
+        test_paths=(
+            "/mnt/c/Users/test"
+            "/mnt/d/ai软件/zed"
+            "/mnt/d/ai软件/zed/crates/terminal"
+            "C:\\Windows\\System32"
+        )
+        for p in "${test_paths[@]}"; do
+            echo "  Linux: $p"
+            echo "  Win:   $(linux_to_windows_path "$p")"
+            echo ""
+        done
+        echo "文本转换测试:"
+        test_text="国际化 /mnt/d/ai软件/zed/crates/terminal 模块"
+        echo "  原文: $test_text"
+        echo "  转换: $(convert_paths_in_text "$test_text")"
+        echo ""
+        test_text2="修复 crates/acp_thread 和 crates/terminal 的编译错误"
+        echo "  原文: $test_text2"
+        echo "  转换: $(convert_paths_in_text "$test_text2")"
+        ;;
+    *) echo "用法: $0 {check|status|repair <agent>|diagnose <agent>|learn <agent> <problem> <solution>|report|trends|test-paths}" ;;
 esac
 
 # ============ Agent 专长分析 (新增) ============
