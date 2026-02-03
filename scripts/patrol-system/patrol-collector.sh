@@ -40,8 +40,8 @@ detect_state() {
         return
     fi
     
-    # 4. 正在工作
-    if echo "$last_20" | grep -qE "esc to cancel|esc to interrupt|Thinking|Working|Searching|Reading|Writing|Cogitating|Shenaniganing|Buffering|Flowing|Transfiguring|Exploring|Investigating|Analyzing|Processing|Clarifying|Mining|Baking|Navigating|Checking|Compiling|Building|Mulling|Limiting|Considering|Enumerating|Scampering|Hatching|Pontificating|Nebulizing|Refining|Resolving" 2>/dev/null; then
+    # 4. 正在工作 (检测更多状态)
+    if echo "$last_20" | grep -qE "esc to cancel|esc to interrupt|Thinking|Working|Searching|Reading|Writing|Cogitating|Shenaniganing|Buffering|Flowing|Transfiguring|Exploring|Investigating|Analyzing|Processing|Clarifying|Mining|Baking|Navigating|Checking|Compiling|Building|Mulling|Limiting|Considering|Enumerating|Scampering|Hatching|Pontificating|Nebulizing|Refining|Resolving|TARDIS|Burrowing|Worked for|context left|Listing|Scanning|Fetching|Loading|Parsing|Generating|Executing|Running|Querying" 2>/dev/null; then
         echo "working"
         return
     fi
