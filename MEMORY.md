@@ -1479,3 +1479,44 @@ codex-agent)
 - pending_input 是常见状态，需要自动恢复
 - Codex ESLint 报错需要让 agent 自己修复
 - i18n 任务正在并行进行，效率高
+
+### 2026-02-03 10:07 - 📊 技术总监巡检学习 #12 (自动化运行良好)
+
+**巡检发现**:
+- ✅ **Cron isolated 模式稳定运行** - 第三次成功触发
+- Claude: 🟢 空闲 (刚完成 P3-1 代码清理任务，删除 63 行调试代码)
+- Gemini: 🟢 空闲 (刚完成 P2-2 Promise 错误处理)
+- Codex: 🟡 正在工作 (52% context，等待 review)
+
+**自动恢复操作**:
+1. ✅ evolution-v4.sh 自动检测到 Gemini 空闲
+2. ✅ 自动派发 i18n 任务: crates/acp_thread 模块
+3. ✅ 无需人工干预，系统自动运行
+
+**任务状态**:
+- 队列为空 (所有任务已派发)
+- 进行中: 1 (i18n acp_thread - Gemini)
+- Codex 等待 review 确认
+
+**项目进度**:
+- cc_switch: ✅ done
+- i18n: 🔄 pending_all (正在进行)
+- multi_model: ⏸️ not_started
+
+**关键成功**:
+1. ✅ **完全自动化** - 检测、派发、恢复全自动
+2. ✅ **Claude 高效完成** - P3-1 代码清理，6分19秒完成
+3. ✅ **Gemini 高效完成** - P2-2 Promise 错误处理完成
+4. ✅ **系统稳定运行** - 无死锁、无 context 溢出
+
+**效率分析**:
+- 从巡检 #10 (09:54) 到 #12 (10:07)，13 分钟内完成 2 个任务
+- Claude: P3-1 代码清理 (6m19s)
+- Gemini: P2-2 Promise 错误处理 (~7min)
+- 平均每个任务 6.5 分钟
+
+**教训**:
+- 自动化系统运行良好，无需人工干预
+- evolution-v4.sh 的空闲检测和派发逻辑有效
+- Cron isolated 模式稳定可靠
+- 下一步: 继续监控 i18n 进度，准备 multi_model 任务
