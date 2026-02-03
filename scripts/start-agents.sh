@@ -31,7 +31,7 @@ start_gemini() {
         tmux -S "$SOCKET" new-session -d -s gemini-agent
         sleep 1
     fi
-    tmux -S "$SOCKET" send-keys -t gemini-agent "cd /mnt/d/ai软件/zed && gemini" Enter
+    tmux -S "$SOCKET" send-keys -t gemini-agent "/mnt/c/Windows/System32/cmd.exe /c 'cd /d $ZED_DIR && gemini'" Enter
     echo "✅ gemini-agent 启动"
 }
 
@@ -61,7 +61,7 @@ restart_agent() {
             tmux -S "$SOCKET" send-keys -t "$agent" "/mnt/c/Windows/System32/cmd.exe /c 'cd /d $ZED_DIR && claude --dangerously-skip-permissions'" Enter
             ;;
         gemini-agent)
-            tmux -S "$SOCKET" send-keys -t "$agent" "gemini" Enter
+            tmux -S "$SOCKET" send-keys -t "$agent" "/mnt/c/Windows/System32/cmd.exe /c 'cd /d $ZED_DIR && gemini'" Enter
             ;;
         codex-agent)
             tmux -S "$SOCKET" send-keys -t "$agent" "/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -Command 'cd D:\\ai软件\\zed; codex'" Enter
