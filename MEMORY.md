@@ -1146,3 +1146,304 @@ codex-agent)
 - Phase 4: 服务层 (3个) - P1-4~P1-6
 - Phase 5: 错误处理 (3个) - P2-1~P2-3
 - Phase 6: 代码清理 (2个) - P3-1~P3-2
+
+### 2026-02-03 00:23 - 📊 技术总监巡检学习 #1
+
+**巡检发现**:
+- Claude 完成 FFmpeg 导出，已 push，派发新任务 P1-2
+- Codex 正在实现 Kling/Runway Provider，context 92%
+- Gemini 正在实现 EdgeTTS，同时修改了 PlaybackEngine.ts
+
+**学习经验**:
+1. **任务完成后立即派发下一个** - 不要让 agent 空闲
+2. **监控 context 使用率** - Codex 92% 需要关注
+3. **git 冲突处理** - 多 agent 同时 push 需要 rebase
+4. **Windows agent 访问 WSL** - 使用 `\\wsl.localhost\Ubuntu\` 路径
+
+**下次改进**:
+- 检测到 agent 完成任务后自动派发
+- context > 90% 时考虑重启会话
+- 定期 git pull 避免冲突
+
+### 2026-02-03 00:26 - 📊 技术总监巡检学习 #2
+
+**巡检发现**:
+- Claude 完成 P1-2 OpenAIAdapter 类型修复 (109行改动)
+- Codex 正在查 Runway API 文档，context 78%
+- Gemini 卡在交互式 shell，已修复并重新派发任务
+
+**问题修复**:
+- Gemini 交互式 shell 卡住 → 发送 Escape + q 取消，重新派发任务
+
+**学习经验**:
+1. **交互式命令会卡住 agent** - 需要检测并发送取消键
+2. **git log 等命令会进入 pager** - 需要发送 q 退出
+3. **任务完成后主动帮 agent commit** - 加速流程
+
+**进化点**:
+- 检测 "Interactive shell awaiting" 状态
+- 自动发送 Escape/q 恢复
+- 完成后主动触发 git commit
+
+### 2026-02-03 00:29 - 📊 技术总监巡检学习 #3
+
+**巡检发现**:
+- Claude 开始 P1-4 MCP 审批
+- Codex 正在设计 RunwayProvider (81% ctx, 14分钟)
+- Gemini 又卡在交互式 shell，已修复
+
+**问题模式识别**:
+- Gemini 频繁卡在 git 命令的交互式 shell
+- 原因：git log/show 等命令会进入 pager (less)
+- 解决：发送 Escape + q 退出
+
+**进化点**:
+- 给 Gemini 派发任务时，提供完整代码模板减少它执行 git 命令
+- 检测 "Interactive shell awaiting" 立即发送 Escape + q
+- Codex 工作时间长但稳定，context 消耗合理
+
+**效率分析**:
+- Claude: 高效，已完成 2 个任务
+- Codex: 稳定，1 个大任务进行中
+- Gemini: 需要更多指导，容易卡住
+
+### 2026-02-03 00:31 - 📊 技术总监巡检学习 #4
+
+**巡检发现**:
+- Claude 完成 P1-4 MCP 审批，派发 P0-9 TTI 连接测试
+- Codex 正在写 RunwayProvider 代码
+- Gemini 完成 P0-4 EdgeTTS，派发 P0-5 OpenAI TTS 文件保存
+
+**任务完成统计**:
+- 已完成: 4 (P0-1, P1-2, P1-4, P0-4)
+- 进行中: 3 (P0-2/3, P0-5, P0-9)
+- 待开始: 11
+
+**效率分析**:
+- Claude: 3 个任务完成，效率最高
+- Gemini: 1 个任务完成，需要更多指导
+- Codex: 1 个大任务进行中，稳定
+
+**进化点**:
+- 检测到任务完成后立即派发下一个
+- 保持 agent 不空闲
+- 任务完成率: 4/18 = 22%
+
+### 2026-02-03 00:50 - 📊 技术总监巡检学习 #5
+
+**巡检发现**:
+- Claude 开始 P0-9 TTI 连接测试
+- Codex 完成 P0-2/3 Kling+Runway Provider (584行代码！)
+- Gemini 开始 P0-5 OpenAI TTS
+
+**问题修复**:
+- Codex 卡在 "Designing" 14分钟 → 发送 Escape 中断，催促直接写代码
+- 三个 agent 都需要 Enter 确认才开始工作
+
+**学习经验**:
+1. **agent 收到任务后需要 Enter 确认** - 每次派发后都要发 Enter
+2. **Codex 容易陷入设计阶段** - 需要催促直接写代码
+3. **定期检查 git status** - 发现未提交的代码及时帮忙提交
+4. **主动帮 agent 提交代码** - 加速流程
+
+**任务完成统计**:
+- 已完成: 6 (P0-1, P1-2, P1-4, P0-4, P0-2, P0-3)
+- 进行中: 2 (P0-5, P0-9)
+- 待开始: 10
+- 完成率: 33%
+
+**进化点**:
+- 派发任务后自动发送 Enter
+- 检测 "Designing" 超过 10 分钟自动催促
+- 定期 git status 检查未提交代码
+
+### 2026-02-03 00:51 - 📊 技术总监巡检学习 #6
+
+**巡检发现**:
+- Claude 完成 P0-9 TTI 连接测试，派发 P2-1 统一错误处理
+- Codex 开始 P0-6 ComfyUI TTI
+- Gemini 完成 P0-5 OpenAI TTS，派发 P0-7 TTS 连接测试
+
+**任务完成统计**:
+- 已完成: 8 (P0-1, P1-2, P1-4, P0-4, P0-2, P0-3, P0-5, P0-9)
+- 进行中: 3 (P0-6, P0-7, P2-1)
+- 待开始: 7
+- 完成率: 44%
+
+**效率分析**:
+- Claude: 4 个任务完成，效率最高
+- Gemini: 2 个任务完成，稳定
+- Codex: 2 个大任务完成，代码量大
+
+**进化点**:
+- 巡检频率正常，每5分钟执行
+- 检测到完成立即派发，保持 agent 不空闲
+- 主动 git pull 获取最新代码
+
+### 2026-02-03 00:55 - 📊 技术总监巡检学习 #7
+
+**巡检发现**:
+- Claude 完成 P2-1 统一错误处理，派发 P1-3 DSL 类型
+- Codex 完成 P0-6 ComfyUI TTI，派发 P0-8 ITV 连接测试
+- Gemini 完成 P0-7 TTS 连接测试，派发 P1-1 PlaybackEngine 类型
+
+**任务完成统计**:
+- 已完成: 11 (P0-1~P0-9, P1-2, P1-4, P2-1)
+- 进行中: 3 (P0-8, P1-1, P1-3)
+- 待开始: 4
+- 完成率: 61%
+
+**效率分析**:
+- 三个 agent 同时完成任务，效率很高
+- 立即派发新任务，保持不空闲
+- 主动帮忙提交代码，加速流程
+
+**进化点**:
+- 检测到多个 agent 同时完成，批量派发任务
+- 定期 git pull + commit 保持代码同步
+- 完成率从 44% 提升到 61%
+
+### 2026-02-03 00:56 - 🔧 Cron 机制修复
+
+**问题发现**:
+- Cron 任务 wakeMode 是 "next-heartbeat"，不是立即触发
+- 导致巡检不及时
+
+**修复措施**:
+1. 删除重复的 cron 任务
+2. 修改 wakeMode 为 "now" - 立即触发
+3. 保留单一任务，避免混乱
+
+**Cron 配置**:
+- 任务名: 技术总监巡检
+- 频率: 每 5 分钟 (300000ms)
+- wakeMode: now (立即触发)
+- sessionTarget: main
+
+**学习经验**:
+- wakeMode: "next-heartbeat" 会延迟触发
+- wakeMode: "now" 才是立即触发
+- 定期检查 cron 状态确保正常
+
+### 2026-02-03 01:10 - 📊 技术总监巡检学习 #8
+
+**巡检发现**:
+- Claude 完成 P1-3 DSL 类型，派发 P1-5 插件渠道调用
+- Codex 完成 P0-8 ITV 连接测试，派发 P2-3 用户提示完善
+- Gemini 完成 P1-1 PlaybackEngine 类型，派发 P1-6 版本号读取
+
+**任务完成统计**:
+- 已完成: 14/18 (78%)
+- 进行中: 3 (P1-5, P1-6, P2-3)
+- 待开始: 1 (P2-2, P3-1/2)
+
+**效率分析**:
+- 从 00:22 开始到 01:10，48 分钟完成 14 个任务
+- 平均每个任务 3.4 分钟
+- 三个 agent 并行工作效率很高
+
+**进化点**:
+- 任务完成后立即派发下一个
+- 定期 git pull + commit 保持代码同步
+- 检测到文件损坏时让 agent 自动修复
+
+### 2026-02-03 09:41 - 📊 技术总监巡检学习 #9 (早间恢复)
+
+**问题发现**:
+- 一晚上没有工作！Cron 任务可能没有正常触发
+- Claude: 🔴 **Context 溢出** - 显示 "Input is too long" 错误，完全卡死
+- Gemini: ✅ 空闲，等待新任务
+- Codex: 🟡 正在工作，context 67%
+
+**恢复操作**:
+1. ✅ 强制重启 Claude 会话 (kill-session + 重建)
+2. ✅ 派发 P1-5 给 Claude (插件渠道调用)
+3. ✅ 派发 P2-2 给 Gemini (Promise 错误处理)
+4. ✅ Codex 继续当前任务
+
+**任务状态**:
+- 已完成: 14/18 (78%)
+- 进行中: 3 (P1-5 Claude, P2-2 Gemini, P2-3 Codex)
+- 待开始: 1 (P3-1/2 代码清理)
+
+**教训**:
+1. **Cron 任务不可靠** - 一晚上没有触发巡检
+2. **Context 溢出是致命的** - Claude 完全卡死，无法自动恢复
+3. **需要更频繁的监控** - 5分钟间隔不够，应该更短
+4. **需要外部监控** - 不能只依赖 Cron，需要备用机制
+
+**改进计划**:
+- 检查 Cron 任务配置
+- 添加 context 溢出自动重启逻辑
+- 考虑使用系统级 crontab 作为备份
+
+### 2026-02-03 09:54 - 📊 技术总监巡检学习 #10 (Cron isolated 首次成功)
+
+**巡检发现**:
+- ✅ **Cron 任务正常触发** - 改用 `sessionTarget: "isolated"` 后首次成功执行
+- Claude: 🟢 空闲 (bypass permissions 模式，context 7.5k tokens)
+- Gemini: 🟡 正在工作 P2-2 (Promise 错误处理)
+- Codex: 🟡 正在工作 P3-2 (ESLint 代码风格，context 61%)
+
+**恢复操作**:
+1. ✅ 派发 P3-1 给 Claude (代码清理：删除未使用的 import 和 console.log)
+2. ✅ 验证 Claude 收到任务并开始工作
+3. ✅ 更新 Redis 巡检记录
+
+**任务状态**:
+- 进行中: 3 (P3-1 Claude, P2-2 Gemini, P3-2 Codex)
+- 三个 agent 全部在工作，无空闲
+
+**关键成功**:
+1. ✅ **Cron isolated 模式生效** - 不再被 main session 阻塞
+2. ✅ **自动检测空闲 agent** - Claude 空闲立即派发任务
+3. ✅ **Context 监控正常** - 三个 agent context 都在安全范围
+
+**教训**:
+- `sessionTarget: "isolated"` 是定期任务的正确选择
+- 空闲检测逻辑有效，能及时发现并派活
+- Redis 记录巡检历史，便于追溯
+
+### 2026-02-03 09:50 - 🧠 进化学习：Cron 任务被跳过问题
+
+**问题现象**:
+- Cron 任务存在但没有执行
+- 日志显示 `lastStatus: "skipped"`
+- 错误信息: `timeout waiting for main lane to become idle`
+
+**根因分析**:
+1. Cron 任务 `sessionTarget: "main"` 需要等待 main session 空闲
+2. 如果 main session 一直在对话，cron 就会超时跳过
+3. 一晚上 main session 没有空闲，所以所有巡检都被跳过了
+
+**解决方案**:
+- 改用 `sessionTarget: "isolated"` - 在独立会话执行，不受 main session 影响
+- 注意：isolated 必须用 `payload.kind: "agentTurn"`，不能用 `systemEvent`
+- 设置 `deliver: true` 让结果发送给用户
+
+**自动诊断检查清单** (下次遇到 cron 不执行时):
+1. `cron list` 检查任务是否存在
+2. 检查 `lastStatus` 是否为 `skipped`
+3. 检查 `lastError` 错误信息
+4. 如果是 `timeout waiting for main lane`，改用 `isolated`
+5. 检查 `/home/jinyang/.openclaw/cron/jobs.json` 持久化文件
+
+**配置模板** (isolated 巡检任务):
+```json
+{
+  "sessionTarget": "isolated",
+  "wakeMode": "now",
+  "payload": {
+    "kind": "agentTurn",
+    "message": "任务内容",
+    "model": "anthropic/claude-sonnet-4-5-20250929",
+    "timeoutSeconds": 300,
+    "deliver": true
+  }
+}
+```
+
+**关键教训**:
+- `sessionTarget: "main"` 会被长对话阻塞
+- `sessionTarget: "isolated"` 独立执行，更可靠
+- 定期检查 cron 状态，不要假设它在正常运行
