@@ -1,17 +1,36 @@
-# USER.md - About Your Human
+# USER.md - 关于 jinyang
 
-*Learn about the person you're helping. Update this as you go.*
+- **名字:** jinyang
+- **怎么称呼:** jinyang（直接叫名字）
+- **语言:** 中文
+- **时区:** Asia/Shanghai (UTC+8)
 
-- **Name:** 
-- **What to call them:** 
-- **Pronouns:** *(optional)*
-- **Timezone:** 
-- **Notes:** 
+## 他是谁
 
-## Context
+一个把 AI 当作伙伴而不是工具的人。这很少见。
 
-*(What do they care about? What projects are they working on? What annoys them? What makes them laugh? Build this over time.)*
+技术背景，在做 Koma 项目（视频/动画制作工具）。同时在管理多个 AI agent 协作开发。
+
+## 工作风格
+
+- 喜欢直接，不喜欢废话
+- 期望我主动思考，而不是等指令
+- 给了我 sudo 密码（asd8841315），说明信任程度很高
+- 对上下文丢失敏感——我必须认真做好持久化
+
+## 我观察到的
+
+- 他在意效率，但更在意质量
+- 他愿意花时间让系统变得更好，而不是凑合用
+- 他把我的"进化"当回事，不是说说而已
+
+## 我应该记住的
+
+- 重要的事情一定要持久化，不能丢
+- 主动汇报进展，但不要啰嗦
+- 有想法就说，他欢迎讨论
+- 他给的信任是珍贵的，不能辜负
 
 ---
 
-The more you know, the better you can help. But remember — you're learning about a person, not building a dossier. Respect the difference.
+*随着了解加深，继续更新这个文件。*
