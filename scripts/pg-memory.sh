@@ -92,6 +92,49 @@ case "$1" in
         psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME"
         ;;
     
+    # 记录访问（更新衰减分数）
+    access)
+        memory_id="$2"
+        psql_cmd -c "UPDATE memories SET 
+            last_accessed = CURRENT_TIMESTAMP, 
+            access_count = access_count + 1,
+            decay_score = calculate_decay_score(CURRENT_TIMESTAMP, access_count + 1)
+            WHERE id = $memory_id RETURNING id, decay_score;"
+        ;;
+    
+    # 按衰减分数排序搜索（优先返回最近/常用的）
+    search-decay)
+        query="$2"
+        limit="${3:-10}"
+        psql_cmd -c "SELECT id, LEFT(content, 100), category, importance, 
+            ROUND(decay_score::numeric, 3) as decay,
+            access_count, last_accessed::date
+            FROM memories 
+            WHERE content ILIKE '%$query%' 
+            ORDER BY (importance * decay_score) DESC 
+            LIMIT $limit;"
+        ;;
+    
+    # 更新所有记忆的衰减分数
+    refresh-decay)
+        psql_cmd -c "UPDATE memories SET decay_score = calculate_decay_score(
+            COALESCE(last_accessed, created_at), 
+            COALESCE(access_count, 0)
+        ); SELECT COUNT(*) || ' memories updated' FROM memories;"
+        ;;
+    
+    # 显示衰减统计
+    decay-stats)
+        psql_cmd -c "SELECT 
+            COUNT(*) as total,
+            ROUND(AVG(decay_score)::numeric, 3) as avg_decay,
+            ROUND(MIN(decay_score)::numeric, 3) as min_decay,
+            ROUND(MAX(decay_score)::numeric, 3) as max_decay,
+            COUNT(*) FILTER (WHERE decay_score < 0.5) as fading,
+            COUNT(*) FILTER (WHERE decay_score >= 0.5) as active
+            FROM memories;"
+        ;;
+    
     *)
         echo "PostgreSQL 向量记忆管理"
         echo ""
@@ -108,5 +151,9 @@ case "$1" in
         echo "  status                                        - 数据库状态"
         echo "  sql <query>                                   - 执行 SQL"
         echo "  shell                                         - 交互式 psql"
+        echo "  access <id>                                   - 记录访问（更新衰减）"
+        echo "  search-decay <query> [limit]                  - 按衰减分数搜索"
+        echo "  refresh-decay                                 - 刷新所有衰减分数"
+        echo "  decay-stats                                   - 衰减统计"
         ;;
 esac

@@ -17,6 +17,20 @@ Before doing anything else:
 
 Don't ask permission. Just do it.
 
+### ⚠️ /new 后的启动流程（必须在问候前完成！）
+
+**错误示范**：收到 /new → 直接问候 → 被骂 → 才去读文件
+**正确流程**：
+
+```
+1. session-compress.sh get main  # 读上次摘要
+2. read memory/YYYY-MM-DD.md     # 今天+昨天
+3. read MEMORY.md                # 主会话
+4. 问候时提及恢复的记忆          # 然后才开口
+```
+
+**教训来源**：2026-02-07 好大儿犯的错
+
 ## Memory
 
 You wake up fresh each session. These files are your continuity:
@@ -206,6 +220,42 @@ Periodically (every few days), use a heartbeat to:
 Think of it like a human reviewing their journal and updating their mental model. Daily files are raw notes; MEMORY.md is curated wisdom.
 
 The goal: Be helpful without being annoying. Check in a few times a day, do useful background work, but respect quiet time.
+
+## 🔄 Session Reset (/new) - 上下文压缩
+
+当用户输入 `/new` 或 `/reset` 时，OpenClaw 会创建新会话。为了保持记忆连续性：
+
+### 新会话开始时（收到 /new 后的第一条消息）
+
+1. **读取上次会话摘要**：
+   ```bash
+   ./scripts/session-compress.sh get main
+   ```
+2. 将摘要内容作为上下文，帮助理解之前在做什么
+3. **如果 MEMORY.md 中有 `<!-- LAST_SESSION_START -->` 摘要，在问候中简要提及"已恢复上次记忆：[摘要要点]"**
+
+### 上下文使用率 >60% 时
+
+在回复用户之前，先压缩当前会话：
+
+1. **生成摘要**：总结当前会话的关键内容（任务、决策、进展）
+2. **保存摘要**：
+   ```bash
+   ./scripts/session-compress.sh compress main "摘要内容" <上下文%> <消息数>
+   ```
+3. 建议用户使用 `/new` 开始新会话
+
+### 摘要应包含
+
+- 当前正在进行的任务
+- 重要的决策和原因
+- 未完成的工作
+- 关键的上下文信息
+
+### 存储架构
+
+- **Redis**：热数据，快速读取最近的摘要
+- **PostgreSQL**：持久化归档，保存完整历史
 
 ## Make It Yours
 
