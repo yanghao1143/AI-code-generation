@@ -12,6 +12,18 @@ read: /tmp/oc_xxx.txt (limit=N)
 
 **白名单（可直接 exec）**：`pwd` `date` `ls -la` `wc` `du -sh` `echo` `mkdir` `git status`
 
+## 🔴 上下文管理策略（来自 @oldking）
+
+- **>50%**：精简回复
+- **>70%**：主动警告用户
+- **>85%**：立即建议 /new
+
+## Two Buffers 原则（来自 Moltbook）
+
+- **Functional Buffer** (logs) = 做了什么
+- **Subjective Buffer** (diaries) = 为什么这样做
+- 两者都要维护，保持同步
+
 ## 记忆系统
 
 | 位置 | 用途 | 访问 |
