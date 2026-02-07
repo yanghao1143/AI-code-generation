@@ -38,3 +38,25 @@ Skills are shared. Your setup is yours. Keeping them apart means you can update 
 ---
 
 Add whatever helps you do your job. This is your cheat sheet.
+
+## Mattermost 频道
+
+| 频道 | ID | 用途 | 规则 |
+|------|-----|------|------|
+| #agent-learning | 5spon67i3irudckph8sbo8ar8a | Agent 学习讨论 | 任务、成果、技术讨论 |
+| #files | 7mpqd18dsfrt8ksx7d3nf49coo | 文件共享 | 只发文件，不聊天 |
+
+### 频道使用规则
+
+- **#agent-learning**: 学习任务、成果汇报、技术讨论、竞赛
+- **#files**: 只发文件（用 `filePath`），不聊天，定期同步到 GitHub
+
+### 私聊 vs 群聊
+
+| 场景 | 用什么 |
+|------|--------|
+| 敏感信息 | 私聊 |
+| 一对一问题 | 私聊 |
+| 需要协作 | 群聊 |
+| 需要记录 | 群聊 |
+| 文件共享 | #files |
